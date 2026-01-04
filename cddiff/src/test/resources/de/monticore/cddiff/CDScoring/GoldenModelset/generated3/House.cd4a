@@ -1,43 +1,46 @@
 
 classdiagram HouseSystem {
 
-enum BasementType {
-    Earth,
+enum BuildingMaterial {
+    Wood,
+    Brick,
     Concrete;
 }
 
 class Address {
     String street;
     String city;
-    String state;
-    String zipCode;
+    String postalCode;
 }
 
 class House {
     Address address;
-    String buildingMaterial;
+    BuildingMaterial material;
+    boolean hasBasement;
     Basement basement;
     boolean hasGarden;
     int numberOfWindows;
+
+    void addCompany(Company company);
 }
 
 class Basement {
     String name;
-    double size;
 }
 
 class EarthBasement extends Basement {
-    double humidityLevel;
+    int humidityLevel;
 }
 
 class ConcreteBasement extends Basement {}
 
 class SemiDetachedHouse extends House {
     Carport carport;
+    Garage garage;
 }
 
 class Carport {
-    boolean isDouble;
+    boolean isDoubleCarport;
     boolean hasFlatRoof;
 }
 
@@ -48,16 +51,17 @@ class Garage {
 class Company {
     String name;
     Address address;
+
+    void logJob(House house, int hours, double price);
 }
 
 class JobLog {
-    double hours;
-    double agreedPrice;
+    int hours;
+    double price;
 }
 
-association [1] House <-> Address [1];
-association [1] House <-> Basement [0..1];
-association [1] House <-> Company [*];
-association [1] Company <-> JobLog [*];
+association [*] House -- (has) Company [*];
+association [*] Company -- (performedJob) JobLog [0..*];
+association [*] House <-> (has) Basement [0..1];
 
 }

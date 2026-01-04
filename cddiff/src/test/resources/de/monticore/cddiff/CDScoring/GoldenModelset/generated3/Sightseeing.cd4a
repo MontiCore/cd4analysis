@@ -1,5 +1,11 @@
 
-classdiagram City {
+// CD4A class diagram for City Attractions
+classdiagram CityAttractions {
+
+class City {
+    String name;
+    int inhabitants;
+}
 
 class Attraction {
     String name;
@@ -7,9 +13,10 @@ class Attraction {
 }
 
 class GuidedTour {
-    int duration;
-    int numberOfVisitors;
-    double discountAmount;
+    int duration; // in minutes
+    int number; // tour number
+    double discount; // discount amount for certain visitors
+    boolean hasDiscountFor(Visitor visitor); // method to check if a visitor has a discount
 }
 
 class Visitor {
@@ -20,14 +27,10 @@ class Guide {
     String name;
 }
 
-class City {
-    String name;
-    int inhabitants;
-}
-
-association [*] City -> Attraction [*];
-association [*] Attraction -> GuidedTour [*];
-association [0..*] GuidedTour -> Guide [1];
-association [0..20] GuidedTour <-> Visitor [*];
+// Association between entities
+association [1..*] City <-> Attraction [0..*];
+association [1] Attraction <-> GuidedTour [0..*];
+association [1..20] GuidedTour <-> Visitor [0..*]; // maximum 20 visitors per guided tour
+association [1] GuidedTour <-> Guide [1];
 
 }

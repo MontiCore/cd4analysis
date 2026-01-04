@@ -1,5 +1,6 @@
 
-classdiagram EBike {
+// Class diagram for the EBike system
+classdiagram EBikeSystem {
 
 class EBike {
     Frame frame;
@@ -9,42 +10,41 @@ class EBike {
 }
 
 class Frame {
-    String material;
+    String material; // "steel"
 }
 
 class DriveSystem {
     Motor motor;
 }
 
-class Motor {
-    // motor properties
-}
+class Motor {}
 
 class Battery {
     double storedEnergy; // in Watt-hours (Wh)
 }
 
-class Controller {
-    State state;
+enum ControllerState {
+    On,
+    Off,
+    Charging;
 }
 
-enum State {
-        On,
-        Off,
-        Charging;
-    }
-
-class BasicController extends Controller {
-    // class body
+// Base class for controllers
+abstract class Controller {
+    ControllerState state;
 }
 
+// Basic Controller class
+class BasicController extends Controller {}
+
+// Advanced Controller class with additional functionality
 class AdvancedController extends Controller {
     Date estimateNextInspectionDate();
 }
 
-association [1] EBike <-> (has) Frame [1];
-association [1] EBike <-> (has) DriveSystem [1];
-association [1] EBike <-> (has) Controller [1];
-association [0..1] EBike <-> (has) Battery [1];
+association [1] EBike -- Frame [1];
+association [1] EBike -- DriveSystem [1];
+association [1] EBike -- Controller [1];
+association [0..1] EBike -- Battery [1];
 
 }

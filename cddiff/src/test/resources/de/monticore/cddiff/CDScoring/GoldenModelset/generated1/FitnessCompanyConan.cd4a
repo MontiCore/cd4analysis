@@ -1,49 +1,55 @@
- 
-classdiagram FitnessCompanyConan {
 
-class Address {
-    String street;
-    String city;
-    String zipCode;
-}
+// Class diagram for the Fitness company "Conan".
+classdiagram Conan {
 
-class Room {
-    int number;
-    int maxCapacity;
-}
+    class FitnessCenter {
+        String name; // Unique name for the center
+        String address; // Atomic address of the center
+    }
 
-class Center {
-    String uniqueName;
-    Address address;
-}
+    class Room {
+        int roomNumber; // Unique room number within a center
+        int maxCapacity; // Maximum capacity of the room
+    }
 
-class Person {
-    String firstName;
-    String familyName;
-    Date birthDate;
-}
+    class Person {
+        String firstName; // First name of the person
+        String familyName; // Family name of the person
+        Date birthDate; // Birth date of the person
+    }
 
-class Trainer extends Person {
-    String diploma;
-}
+    class Trainer extends Person {
+        String diploma; // Diploma of the trainer
+    }
 
-class Session {
-    Date date;
-    String startingHour;
-}
+    class Session {
+        Date sessionDate; // Date of the session
+        Time startHour; // Starting hour of the session
+    }
 
-class GroupSession extends Session {
-    String type;
-}
+    class GroupSession extends Session {
+        String type; // Type of group session (e.g., aerobics, bodystyling, etc.)
+    }
 
-class IndividualSession extends Session {}
+    class IndividualSession extends Session {
+        // Individual sessions without a trainer
+    }
 
+    class Participation {
+        // Information about a person's participation in a session
+    }
 
-association [1] Center <-> Room [*];
-association [*] Center <-> (hosts) Session [*];
-association [1] Session <-> (supervisedBy) Trainer [0..1];
-association [*] Person <-> (participatesIn) Session [*];
-association [*] Trainer <-> (supervises) GroupSession [0..*];
-association [0..*] Person <-> (prospectsBy) Session [0..*];
+    class Supervision {
+        // Information about a trainer supervising a session
+    }
+
+    // Associations
+    association [1] FitnessCenter <-> Room [1..*]; // A center has one or more rooms
+    association [0..*] FitnessCenter <-> Session [0..*]; // Centers can host sessions
+    association [0..*] Person <-> Participation [0..*]; // A person can participate in multiple sessions
+    association [0..*] Trainer <-> Supervision [0..*]; // A trainer can supervise multiple group sessions
+    association [1] GroupSession <-> Trainer [1]; // Each group session requires exactly one trainer
+    association [0..*] GroupSession <-> Participation [0..*]; // Group sessions can have multiple participants
+    association [0..*] IndividualSession <-> Participation [0..*]; // Individual sessions can have multiple participants
 
 }

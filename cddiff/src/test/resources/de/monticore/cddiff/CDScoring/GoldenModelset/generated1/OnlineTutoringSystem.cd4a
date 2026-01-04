@@ -1,51 +1,49 @@
 
-classdiagram OTS {
-    class Tutor {
+// CD4A Class Diagram for Online Tutoring System (OTS)
+classdiagram OnlineTutoringSystem {
+
+    class User {
         String name;
         String email;
+    }
+
+    class Tutor extends User {
         String bankAccount;
-        float hourlyPrice;
-    }
-
-    class Student {
-        String name;
-        String email;
-    }
-
-    class TutoringOffer {
+        double hourlyPrice;
+        String levelOfExpertise;
         String subject;
-        String expertiseLevel;
-        String availability; // e.g. "Thursdays from 10:00 to 11:30"
+        String availability; // e.g., "Thursdays from 10:00 to 11:30"
+    }
+
+    class Student extends User {
+        // Student specific details can be added here
     }
 
     class TutoringRequest {
-        String subject;
-        String level;
-        Date targetDateTime;
+        Date suggestedDateTime;
+        String levelOfTutoring; // e.g., primary, high school, university
     }
 
     class TutoringSession {
-        Date scheduledTime;
-        boolean isConfirmed;
-        boolean isCancelled;
-        float sessionPrice;
+        Date sessionTime;
+        boolean cancelledByStudent;
+        boolean cancelledByTutor;
+        double sessionPrice;
     }
 
     class Payment {
-        String method; // e.g. credit card, wire transfer
-        float amount;
+        String paymentMethod; // e.g., credit card, wire transfer
+        double amountPaid;
     }
 
-    class Award {
-        String subject;
-        String tutorName;
-        String month;
+    enum CancellationPolicy {
+        STUDENT_CANCELLATION,
+        TUTOR_CANCELLATION;
     }
 
-    // Association to allow tutor to also be a student
-    association [0..*] Tutor <-> Student [0..*];
-    association [0..*] Tutor <-> TutoringOffer [0..*];
-    association [1..*] Student <-> TutoringRequest [0..*];
-    association [1..*] TutoringRequest <-> TutoringSession [1..1];
-    association [1..1] TutoringSession <-> Payment [1..1];
+    association [1] Tutor <-> (offers) TutoringRequest [*];
+    association [1] Student <-> (makes) TutoringRequest [*];
+    association [1] TutoringRequest <-> (resultsIn) TutoringSession [1];
+    association [1] TutoringSession <-> (paidBy) Payment [1];
+
 }

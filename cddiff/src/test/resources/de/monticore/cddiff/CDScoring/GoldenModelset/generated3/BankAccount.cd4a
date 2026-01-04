@@ -1,5 +1,14 @@
 
+// CD4A Class Diagram for the Bank Management System
 classdiagram BankManagement {
+
+    class Bank {
+        // A bank consists of multiple branches
+    }
+
+    class Branch {
+        // A branch belongs to a bank
+    }
 
     class Customer {
         String firstName;
@@ -17,11 +26,8 @@ classdiagram BankManagement {
 
     class SavingsAccount extends Account {}
 
-    class Branch {}
+    association [1..*] Bank -> Branch [*];
+    association [1..5] Customer -> Account [*];
+    association [1] Account -> Customer [1];
 
-    class Bank {}
-
-    association [1..*] Bank -> (has) Branch [*];
-    association [1..5] Customer -> (owns) Account [*];
-    association [1] Account -> (owner) Customer [1];
 }

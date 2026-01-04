@@ -1,72 +1,68 @@
 
+// CD4A Class Diagram for Oil Company Gas Stations
+
 classdiagram OilCompany {
 
 class Customer {
     int customerId;
     String name;
-    String refuelCardStatus; // e.g., "active", "blocked"
+    String address;
+    boolean suspended;
 
-    int getCustomerId();
-    void setCustomerId(int newCustomerId);
     void receiveInvoice();
     void payInvoice();
-    void suspendCustomer();
-    void reactivateCustomer();
+}
+
+class RefuelCard {
+    int cardNumber;
+
+    void issueCard(Customer customer);
+}
+
+class Invoice {
+    int invoiceNumber;
+    Date invoiceDate;
+    double totalAmount;
+
+    void sendInvoice();
+    void remindPayment();
+}
+
+class Payment {
+    int paymentId;
+    Date paymentDate;
+    double amount;
+
+    void processPayment(Invoice invoice);
 }
 
 class GasStation {
     int stationId;
     String location;
 
-    int getStationId();
-    void setStationId(int newStationId);
-    void produceDailyReport();
+    void generateDailyReport();
 }
 
 class Pump {
     int pumpId;
     String gasolineType;
-    float currentLevel;
-    float reorderLevel;
-    float criticalLevel;
+    double currentLevel;
+    double reorderLevel;
+    boolean isBlocked;
 
-    int getPumpId();
-    void setPumpId(int newPumpId);
-    void initiateRefilling();
-    void blockPump();
-    void releasePump();
+    void startRefueling(Customer customer);
+    void stopRefueling();
+    void refill(double quantity);
 }
 
-class Invoice {
-    int invoiceId;
-    DateTime issueDate;
-    float totalAmount;
-
-    int getInvoiceId();
-    void setInvoiceId(int newInvoiceId);
-    void applyDiscount();
+class Report {
+    void generatePumpStatus(GasStation station);
 }
 
-class Payment {
-    int paymentId;
-    float amount;
+association [1] Customer <-> RefuelCard [0..*];
+association [1] Customer <-> Invoice [0..*];
+association [1] Invoice <-> Payment [0..*];
+association [1] GasStation <-> Pump [*];
+association [0..*] Pump <-> Invoice [0..*];
 
-    int getPaymentId();
-    void setPaymentId(int newPaymentId);
-}
-
-class RefuelTurn {
-    int refuelTurnId;
-    DateTime refuelDate;
-    float amount;
-
-    int getRefuelTurnId();
-    void setRefuelTurnId(int newRefuelTurnId);
-}
-
-association [1] GasStation -- (has) Pump [*];
-association [1] Customer -- (owns) RefuelTurn [*];
-association [1] Customer -- (receives) Invoice [*];
-association [*] Invoice <-> Payment [1];
-association [*] Invoice <-> RefuelTurn [1];
 }

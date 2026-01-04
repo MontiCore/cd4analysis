@@ -1,66 +1,58 @@
 
-// CD4A Class Diagram for E-Home-2020
+// CD4A class diagram for the E-Home-2020 system
 classdiagram EHome2020 {
 
-enum SensorUnit {
-    CELSIUS,
-    WATT;
+class Sensor {
+    String vendorId;
+    String description;
+    String unit;
 }
 
-class User {
-    String username;
-    String password;
+class TemperatureSensor extends Sensor {
+    float minValue;
+    float maxValue;
+    float getLastValue();
 }
 
-class Apartment {
-    String address;
+class PowerSensor extends Sensor {
+    float totalPowerConsumption;
+    float getLastValue();
 }
 
 class Room {
     String description;
 }
 
-class Sensor {
-    String vendorId;
-    String description;
-    SensorUnit unit;
-}
-
-class TemperatureSensor extends Sensor {
-    float minValue;
-    float maxValue;
-}
-
-class PowerSensor extends Sensor {
-    float totalConsumption;
-}
-
-class SensorValue {
-    Date timestamp;
-    float value;
-}
-
 class SensorController {
-    Apartment apartment;
+    void querySensorValues();
+    void configureSensor();
+}
+
+class Apartment {
+    String address;
+}
+
+class Inhabitant {
+    String username;
+    String password;
+    boolean hasAdminRights; 
 }
 
 class EMonitor {
     void checkThresholds();
+    void sendAlert();
 }
 
-class Alert {
-    String emailAddress;
+class SensorValue {
+    float value;
+    Date timestamp;
 }
-
-class AdministrativeUser extends User {}
 
 association [1] Apartment -- Room [2..*];
-association [1] User -- Alert [0..1];
-association [1] User -- (adminRights) AdministrativeUser [0..1];
-association [1] SensorController -- Sensor [1..*];
-association [1] Room -- Sensor [1..*];
-association [1] Sensor -- (measuredValues) SensorValue [*];
-association [1] SensorController -- (inhabitants) User [1..*];
-association [1] EMonitor -- Sensor [*];
+association [1] Room <-> Sensor [1..*];
+association [1] Inhabitant <-> Apartment [1];
+association [1] SensorController <-> Apartment [1];
+association [1] EMonitor <-> Sensor [*];
+association [1..*] Sensor <-> (measures) SensorValue [*];
 
 }

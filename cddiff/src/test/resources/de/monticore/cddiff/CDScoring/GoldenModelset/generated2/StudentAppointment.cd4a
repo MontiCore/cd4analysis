@@ -1,26 +1,34 @@
 
-classdiagram Course_Appointment_System {
+// Class Diagram for Appointment System for Teaching Assistants
+classdiagram AppointmentSystem {
 
-class Student {
-    String name;
-}
+    class Student {
+        String name;
+        String studentId;
+        // A student can only be associated with courses they are registered for.
+    }
 
-class Course {
-    String courseName;
-}
+    class Course {
+        String courseName;
+        String courseCode;
+        // Each course has a unique identifier and a name.
+    }
 
-class TeachingAssistant {
-    String name;
-}
+    class TeachingAssistant {
+        String name;
+        String taId;
+        // A TA can only assist in the courses they are teaching.
+    }
 
-class Appointment {
-    String dateTime;
-}
+    class Appointment {
+        String appointmentId;
+        String dateTime;
+        // An appointment is specific to one course and one TA.
+    }
 
-association [1] Course <-> TeachingAssistant [0..*];
-association [1] Course <-> Appointment [0..*];
-association [1] Student <-> Course [1..*];
-association [1] Student <-> Appointment [0..*];
-association [1] TeachingAssistant <-> Appointment [0..*];
-
+    association [1] Student -> Course [*];  // A student can be registered in multiple courses
+    association [1] TeachingAssistant -> Course [*];  // A TA can assist multiple courses
+    association [1] Course -> Appointment [0..*];  // A course can have multiple appointments
+    association [1] TeachingAssistant -> Appointment [0..*];  // A TA can have multiple appointments
+    association [1] Student -> Appointment [0..*];  // A student can have multiple appointments
 }

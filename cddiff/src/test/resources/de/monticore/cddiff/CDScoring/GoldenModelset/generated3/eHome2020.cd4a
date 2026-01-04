@@ -1,28 +1,16 @@
 
+// Class diagram for the E-Home-2020 system
 classdiagram EHome2020 {
 
-enum SensorUnit {
+enum Unit {
     CELSIUS,
     WATT;
 }
 
-class User {
-    String username;
-    String password;
-}
-
-class Apartment {
-    String address;
-}
-
-class Room {
-    String description;
-}
-
-abstract class Sensor {
+class Sensor {
     String vendorId;
     String description;
-    SensorUnit unit;
+    Unit unit;
 }
 
 class TemperatureSensor extends Sensor {
@@ -31,32 +19,55 @@ class TemperatureSensor extends Sensor {
 }
 
 class PowerSensor extends Sensor {
-    float counterReading;
+    float totalConsumption;
+}
+
+class Room {
+    String description;
+}
+
+class Apartment {
+    String address;
 }
 
 class SensorController {
-    Apartment apartment;
-}
-
-class SensorValue {
-    Date timestamp;
-    float value;
-}
-
-class EMonitor {
-    void checkThresholds();
-}
-
-class Alert {
+    String username;
+    String password;
     String email;
 }
 
-association [1] User -- (apartment) Apartment [1];
-association [1] Apartment -- (rooms) Room [2..*];
-association [1] Apartment -- (sensors) Sensor [1..*];
-association [1] SensorController -- (sensors) Sensor [*];
-association [1] Sensor -- (values) SensorValue [*];
-association [1] Sensor -- (lastValue) SensorValue [0..1];
-association [1] EMonitor -- (monitors) Sensor [*];
-association [1] Apartment -- (alert) Alert [0..1];
+class Inhabitant {
+    String name;
+    boolean isAdmin; // Indicates if the inhabitant has administrative rights
+}
+
+class MeasuredValue {
+    float value;
+    Date timestamp;
+}
+
+class Threshold {
+    float thresholdValue;  
+}
+
+class EMonitor {
+    // Monitors sensor thresholds and sends alerts
+}
+
+association [1] Apartment -- (inhabitants) Inhabitant [*];
+association [1] Apartment -- Room [2..*];
+association [1] Room -> (assignedSensors) Sensor [*];
+
+// Associations to signify relationships between sensors and their measured values
+association [1] Sensor -- (measuredValues) MeasuredValue [*];
+association [1] Sensor -- Threshold [0..1];
+
+// Each sensor is associated with exactly one room
+association [1] Sensor -> Room [1];
+
+// EMonitor checks thresholds for all sensors
+association [1] EMonitor -- Sensor [*];
+
+// Each SensorController is associated with one Apartment
+association [1] Apartment <-> SensorController [1];
 }

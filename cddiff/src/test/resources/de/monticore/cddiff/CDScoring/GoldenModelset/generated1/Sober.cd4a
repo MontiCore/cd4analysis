@@ -1,13 +1,20 @@
 
+// Class Diagram for Sober Taxi Company
 classdiagram SoberTaxi {
 
-class SelfDrivingCab {
-    String licensePlate;
-}
-
-class Owner {
+class Customer {
     String name;
     String contactInfo;
+}
+
+class CarOwner {
+    String name;
+    String contactInfo;
+}
+
+class SelfDrivingTaxi {
+    String licensePlate;
+    String model;
 }
 
 class RideHailService {
@@ -15,12 +22,12 @@ class RideHailService {
     DateTime dropOffTime;
     String pickUpLocation;
     String dropOffLocation;
-    Duration rideDuration;
+    double rideDuration;
     double distance;
-    int numberOfPassengers;
+    int passengerCount; // max 6
     double fee;
-    String requestType; // "Sober App" or "Hand-Waving"
-    String leadCustomerName;
+    String requestType; // either 'Sober App' or 'Hand-waving'
+    Customer leadCustomer;
 }
 
 class RideShareService {
@@ -28,29 +35,25 @@ class RideShareService {
     DateTime dropOffTime;
     String pickUpLocation;
     String dropOffLocation;
-    Duration rideDuration;
+    double rideDuration;
     double distance;
-    List<String> customerNames;
+    List<Customer> customers; // max 10
     double negotiatedFee;
+    boolean ecoIncentive; // e.g., tree planting for every 20 rides
 }
 
 class Accident {
-    Date accidentDate;
+    DateTime accidentDate;
     String location;
     double damageAmount;
 }
 
-class SoberApp {
-    String version;
-}
 
-class ImageRecognitionSystem {}
+association [1] SelfDrivingTaxi <-> RideHailService [0..*];
+association [1] SelfDrivingTaxi <-> RideShareService [0..*];
+association [0..*] CarOwner <-> SelfDrivingTaxi [0..*];
+association [0..*] Customer <-> RideHailService [0..*];
+association [0..*] Customer <-> RideShareService [0..*];
+association [1] SelfDrivingTaxi <-> Accident [0..*];
 
-
-// Associations
-association [1] SelfDrivingCab <-> Owner [0..*];
-association [1] SelfDrivingCab <-> RideHailService [0..*];
-association [1] SelfDrivingCab <-> RideShareService [0..*];
-association [0..*] RideHailService <-> RideShareService [0..*];
-association [0..*] SelfDrivingCab <-> Accident [0..*];
 }

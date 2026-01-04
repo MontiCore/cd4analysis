@@ -1,4 +1,5 @@
 
+// Class Diagram for the DestroyBlock application
 classdiagram DestroyBlock {
 
 class User {
@@ -6,48 +7,43 @@ class User {
     String password;
 }
 
-class Player extends User {}
+// Player and Admin are specialized roles of User
+class Player extends User {
+    int lives = 3; // Default starting lives
+    int score;
+}
 
 class Admin extends User {}
 
 class Game {
     String name;
     HallOfFame hallOfFame;
-    int maxLevels;
-    int minSpeed;
-    int speedIncreaseFactor;
-    int maxPaddleLength;
-    int minPaddleLength;
+    int maxLevels = 99;
+    int currentLevel;
+}
+
+class HallOfFame {
+    List<PlayerScore> scores;
 }
 
 class Level {
     int levelNumber;
+    List<Block> blocks; // Collection of blocks defined for this level
     boolean isRandom;
-    int numberOfBlocks;
-    Block[][] blockArrangement;
+    int ballSpeed; // Speed of the ball at this level
+    int paddleLength; // Length of the paddle at this level
 }
 
 class Block {
     String color;
-    int points; // between 1 and 1000
+    int points; // Points worth between 1 and 1000
 }
 
-class HallOfFame {
-    List<Player> players; // holds players with high scores
-}
-
-class Ball {
-    int speed;
-    String direction;
-}
-
-class Paddle {
-    int length;
-}
-
-association [1] Game <-> Admin [1];
-association [1] Game <-> Level [*];
-association [1] Game <-> Player [*];
-association [*] Level <-> Block [*];
+association [1] Admin <-> Game [1]; // One admin per game
+association [1] Game <-> Level [*]; // A game has multiple levels
+association [1] Game <-> HallOfFame [1]; // Each game has its own hall of fame
+association [*] Player <-> Game [*]; // Players may play multiple games
+association [1] Player <-> (scores) HallOfFame [*]; // Players compete in the hall of fame
+association [1] Level <-> Block [*]; // Levels consist of multiple blocks
 
 }

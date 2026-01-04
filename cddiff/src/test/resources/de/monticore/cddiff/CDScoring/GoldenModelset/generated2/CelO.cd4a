@@ -1,29 +1,20 @@
 
+// Celebrations Organization System class diagram
 classdiagram CelebrationsOrganizationSystem {
 
     class Organizer {
         String firstName;
         String lastName;
-        String email;
+        String email; // used as username
         String postalAddress;
         String phoneNumber;
         String password;
     }
 
-    class Attendee {
-        String firstName;
-        String lastName;
-        String email;
-        String password;
-        AttendanceStatus attendanceStatus;
-    }
-
     class Event {
-        Date startDateTime;
-        Date endDateTime;
+        DateTime startDateTime;
+        DateTime endDateTime;
         String occasion;
-        Location location;
-        List<String> eventTypes;
     }
 
     class Location {
@@ -31,27 +22,28 @@ classdiagram CelebrationsOrganizationSystem {
         String address;
     }
 
+    class Attendee {
+        String firstName;
+        String lastName;
+        String email; // used as username
+        // Password only if creating an account
+    }
+
+    class Invitation {
+        String status; // e.g., attending, maybe attending, cannot attend
+    }
+
     class Task {
         String description;
-        TaskStatus status;
+        String status; // e.g., needs to be done, done, not applicable
     }
 
-    enum AttendanceStatus {
-        ATTENDING,
-        MAYBE_ATTENDING,
-        NOT_ATTENDING;
-    }
+    association [1] Organizer -> Event [*]; // One organizer can manage multiple events
+    association [1] Event -> Location [1]; // Each event has one location
+    association [*] Event -> Attendee [*]; // Many attendees can attend an event
+    association [1] Attendee -> Invitation [1]; // Each attendee has one invitation
+    association [*] Event -> Task [*]; // Each event can have multiple tasks
+    association [1] Organizer -> Task [*]; // Organizer can add tasks for events
+    association [*] Task -> Attendee [*]; // Attendees can be assigned tasks for events
 
-    enum TaskStatus {
-        NEEDS_TO_BE_DONE,
-        DONE,
-        NOT_APPLICABLE;
-    }
-    
-    association [1..*] Organizer -> (organizes) Event [1];
-    association [0..*] Organizer -> (invites) Attendee [*];
-    association [1..*] Attendee -> (attends) Event [1];
-    association [1] Event -- Location [1];
-    association [*] Event -> (has) Task [*];
-    association [*] Task -> (assignedTo) Attendee [*];
 }

@@ -12,21 +12,23 @@ enum DayOfWeek {
 }
 
 class User {
-    String userId;
+    String userId; // Unique identifier for each user
     String name;
     String address;
-    Date birthday;
+    String birthday;
 }
 
 class BusinessOwner extends User {
-    String linkedinAccount;
+    String linkedInAccount;
 }
 
 class PizzaRestaurant {
+    String name;
     String zipCode;
     String address;
     String phoneNumber;
     String website;
+    String openingHours;
 }
 
 class Pizza {
@@ -35,17 +37,20 @@ class Pizza {
     double price;
 }
 
+class HungryCustomer extends User {
+    String deliveryAddress;
+}
+
 class Order {
-    String orderId;
-    Date orderDate;
-    Time orderTime;
+    int orderId; // Unique order identifier
+    Date orderDateTime; // Date and time when the order was placed
     Time latestDeliveryTime;
     int numberOfPeople;
 }
 
 class EntertainmentOrder extends Order {
-    String entertainmentType;
-    Duration entertainmentDuration;
+    String entertainmentType; // Type of entertainment requested
+    Duration duration; // Duration of entertainment
 }
 
 class Entertainer extends User {
@@ -54,17 +59,12 @@ class Entertainer extends User {
     double pricePer30Minutes;
 }
 
-class Availability {
-    DayOfWeek day;
-    boolean isAvailable;
-}
-
-association [1] BusinessOwner <-> PizzaRestaurant [*];
-association [1] PizzaRestaurant <-> Pizza [*];
-association [1] HungryCustomer <-> Order [*];
-association [1] Order <-> Pizza [*];
-association [1] EntertainmentOrder <-> Entertainer [1];
-association [1] Entertainer <-> PizzaRestaurant [*];
-association [1] Entertainer <-> Availability [*];
+association [1] BusinessOwner -> PizzaRestaurant [*]; 
+association [1] PizzaRestaurant -> Pizza [*];
+association [1] HungryCustomer -> Order [*];
+association [1] Order -> Pizza [*];
+association [1] EntertainmentOrder -> Entertainer [1];
+association [1] Entertainer -> PizzaRestaurant [*];
+association [*] Entertainer -> DayOfWeek [*]; // Availability of entertainer by day
 
 }

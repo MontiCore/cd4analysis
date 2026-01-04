@@ -1,31 +1,30 @@
 
 classdiagram HelpingHandsStore {
 
-    class HelpingHandsStore {
-        Location location;
-        PickupService pickupService;
+    class H2S {
+        String name;
+        List<Location> locations;
     }
 
     class Location {
         String city;
+        DistributionCenter distributionCenter;
+        List<VolunteerDriver> drivers;
     }
 
-    class Resident {
-        String name;
+    class PickupRequest {
+        String residentName;
         String streetAddress;
         String phoneNumber;
-        String emailAddress;  // Optional
+        String email; // optional
         String itemDescription;
-    }
-
-    class PickupService {
-        void schedulePickup(Resident resident);
-        void determinePickupRoute(Vehicle vehicle);
+        Time pickupTime;
     }
 
     class Vehicle {
-        String vehicleId;
-        float storageSpace;
+        String licensePlate;
+        int storageCapacity; // in liters or cubic meters
+        List<Item> scheduledItems; // items picked up
     }
 
     class VolunteerDriver {
@@ -34,24 +33,35 @@ classdiagram HelpingHandsStore {
         void indicateAvailability();
     }
 
-    class H2SEmployee {
-        void examineArticle(Article article);
-        void assignCategory(Article article, Category category);
-        void notifyClients();
+    class DistributionCenter {
+        List<ReceivedArticle> receivedArticles;
+        void examineArticle(ReceivedArticle article);
     }
 
-    class Article {
+    class ReceivedArticle {
         String description;
-        RFIDTag rfidTag;
-        Category category;
+        String rfidTag;
+        String category;
+        void tag();
     }
 
-    class RFIDTag {
-        String id;
+    class DeliveryService {
+        Client client;
+        List<String> requestedCategories;
+        void arrangeDelivery(ReceivedArticle article);
     }
 
-    class Category {
-        String name;  // e.g., baby clothing, women’s winter boots, etc.
+    class Client {
+        String name;
+        String contactNumber;
+        String address;
+        List<String> requestedCategories;
+    }
+
+    class Item {
+        String name;
+        double weight; // in kilograms
+        double dimension; // e.g., volume
     }
 
     enum DayOfWeek {
@@ -59,16 +69,18 @@ classdiagram HelpingHandsStore {
         Tuesday,
         Wednesday,
         Thursday,
-        Friday;
+        Friday,
+        Saturday,
+        Sunday;
     }
 
-    association [1] HelpingHandsStore -> (location) Location [*];
-    association [*] HelpingHandsStore -> (pickupService) PickupService [1];
-    association [*] PickupService -> (scheduledPickup) Resident [*];
-    association [1] PickupService -> (vehicle) Vehicle [*];
-    association [1] Vehicle -> (driver) VolunteerDriver [*];
-    association [*] H2SEmployee -> (examine) Article [*];
-    association [1] Article -> (tag) RFIDTag [0..1];
-    association [1] Article -> (category) Category [1];
-
+    association [*] H2S -> (location) Location [*];
+    association [*] Location -> (pickupRequest) PickupRequest [*];
+    association [1] Location -> (distributionCenter) DistributionCenter [1];
+    association [1] DistributionCenter <-> ReceivedArticle [0..*];
+    association [*] Vehicle <-> (scheduledForPickup) PickupRequest [*];
+    association [*] VolunteerDriver <-> PickupRequest [*];
+    association [1] Client <-> DeliveryService [0..*];
+    association [*] DeliveryService <-> ReceivedArticle [*];
+    
 }

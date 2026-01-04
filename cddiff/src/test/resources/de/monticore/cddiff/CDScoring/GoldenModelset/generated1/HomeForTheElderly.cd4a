@@ -1,69 +1,63 @@
 
-// CD4A Model for Home for the Elderly
-
+// CD4A Class Diagram for Home for the Elderly
 classdiagram HomeForElderly {
 
-class Inhabitant {
-    int id;
+class Home {
     String name;
 }
 
-class Bed {
-    String category;
+class Department {
+    String name;
 }
 
 class Room {
     int roomNumber;
 }
 
-class Department {
-    int departmentNumber;
+class Bed {
+    String category;
 }
 
 class Stay {
+    String type;
     Date intakeDate;
-    String typeOfStay;
     boolean isActive;
+    double amountInvoiced;
 }
 
-class Registration {
-    Date registrationDate;
+class Inhabitant {
+    String name;
+    String identificationData;
+    int waitingListPosition;
 }
 
 class Assessment {
-    boolean needsHelpEating;
-    boolean needsHelpDressing;
-    boolean needsHelpPersonalCare;
-}
-
-class Proposal {
-    boolean isAccepted;
-    Date proposalDate;
+    String needsForHelp;
+    Stay assignedStay;
 }
 
 class Invoice {
     double outstandingAmount;
-    String status;
+    boolean isPaid;
 }
 
 class PaymentEvent {
     double amountPaid;
-    boolean isRefund;
 }
 
-enum StayType {
-    RH,
-    RNH,
-    SF;
+// Registration process for individuals 
+class Registration {
+    Inhabitant inhabitant; // Reference to the person being registered
 }
 
+// Association for registration process
+association [1] Registration <-> Inhabitant [1];
+association [*] Home <-> Department [*];
 association [*] Department <-> Room [*];
 association [*] Room <-> Bed [*];
-association [1] Inhabitant <-> Bed [1];
-association [1] Inhabitant <-> Registration [1];
-association [1] Inhabitant <-> Assessment [1];
 association [1] Inhabitant <-> Stay [*];
-association [*] Stay <-> Proposal [1];
-association [*] Stay <-> Invoice [*];
-association [*] Invoice <-> PaymentEvent [*];
+association [1] Inhabitant <-> Assessment [1];
+association [1] Stay <-> Invoice [0..*];
+association [1] Invoice <-> PaymentEvent [0..*];
+
 }

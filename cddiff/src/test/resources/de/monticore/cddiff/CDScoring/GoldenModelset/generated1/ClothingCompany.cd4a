@@ -1,15 +1,21 @@
 
-classdiagram ClothingManagementSystem {
+// CD4A Class Diagram for Clothing Management Application
+classdiagram ClothingManagementApplication {
 
 class Product {
     String uniqueName;
     String description;
-    double netPrice;
+    double netPrice; // price before VAT
+}
+
+class Manufacturer {
+    String name;
+    String country;
 }
 
 class Country {
     String name;
-    double vatRate;
+    double vatRate; // VAT in percentage
     String currency;
     double conversionRateToEuro;
 }
@@ -18,29 +24,30 @@ class Representative {
     String firstName;
     String lastName;
     String socialSecurityNumber;
-    String telephoneNumber;
+    String phoneNumber;
     String emailAddress;
 }
 
 class Customer {
     String name;
     String address;
-    String telephoneNumber;
+    String phoneNumber;
     String emailAddress;
 }
 
 class Order {
-    String orderId;
-    int orderQuantity;
+    String orderId; // unique identifier
+    int quantity;
     Date orderDate;
     Date desiredDeliveryDate;
 }
 
-association [1] Product -> (manufacturedBy) Company [1];
-association [1] Product -> (availableIn) Country [*];
-association [1] Representative -- (responsibleCountry) Country [1];
-association [1] Representative -- (orders) Order [*];
-association [1] Customer -- (orders) Order [*];
-association [1] Order -> (containsProduct) Product [1];
+// Associations
+association [1] Product <-> Manufacturer [1..1];
+association [1] Product <-> Country [0..*]; // Product may not be available in every country
+association [1] Representative <-> Country [1..1]; // Each representative is responsible for one country
+association [1] Representative <-> Order [0..*]; // A representative can place many orders
+association [1] Customer <-> Order [0..*]; // A customer can have many orders
+association [1] Order <-> Product [1..1]; // Each order refers to exactly one product
 
 }

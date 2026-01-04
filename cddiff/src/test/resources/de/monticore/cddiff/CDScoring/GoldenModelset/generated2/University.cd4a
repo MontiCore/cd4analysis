@@ -1,5 +1,10 @@
 
+// Class diagram for a university structure
 classdiagram University {
+
+class University {
+    int totalEmployees;
+}
 
 class Faculty {
     String name;
@@ -29,18 +34,15 @@ class Project {
 class Lecturer extends ResearchAssistant {}
 
 class Course {
-    int id;
+    String uniqueID;
     String name;
-    int weeklyDuration;
+    int weeklyDurationHours;
 }
 
-class Dean extends Employee {}
-
-
-association [1] Faculty <-> Institute [*];
-association [1] Faculty -> Dean [1];
-association [1..*] ResearchAssistant <-> Institute [*];
-association [*] ResearchAssistant <-> Project [*];
-association [*] Lecturer <-> Course [*];
-
+association [1] University -- Faculty [*];
+association [1] Faculty -- Institute [*];
+association [1] Faculty -- Employee [1]; // The dean is an employee
+association [1] Institute <-> ResearchAssistant [*]; // RAs assigned to institutes
+association [1] ResearchAssistant <-> Project [*]; // RAs involved in projects
+association [1] ResearchAssistant <-> Course [*]; // RAs that teach courses
 }

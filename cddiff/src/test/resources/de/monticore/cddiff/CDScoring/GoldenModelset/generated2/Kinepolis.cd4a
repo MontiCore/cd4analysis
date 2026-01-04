@@ -1,41 +1,54 @@
 
-classdiagram KinepolisCinemas {
+classdiagram KinepolisCinema {
 
 class Cinema {
-    String location;
+    String address;
 }
 
 class Theatre {
     int number;
+    int totalSeats;
 }
 
-class MovieCopy {
-    String location;
+class Movie {
+    String title;
+}
+
+class Copy {
+    String id; // unique identifier for each copy
 }
 
 class Show {
     Date startTime;
-    boolean isPublished;
+    Date endTime;
 }
 
 class Reservation {
+    String customerName;
     String creditCardInfo;
-    Date reservationTime;
+    boolean isPaid;
 }
 
 class Ticket {
-    int seatNumber;
+    String seatNumber;
 }
 
 class Offer {
-    Date expirationTime;
+    boolean isAccepted;
+}
+
+class CancellationPolicy {
+    int hoursBeforeShow;
 }
 
 association [1] Cinema <-> Theatre [0..*];
-association [1] Cinema <-> MovieCopy [1..*];
-association [1] MovieCopy <-> Show [0..*];
+association [1] Theatre <-> Show [0..*];
+association [1] Cinema <-> Copy [0..*];
+association [1] Movie <-> Copy [0..*];
+association [1] Copy <-> Show [0..*];
 association [1] Show <-> Reservation [0..*];
 association [1] Show <-> Ticket [0..*];
-association [1] Show <-> Offer [0..*];
+association [1] Reservation <-> Offer [0..1];
+association [1] Show <-> CancellationPolicy [0..1];
 
 }

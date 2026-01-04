@@ -1,12 +1,18 @@
 
-classdiagram BankSystem {
+classdiagram BankManagement {
 
     class Customer {
         String firstName;
         String lastName;
     }
 
-    class Branch {}
+    class Bank {
+        // A bank consists of multiple branches
+    }
+
+    class Branch {
+        // Branch details can be added here
+    }
 
     class Account {
         int accountNumber;
@@ -19,8 +25,7 @@ classdiagram BankSystem {
 
     class SavingsAccount extends Account {}
 
-    association [*] Bank -> Branch [*];
-    association [1..5] Customer -> (owns) Account [*];
+    association [1..5] Customer -> (owner) Account [*];
     association [1] Account -> (owner) Customer [1];
-
+    association [0..*] Bank -> Branch [*];
 }

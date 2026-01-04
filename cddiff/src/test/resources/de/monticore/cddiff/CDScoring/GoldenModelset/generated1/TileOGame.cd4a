@@ -1,72 +1,70 @@
 
+// CD4A Class Diagram for the Tile-O application
+
 classdiagram TileO {
 
     class Game {
-        BoardGame boardGame;
+        Board board;
+        Player[] players;
         Player currentPlayer;
         void rollDie();
-        void movePiece();
+        void movePiece(Player player, Tile destination);
     }
 
-    class BoardGame {
+    class Board {
+        Tile[][] tiles;
+        ActionTile actionTile;
         Tile hiddenTile;
-        List<Tile> tiles;
-        List<ActionTile> actionTiles;
-        List<Player> players;
-        void defineBoard();
-    }
-
-    class Color {
-        // The LLM did not generate this class, adding it to avoid errors
+        ConnectionPiece spareConnectionPieces;
     }
 
     class Tile {
-        Color color;
-        Tile rightTile;
-        Tile leftTile;
-        Tile topTile;
-        Tile bottomTile;
-        boolean isVisited;
+        Color color; // Color can be WHITE or BLACK
+        Tile leftConnection;
+        Tile rightConnection;
+        Tile topConnection;
+        Tile bottomConnection;
     }
 
     class ActionTile extends Tile {
-        int turnsUntilRegular;
+        int turnsToRegular;
     }
+
+    class ConnectionPiece {}
 
     class Player {
         String name;
-        PlayingPiece piece;
+        Color pieceColor; // Color of the player's piece
+        Tile currentTile;
         void takeTurn();
-    }
-
-    class PlayingPiece {
-        Color color;
     }
 
     class Die {
         int roll();
     }
 
-    class Designer {
-        void designGame();
-        void defineHiddenTile();
-        void defineStartingPositions();
-        void defineActionTiles();
-        void defineActionCardDeck();
-    }
-
     class ActionCard {
-        String instructions;
+        String description; // e.g., "roll the die for an extra turn"
+        void executeAction(Player player, Game game);
     }
 
-    association [1] Game -> (boardGame) BoardGame [1];
-    association [1] BoardGame -> (tiles) Tile [*];
-    association [1] BoardGame -> (actionTiles) ActionTile [*];
-    association [1] BoardGame -> (players) Player [2..4];
-    association [1] Player -> (piece) PlayingPiece [1];
-    association [1] Tile -> (rightTile) Tile [0..1];
-    association [1] Tile -> (leftTile) Tile [0..1];
-    association [1] Tile -> (topTile) Tile [0..1];
-    association [1] Tile -> (bottomTile) Tile [0..1];
+    class ActionCardDeck {
+        ActionCard[] actionCards;
+        ActionCard drawCard();
+    }
 
+    enum Color {
+        WHITE,
+        BLACK;
+    }
+
+    association [2..4] Game (player) <-> Player [*];
+    association [1] Game -> Board [1];
+    association [1] Board -> Tile [*];
+    association [0..1] Board -> ActionTile [1];
+    association [1] Board -> ConnectionPiece [*];
+    association [1] Player -> Tile [1];
+    association [1] Player -> Die [1];
+    association [1] Board -> ActionCardDeck [1];
 }
+

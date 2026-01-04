@@ -1,73 +1,72 @@
-
+// Class diagram for Helping Hands Store (H2S)
 classdiagram HelpingHandsStore {
 
-    class HelpingHandsStore {
+    class Resident {
         String name;
-        List<Location> locations;
-        List<PickupVehicle> vehicles;
-    }
-
-    class Location {
-        String city;
-        List<PickupRequest> pickupRequests;
-        DistributionCenter distributionCenter;
-    }
-
-    class PickupRequest {
-        String residentName;
         String streetAddress;
         String phoneNumber;
-        String emailAddress;
+        String email; // optional
         String itemDescription;
-        Date pickupDate;
-        Time pickupTime;
+        void schedulePickup(Date date, Time time);
+    }
+
+    class PickupService {
+        void createPickupSchedule();
+        void assignPickupRoute();
     }
 
     class PickupVehicle {
-        String vehicleId;
-        StorageSpace storageSpace;
-        VolunteerDriver driver;
-    }
-
-    class StorageSpace {
-        float capacity;
+        String vehicleID;
+        int storageCapacity;
     }
 
     class VolunteerDriver {
         String name;
-        List<Availability> availability;
+        List<Day> availableDays; // Indicates which days driver is available
     }
 
-    class Availability {
-        DayOfWeek day;
+    class Pickup {
+        Date date;
+        Time startTime; // between 8:00 and 14:00
+        Resident resident;
+        PickupVehicle vehicle;
     }
 
     class DistributionCenter {
-        List<SecondHandArticle> articles;
-        void examineArticle(SecondHandArticle article);
+        void examineReceivedArticles();
+        void tagWithRFID(Article article);
+        void assignCategory(Article article, Category category);
     }
 
-    class SecondHandArticle {
+    class Article {
         String description;
-        RFIDDevice rfid;
-        String category;
+        Category category;
+        boolean isUsable;
     }
 
-    class RFIDDevice {
-        String rfidId;
+    class Employee {
+        String name;
+        void notifyClient(Client client);
+        void arrangeDelivery(Article article, Client client);
     }
 
-    class FoodBank {
-        void receiveFood(FoodItem item);
+    class Client {
+        String name;
+        String address;
+        List<Category> requestedCategories;
+        void indicateNeededCategories();
     }
 
-    class FoodItem {
-        String description;
+    class Category {
+        String name;
     }
 
-    association [1] HelpingHandsStore -> (location) Location [*];
-    association [*] Location -> (pickupRequest) PickupRequest [*];
-    association [*] HelpingHandsStore -> (vehicle) PickupVehicle [*];
-    association [1] PickupVehicle -> (driver) VolunteerDriver [1];
-    association [1] DistributionCenter -> (article) SecondHandArticle [*];
+    association [1] Pickup <-> (resident) Resident [1];
+    association [1] Pickup <-> (vehicle) PickupVehicle [1];
+    association [1] PickupVehicle <-> (driver) VolunteerDriver [1];
+    association [1] DistributionCenter <-> (examines) Article [*];
+    association [1] DistributionCenter <-> (employee) Employee [*];
+    association [1] Employee <-> (notifies) Client [*];
+    association [0..*] Client <-> (requests) Category [*];
+    association [0..*] Resident <-> (schedules) Pickup [*];
 }

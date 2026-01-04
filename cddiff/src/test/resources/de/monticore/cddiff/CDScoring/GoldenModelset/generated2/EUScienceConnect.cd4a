@@ -1,59 +1,52 @@
 
-classdiagram ScienceConnect {
+// CD4A Class Diagram for the European Union Cross-National Research Database
+
+classdiagram ScienceConnectDatabase {
 
     class Person {
-        String personID;
+        String personID; // Unique identifier for each person
         String phoneNumber;
-        List<String> researchKeywords;
-        Institution institution;
+        String keywords; // Keywords for research topics
+        Institution institution; // Reference to the institution the person works for
     }
 
     class Institution {
-        String institutionCode;
-        List<TechnicalReport> technicalReports;
+        String institutionCode; // Unique identifier for each institution
     }
 
     class ScientificArticle {
-        String DOI;
+        String DOI; // Unique identifier for each article
         String title;
-        List<AuthorPosition> authors;
-    }
-
-    class PeerReviewedPaper extends ScientificArticle {
-        int citationCount;
-        Reviewer reviewer;
-        Journal journal;
-    }
-
-    class TechnicalReport extends ScientificArticle {
-        Institution publishedBy;
+        List<AuthorPosition> authors; // List of authors with positions
     }
 
     class AuthorPosition {
-        Person author;
-        int position;
+        Person author; // The author of the article
+        int position; // Position of the author in the list
     }
 
-    class Reviewer {
-        Person person;
+    class PeerReviewedPaper extends ScientificArticle {
+        int citationCount; // Number of citations
+        Person reviewer; // Reference to the reviewer
+    }
+
+    class TechnicalReport extends ScientificArticle {
+        Institution publishedBy; // Reference to the institution that published the report
     }
 
     class Publisher {
-        String name;
-        List<Journal> journals;
+        String name; // Name of the publisher
     }
 
     class Journal {
-        String name;
-        float impactFactor;
+        String name; // Name of the journal
+        float impactFactor; // Impact factor of the journal
     }
 
-    association [1] Person -> (institution) Institution [1];
-    association [1] ScientificArticle -> (authors) AuthorPosition [*];
-    association [1] PeerReviewedPaper -> (journal) Journal [1];
-    association [1] Institution -> (technicalReports) TechnicalReport [*];
-    association [1] Publisher -> (journals) Journal [*];
-    
-    association [1] PeerReviewedPaper -> (reviewer) Reviewer [1];
-
+    association [1] Institution <-> (publishes) TechnicalReport [0..*]; 
+    association [1] Institution <-> (employs) Person [0..*];
+    association [1] Person -- (authored) ScientificArticle [0..1]; 
+    association [1] Person <-> (reviewed) ScientificArticle [0..1];
+    association [1] Publisher -- Journal [1..*]; 
+    association [1] Journal <-> (publishes) PeerReviewedPaper [0..*];
 }

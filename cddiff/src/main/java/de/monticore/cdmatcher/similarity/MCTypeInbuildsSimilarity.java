@@ -18,7 +18,7 @@ public class MCTypeInbuildsSimilarity implements CDSimilarity<ASTMCType> {
   // it will return 0.0 for all comparisons involving other types except if their names match
 
   // A match between primitive types and their wrapper types are considered identical
-  public static Map<String, String> wrapperTypes = Map.of(
+  private static final Map<String, String> wrapperTypes = Map.of(
       "int", "Integer",
       "boolean", "Boolean",
       "char", "Character",
@@ -30,7 +30,7 @@ public class MCTypeInbuildsSimilarity implements CDSimilarity<ASTMCType> {
   );
 
   // Similarities not included are 0.0
-  public Map<Pair<String, String>, Double> inbuildsSimilarity = new HashMap<>();
+  private final Map<Pair<String, String>, Double> inbuildsSimilarity = new HashMap<>();
 
   public MCTypeInbuildsSimilarity() {
     inbuildsSimilarity.put(new Pair<>("Character", "Byte"), 0.5);

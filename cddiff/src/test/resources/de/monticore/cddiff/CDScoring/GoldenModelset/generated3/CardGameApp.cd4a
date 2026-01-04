@@ -1,4 +1,5 @@
 
+// Class diagram for a Game
 classdiagram Game {
 
 enum Suit {
@@ -9,39 +10,48 @@ enum Suit {
 }
 
 class Card {
-    int id;
+    int id; // Unique ID for each card
     Suit suit;
 
-    ComparisonResult compareHeight(Card otherCard);
+    int compare(Card otherCard);
 }
 
 class Deck {
-    int id;
-    Card[] cards; // Up to 48 cards
+    List<Card> cards; // Up to 48 cards
+}
+
+class Player {
+    int id; // Unique ID for each player
 }
 
 class ScoringTable {
-    int id;
-    Round[] rounds; // Any number of rounds
+    List<Round> rounds; // Any number of rounds
 }
 
 class Round {
-    int id;
-    Player[] winningPlayers;
-    int pointValue;
+    List<Player> winningPlayers; // Winning players of the round
+    int pointValue; // Point value of the round
 }
 
-abstract class SoloRound extends Round {
-    String soloType; // trump, jack, or queen
+class JackRound extends Round {
+    // Specific attributes/methods for jack round (if any)
+}
+
+class SoloRound extends Round {
+    SoloType soloType; // Type of solo (trump, jack, queen)
     Player soloPlayer; // Exactly one solo player
 }
 
-class JackRound extends SoloRound {}
-
-class MandatorySoloRound extends SoloRound {}
-
-class Player {
-    int id;
+enum SoloType {
+    Trump,
+    Jack,
+    Queen;
 }
+
+association [4] Game <-> Player [4]; // A game consists of 4 players
+association [1] Game <-> Deck [1]; // A game consists of a deck of cards
+association [1] Game <-> ScoringTable [1]; // A game has a scoring table
+association [*] ScoringTable <-> Round [*]; // Scoring table consists of any number of rounds
+association [*] Round <-> Player [*]; // Each round has winning players
 
 }

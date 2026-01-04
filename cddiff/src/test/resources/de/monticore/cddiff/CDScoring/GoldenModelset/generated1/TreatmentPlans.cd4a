@@ -1,9 +1,20 @@
 
-classdiagram hospitalSystem {
+// Class diagram for Hospital Examination System
+classdiagram HospitalExaminationSystem {
 
     class Hospital {
         String name;
-        String location;
+        String address;
+    }
+
+    class Doctor {
+        String firstName;
+        String lastName;
+    }
+
+    class Patient {
+        String firstName;
+        String lastName;
     }
 
     class Examination {
@@ -11,29 +22,25 @@ classdiagram hospitalSystem {
     }
 
     class TreatmentPlan {
-        String problemDescription;
-    }
-
-    class Doctor {
-        String name;
-        String specialization;
-    }
-
-    class Patient {
-        String name;
-        int age;
+        String problem;
     }
 
     class ActualTreatment {
-        String description;
+        String deviationDetails;
     }
 
-    association [1] Hospital -> Examination [0..*];
-    association [1] Hospital -> TreatmentPlan [0..*];
-    association [1] TreatmentPlan -> Examination [1..*];
-    association [1] Patient -> Doctor [1];
-    association [1] Doctor -> ActualTreatment [0..*];
-    association [1] Patient -> ActualTreatment [0..*];
-    association [1] Doctor -> Hospital [1];
+    enum ExaminationType {
+        CARDIOLOGIC_TEST,
+        ECHOGRAPHY,
+        RADIOLOGY,
+        SCANNER;
+    }
 
+    association [1] Hospital -> Examination [*];
+    association [1] Hospital <-> TreatmentPlan [0..*];
+    association [1] TreatmentPlan -> Examination [*];  // advised types of examinations
+    association [1] Patient <-> ActualTreatment [0..*]; // A patient can have multiple treatments
+    association [1] Doctor -> Patient [*];  // A doctor can have multiple patients
+    association [1] Doctor -> ActualTreatment [*]; // A doctor defines actual treatments
+    association [1] Examination <-> Hospital [0..*]; // A hospital can apply for permissions for examinations
 }

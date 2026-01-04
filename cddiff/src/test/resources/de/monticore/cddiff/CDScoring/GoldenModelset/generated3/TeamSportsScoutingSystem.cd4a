@@ -1,55 +1,75 @@
 
+// Class Diagram for Team Sports Scouting System
 classdiagram TeamSportsScoutingSystem {
+
     class Employee {
         String name;
+        String role; // e.g. "Head Coach", "Director", "Scout"
     }
 
-    class HeadCoach extends Employee {
-        void identifyPlayerProfile();
-    }
-
-    class Director extends Employee {
-        void makeOffer();
+    class Coach extends Employee {
+        void identifyPlayerProfile(String position);
     }
 
     class Scout extends Employee {
-        void notePlayer();
-        void submitScoutingReport();
+        void notePlayer(Player player);
+        ScoutingReport submitScoutingReport(Player player);
     }
 
-    class PlayerProfile {
-        String targetPosition;
-        Attribute[] attributes;
+    class Director extends Employee {
+        void makeOffer(Player player);
+    }
+
+    class Player {
+        String name;
+        String position; // e.g. "GK", "LB"
+        List<Attribute> attributes;
     }
 
     class Attribute {
         String name;
-        String value;
-    }
-
-    class LongList {
-        PlayerProfile[] players;
-    }
-
-    class ScoutingAssignment {
-        void evaluateLongList();
-        void setupShortList();
+        String value; // Value of the attribute
     }
 
     class ScoutingReport {
-        String pros;
-        String cons;
-        String recommendation; // e.g., key player, first team player, etc.
+        List<String> pros;
+        List<String> cons;
+        Recommendation recommendation; // E.g. Key Player, First Team Player, etc.
+    }
+
+    enum Recommendation {
+        KEY_PLAYER,
+        FIRST_TEAM_PLAYER,
+        RESERVE_TEAM_PLAYER,
+        PROSPECTIVE_PLAYER,
+        NOT_A_GOOD_SIGNING;
+    }
+
+    class LongList {
+        List<Player> players;
     }
 
     class ShortList {
-        PlayerProfile[] players;
+        List<Player> players;
     }
 
-    association [1] HeadCoach -> (targetProfile) PlayerProfile [*];
-    association [*] Scout -> (notedPlayers) LongList [*];
-    association [1] Scout -> (scoutingReport) ScoutingReport [*];
-    association [1] ScoutingAssignment -> (evaluatedLongList) LongList [1];
-    association [1] ScoutingAssignment -> (shortList) ShortList [1];
-    association [1] Director -> (officialOffer) PlayerProfile [1];
+    class ScoutingAssignment {
+        Player player;
+        Scout scout;
+        ScoutingReport report;
+    }
+
+    class Offer {
+            //comment: The LLM did not generated the class, added to avoid errors
+    }
+
+    association [1] Coach -- (identifies) Player [*];
+    association [*] Scout -- (notes) Player [*];
+    association [1] Scout -- (submits) ScoutingReport [*];
+    association [1] Director -- (makes) Offer [*];
+
+    association [1] LongList -- (evaluates) Player [*];
+    association [1] ShortList -- (contains) Player [*];
+    association [1] ScoutingAssignment -- (involves) Scout [1];
+    association [1] ScoutingAssignment -- (for) Player [1];
 }

@@ -1,22 +1,20 @@
 
+// Class diagram for a transport company management system
 classdiagram TransportCompany {
 
-abstract class Employee {
+class Employee {
     String name;
-    int ssn;
-}
-
-class Driver extends Employee {
-    // Additional driver specific attributes can be added here
+    String ssn;
 }
 
 class Planner extends Employee {
-    String username;
-    String password;
+    // Additional functionality for planners
 }
 
-class AdministrativeStaff extends Employee {
+class AdminStaff extends Employee {
     String fieldOfActivity;
+    String username;
+    String password;
 }
 
 class Customer {
@@ -25,25 +23,17 @@ class Customer {
 }
 
 abstract class Vehicle {
-    String licensePlateNumber;
+    String licensePlate;
     int mileage;
 }
 
-class RefrigeratedTruck extends Vehicle {
-    // Specific attributes for refrigerated trucks can be added here
-}
+class RefrigeratedTruck extends Vehicle {}
 
-class SmallVan extends Vehicle {
-    // Specific attributes for small vans can be added here
-}
+class SmallVan extends Vehicle {}
 
-class LoadingPlatform extends Vehicle {
-    // Specific attributes for loading platforms can be added here
-}
+class LoadingPlatform extends Vehicle {}
 
-class BoxTruck extends Vehicle {
-    // Specific attributes for box trucks can be added here
-}
+class BoxTruck extends Vehicle {}
 
 class RepairShop {
     String name;
@@ -51,29 +41,31 @@ class RepairShop {
 }
 
 class Repair {
-    RepairShop repairShop;
-    Employee employee;
-    int duration;
+    int duration; // in days
     double cost;
 }
 
 class Order {
-    String packageSize;
-    String comment;
-    Date startTime;
-    Date endTime;
-    Customer customer;
-    Address pickupAddress;
-    Address deliveryAddress;
+    String pickupAddress;
+    String deliveryAddress;
+    String additionalInfo;
+    Date startDate;
+    Date endDate;
 }
 
-association [*] Planner <-> (assigns) Order [*];
-association [*] Driver <-> (completes) Order [*];
-association [*] Vehicle <-> (assignedTo) Order [*];
-association [*] Customer <-> (places) Order [*];
-association [1] AdministrativeStaff <-> (takesOrder) Order [0..1];
-association [*] PartnerCompany <-> (places) Order [0..1];
-association [1] PartnerCompany <-> (name) String [0..1];
-association [1] PartnerCompany <-> (address) String [0..1];
+class PartnerCompany {
+    String name;
+    String address;
+}
 
+association [1] Customer <-> Order [0..*];
+association [1] Employee (assignedBy) <-> Order [0..*];
+association [1] Planner <-> Order [0..*];
+association [1] Driver <-> Order [0..*];
+association [1] Order <-> Vehicle [1];
+association [1] RepairShop <-> Repair [0..*];
+association [1] Vehicle <-> Repair [0..*];
+association [1] Vehicle <-> (tookToRepair) Employee [0..1];
+association [1] Order <-> PartnerCompany [0..1];
+association [1] Employee <-> Vehicle [0..*];
 }

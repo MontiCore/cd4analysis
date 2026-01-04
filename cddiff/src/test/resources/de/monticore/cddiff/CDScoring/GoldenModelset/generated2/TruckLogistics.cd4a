@@ -1,18 +1,14 @@
 
+// Class diagram for location management system
 classdiagram LocationManagement {
-    class Driver {
-        String firstName;
-        String lastName;
-    }
 
     class Location {
         String address;
     }
 
-    class Order {
-        Location origin;
-        Location destination;
-        Date executionDate;
+    class Driver {
+        String firstName;
+        String lastName;
     }
 
     class Vehicle {
@@ -27,11 +23,21 @@ classdiagram LocationManagement {
         int numberOfSeats;
     }
 
-    class Van extends Vehicle {}
+    class Van extends Vehicle {
+        // properties specific to vans can be added here if necessary
+    }
 
-    association [1] Location -> (driver) Driver [*];
-    association [1] Order -> Location [2]; // origin and destination
-    association [1] Driver -> (order) Order [0..1];
-    association [0..1] Driver -> (drives) Vehicle [1];
-    association [1] Vehicle -> (drivenBy) Driver [0..1];
+    class Order {
+        Location origin;
+        Location destination;
+        Driver assignedDriver;
+        Date executionDate;
+    }
+
+    association [1] Location <-> Driver [0..*]; // A location can have multiple drivers
+    association [1] Location <-> Vehicle [0..*]; // A location can have multiple vehicles
+    association [1] Driver <-> Order [0..1]; // A driver can have at most one active order
+    association [1] Driver <-> Vehicle [0..1]; // A driver is assigned to at most one vehicle
+    association [1] Order <-> Driver [1]; // An order must have at least one assigned driver
+    association [1] Order <-> Location [1]; // An order has an origin and a destination location
 }

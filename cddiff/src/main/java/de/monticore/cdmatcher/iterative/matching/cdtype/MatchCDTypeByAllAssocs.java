@@ -7,21 +7,21 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.cdmatcher.MultipleMatchingStrategy;
 import de.monticore.cdmatcher.caching.StructureCache;
 
-public class MatchCDTypeByDirectAssocs extends
+public class MatchCDTypeByAllAssocs extends
     MultipleMatchingStrategy<ASTCDType, ASTCDAssociation> {
 
   private final MatchingStrategy<ASTCDAssociation> strategy;
   private final StructureCache structureCache;
 
-  public MatchCDTypeByDirectAssocs(MatchingStrategy<ASTCDAssociation> associationMatchingStrategy,
-      StructureCache structureCache) {
+  public MatchCDTypeByAllAssocs(MatchingStrategy<ASTCDAssociation> associationMatchingStrategy,
+                                StructureCache structureCache) {
     this.strategy = associationMatchingStrategy;
     this.structureCache = structureCache;
   }
 
   @Override
   public double getScore(ASTCDType srcElem, ASTCDType tgtElem) {
-    return getBestMatchingScore(srcElem, tgtElem, structureCache::getDirectAssociations, strategy);
+    return getBestMatchingScore(srcElem, tgtElem, structureCache::getAssociations, strategy);
   }
 
 }

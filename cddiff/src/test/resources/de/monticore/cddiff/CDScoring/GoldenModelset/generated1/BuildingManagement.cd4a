@@ -1,6 +1,45 @@
 
+// CD4A class diagram for a web portal system with buildings and users
 classdiagram WebPortal {
 
+class WebPortal {
+    String versionNumber;
+    String url;
+}
+
+class Building {
+    int id;
+    String name;
+    EnergyClass energyClass;
+    String address;
+    int yearOfConstruction;
+}
+
+class User {
+    String username;
+    String email;
+    String password;
+}
+
+class Entry {
+    String name;
+    String textValue; // optional
+    double numericValue; // optional
+    String unit; // optional
+    boolean releasedPublicly;
+}
+
+class Image {
+    String filename;
+}
+
+class Visitor extends User {}
+
+class Administrator extends User {
+    String idCardNumber;
+}
+
+// Energy Class can have values A, B, C, D
 enum EnergyClass {
     A,
     B,
@@ -8,53 +47,12 @@ enum EnergyClass {
     D;
 }
 
-class Building {
-    String uniqueID;
-    String name;
-    EnergyClass energyClass;
-    String address;
-    int yearOfConstruction;
-    User owner;
-}
-
-class AdditionalEntry {
-    String name;
-    String value; // Can be either textual information or a floating point number with a unit
-    boolean isPublic;
-}
-
-class Image {
-    String fileName;
-    boolean isProfilePhoto; // Indicates if this image is the profile photo
-}
-
-class User {
-    String userName;
-    String emailAddress;
-    String password;
-    String idCardNumber; // Optional for administrators
-}
-
-class Visitor extends User {}
-
-class Administrator extends User {
-    // Special administrative functions can be delineated here if needed
-}
-
-class Comment {
-    String content;
-    User author;
-}
-
-class Catalog {
-    // This could potentially contain methods related to building search
-}
-
-// Associations
-association [1] User <-> Building [0..*]; // A user can own multiple buildings
-association [1] Building <-> AdditionalEntry [0..*]; // A building can have multiple additional entries
-association [1] Building <-> Image [0..*]; // A building can have multiple images
-association [1] User <-> Comment [0..*]; // A user can write multiple comments
-association [1] Building <-> Comment [0..*]; // A building can have multiple comments
+association [1] WebPortal -> Building [*];
+association [1] Building -- Entry [*];
+association [1] Building <-> Image [0..*];
+association [1] User <-> Building [0..*];
+association [1] User <-> Comment [0..*];
+association [1] User <-> Visitor [0..1];
+association [1] Administrator <-> User [1];
 
 }

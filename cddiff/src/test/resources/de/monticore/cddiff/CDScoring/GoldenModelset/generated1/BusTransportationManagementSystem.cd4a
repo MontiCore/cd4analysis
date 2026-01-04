@@ -1,30 +1,33 @@
 
-classdiagram BTMS {
+// CD4A Class Diagram for Bus Transportation Management System (BTMS)
+classdiagram BusTransportationManagementSystem {
 
 class Driver {
     String name;
-    int id;
+    int driverId; // Unique ID for each driver
+    boolean isSickLeave; // Indicates if the driver is on sick leave
 }
 
 class Bus {
-    String licencePlate;
+    String licencePlate; // Unique licence plate identifier
+    boolean isInRepair; // Indicates if the bus is in the repair shop
 }
 
 class BusRoute {
-    int number;
-}
-
-class Schedule {
-    boolean isDriverSick;
-    boolean isBusInRepairShop;
+    int routeNumber; // Unique identifier for each bus route
 }
 
 class Shift {
-    String type; // morning, afternoon, night
+    String shiftType; // Morning, Afternoon, or Night
+    Date assignedDate; // Date for the assigned shift
 }
 
-association [*] BusRoute <-> Bus [*];
-association [*] Driver <-> Shift [*];
-association [*] Driver -- Schedule [0..1];
-association [*] Bus -- Schedule [0..1];
+class Schedule {
+    Date scheduleDate; // Date for the schedule
+}
+
+association [1] BusRoute <-> (assignedTo) Bus [0..*]; // A route can have several buses assigned
+association [1] Bus <-> (serves) Driver [0..*]; // A bus serves one driver per day
+association [1] Driver <-> (assignedTo) Shift [0..*]; // Drivers can be assigned to multiple shifts
+association [1] Shift <-> (scheduledOn) Schedule [1]; // Shift is associated with a specific schedule
 }

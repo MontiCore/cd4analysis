@@ -1,5 +1,6 @@
 
-classdiagram GameAreaModel {
+// Class Diagram for Game Area
+classdiagram GameArea {
 
 class GameArea {
     String name;
@@ -10,21 +11,23 @@ class GameElement {
     private long y;
 }
 
-class Shape extends GameElement {}
+class Shape extends GameElement {
+    // Shapes can connect to other shapes
+}
 
 class Object extends GameElement {}
 
 class Opponent extends GameElement {
     protected int lives;
-    
     void kill();
 }
 
 class Boss extends Opponent {}
 
-association [1..*] GameElement -> (contains) GameArea [1];
-association [1] Opponent <-> (is) GameArea [1];
+class Enemy extends Opponent {}
 
-association [*] Shape <-> Shape [*];
+// Association definitions
+association [1..*] GameArea -> GameElement [*]; // Game Area has at least one Game Element
+association [1..2] GameArea -> GamePiece [*]; // Game Area has one or two Game Pieces (GamePiece class assumed to exist)
 
 }

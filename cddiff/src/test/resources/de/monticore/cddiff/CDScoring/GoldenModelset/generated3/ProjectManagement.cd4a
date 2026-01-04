@@ -6,20 +6,25 @@ classdiagram ResearchProjectManagement {
     class Department {}
 
     class ResearchGroup {
-        // no attributes mentioned
+        // A research group belongs to one department
     }
-
+    
     class Researcher {
-        // no attributes mentioned
+        // A researcher belongs to exactly one research group
     }
 
     class WorkPackage {
-        // no attributes mentioned
+        // Each WP has exactly one research group as WP leader
     }
 
-    association [*] University -- Department [*];
-    association [*] Department -- ResearchGroup [*];
-    association [1] ResearchGroup -> WorkPackage [1];
-    association [*] Researcher -> WorkPackage [*];
+    association [*] University -> ResearchGroup [*];
+    association [*] Department -> ResearchGroup [*];
+    association [1] Researcher -> ResearchGroup [1];
+    association [1] WorkPackage -> ResearchGroup [1];
+    association [*] Researcher -> WorkPackage [0..*];
+
+    // "Service delivery" traceability
+    // When a researcher changes research group, current WP assignments are terminated and new ones created.
+    // If WP leadership is reassigned, team member assignments are re-recorded.
 
 }

@@ -1,26 +1,56 @@
 
+// CD4A Class Diagram for the Louvre Museum Exhibition Management System
 classdiagram LouvreMuseum {
 
-class Location {}
+class Employee {
+    int employeeId;
+    String name;
+    String position;
+}
+
+class JuniorEmployee extends Employee {
+    Employee coach; // Assigned senior employee as coach
+}
+
+class SeniorEmployee extends Employee {
+    // Senior employee class
+}
+
+class Location {
+    int locationId;
+    String description; // Description of the location
+}
 
 class Exhibition {
-    Employee coordinator;
+    int exhibitionId;
+    String title;
+    Date planningStartDate;
+    Date openingDate;
+    Employee coordinator; // Employee assigned as coordinator
 }
 
-class Employee {}
-
-class ExhibitionItem {}
-
-class Collector {}
-
-class CoachingRelationship {
-    Employee junior;
-    Employee senior;
+class ExhibitionItem {
+    int itemId;
+    String description;
 }
 
-association [1] Location <-> Exhibition [0..*];
-association [1] Exhibition <-> ExhibitionItem [1..*];
-association [0..*] ExhibitionItem <-> Collector [0..*];
-association [1] Employee <-> CoachingRelationship [0..*];
+class Collector {
+    int collectorId;
+    String name;
+}
 
+class Piece {
+    int pieceId;
+    ExhibitionItem exhibitionItem; // The item for which this piece is sourced
+    Collector collector; // The collector from whom the piece is sourced
+}
+
+
+association [1] Location <-> Exhibition [*]; // A location can host multiple exhibitions
+association [1] Exhibition <-> Employee [1]; // Each exhibition has one coordinator
+association [*] Exhibition <-> ExhibitionItem [*]; // An exhibition can have multiple items
+association [1] Collector <-> Piece [*]; // A collector can have multiple pieces
+association [*] ExhibitionItem <-> Piece [*]; // An exhibition item can correspond to multiple pieces
+
+association [1] SeniorEmployee <-> JuniorEmployee [*]; // Coaching relationship
 }

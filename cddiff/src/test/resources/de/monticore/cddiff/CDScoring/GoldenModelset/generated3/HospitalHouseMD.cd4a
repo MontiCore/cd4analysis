@@ -1,37 +1,40 @@
 
+// CD4A Model for HospitalHouseMD
 classdiagram HospitalHouseMD {
 
-class Patient {
-  String name;
-  String consentForm;
+    class Patient {
+        String name;
+        boolean consentSigned; // indicates if the patient has signed consent for treatment upgrades
+    }
+
+    class Doctor {
+        String name;
+    }
+
+    class HeadDoctor extends Doctor {
+        // HeadDoctor can approve diagnoses
+    }
+
+    class Treatment {
+        int stage; // stage can be 1, 2, or 3
+        boolean priorityUpgrade; // indicates if treatment has been upgraded due to high priority of illness
+    }
+
+    class Illness {
+        String name;
+        String priorityScore; // can be "high" or "low"
+    }
+
+    class Nurse {
+        String name;
+    }
+
+    association [1..*] Patient <-> (assignedTo) Doctor [1..*]; // Patients are assigned to one or more doctors
+    association [1] Illness <-> Treatment [1..*]; // Each illness can have multiple treatments
+    association [1] Doctor <-> (approves) Treatment [0..*]; // Doctors approve treatments
+    association [1] Treatment <-> (appliesTo) Patient [*]; // Treatments are applied to patients
+    association [1] Treatment <-> Illness [1]; // Each treatment is related to one illness
+    association [0..*] Treatment <-> Nurse [0..*]; // Nurses can monitor treatments
+
+    // Methods could be added here to handle consent and treatment stage upgrades/changes
 }
-
-class Doctor {
-  String name;
-}
-
-class HeadDoctor extends Doctor {}
-
-class Illness {
-  String name;
-  String priorityScore; // high or low
-}
-
-class Treatment {
-  String name;
-  int stage; // 1, 2, or 3
-}
-
-class Nurse {
-  String name;
-}
-
-class Diagnosis {}
-
-association [1..*] Patient <-> (assignedTo) Doctor [1..*];
-association [1] HeadDoctor <-> (approves) Diagnosis [0..*];
-association [1] Illness -- Treatment [1..*];
-association [1..*] Treatment -- (requires) Nurse [1..*];
-association [1..*] Illness -> Treatment [0..*];
-}
-

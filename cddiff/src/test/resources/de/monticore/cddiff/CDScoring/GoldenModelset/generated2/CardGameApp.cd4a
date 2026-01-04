@@ -1,9 +1,6 @@
 
+// Class Diagram for a Card Game
 classdiagram CardGame {
-
-class Game {
-    // The LLM did not generate this class, adding it to avoid errors
-}
 
 enum Suit {
     Diamonds,
@@ -12,59 +9,66 @@ enum Suit {
     Clubs;
 }
 
-abstract class GameObject {
-    int uniqueID;
+// Class representing a Card
+class Card {
+    int uniqueId; // Unique identifier for each card
+    Suit suit;
+    
+    // Comparison method for card height
+    int compareHeight(Card otherCard);
 }
 
-class Card extends GameObject {
-    ComparisonResult compareHeight(Card otherCard);
+// Class representing a Deck of Cards
+class Deck {
+    Card[] cards; // Up to 48 cards in the deck
 }
 
-enum ComparisonResult {
-    Lower,
-    Equal,
-    Higher;
+// Class representing a Player
+class Player {
+    int uniqueId; // Unique identifier for each player
 }
 
-class Deck extends GameObject {
-    Card[] cards; // up to 48 cards
+// Class representing a Round
+class Round {
+    Player[] winningPlayers; // Players who won the round
+    int pointValue; // Points awarded for this round
 }
 
-class Player extends GameObject {
-    // player attributes and methods
+// Class representing a Scoring Table
+class ScoringTable {
+    Round[] rounds; // Any number of rounds
 }
 
-class ScoringTable extends GameObject {
-    Round[] rounds;
-}
-
-abstract class Round extends GameObject {
-    Player[] winningPlayers;
-    int pointValue;
-}
-
-class JackRound extends Round {
-    // jack round specific attributes and methods
-}
-
+// Class representing a Solo Round (inheritance)
 class SoloRound extends Round {
-    SoloType soloType;
-    Player soloPlayer;
+    SoloType soloType; // Type of solo: trump, jack, or queen
+    Player soloPlayer; // Exactly one solo player
 }
 
+// Class representing a Jack Round (inheritance)
+class JackRound extends Round {
+}
+
+// Class representing a Mandatory Solo Round (inheritance)
+class MandatorySoloRound extends SoloRound {
+}
+
+// Enumeration for Solo Types
 enum SoloType {
     Trump,
     Jack,
     Queen;
 }
 
-class MandatorySoloRound extends SoloRound {
-    // mandatory solo round specific attributes and methods
+// Association between Game, Player, Deck, and Scoring Table
+class Game {
+    Deck deck;
+    Player[] players; // 4 players
+    ScoringTable scoringTable;
 }
 
-association [4] Game <-> Player [1];
-association [1] Game <-> Deck [1];
-association [1] Game <-> ScoringTable [1];
-association [*] ScoringTable <-> Round [*];
+association [4] Player <-> Game [1]; // 4 players in the game
+association [1] Deck <-> Game [1]; // One deck for the game
+association [1] ScoringTable <-> Game [1]; // One scoring table for the game
 
 }

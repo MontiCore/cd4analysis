@@ -1,16 +1,17 @@
 
-classdiagram AircraftManagementSystem {
+// CD4A Class Diagram
+classdiagram AircraftSystem {
 
 class Aircraft {
     String name;
     String type;
     int yearOfManufacture;
-    Date nextInspectionDate;
+    DateTime nextInspection;
 }
 
 class Flight {
-    String flightNumber;
-    Date flightDate;
+    int flightNumber;
+    DateTime flightDate;
 }
 
 class Passenger {
@@ -19,8 +20,8 @@ class Passenger {
 }
 
 class Ticket {
-    String ticketNumber;
-    float price;
+    int ticketNumber;
+    double price;
     boolean upgradeDesired;
 }
 
@@ -30,7 +31,7 @@ class PassengerAircraft extends Aircraft {
 
 class SeatCategory {
     String designation;
-    boolean entertainmentProgram;
+    boolean entertainmentProgramAvailable;
     int numberOfSeats;
 }
 
@@ -40,13 +41,13 @@ class Airline {
 
 class FlightAttendant {
     String name;
-    Date dateOfEmployment;
+    DateTime dateOfEmployment;
     boolean isChiefSteward;
 }
 
 class Pilot {
     String name;
-    Date dateOfEmployment;
+    DateTime dateOfEmployment;
     String license;
 }
 
@@ -56,18 +57,17 @@ class Airport {
     int numberOfRunways;
 }
 
-association [*] Aircraft -- Flight [*];
-association [*] Flight -- Passenger [*];
-association [1] Passenger -- Ticket [*];
-association [1] PassengerAircraft -- SeatCategory [*];
-association [1] Aircraft -- Airline [0..1];
-association [*] Airline -- FlightAttendant [*];
-association [*] Airline -- Pilot [*];
-association [1] Flight -- (departureAirport) Airport [1];
-association [1] Flight -> (destinationAirport) Airport [1];
-association [1] Aircraft -- Airport [0..1];
 
-association [*] FlightAttendant -- Flight [*];
-association [1] Pilot -- Flight [1];
+association [0..*] Passenger <-> Ticket [0..*];
+association [1] Flight <-> Passenger [0..*];
+association [1] Ticket <-> Passenger [0..1];
+association [1] Flight <-> FlightAttendant [0..*];
+association [1] Flight <-> Pilot [1]; // One pilot flies as captain
+association [0..2] Flight <-> Pilot [0..2]; // Co-pilots
+association [1] PassengerAircraft <-> SeatCategory [0..*];
+association [1] Aircraft <-> Airline [0..1];
+association [1] Aircraft <-> Airport [0..1];
+association [1] Flight <-> (departureAirport) Airport [1];
+association [1] Flight <-> (destinationAirport) Airport [1];
 
 }

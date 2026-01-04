@@ -2,73 +2,66 @@
 classdiagram OilCompany {
 
 class Customer {
-    int custId;
-    String custName;
+    int customerId;
+    String name;
     boolean isSuspended;
 
-    int getCustId();
-    void setCustId(int newCustId);
-    void blockCard();
-    void unblockCard();
+    void payInvoice(Invoice invoice);
+    void requestRefuelCard();
+}
+
+class RefuelCard {
+    int cardNumber;
+    Customer owner;
+
+    void generateInvoice();
 }
 
 class Invoice {
-    int invoiceId;
+    int invoiceNumber;
     Date invoiceDate;
-    double amountDue;
+    double totalAmount;
     double discount;
 
-    int getInvoiceId();
-    void setInvoiceId(int newInvoiceId);
+    void sendReminder();
+    void markAsPaid();
 }
 
 class Payment {
     int paymentId;
     Date paymentDate;
-    double amountPaid;
+    double amount;
 
-    int getPaymentId();
-    void setPaymentId(int newPaymentId);
+    void processPayment(Invoice invoice);
 }
 
 class GasStation {
     int stationId;
     String location;
-
-    int getStationId();
-    void setStationId(int newStationId);
 }
 
 class Pump {
     int pumpId;
     double gasolineLevel;
-    double reorderLevel;
     boolean isBlocked;
 
-    int getPumpId();
-    void setPumpId(int newPumpId);
-    void blockPump();
-    void unblockPump();
+    void startRefueling(Customer customer);
+    void stopRefueling();
+    void refill(double amount);
 }
 
-class RefuelTurn {
-    int turnId;
-    Date turnDate;
-    double quantity;
+class Report {
+    Date reportDate;
+    List<Pump> pumpsToRefill;
 
-    int getTurnId();
-    void setTurnId(int newTurnId);
+    void generateDailyReport();
 }
 
-class RefuelCard {
-    // The LLM did not generate this class, adding it to avoid errors
-}
-
-association [0..*] Customer -- (holds) RefuelCard [1];
-association [*] RefuelCard -- (has) Invoice [*];
-association [*] Invoice -- (receivedBy) Customer [1];
-association [*] Invoice -- (relatedTo) Payment [0..*];
-association [*] GasStation -- (operates) Pump [*];
-association [*] Pump -- (has) RefuelTurn [0..*];
+// Association between classes
+association [0..*] GasStation <-> Pump [1];
+association [1] Pump -> Customer [0..1]; // A pump can be used by one customer at a time
+association [0..*] Customer <-> Invoice [0..*]; // A customer can have many invoices
+association [1] Invoice <-> Payment [0..*]; // An invoice can have multiple payments, but must be paid at least once
+association [0..*] RefuelCard <-> Customer [1]; // A refuel card is owned by one customer
 
 }

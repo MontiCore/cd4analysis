@@ -1,10 +1,17 @@
 
-classdiagram HospitalSystem {
+classdiagram HospitalExamination {
 
     class Hospital {
         String name;
-        String location;
-        boolean hasPermissionForExamination;
+        String address;
+    }
+
+    class Doctor {
+        String name;
+    }
+
+    class Patient {
+        String name;
     }
 
     class Examination {
@@ -13,29 +20,18 @@ classdiagram HospitalSystem {
 
     class TreatmentPlan {
         String problem;
-        List<Examination> advisedExaminations;
-    }
-
-    class Doctor {
-        String name;
-        String licenseNumber;
-    }
-
-    class Patient {
-        String name;
-        String patientId;
     }
 
     class ActualTreatment {
-        List<Examination> examinations;
-        List<String> medicalActions;
+        // Can consist of both advised examinations and freely chosen medical actions
     }
 
-    association [1] Hospital -> Examination [0..*];
-    association [1] TreatmentPlan -> Examination [*];
-    association [1] Doctor -> Hospital [1];
-    association [1] Patient -> Doctor [1];
-    association [1] Doctor -> ActualTreatment [1];
-    association [1] Patient -> ActualTreatment [1];
-
+    association [1] Hospital -- Doctor [*];
+    association [1] Hospital -- Patient [*];
+    association [1] Hospital <-> Examination [*]; // Hospitals have permissions for certain examinations
+    association [1] TreatmentPlan -- Examination [*]; // Advised examinations per treatment plan
+    association [1] TreatmentPlan <-> ActualTreatment [0..*]; // Actual treatments based on treatment plans
+    association [1] Doctor -- ActualTreatment [*];
+    association [1] Patient -- ActualTreatment [*];
+    
 }

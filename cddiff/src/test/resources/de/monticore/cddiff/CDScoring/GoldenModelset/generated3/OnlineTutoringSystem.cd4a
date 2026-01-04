@@ -1,47 +1,60 @@
 
+// Class Diagram for Online Tutoring System (OTS)
+
 classdiagram OTS {
-    class User {
-        String name;
-        String email;
-    }
 
-    class Tutor extends User {
-        String bankAccount;
-        String weeklyAvailability; // e.g., "Thursdays from 10:00 to 11:30"
-    }
+class Tutor {
+    String name;
+    String email;
+    String bankAccount;
+}
 
-    class Student extends User {
-        // Additional attributes can be added if needed
-    }
+class Subject {
+    String name;
+    String expertiseLevel; // e.g. primary, high school, university
+    double hourlyPrice;
+}
 
-    class TutoringOffer {
-        String subject;
-        String levelOfExpertise; // e.g., "primary school level"
-        float hourlyPrice;
-    }
+class Student {
+    String name;
+    String email;
+}
 
-    class TutoringRequest {
-        String targetDateTime; // e.g., "2023-10-05 10:00"
-        String levelOfTutoring;
-    }
+class TutoringRequest {
+    DateTime suggestedDateTime;
+    String level; // e.g. primary, high school, university
+}
 
-    class TutoringSession {
-        boolean cancelled;
-        float price;
-    }
+class TutoringSession {
+    boolean confirmed;
+    DateTime startTime;
+    double price;
+    String cancellationPolicy;
+}
 
-    class Payment {
-        String method; // e.g., "credit card" or "wire transfer"
-    }
+class Payment {
+    String paymentMethod; // e.g. credit card, wire transfer
+    double amount;
+}
 
-    class Award {
-        String name; // e.g., "Tutor of the Month"
-    }
+class TutorOfTheMonth {
+    Tutor tutor;
+    Subject subject;
+}
 
-    association [0..*] Tutor <-> TutoringOffer [0..*];
-    association [0..*] Student <-> TutoringRequest [0..*];
-    association [0..*] TutoringOffer <-> TutoringRequest [0..*];
-    association [1..1] TutoringRequest <-> TutoringSession [0..1];
-    association [1..1] TutoringSession <-> Payment [0..1];
-    association [1..*] Tutor <-> Award [0..*];
+class Availability {
+    String dayOfWeek; // e.g. Thursdays
+    String timeRange; // e.g. 10:00 to 11:30
+}
+
+association [1..*] Tutor <-> (offers) Subject [1..*];
+association [1..*] Student <-> (makes) TutoringRequest [*];
+association [1] TutoringRequest <-> (for) Tutor [1];
+association [1] TutoringRequest <-> (leadsTo) TutoringSession [0..1];
+association [1] TutoringSession <-> (paidBy) Student [0..1];
+association [1] TutoringSession <-> (canceledBy) Student [0..1];
+association [1] TutoringSession <-> (canceledBy) Tutor [0..1];
+association [1..*] Tutor <-> (has) Availability [0..*];
+association [1] Tutor <-> (receives) TutorOfTheMonth [0..*];
+
 }

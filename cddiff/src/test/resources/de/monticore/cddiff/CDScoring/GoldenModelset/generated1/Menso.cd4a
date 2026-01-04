@@ -1,32 +1,35 @@
 
+// CD4A Class Diagram for De Lijn Bus Company
+
 classdiagram DeLijnBusCompany {
 
 class Bus {
-    int lineNumber;
+    String lineNumber; // Line number for the bus
 }
 
 class Trajectory {
-    String status; // e.g., Pending, Approved, Suspended, Cancelled
+    String status; // Possible values: Pending, Approved, Suspended, Cancelled
 }
 
 class Line {
-    String description;
-}
-
-class ApprovalProcess {
-    int attemptCount;
+    String category; // Category for pricing in MENSO
 }
 
 class MENSO {
-    String customerID;
-    int validDuration; // one year
-    float price;
-    float discount; // up to 20%
+    double price; // Price depends on line category
+    Date startDate; // Start date of validity
+    Date endDate; // End date of validity
 }
 
 class Trip {
-    Date dateTime;
-    String line;
+    Date date; // Date of the trip
+    Time time; // Time of the trip
+    String line; // Line information for the trip
+}
+
+class Invoice {
+    double totalAmount; // Total invoice amount
+    double discount; // Discount applied, up to 20%
 }
 
 class Customer {
@@ -35,10 +38,10 @@ class Customer {
     String workingHours;
 }
 
-association [1] Bus <-> Trajectory [0..*];
-association [1] Trajectory <-> ApprovalProcess [0..*];
-association [1] Line <-> Trajectory [0..*];
-association [1] MENSO <-> Trip [0..*];
-association [1] Customer <-> MENSO [0..*];
+association [0..*] Bus <-> Trajectory [0..*]; // Buses can be assigned to multiple trajectories
+association [0..*] Trajectory <-> Line [1]; // Each trajectory corresponds to one line
+association [0..*] Line <-> MENSO [1]; // A line can have one MENSO ticket associated
+association [0..*] Customer <-> Trip [0..*]; // Customers can have multiple trips
+association [1] Trip <-> Invoice [1]; // Each trip results in an invoice for the customer
 
 }

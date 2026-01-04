@@ -1,57 +1,72 @@
 
+// Class Diagram for Team Sports Scouting System
 classdiagram TeamSportsScoutingSystem {
+
     class Employee {
         String name;
+        String role;
     }
-    
+
     class HeadCoach extends Employee {
-        void identifyPlayerProfile();
+        // identifies designated player profiles for future signings
     }
-    
-    class Director extends Employee {
-        void makeOffer();
+
+    class HeadScout extends Employee {
+        // manages scouting assignments
     }
-    
+
     class Scout extends Employee {
-        void notePlayer();
-        void submitScoutingReport();
+        // performs scouting assignments and submits reports
     }
-    
+
     class PlayerProfile {
-        String targetPosition;
-        Attribute[] attributes;
+        String targetPosition; // e.g. GK, LB, etc.
+        List<PlayerAttribute> attributes; // list of player attributes
     }
-    
-    class Attribute {
+
+    class PlayerAttribute {
         String name;
         String value;
     }
-    
+
     class LongList {
-        PlayerProfile[] playerProfiles;
+        List<Player> players; // players that may match the designated target profile
     }
-    
+
     class ScoutingAssignment {
-        void evaluateLongList();
-        void investigatePlayer();
+        Player player; // player under investigation
+        HeadScout assignedScout; // scout assigned to the assignment
     }
-    
+
     class ScoutingReport {
-        String pros;
-        String cons;
-        String recommendation; // e.g., key player, first team player, etc.
+        String pros; // positive attributes of the player
+        String cons; // negative attributes of the player
+        Recommendation recommendation; // e.g. key player, first team player, etc.
+    }
+
+    enum Recommendation {
+        KEY_PLAYER,
+        FIRST_TEAM_PLAYER,
+        RESERVE_TEAM_PLAYER,
+        PROSPECTIVE_PLAYER,
+        NOT_A_GOOD_SIGNING;
     }
 
     class ShortList {
-        PlayerProfile[] playerProfiles;
+        List<Player> players; // selected players for further consideration
     }
 
-    association [*] Employee -> (assigned) ScoutingAssignment [*];
-    association [1] HeadCoach -> (identified) PlayerProfile [*];
-    association [*] Scout -> (noted) PlayerProfile [*];
-    association [1] Scout -> (submitted) ScoutingReport [*];
-    association [1] ScoutingAssignment -> (evaluates) LongList [1];
-    association [1] ScoutingAssignment -> (investigates) PlayerProfile [1];
-    association [1] HeadScout -> (decides) ShortList [1];
-    association [1] Director -> (makes) Offer [1];
+    class Player {
+        String name;
+        PlayerProfile profile;
+    }
+
+    association [1] HeadCoach -- PlayerProfile [*]; 
+    association [1] HeadScout -- ScoutingAssignment [*];
+    association [1] Scout -- ScoutingReport [*];
+    association [1] LongList -> Player [*];
+    association [1] ScoutingAssignment -> Player [1];
+    association [1] ScoutingAssignment -> HeadScout [1];
+    association [1] ScoutingReport -> Player [1];
+    association [1] ShortList -> Player [*];
 }

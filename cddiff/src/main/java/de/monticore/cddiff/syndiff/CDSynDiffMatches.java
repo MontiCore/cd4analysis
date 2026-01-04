@@ -26,8 +26,8 @@ import de.monticore.cdmatcher.caching.StructureCache;
 import de.monticore.cdmatcher.iterative.matching.association.MatchCDAssocByBestSuperType;
 import de.monticore.cdmatcher.iterative.matching.attribute.MatchCDAttributeByNameAndType;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDEnum;
+import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByAllAttributes;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAssocs;
-import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAttributes;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectMethods;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSubClasses;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSuperClasses;
@@ -37,7 +37,6 @@ import de.monticore.cdmatcher.iterative.matching.method.MatchCDMethod;
 import de.monticore.cdmatcher.similarity.CDAssocEmbeddingSimilarity;
 import de.monticore.cdmatcher.similarity.CDAssocSimilarity4Iterative;
 import de.monticore.cdmatcher.similarity.CDTypeEmbeddingSimilarity;
-import de.monticore.cdmatcher.similarity.CDTypeEmbeddingWithAttributesSimilarity;
 import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
 import de.monticore.cdmatcher.similarity.NameEmbeddingSimilarity;
 import de.monticore.cdmatcher.similarity.NameSimilarity;
@@ -102,9 +101,9 @@ public class CDSynDiffMatches {
     if(useEmbedding) {
       MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()));
       HashMap<MatchingStrategy<ASTCDType>, BiFunction<ASTCDType, ASTCDType, Boolean>> matchingStrategies = new HashMap<>((Map.of(
-        new MatchBySimilarity<>(new CDTypeEmbeddingWithAttributesSimilarity(structureCache)), ALWAYS_APPLY,
+        new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()), ALWAYS_APPLY,
         new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocEmbeddingSimilarity())), structureCache), ALWAYS_APPLY,
-        new MatchCDTypeByDirectAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, matchByNameEmbedding(ASTCDAttribute::getName))), ALWAYS_APPLY,
+        new MatchCDTypeByAllAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, matchByNameEmbedding(ASTCDAttribute::getName))), ALWAYS_APPLY,
         new MatchCDTypeByDirectMethods(structureCache, new MatchCDMethod(cachedMatches,  matchByNameEmbedding(ASTCDMethod::getName), matchByNameEmbedding(ASTCDParameter::getName))), notBothEmpty(structureCache::getDirectMethods),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache), notBothEmpty(structureCache::getDirectSubTypes),
         new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache), notBothEmpty(structureCache::getDirectSuperTypes)
@@ -116,7 +115,7 @@ public class CDSynDiffMatches {
       HashMap<MatchingStrategy<ASTCDType>, BiFunction<ASTCDType, ASTCDType, Boolean>> matchingStrategies = new HashMap<>((Map.of(
         new MatchBySimilarity<>(new CDTypeSimilarity()), ALWAYS_APPLY,
         new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocSimilarity4Iterative())), structureCache), ALWAYS_APPLY,
-        new MatchCDTypeByDirectAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, matchByName(ASTCDAttribute::getName))), ALWAYS_APPLY,
+        new MatchCDTypeByAllAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, matchByName(ASTCDAttribute::getName))), ALWAYS_APPLY,
         new MatchCDTypeByDirectMethods(structureCache, new MatchCDMethod(cachedMatches,  matchByName(ASTCDMethod::getName), matchByName(ASTCDParameter::getName))), notBothEmpty(structureCache::getDirectMethods),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache), notBothEmpty(structureCache::getDirectSubTypes),
         new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache), notBothEmpty(structureCache::getDirectSuperTypes)

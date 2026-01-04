@@ -1,11 +1,12 @@
 
-classdiagram School {
+// CD4A class diagram for School Management System
+classdiagram SchoolManagement {
 
 class School {
     String name;
 }
 
-abstract class Person {
+class Person {
     String firstName;
     String lastName;
 }
@@ -15,7 +16,11 @@ class Teacher extends Person {
 }
 
 class Student extends Person {
-    // No additional attributes
+    // A student is always in exactly one class group
+}
+
+class Principal extends Teacher {
+    // A principal is a teacher who manages one school
 }
 
 class Room {
@@ -26,19 +31,20 @@ class Classroom extends Room {
     int capacity;
 }
 
-class Gym extends Room {
+class OtherRoom extends Room {
     int sizeInSquareMeters;
 }
 
 class ClassGroup {
-    String name;
+    String name; // e.g., 5a
 }
 
-association [1] School <-> (principal) Teacher [1];
-association [*] Teacher <-> (teaches) School [0..3];
-association [1] Student <-> (attends) School [1];
-association [1] Student <-> (in) ClassGroup [1];
-association [1] ClassGroup <-> (assignedTo) Classroom [1];
-association [1] Classroom <-> (assignedTo) ClassGroup [1];
+association [1] School <-> (has) Principal [1]; // Each school has exactly one principal
+association [1] School <-> (employs) Teacher [0..3]; // A teacher can teach at a maximum of three schools
+association [1] School <-> Student [*]; // Students attend exactly one school
+association [1] Teacher <-> (teaches) School [0..3]; // Teachers can teach at multiple schools
+association [0..*] Student <-> (in) ClassGroup [1]; // A student is in exactly one class group
+association [1] ClassGroup <-> (assignedTo) Classroom [1]; // A class group is assigned to exactly one classroom
+association [1] Classroom <-> (has) Room [1]; // Each classroom is a type of room
 
 }

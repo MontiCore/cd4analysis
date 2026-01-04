@@ -6,7 +6,7 @@ class Doctor {
     String fullName;
     String address;
     String phoneNumber;
-    Image signature;
+    String signature; // Digital signature image
     Date validFrom;
 }
 
@@ -20,53 +20,43 @@ class Patient {
 }
 
 class Requisition {
+    int id;
+    Date date;
     Doctor doctor;
     Patient patient;
     TestGroup testGroup;
-    Repetition repetition;
-}
-
-class TestGroup {
-    Test[] tests;
+    int repeatCount;
+    Interval repeatInterval;
+    
+    void addTest(Test test);
 }
 
 class Test {
     String name;
-    Duration duration;
+    int duration; // Duration defined by lab network
     boolean requiresAppointment;
     boolean isWalkInOnly;
     boolean requiresSampleDropOff;
-    Result result;
+}
+
+class TestGroup {
+    String groupName;
 }
 
 class Appointment {
-    Patient patient;
-    Lab lab;
+    int confirmationNumber;
     Date appointmentDate;
     Time startTime;
     Time endTime;
-    String confirmationNumber;
+    Lab lab;
 }
 
 class Lab {
+    String name;
     String address;
     String registrationNumber;
-    BusinessHours businessHours;
-    Fee cancellationFee;
-}
-
-class Result {
-    String status;
-    Report report;
-}
-
-class Report {
-    String details;
-}
-
-class Repetition {
-    int numberOfRepetitions;
-    Interval interval;
+    String businessHours;
+    double cancellationFee;
 }
 
 enum Interval {
@@ -76,22 +66,12 @@ enum Interval {
     Yearly;
 }
 
-class Duration {
-    int durationInMinutes;
-}
+association [1] Doctor -> Requisition [*];  // Doctor can create multiple requisitions
+association [1] Patient -> Requisition [*];  // Patient can have multiple requisitions
+association [1] Requisition -> TestGroup [1]; // Each requisition belongs to one test group
+association [1] Requisition -> Patient [1];   // Each requisition is for one patient
+association [*] Requisition -> Test [*];       // A requisition can have multiple tests
+association [1] Lab -> Appointment [*];        // A lab can have multiple appointments
+association [1] Appointment -> Lab [1];        // Each appointment is for one lab
 
-class BusinessHours {
-    Time startTime;
-    Time endTime;
-}
-
-association [1] Doctor -> Requisition [*];
-association [1] Patient -> Requisition [*];
-association [1] Requisition -> TestGroup [1];
-association [1] TestGroup -> Test [*];
-association [1] Test -> Result [0..1];
-association [1] Test -> Appointment [0..1];
-association [1] Appointment -> Lab [1];
-association [1] Lab -> BusinessHours [1];
-association [1] Lab -> Fee [1];
 }

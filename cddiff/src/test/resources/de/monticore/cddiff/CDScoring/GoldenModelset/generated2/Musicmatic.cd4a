@@ -1,12 +1,12 @@
 
-// CD4A Class Diagram for Musicmatic
+// Class Diagram for Musicmatic
 
-classdiagram Musicmatic {
+classdiagram MusicmaticLLM {
 
 class Song {
     String title;
     int year;
-    int length;
+    double length; // in minutes
     String genre;
 }
 
@@ -17,35 +17,32 @@ class Artist {
 }
 
 class User {
-    String id; // unique identifier
+    int id; // unique identifier
     String name;
     String address;
 }
 
-class RegularUser extends User {
-    // Regular users can buy music (no additional attributes defined)
-}
+class RegularUser extends User {}
 
 class BusinessUser extends User {
     String vatNumber;
 }
 
-class Single extends Song {
-    // Additional attributes can be defined if needed
+class Album {
+    String title;
 }
 
-class Hit extends Song {
+class Hit {
     int trackNumber;
 }
 
-class Album {
-    // Albums only contain hits (no attributes defined)
-}
+class Single extends Song {}
 
-// Associations
-association [1] Song -> Artist [1]; // A song belongs to exactly one artist
-association [1] RegularUser <-> Single [*]; // Regular user can buy singles
-association [0..*] RegularUser <-> Album [0..*]; // Regular users can own albums
-association [1] BusinessUser <-> Single [1]; // Business users upload singles
-association [1] Album <-> Hit [*]; // An album contains multiple hits
+association [1] Artist <-> Song [*]; // A song belongs to exactly one artist
+association [1] User <-> Album [0..*]; // A user can have multiple albums
+association [0..*] Album <-> Hit [0..*]; // An album can have multiple hits
+association [1] Album <-> RegularUser [0..*]; // Regular user can own albums
+association [1] BusinessUser <-> (uploads) Single [0..*]; // Business users upload singles only
+association [1] RegularUser <-> (buys) Single [0..*]; // Regular users buy singles
+
 }

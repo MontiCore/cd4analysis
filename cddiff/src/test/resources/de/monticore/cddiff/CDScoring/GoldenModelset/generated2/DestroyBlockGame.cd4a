@@ -1,68 +1,63 @@
 
+// CD4A Class Diagram for the DestroyBlock application
 classdiagram DestroyBlock {
 
 class User {
-    String username;
-    String password;
+    String username; // unique identifier for a user
+    String password; // shared password for both admin and player
 }
 
-class Player extends User {}
+class Player extends User {
+    int lives; // number of lives, starts at 3
+    int score; // player's score in the game
+}
 
-class Admin extends User {}
+class Admin extends User {
+    // Admin can create a game
+}
 
 class Game {
-    String name;
-    HallOfFame hallOfFame;
-    int maxLevels;
-    int minSpeed;
-    int speedIncreaseFactor;
-    int maxLength;
-    int minLength;
-}
-
-class Block {
-    String color;
-    int worth; // range: 1 to 1000
-}
-
-class Level {
-    int number;
-    boolean isRandom;
-    Arrangement startingArrangement;
-}
-
-class Arrangement {
-    // Defines the grid position of blocks
+    String name; // unique name for the game
+    HallOfFame hallOfFame; // hall of fame for the game
 }
 
 class HallOfFame {
-    List<Player> players;
+    List<Player> players; // players competing for high scores
+}
+
+class Level {
+    int number; // level number, starting from 1
+    List<Block> blocks; // blocks defined by the admin for the level
+    boolean isRandom; // true if level is random
+}
+
+class Block {
+    String color; // color of the block
+    int points; // points assigned to the block (1 to 1000)
+}
+
+class GameSettings {
+    int minSpeed; // minimum speed of the ball
+    int speedIncreaseFactor; // how much speed increases with each level
+    int maxPaddleLength; // maximum length of the paddle
+    int minPaddleLength; // minimum length of the paddle
+    int numberOfBlocks; // number of blocks at the start of each level
 }
 
 class Ball {
-    int speed;
-    String direction;
+    int speed; // speed of the ball
+    String direction; // current direction of the ball
 }
 
 class Paddle {
-    int length;
+    int length; // current length of the paddle
 }
 
-class GameSession {
-    int lives;
-    int score;
-    boolean isPaused;
-}
-
-association [1] Game <-> Admin [1];
-association [1] Game <-> Player [*];
-association [1] Game <-> Level [*];
-association [1] Game <-> Block [*];
-association [1] Level <-> Arrangement [1];
-association [1] Game <-> HallOfFame [1];
-association [1] Game <-> GameSession [1];
-association [1] GameSession <-> Player [1];
-association [1] GameSession <-> Ball [1];
-association [1] GameSession <-> Paddle [1];
+association [1] Admin -> Game [1]; // one admin can create one game
+association [1] Game -> Level [1..99]; // a game has multiple levels
+association [1] Level -> Block [*]; // a level consists of multiple blocks
+association [1] Game -> HallOfFame [1]; // each game has one hall of fame
+association [*] Player <-> Game [*]; // players may play multiple games
+association [1] Player <-> Player [*]; // players compete with each other
 
 }

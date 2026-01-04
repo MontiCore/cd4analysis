@@ -1,20 +1,21 @@
 
-// CD4A Class Diagram
+// Class Diagram for Transport Company
 
 classdiagram TransportCompany {
 
 class Employee {
     String name;
-    int ssn;
+    String ssn;
 }
 
 class Planner extends Employee {
-    String username;
-    String password;
+    // additional attributes for Planner can be added here
 }
 
 class AdministrativeStaff extends Employee {
     String fieldOfActivity;
+    String username;
+    String password;
 }
 
 class Customer {
@@ -22,15 +23,10 @@ class Customer {
     String billingAddress;
 }
 
-abstract class Vehicle {
-    String licensePlateNumber;
+class Vehicle {
+    String licensePlate;
     int mileage;
 }
-
-class RefrigeratedTruck extends Vehicle {}
-class SmallVan extends Vehicle {}
-class LoadingPlatform extends Vehicle {}
-class BoxTruck extends Vehicle {}
 
 class RepairShop {
     String name;
@@ -38,13 +34,12 @@ class RepairShop {
 }
 
 class Repair {
-    Employee employee;
-    int duration;
+    int duration; // duration in hours
     double cost;
 }
 
 class Order {
-    String additionalInfo;
+    String additionalInformation;
     Date startTime;
     Date finishTime;
 }
@@ -54,12 +49,15 @@ class PartnerCompany {
     String address;
 }
 
-association [*] Employee <-> Order [*];
-association [*] Customer <-> Order [*];
-association [*] Vehicle <-> Order [*];
-association [*] Planner <-> Order [*];
-association [1] Order <-> (takes) RepairShop [0..1];
-association [0..1] RepairShop <-> Repair [*];
-association [*] PartnerCompany <-> Order [0..1];
+
+association [1] Employee <-> Order [*]; // employees can handle multiple orders
+association [1] Planner <-> (assigns) Order [*]; // planners assign orders
+association [1] AdministrativeStaff <-> Order [*]; // administrative staff can handle orders
+association [1] Customer <-> Order [*]; // each order has one customer
+association [1] Order <-> Vehicle [1]; // each order is assigned to one vehicle
+association [1] Vehicle <-> Repair [*]; // vehicles can have multiple repairs
+association [1] RepairShop <-> Repair [*]; // repair shops can perform multiple repairs
+association [1] Order <-> (handledBy) Planner [1]; // each order is assigned by one planner
+association [1] Order <-> PartnerCompany [0..1]; // orders can also be placed with a partner company
 
 }

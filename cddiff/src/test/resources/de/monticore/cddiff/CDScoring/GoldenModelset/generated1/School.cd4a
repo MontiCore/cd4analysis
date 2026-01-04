@@ -1,5 +1,6 @@
 
-classdiagram School {
+// CD4A Class Diagram for School System
+classdiagram SchoolSystem {
 
 class School {
     String name;
@@ -15,27 +16,35 @@ class Teacher extends Person {
 }
 
 class Student extends Person {
-    // No additional attributes
+    // Each student belongs to exactly one class group
 }
 
-class Classroom {
+class Principal extends Teacher {
+    // A teacher can only be principal of one school
+}
+
+class Room {
     String name;
+}
+
+class Classroom extends Room {
     int capacity;
 }
 
-class OtherRoom {
-    String name;
-    int sizeInSquareMeters;
+class Gym extends Room {
+    int size; // in square meters
 }
 
 class ClassGroup {
-    String groupName;
+    String name; // e.g., "5a"
 }
 
+association [1] School <-> (attendedBy) Student [*];
+association [1] School <-> (teaches) Teacher [0..3];
 association [1] Teacher <-> (principalOf) School [0..1];
-association [*] Teacher <-> (teachesAt) School [0..3];
-association [*] Student <-> (attends) School [1];
-association [10..31] Student <-> (members) ClassGroup [*];
+association [1] Teacher <-> (teaches) ClassGroup [*];
 association [1] ClassGroup <-> (assignedTo) Classroom [1];
 association [1] Classroom <-> (assignedTo) ClassGroup [1];
+association [1] Student <-> (belongsTo) ClassGroup [1];
+
 }

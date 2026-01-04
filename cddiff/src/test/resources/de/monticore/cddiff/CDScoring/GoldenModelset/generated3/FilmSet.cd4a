@@ -1,13 +1,15 @@
 
+// CD4A Class Diagram for Film Set Management
+
 classdiagram FilmSet {
 
 class Employee {
     String name;
-    String socialSecurityNumber;
+    String ssNo;
 }
 
 class CreativeEmployee extends Employee {
-    Boolean hasOscar;
+    boolean hasOscar;
 }
 
 class Director extends CreativeEmployee {
@@ -28,19 +30,15 @@ class FilmSet {
 
 class Film {
     String title;
-    int yearOfRelease;
+    int year;
 }
 
-class Genre {
-    Type type;
+enum Genre {
+    THRILLER,
+    ACTION,
+    HORROR,
+    COMEDY;
 }
-
-enum Type {
-        THRILLER,
-        ACTION,
-        HORROR,
-        COMEDY;
-    }
 
 class Screenwriter {
     String name;
@@ -50,7 +48,7 @@ class Screenwriter {
 class Screenplay {
     String title;
     String version;
-    String date;
+    Date date;
     int numberOfScenes;
     String plot;
 }
@@ -61,10 +59,11 @@ class Novel {
 }
 
 association [0..*] FilmSet <-> Film [0..*];
-association [0..*] Film <-> Screenplay [1];
-association [1] Screenplay <-> Screenwriter [1];
-association [1] Screenplay <-> (basedOn) Novel [0..1];
-association [0..*] Film <-> (actors) Actor [0..*];
-association [1] Film <-> (director) Director [1];
+association [1] Film <-> (writtenBy) Screenplay [1];
+association [1] Screenplay <-> (createdBy) Screenwriter [1];
+association [1] Screenplay -- Novel [0..1];
+association [1..*] Film <-> (features) Actor [0..*];
+association [1] Film <-> (directedBy) Director [1];
+association [1] Screenplay <-> Film [1];
 
 }
