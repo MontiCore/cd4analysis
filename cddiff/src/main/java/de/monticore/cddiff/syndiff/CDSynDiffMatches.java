@@ -26,8 +26,8 @@ import de.monticore.cdmatcher.caching.StructureCache;
 import de.monticore.cdmatcher.iterative.matching.association.MatchCDAssocByBestSuperType;
 import de.monticore.cdmatcher.iterative.matching.attribute.MatchCDAttributeByNameAndType;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDEnum;
+import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByAllAssocs;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByAllAttributes;
-import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAssocs;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectMethods;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSubClasses;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSuperClasses;
@@ -102,7 +102,7 @@ public class CDSynDiffMatches {
       MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()));
       HashMap<MatchingStrategy<ASTCDType>, BiFunction<ASTCDType, ASTCDType, Boolean>> matchingStrategies = new HashMap<>((Map.of(
         new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()), ALWAYS_APPLY,
-        new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocEmbeddingSimilarity())), structureCache), ALWAYS_APPLY,
+        new MatchCDTypeByAllAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocEmbeddingSimilarity())), structureCache), ALWAYS_APPLY,
         new MatchCDTypeByAllAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, matchByNameEmbedding(ASTCDAttribute::getName))), ALWAYS_APPLY,
         new MatchCDTypeByDirectMethods(structureCache, new MatchCDMethod(cachedMatches,  matchByNameEmbedding(ASTCDMethod::getName), matchByNameEmbedding(ASTCDParameter::getName))), notBothEmpty(structureCache::getDirectMethods),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache), notBothEmpty(structureCache::getDirectSubTypes),
@@ -114,7 +114,7 @@ public class CDSynDiffMatches {
       MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeSimilarity()));
       HashMap<MatchingStrategy<ASTCDType>, BiFunction<ASTCDType, ASTCDType, Boolean>> matchingStrategies = new HashMap<>((Map.of(
         new MatchBySimilarity<>(new CDTypeSimilarity()), ALWAYS_APPLY,
-        new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocSimilarity4Iterative())), structureCache), ALWAYS_APPLY,
+        new MatchCDTypeByAllAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocSimilarity4Iterative())), structureCache), ALWAYS_APPLY,
         new MatchCDTypeByAllAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, matchByName(ASTCDAttribute::getName))), ALWAYS_APPLY,
         new MatchCDTypeByDirectMethods(structureCache, new MatchCDMethod(cachedMatches,  matchByName(ASTCDMethod::getName), matchByName(ASTCDParameter::getName))), notBothEmpty(structureCache::getDirectMethods),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache), notBothEmpty(structureCache::getDirectSubTypes),
@@ -125,10 +125,7 @@ public class CDSynDiffMatches {
     }
 
     for(int i = 0; i < matchingIterations; i++) {
-      cachedMatches.resetBiggestChange();
-      cachedMatches.getMethodMatches().clear();
-      cachedMatches.getAssocMatches().clear();
-      cachedMatches.getAttributeMatches().clear();
+      cachedMatches.clearIteration();
       for (ASTCDType srcType : srcTypes) {
         for (ASTCDType tgtType : tgtTypes) {
           typeMatcher.getScore(srcType, tgtType);
@@ -137,11 +134,14 @@ public class CDSynDiffMatches {
       if(cachedMatches.getBiggestChange() < MINIMUM_CHANGE_THRESHOLD) break;
     }
 
+    Set<ASTCDAttribute> srcAttributes = srcTypes.stream().map(structureCache::getAttributes).flatMap(Set::stream).collect(Collectors.toSet());
+    Set<ASTCDAttribute> tgtAttributes = tgtTypes.stream().map(structureCache::getAttributes).flatMap(Set::stream).collect(Collectors.toSet());
+
     scoredMatches = cachedMatches;
     // compute a matching of types by name
     typeMatches = computeMatching(cachedMatches.getTypeMatches(), threshold);
     assocMatches = computeMatching(cachedMatches.getAssocMatches(), threshold);
-    attributeMatches = computeMatching(cachedMatches.getAttributeMatches(), threshold);
+    attributeMatches = computeMatching(cachedMatches.getAttributeMatches(srcAttributes, tgtAttributes), threshold);
   }
 
   public CDSynDiffMatches(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD,

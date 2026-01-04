@@ -1,8 +1,6 @@
 package de.monticore.cddiff.cdscoring;
 
 import com.google.common.math.DoubleMath;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
@@ -24,8 +22,6 @@ public class CDScoring {
   private final ASTCDCompilationUnit tgtCD;
   // score matches that are close to the threshold ([0,9 * threshold, 1.11 * threshold])
   private CachedMatch<ASTCDType> closeTypeMatches = new CachedMatch<>();
-  private CachedMatch<ASTCDAssociation> closeAssocMatches = new CachedMatch<>();
-  private CachedMatch<ASTCDAttribute> closeAttributeMatches = new CachedMatch<>();
 
   CDScoring(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
@@ -56,18 +52,6 @@ public class CDScoring {
     CachedMatch<ASTCDType> combinedTypeMatches = combinedTypeMatchesResult.a;
     closeTypeMatches = combinedTypeMatchesResult.b;
 
-    Pair<CachedMatch<ASTCDAssociation>, CachedMatch<ASTCDAssociation>> combinedAssocMatchesResult = filterAndCombineMatches(
-      srcToTgtScore.getAssocMatches(), tgtToSrcScore.getAssocMatches(), threshold
-    );
-    CachedMatch<ASTCDAssociation> combinedAssocMatches = combinedAssocMatchesResult.a;
-    closeAssocMatches = combinedAssocMatchesResult.b;
-
-    Pair<CachedMatch<ASTCDAttribute>, CachedMatch<ASTCDAttribute>> combinedAttributeMatchesResult = filterAndCombineMatches(
-      srcToTgtScore.getAttributeMatches(), tgtToSrcScore.getAttributeMatches(), threshold
-    );
-    CachedMatch<ASTCDAttribute> combinedAttributeMatches = combinedAttributeMatchesResult.a;
-    closeAttributeMatches = combinedAttributeMatchesResult.b;
-
     // Calculate the scores for all types in the source CD, if a type is not matched, it will be the default value 0.0
     // If two different types are matched to the same type, the average will be lower because both matches were scaled down
     List<Double> typeScores = CDDiffUtil.getAllTypesFromCD(srcCD).stream().map(
@@ -79,9 +63,7 @@ public class CDScoring {
       combinedTypeMatches::getMatchesForTarget
     ).map(Map::values).map(list -> list.isEmpty() ? 0.0 : DoubleMath.mean(list)).collect(Collectors.toList()));
 
-    double typeScore = DoubleMath.mean(typeScores);
-
-    return typeScore;
+    return DoubleMath.mean(typeScores);
   }
 
   /**
@@ -163,27 +145,4 @@ public class CDScoring {
     return closeTypeMatches;
   }
 
-  /**
-   * Returns the cached matches that are close to the threshold.
-   * Close matches are defined as those with a score in the range of [0.9 * threshold, 1.11 * threshold].
-   * These matches can be used for further analysis or debugging.
-   * This is only meaningful if the score method was called before, otherwise this will return an empty CachedMatches.
-   *
-   * @return CachedMatches containing matches close to the threshold
-   */
-  public CachedMatch<ASTCDAssociation> getCloseAssocMatches() {
-    return closeAssocMatches;
-  }
-
-  /**
-   * Returns the cached matches that are close to the threshold.
-   * Close matches are defined as those with a score in the range of [0.9 * threshold, 1.11 * threshold].
-   * These matches can be used for further analysis or debugging.
-   * This is only meaningful if the score method was called before, otherwise this will return an empty CachedMatches.
-   *
-   * @return CachedMatches containing matches close to the threshold
-   */
-  public CachedMatch<ASTCDAttribute> getCloseAttributeMatches() {
-    return closeAttributeMatches;
-  }
 }
