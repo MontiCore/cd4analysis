@@ -22,9 +22,7 @@ import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
-import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.monticore.generating.templateengine.TemplateController;
-import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.generating.templateengine.*;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.MCTypeFacade;
@@ -158,7 +156,7 @@ public class CDGenTool extends CDGeneratorTool {
         String outputPath = (cmd.hasOption("o")) ? Paths.get(cmd.getOptionValue("o")).toString()
             : "";
         
-        GlobalExtensionManagement glex = new GlobalExtensionManagement();
+        GlobalExtensionManagement glex = new SourceMapAwareGlobalExtensionManagement();
         GeneratorSetup generatorSetup = newConfiguredGeneratorSetup(additionalTemplatePaths,
             handcodedPath, outputPath, glex);
         
@@ -274,7 +272,15 @@ public class CDGenTool extends CDGeneratorTool {
   
   public GeneratorSetup newConfiguredGeneratorSetup(List<File> additionalTemplatePaths,
       Optional<MCPath> handcodedPath, String outputPath, GlobalExtensionManagement glex) {
-    GeneratorSetup setup = new GeneratorSetup();
+    SourceMapData sourceMapData = new SourceMapData();
+    GeneratorSetup setup = new GeneratorSetup() {
+      
+      @Override
+      public TemplateController getNewTemplateController(String templateName) {
+        return new SourceMapAwareTemplateController(this, templateName, sourceMapData);
+      }
+      
+    };
     
     setup.setAdditionalTemplatePaths(additionalTemplatePaths);
     handcodedPath.ifPresent(setup::setHandcodedPath);

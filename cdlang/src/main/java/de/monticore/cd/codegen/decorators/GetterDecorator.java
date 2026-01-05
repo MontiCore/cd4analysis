@@ -15,6 +15,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.generating.templateengine.hookpoints.TemplateHookPointWithInfo;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -66,13 +67,19 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     ASTMCType type = attribute.getMCType().deepClone();
     ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), type, name);
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, templateHookPoint(
         "methods.Get", attribute)));
     method.getModifier().setAbstract(attribute.getModifier().isDerived());
     
     addToClass(decoratedClazz, method);
     
     this.updateModifier(attribute);
+  }
+  
+  protected TemplateHookPoint templateHookPoint(String templateName, Object... templateArguments) {
+    var ret = new TemplateHookPointWithInfo(templateName, templateArguments);
+    ret.setDecorator("GetterDecorator");
+    return ret;
   }
   
   protected void decorateOptional(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
@@ -85,7 +92,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
         .deepClone(), type, name);
     String nativeAttributeName = StringUtils.capitalize(getCDGenService().getNativeAttributeName(
         attribute.getName()));
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getMethod, new TemplateHookPoint(
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getMethod, templateHookPoint(
         "methods.opt.Get4Opt", attribute, nativeAttributeName, generatedErrorCode)));
     getMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     CD4C.getInstance().addImport(decoratedClazz, Log.class.getName());
@@ -95,8 +102,8 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     ASTCDMethod isPresentMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), MCTypeFacade.getInstance().createBooleanType(), "isPresent"
             + StringTransformations.capitalize(attribute.getName()));
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isPresentMethod,
-        new TemplateHookPoint("methods.opt.IsPresent4Opt", attribute)));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isPresentMethod, templateHookPoint(
+        "methods.opt.IsPresent4Opt", attribute)));
     addToClass(decoratedClazz, isPresentMethod);
     
     this.updateModifier(attribute);
@@ -108,7 +115,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     
     ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), MCTypeFacade.getInstance().createSetTypeOf(type), name);
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, templateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedClazz, getListMethod);
@@ -122,7 +129,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     
     ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), MCTypeFacade.getInstance().createListTypeOf(type), name);
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, templateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedClazz, getListMethod);
@@ -196,8 +203,8 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     String returnType = (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint(method
         .getMCReturnType());
     
-    return new TemplateHookPoint("methods.AnyMethodDelegate", attributeName, methodName,
-        parameterCall, returnType);
+    return templateHookPoint("methods.AnyMethodDelegate", attributeName, methodName, parameterCall,
+        returnType);
   }
   
   protected static final String CONTAINS = "public boolean contains%s(Object element);";

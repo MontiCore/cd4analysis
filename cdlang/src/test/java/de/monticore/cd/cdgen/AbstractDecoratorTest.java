@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdgen.CDGenTool;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.generating.templateengine.SourceMapAwareGlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
@@ -77,7 +78,7 @@ public abstract class AbstractDecoratorTest {
     // Complete ST
     tool.completeSymbolTable(cd);
     
-    GlobalExtensionManagement glex = new GlobalExtensionManagement();
+    GlobalExtensionManagement glex = new SourceMapAwareGlobalExtensionManagement();
     GeneratorSetup generatorSetup = tool.newConfiguredGeneratorSetup(getAdditionalTemplatesPath(),
         getHandWrittenPath(), this.outputDir.getAbsolutePath(), glex);
     
