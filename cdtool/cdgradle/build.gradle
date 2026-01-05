@@ -12,8 +12,8 @@ configurations {
 
 
 dependencies {
-  implementation group: 'de.se_rwth.commons', name: 'se-commons-gradle', version: mc_version
-  cdTool group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
+  implementation "de.se_rwth.commons:se-commons-gradle:$mc_version"
+  cdTool "de.monticore.lang:cd4analysis:$mc_version"
   compileOnly(project(":cdlang")) // As the main/cdtool dependency does not have an api dependency to cdlang
 
   testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
