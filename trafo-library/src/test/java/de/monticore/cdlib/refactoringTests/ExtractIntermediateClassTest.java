@@ -118,8 +118,8 @@ public class ExtractIntermediateClassTest {
     List<String> allowedClassNames = List.of("ClassA1ClassA2ClassA3", "ClassA1ClassA3ClassA2",
         "ClassA2ClassA1ClassA3", "ClassA2ClassA3ClassA1", "ClassA3ClassA1ClassA2",
         "ClassA3ClassA2ClassA1");
-    assertTrue(allowedClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList().get(
-        6).getName()));
+    String className6 = utility.getAst().getCDDefinition().getCDClassesList().get(6).getName();
+    assertTrue(allowedClassNames.contains(className6));
     assertEquals(1, utility.getAst().getCDDefinition().getCDClassesList().get(6)
         .getCDAttributeList().size());
     assertEquals("attribute1", utility.getAst().getCDDefinition().getCDClassesList().get(6)

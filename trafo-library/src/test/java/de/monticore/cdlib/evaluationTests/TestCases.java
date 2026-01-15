@@ -124,23 +124,27 @@ public class TestCases {
     // as the actual order depends on the pattern matching
     List<String> allowedSuperClassNames = List.of("ClassBClassCClassD", "ClassBClassDClassC",
         "ClassCClassBClassD", "ClassCClassDClassB", "ClassDClassBClassC", "ClassDClassCClassB");
-    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
-        .get(2).printSuperclasses()));
+    String superclassName2 = utility.getAst().getCDDefinition().getCDClassesList().get(2)
+        .printSuperclasses();
+    assertTrue(allowedSuperClassNames.contains(superclassName2));
     
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(3)
         .getCDAttributeList().size());
-    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
-        .get(3).printSuperclasses()));
+    
+    String superclassName3 = utility.getAst().getCDDefinition().getCDClassesList().get(3)
+        .printSuperclasses();
+    assertTrue(allowedSuperClassNames.contains(superclassName3));
     
     assertEquals("ClassD", utility.getAst().getCDDefinition().getCDClassesList().get(4).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(4)
         .getCDAttributeList().size());
-    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
-        .get(4).printSuperclasses()));
+    String superclassName4 = utility.getAst().getCDDefinition().getCDClassesList().get(4)
+        .printSuperclasses();
+    assertTrue(allowedSuperClassNames.contains(superclassName4));
     
-    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
-        .get(5).getName()));
+    String className5 = utility.getAst().getCDDefinition().getCDClassesList().get(5).getName();
+    assertTrue(allowedSuperClassNames.contains(className5));
     assertEquals(1, utility.getAst().getCDDefinition().getCDClassesList().get(5)
         .getCDAttributeList().size());
     assertEquals("attributeB", utility.getAst().getCDDefinition().getCDClassesList().get(5)
