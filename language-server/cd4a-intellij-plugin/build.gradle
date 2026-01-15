@@ -1,0 +1,117 @@
+plugins {
+  id 'java'
+  id 'de.monticore.language-server' version "$mc_version"
+  id "org.jetbrains.intellij.platform" version "2.6.0"
+}
+
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
+// IntelliJ needs Java 21, does not effect rest of CD4Analysis
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+ecj {
+  compilerVersion = "3.43.0"
+}
+
+// Add generated sources
+sourceSets {
+  main {
+    java {
+      srcDir(buildDir.toString() + "/generated-sources/CD4Analysis/plugins/cd4analysis-intellij-plugin/src/main/java")
+    }
+    resources {
+      srcDir(buildDir.toString() + "/generated-sources/CD4Analysis/plugins/cd4analysis-intellij-plugin/src/main/resources")
+    }
+  }
+}
+
+repositories {
+  if (("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
+  maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url repo
+  }
+  mavenCentral()
+  intellijPlatform {
+    defaultRepositories()
+  }
+}
+
+def languageServerJarFile = parent.tasks.packCD4AnalysisLanguageServer.getArchiveFile().get().getAsFile()
+
+dependencies {
+  implementation "de.monticore.language-server.plugin:monticore-language-server-runtime-intellij:$mc_version"
+
+  // Standard JUnit 5 dependencies
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+
+  intellijPlatform {
+    intellijIdeaCommunity("2024.2")
+    plugins(["com.redhat.devtools.lsp4ij:0.18.0"])
+    testFramework(TestFrameworkType.Platform.INSTANCE)
+    testFramework(TestFrameworkType.Plugin.Java.INSTANCE)
+  }
+}
+
+test {
+  useJUnitPlatform()
+}
+
+task initializeIntelliJPlugin(){
+  // ignore, workaround for new intellij plugin
+}
+
+task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
+  mclsg {
+    languageName = "de.monticore.CD4Analysis"
+    fileExtension = "cd"
+    modelPath = ["${parent.projectDir}/src/main/grammars"]
+    including(de.mclsg.TaskTypes.INTELLIJ_PLUGIN)
+    excluding(de.mclsg.TaskTypes.LANGUAGE_SERVER)
+    excluding(de.mclsg.TaskTypes.BUILD_INTELLIJ_PLUGIN) // conflicts with "org.jetbrains.intellij.platform"
+    languageServerJar(languageServerJarFile)
+  }
+}
+
+// integrate into plugin
+generateCD4AnalysisIntellijPlugin {
+  handCodedDir.set(project.layout.projectDirectory.dir("src/main/java"))
+}
+patchPluginXml.dependsOn(generateCD4AnalysisIntellijPlugin) // maybe specific to "org.jetbrains.intellij.platform"
+compileJava.dependsOn(generateCD4AnalysisIntellijPlugin) // replaces intelliJPlugin source set
+buildPlugin.dependsOn(prepareSandbox) // weird: this is not set by default, but buildPlugin copies from target folder of prepareSandbox
+prepareSandbox {
+  // TODO: double copy, we can probably skip copy into generated-sources
+  from(buildDir.toString() + "/generated-sources/CD4Analysis/plugins/cd4analysis-intellij-plugin/bin/") {
+    into("cd4a-intellij-plugin/bin") // based on project name, not generated plugin name!
+  }
+  dependsOn(copyCD4AnalysisJarIntoIntellijPlugin)
+}
+copyCD4AnalysisJarIntoIntellijPlugin.dependsOn(parent.tasks.packCD4AnalysisLanguageServer)
+
+// config
+def lspWorkdir = file("../example").getAbsolutePath()
+
+runIde {
+  args += lspWorkdir
+}
+
+jar.dependsOn parent.tasks.packCD4AnalysisLanguageServer
+
+// TODO: can not override default starting behaviour
+task runLsp(type: JavaExec) {
+  classpath languageServerJarFile
+  mainClass.set("umlp_with_gui._lsp.language_aggregation.CD4AnalysisLanguageAggrServerCLI")
+  args("-port", "3000", "-r", "-mp", lspWorkdir)
+  environment("LSP_SYSTEM_EXIT", "false")
+  dependsOn parent.tasks.packCD4AnalysisLanguageServer
+}

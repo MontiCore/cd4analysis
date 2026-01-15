@@ -1,3 +1,5 @@
+import de.mclsg.TaskTypes
+
 plugins {
   id 'java'
   id 'de.monticore.language-server' version "$mc_version"
@@ -54,6 +56,7 @@ dependencies {
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
   testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
   testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_platform_version"
 }
 
 test {
@@ -64,6 +67,9 @@ task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
   mclsg {
     languageName = "de.monticore.CD4Analysis"
     fileExtension = "cd"
+  }
+  if(("true").equals(getProperty('buildVscodePlugin'))){
+    including(TaskTypes.VSCODE_PLUGIN)
   }
 }
 compileJava.dependsOn autoconfigure
