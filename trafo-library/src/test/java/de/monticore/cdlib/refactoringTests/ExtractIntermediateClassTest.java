@@ -13,7 +13,10 @@ import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
+
 import java.io.IOException;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -109,8 +112,14 @@ public class ExtractIntermediateClassTest {
     assertEquals("ClassB2", utility.getAst().getCDDefinition().getCDClassesList().get(5).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(5)
         .getCDAttributeList().size());
-    assertEquals("ClassA1ClassA3ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(
-        6).getName());
+    
+    // allow all permutations of the three A-class names
+    // as the actual order depends on the pattern matching
+    List<String> allowedClassNames = List.of("ClassA1ClassA2ClassA3", "ClassA1ClassA3ClassA2",
+        "ClassA2ClassA1ClassA3", "ClassA2ClassA3ClassA1", "ClassA3ClassA1ClassA2",
+        "ClassA3ClassA2ClassA1");
+    String className6 = utility.getAst().getCDDefinition().getCDClassesList().get(6).getName();
+    assertTrue(allowedClassNames.contains(className6));
     assertEquals(1, utility.getAst().getCDDefinition().getCDClassesList().get(6)
         .getCDAttributeList().size());
     assertEquals("attribute1", utility.getAst().getCDDefinition().getCDClassesList().get(6)
