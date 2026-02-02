@@ -28,7 +28,7 @@ public class CDScoringTest extends SynDiffTestBasis {
 
     CDScoring cdScoring = new CDScoring(src, tgt);
 
-    System.out.println("Score: " + cdScoring.score(5, 0.5, true));
+    System.out.println("Score: " + cdScoring.score(5, 0.5));
   }
 
   @Test

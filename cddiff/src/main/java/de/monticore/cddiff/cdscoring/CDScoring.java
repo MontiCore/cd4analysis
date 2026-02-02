@@ -37,6 +37,15 @@ public class CDScoring {
   }
 
   /**
+   * scores the two CDs using the given parameters, embedding and a greedy matching approach.
+   * This is equivalent to calling {@link #score(int, double, boolean, boolean)} with useEmbedding set to true and useOptimalMatching set to false.
+   */
+  //TODO: explain embedding usage in the readme
+  public double score(int iterations, double threshold) {
+    return score(iterations, threshold, true, false);
+  }
+
+  /**
    * scores the two CDs using the given parameters and a greedy matching approach.
    * This is equivalent to calling {@link #score(int, double, boolean, boolean)} with useOptimalMatching set to false.
    */

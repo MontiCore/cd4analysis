@@ -100,7 +100,7 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
     for(String generatedFile : generatedFiles) {
       parseModels(generatedFile, referenceFile);
       CDScoring llmCDScoring = new CDScoring(src, tgt);
-      double score = llmCDScoring.score(5, 0.5, true);
+      double score = llmCDScoring.score(5, 0.5);
       scores.add(score);
       System.out.println("Score for " + generatedFile + " - " + referenceFile + ": " + score);
     }
