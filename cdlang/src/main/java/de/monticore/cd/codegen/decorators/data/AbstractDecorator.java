@@ -6,6 +6,9 @@ import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.generating.templateengine.hookpoints.TemplateHookPointWithInfo;
+
 import java.util.Optional;
 
 /**
@@ -44,5 +47,28 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
   
   /** For Decorators not specifying any additional data */
   public static class NoData {}
+  
+  protected TemplateHookPoint templateHookPoint(String templateName, String x,
+      Object... templateArguments) {
+    var ret = new TemplateHookPointWithInfo(templateName, templateArguments);
+    if (withDecoratorStacktrace()) {
+      StringBuilder sb = new StringBuilder();
+      var st = new Throwable().getStackTrace();
+      for (int i = 1; i <= Math.min(st.length, 20); i++) {
+        var ste = st[i];
+        if (getClass().getName().equals(ste.getClassName())) {
+          sb.append(ste).append(", ");
+        }
+      }
+      x += sb.toString();
+    }
+    ret.setDecorator(getClass().getSimpleName() + "#" + x);
+    
+    return ret;
+  }
+  
+  protected boolean withDecoratorStacktrace() {
+    return true;
+  }
   
 }
