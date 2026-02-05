@@ -28,6 +28,7 @@ public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
     Log.getFindings().clear();
     createSymTab(ast);
     coCoChecker.checkAll(ast);
+    System.out.println(Log.getFindings());
     assertTrue(Log.getFindings().isEmpty());
   }
   
@@ -42,7 +43,7 @@ public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
     createSymTab(ast);
     coCoChecker.checkAll(ast);
     assertEquals(1, Log.getFindings().size());
-    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCE1"));
+    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCE6"));
   }
   
   protected ICD4CodeArtifactScope createSymTab(ASTCDCompilationUnit ast) {
