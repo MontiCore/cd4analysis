@@ -36,7 +36,8 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           // if they share a left role-name, the referenced types on the right should not be the
           // same
           if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2, AssocSide.LEFT))
-              && isNavigable(assoc1, AssocSide.LEFT) && isNavigable(assoc2, AssocSide.LEFT)) {
+              && assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && assoc2.getCDAssocDir()
+                  .isDefinitiveNavigableLeft()) {
             checkRef(assoc1, assoc2, findTypeByFullName(assoc1, assoc1.getRightQualifiedName()
                 .getQName()), findTypeByFullName(assoc2, assoc2.getRightQualifiedName()
                     .getQName()));
@@ -45,21 +46,23 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           // if they share a right role-name, the referenced types on the left should not be the
           // same
           if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2,
-              AssocSide.RIGHT)) && isNavigable(assoc1, AssocSide.RIGHT) && isNavigable(assoc2,
-                  AssocSide.RIGHT)) {
+              AssocSide.RIGHT)) && assoc1.getCDAssocDir().isDefinitiveNavigableRight() && assoc2
+                  .getCDAssocDir().isDefinitiveNavigableRight()) {
             checkRef(assoc1, assoc2, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName()
                 .getQName()), findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()));
           }
           
           // We also consider a left-to-right role name match ...
           if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2, AssocSide.RIGHT))
-              && isNavigable(assoc1, AssocSide.LEFT) && isNavigable(assoc2, AssocSide.RIGHT)) {
+              && assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && assoc2.getCDAssocDir()
+                  .isDefinitiveNavigableRight()) {
             checkRef(assoc1, assoc2, findTypeByFullName(assoc1, assoc1.getRightQualifiedName()
                 .getQName()), findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()));
           }
           // ... as well as a right-to-left match
           if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2, AssocSide.LEFT))
-              && isNavigable(assoc1, AssocSide.RIGHT) && isNavigable(assoc2, AssocSide.LEFT)) {
+              && assoc1.getCDAssocDir().isDefinitiveNavigableRight() && assoc2.getCDAssocDir()
+                  .isDefinitiveNavigableLeft()) {
             checkRef(assoc1, assoc2, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName()
                 .getQName()), findTypeByFullName(assoc2, assoc2.getRightQualifiedName()
                     .getQName()));
