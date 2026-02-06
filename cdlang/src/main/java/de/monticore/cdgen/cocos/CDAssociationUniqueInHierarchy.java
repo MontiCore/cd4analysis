@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4code.cocos;
+package de.monticore.cdgen.cocos;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -13,7 +13,7 @@ import java.util.*;
  * super-classes/interfaces.
  */
 public class CDAssociationUniqueInHierarchy extends CDAssociationUnique {
-  
+
   @Override
   protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2) {
     super.checkRef(node, type1, type2);
@@ -21,18 +21,18 @@ public class CDAssociationUniqueInHierarchy extends CDAssociationUnique {
     checkSuper(type1, type2);
     checkSuper(type2, type1);
   }
-  
+
   /** Check if type2 is a super-type of type1. */
   protected void checkSuper(ASTCDType type1, ASTCDType type2) {
-    
+
     Stack<TypeSymbol> typesToVisit = new Stack<>();
-    
+
     // getSymbol().getSuperClassesOnly() did not work for some reason
     type1.getSymbol().getSuperClassesOnly().forEach(s -> typesToVisit.push(s.getTypeInfo()));
-    
+
     // getSymbol().getInterfaces() did not work for some reason
     type1.getSymbol().getInterfaceList().forEach(s -> typesToVisit.push(s.getTypeInfo()));
-    
+
     while (!typesToVisit.isEmpty()) {
       final TypeSymbol nextType = typesToVisit.pop();
       if (nextType.getFullName().equals(type2.getSymbol().getFullName())) {
@@ -40,13 +40,13 @@ public class CDAssociationUniqueInHierarchy extends CDAssociationUnique {
             type2.getName()));
         return;
       }
-      
+
       // getSymbol().getSuperClassesOnly() did not work for some reason
       nextType.getSuperClassesOnly().forEach(s -> typesToVisit.push(s.getTypeInfo()));
-      
+
       // getSymbol().getInterfaces() did not work for some reason
       nextType.getInterfaceList().forEach(s -> typesToVisit.push(s.getTypeInfo()));
     }
   }
-  
+
 }

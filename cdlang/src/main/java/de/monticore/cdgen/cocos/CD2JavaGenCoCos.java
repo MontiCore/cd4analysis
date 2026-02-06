@@ -1,10 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4code.cocos;
+package de.monticore.cdgen.cocos;
 
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 
 public class CD2JavaGenCoCos extends CD4CodeCoCosDelegator {
-  
+
   @Override
   protected void addCheckerForAllCoCos(CD4CodeCoCoChecker checker) {
     super.addCheckerForAllCoCos(checker);
@@ -13,5 +14,5 @@ public class CD2JavaGenCoCos extends CD4CodeCoCosDelegator {
     checker.addCoCo(new CDNoOutgoingAssocs4Interfaces());
     checker.addCoCo(new CDSingleClassInheritance());
   }
-  
+
 }
