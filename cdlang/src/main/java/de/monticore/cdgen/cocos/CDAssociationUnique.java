@@ -46,7 +46,7 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           // same
           if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2,
               AssocSide.RIGHT)) && isNavigable(assoc1, AssocSide.RIGHT) && isNavigable(assoc2,
-              AssocSide.RIGHT))  {
+                  AssocSide.RIGHT)) {
             checkRef(assoc1, assoc2, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName()
                 .getQName()), findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()));
           }
@@ -68,19 +68,18 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
       }
     }
   }
-
+  
   private static boolean isNavigable(ASTCDAssociation assoc1, AssocSide side1) {
-    if (side1.equals(AssocSide.LEFT) ) {
-      return assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
-              || (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
-              && !assoc1.getCDAssocDir().isDefinitiveNavigableRight());
-    } else {
-      return  assoc1.getCDAssocDir().isDefinitiveNavigableRight()
-              || (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
-              && !assoc1.getCDAssocDir().isDefinitiveNavigableRight());
+    if (side1.equals(AssocSide.LEFT)) {
+      return assoc1.getCDAssocDir().isDefinitiveNavigableLeft() || (!assoc1.getCDAssocDir()
+          .isDefinitiveNavigableLeft() && !assoc1.getCDAssocDir().isDefinitiveNavigableRight());
+    }
+    else {
+      return assoc1.getCDAssocDir().isDefinitiveNavigableRight() || (!assoc1.getCDAssocDir()
+          .isDefinitiveNavigableLeft() && !assoc1.getCDAssocDir().isDefinitiveNavigableRight());
     }
   }
-
+  
   /** helper-method to find types by full-name */
   protected ASTCDType findTypeByFullName(ASTCDAssociation node, String fullName) {
     
