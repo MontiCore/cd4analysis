@@ -81,8 +81,8 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
   /** Check if type2 is the same as type1. */
   protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2) {
     if (type1.equals(type2)) {
-      Log.error(String.format("0xCDCE1: %s has a duplicate association.", type1.getName(), type2
-          .getName()));
+      Log.error(String.format("0xCDCE1: %s has a duplicate association to %s.", type1.getName(),
+          type2.getName()));
     }
   }
   
