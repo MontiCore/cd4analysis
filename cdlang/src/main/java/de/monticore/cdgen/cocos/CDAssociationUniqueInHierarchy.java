@@ -16,16 +16,15 @@ import java.util.*;
 public class CDAssociationUniqueInHierarchy extends CDAssociationUnique {
   
   @Override
-  protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2,
-      ASTCDAssociation assoc1) {
-    super.checkRef(node, type1, type2, assoc1);
+  protected void checkRef(ASTCDAssociation assoc1, ASTCDAssociation assoc2, ASTCDType type1, ASTCDType type2) {
+    super.checkRef(assoc1, assoc2, type1, type2);
     // We now also check if the types are in a sub/super-type relation
-    checkSuper(type1, type2);
-    checkSuper(type2, type1);
+    checkSuper(assoc1, assoc2, type1, type2);
+    checkSuper(assoc2, assoc1, type2, type1);
   }
   
   /** Check if type2 is a super-type of type1. */
-  protected void checkSuper(ASTCDType type1, ASTCDType type2) {
+  protected void checkSuper(ASTCDAssociation assoc1, ASTCDAssociation assoc2, ASTCDType type1, ASTCDType type2) {
     
     Stack<TypeSymbol> typesToVisit = new Stack<>();
     
@@ -38,8 +37,10 @@ public class CDAssociationUniqueInHierarchy extends CDAssociationUnique {
     while (!typesToVisit.isEmpty()) {
       final TypeSymbol nextType = typesToVisit.pop();
       if (nextType.getFullName().equals(type2.getSymbol().getFullName())) {
-        Log.error(String.format("0xCDCE6: %s redefines an association of %s.", type1.getName(),
-            type2.getName()));
+        Log.error(String.format("0xCDCE6: %s redefines an association of %s from %s at %s",
+            type1.getName(), type2.getName(), assoc2.get_SourcePositionStart(),
+                assoc1.get_SourcePositionStart()),
+            assoc1.get_SourcePositionStart());
         return;
       }
       
