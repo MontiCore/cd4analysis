@@ -17,7 +17,9 @@ import java.util.*;
  */
 public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
   
-  /** @param node class to check. */
+  /**
+   * @param node class to check.
+   */
   @Override
   public void check(ASTCDDefinition node) {
     
@@ -38,7 +40,7 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2,
               AssocSide.LEFT))) {
             checkRef(node, findTypeByFullName(assoc1, assoc1.getRightQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()));
+                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()), assoc1);
           }
           
           // if they share a right role-name, the referenced types on the left should not be the
@@ -46,27 +48,29 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2,
               AssocSide.RIGHT))) {
             checkRef(node, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()));
+                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()), assoc1);
           }
           
           // We also consider a left-to-right role name match ...
           if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2,
               AssocSide.RIGHT))) {
             checkRef(node, findTypeByFullName(assoc1, assoc1.getRightQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()));
+                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()), assoc1);
           }
           // ... as well as a right-to-left match
           if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2,
               AssocSide.LEFT))) {
             checkRef(node, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()));
+                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()), assoc1);
           }
         }
       }
     }
   }
   
-  /** helper-method to find types by full-name */
+  /**
+   * helper-method to find types by full-name
+   */
   protected ASTCDType findTypeByFullName(ASTCDAssociation node, String fullName) {
     
     Optional<CDTypeSymbol> optSymbol = node.getEnclosingScope().resolveCDType(fullName);
@@ -79,10 +83,13 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
   }
   
   /** Check if type2 is the same as type1. */
-  protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2) {
+  protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2,
+      ASTCDAssociation assoc1) {
     if (type1.equals(type2)) {
-      Log.error(String.format("0xCDCE1: %s has a duplicate association.", type1.getName(), type2
-          .getName()));
+      Log.error(String.format("0xCDCE1: %s has a duplicate association to %s", type1.getName(),
+          type2.getName()), assoc1.isPresent_SourcePositionStart() ? assoc1
+              .get_SourcePositionStart() : null, assoc1.isPresent_SourcePositionEnd() ? assoc1
+                  .get_SourcePositionEnd() : null);
     }
   }
   
