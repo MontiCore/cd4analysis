@@ -24,7 +24,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
-import de.monticore.cd4code.cocos.CDAssociationUniqueInHierarchy;
+import de.monticore.cdgen.cocos.CDAssociationUniqueInHierarchy;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -830,7 +830,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       paramSet = CDMerge.parseMrgConfig(cmd.getOptionValue("mrg-config"));
     }
     ASTCDCompilationUnit mergeResult = CDMerge.merge(mergeSet, cdName, paramSet);
-    
+    System.out.println("Merged CDs written to " + cdName + ".cd");
     if (mergeResult != null) {
       ast = mergeResult;
     }

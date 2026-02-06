@@ -16,23 +16,23 @@ import java.util.*;
  * Checks that there are not multiple occurrences of the same association between types
  */
 public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
-
+  
   /** @param node class to check. */
   @Override
   public void check(ASTCDDefinition node) {
-
+    
     List<ASTCDAssociation> alreadyChecked = new ArrayList<>();
-
+    
     // we check for each pair of associations
     for (ASTCDAssociation assoc1 : node.getCDAssociationsList()) {
-
+      
       alreadyChecked.add(assoc1);
-
+      
       for (ASTCDAssociation assoc2 : node.getCDAssociationsList()) {
-
+        
         // only check each pair once
         if (assoc2 != assoc1 && !alreadyChecked.contains(assoc2)) {
-
+          
           // if they share a left role-name, the referenced types on the right should not be the
           // same
           if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2,
@@ -40,7 +40,7 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
             checkRef(node, findTypeByFullName(assoc1, assoc1.getRightQualifiedName().getQName()),
                 findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()));
           }
-
+          
           // if they share a right role-name, the referenced types on the left should not be the
           // same
           if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2,
@@ -48,7 +48,7 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
             checkRef(node, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName().getQName()),
                 findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()));
           }
-
+          
           // We also consider a left-to-right role name match ...
           if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2,
               AssocSide.RIGHT))) {
@@ -65,19 +65,19 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
       }
     }
   }
-
+  
   /** helper-method to find types by full-name */
   protected ASTCDType findTypeByFullName(ASTCDAssociation node, String fullName) {
-
+    
     Optional<CDTypeSymbol> optSymbol = node.getEnclosingScope().resolveCDType(fullName);
     if (optSymbol.isPresent()) {
       return optSymbol.get().getAstNode();
     }
-
+    
     Log.error("0xCDCE2: Could not find: " + fullName + ".");
     return null;
   }
-
+  
   /** Check if type2 is the same as type1. */
   protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2) {
     if (type1.equals(type2)) {
@@ -85,7 +85,7 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           .getName()));
     }
   }
-
+  
   /** derive role name if not present */
   protected String deriveRoleName(ASTCDAssociation assoc, AssocSide side) {
     ASTCDAssocSide assocSide;
@@ -106,9 +106,9 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           .getBaseName());
     }
   }
-
+  
   private enum AssocSide {
     LEFT, RIGHT;
   }
-
+  
 }
