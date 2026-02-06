@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4code.cocos;
+package de.monticore.cdgen.cocos;
 
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 
 public class CD2JavaGenCoCos extends CD4CodeCoCosDelegator {
   

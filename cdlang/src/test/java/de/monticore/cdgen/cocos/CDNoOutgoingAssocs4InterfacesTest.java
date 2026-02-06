@@ -1,8 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4code.cocos;
+package de.monticore.cdgen.cocos;
 
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import java.io.IOException;
+
+import de.monticore.cd4code.cocos.AbstractJavaGenCoCoTest;
 import org.junit.jupiter.api.Test;
 
 public class CDNoOutgoingAssocs4InterfacesTest extends AbstractJavaGenCoCoTest {

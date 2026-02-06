@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4code.cocos;
+package de.monticore.cdgen.cocos;
 
 import de.monticore.cd4codebasis._ast.ASTCDInterface;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDInterfaceCoCo;
