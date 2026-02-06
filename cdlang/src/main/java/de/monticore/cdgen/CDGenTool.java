@@ -13,12 +13,14 @@ import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdgen.cocos.CD2JavaGenCoCos;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -388,7 +390,8 @@ public class CDGenTool extends CDGeneratorTool {
    * @param ast the original ast
    */
   public void runCoCos(ASTCDCompilationUnit ast) {
-    super.runCoCos(ast);
+    CD4CodeCoCoChecker checker = new CD2JavaGenCoCos().getCheckerForAllCoCos();
+    checker.checkAll(ast);
   }
   
   @Override
