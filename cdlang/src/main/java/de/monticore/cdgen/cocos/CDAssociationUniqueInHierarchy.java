@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdgen.cocos;
 
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -15,8 +16,9 @@ import java.util.*;
 public class CDAssociationUniqueInHierarchy extends CDAssociationUnique {
   
   @Override
-  protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2) {
-    super.checkRef(node, type1, type2);
+  protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2,
+      ASTCDAssociation assoc1) {
+    super.checkRef(node, type1, type2, assoc1);
     // We now also check if the types are in a sub/super-type relation
     checkSuper(type1, type2);
     checkSuper(type2, type1);
