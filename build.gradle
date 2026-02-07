@@ -122,7 +122,6 @@ publishing {
     // the bootstrap property causes us to only build the main projects,
     // which are required by most downstream projects (cdlang & the symtabdef tool)
     if (!project.hasProperty('bootstrap')) {
-      println("bootstrapbootstrapbootstrapbootstrapbootstrap")
       // trafolib is different
       // cdtool as -tool
       def subprojectsToBePublished = [
