@@ -9,9 +9,6 @@ pluginManagement {
     maven {
       url "https://nexus.se.rwth-aachen.de/content/groups/public"
     }
-
-
   }
-
 }
 rootProject.name = 'cgradle-it'
