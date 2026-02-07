@@ -12,10 +12,7 @@ import de.monticore.cd.codegen.decorators.matcher.MatcherData;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -166,6 +163,9 @@ public class DecoratorData {
     else if (node instanceof ASTCDEnum) {
       result = matchCDEnum(((ASTCDEnum) node), matcherData);
     }
+    else if (node instanceof ASTCDPackage) {
+      result = matchCDPackage(((ASTCDPackage) node), matcherData);
+    }
     else {
       Log.error(INTERNAL_ERROR_CODE + ": Unable add to parent of unknown type " + node.getClass()
           .getName(), node.get_SourcePositionStart());
@@ -194,6 +194,19 @@ public class DecoratorData {
       }
     }
     
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+    }
+    
+    return MatchResult.DEFAULT;
+  }
+  
+  protected MatchResult matchCDPackage(ASTCDPackage node, MatcherData matcherData) {
     if (node.isPresentSymbol()) {
       var r = matchCLI(node.getSymbol(), matcherData);
       if (r != MatchResult.DEFAULT)

@@ -82,4 +82,10 @@ classdiagram MyCD {
   public class IncompleteA {
     public String name;
   }
+
+  package MyInnerPackage {
+    <<getter>>
+    class ClassWithinInnerPackage {}
+  }
+  association A1 <-> MyInnerPackage.ClassWithinInnerPackage;
 }

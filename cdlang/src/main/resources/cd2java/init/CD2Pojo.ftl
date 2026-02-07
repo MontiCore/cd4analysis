@@ -21,16 +21,16 @@
 <#--Apply the default creator: Copy the original CD and use it as the base-->
 ${decConfig.withCopyCreator().defaultApply()}
 <#-- By default (defaultApply) the GetterDecorator is applied, unless an element or its parents are marked with noGetter -->
-${decConfig.withGetters().ignoreOnName("noGetter").defaultApply()}
+${decConfig.withGetters().applyOnName("getter").ignoreOnName("noGetter").defaultApply()}
 <#--  Similar configuration for a decorator setting the initial value of associations -->
 ${decConfig.withDefaultsForCardinalityAttrs().ignoreOnName("noDefaultCardinality").defaultApply()}
 <#-- Similar configuration for the Setter Decorator -->
-${decConfig.withSetters().ignoreOnName("noSetter").defaultApply()}
+${decConfig.withSetters().applyOnName("setter").ignoreOnName("noSetter").defaultApply()}
 <#-- And the NavigableSetters (for bidirectional assocs). -->
 <#-- The implementation of the NavigableSetters decorator requires that the Setter decorator has run before.-->
-${decConfig.withNavigableSetters().ignoreOnName("noSetter").defaultApply()}
+${decConfig.withNavigableSetters().applyOnName("setter").ignoreOnName("noSetter").defaultApply()}
 <#--Method signatures will be turned into abstract methods-->
-${decConfig.withAbstractMethodSignatures().ignoreOnName("nonAbstractMethod").defaultApply()}
+${decConfig.withAbstractMethodSignatures().applyOnName("abstractMethod").ignoreOnName("nonAbstractMethod").defaultApply()}
 <#--The following decorators are not applied by default, instead they have to be explicitly configured using stereos/tags/etc-->
 <#-- By default, the Builders decorator is NOT applied, unless an element or its parents are marked with builder -->
 <#--  Builders are also not applied when the element is not marked and the parent is marked with noBuilder. -->
@@ -42,6 +42,8 @@ ${decConfig.withObservers().applyOnName("observable").ignoreOnName("notObservabl
 <#--
  You can include & override the defaults by including this template
   ${tc.includeArgs("CD2Pojo", ...)}
+
+  Note: When adding new generations, they WILL NOT be defaultApply() for at least one version!
  -->
 
 <#--It is possible to add your own decorators via a config template, see the CD2OwnDecorator.ftl (located in the tests) -->
