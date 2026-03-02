@@ -209,7 +209,7 @@ gradle build
 gradle shadowJar
 ```
 Congratulations! The  executable JAR file `MCCD.jar` is now in
-the directory `target/libs`.
+the directory `cdtool/target/libs/`.
 
 ## Tutorial: Getting Started Using the CD Tool
 
