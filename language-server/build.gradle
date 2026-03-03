@@ -9,7 +9,7 @@ plugins {
 group 'de.monticore.lang'
 version mc_version
 
-sourceCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
   mavenCentral()
