@@ -15,7 +15,7 @@ on:
     types: [ trigger_after_upstream_deploy ]
 
 env:
-  GRADLE_VERSION: 7.6 # Gradle version used
+  GRADLE_VERSION: 8.5 # Gradle version used
   GRADLE_CLI_OPTS: "-Pci --build-cache -PgenTR=false -PgenTagging=true --refresh-dependencies " # CLI options passed to Gradle
   GRADLE_BUILD_ACTION_CACHE_KEY_JOB: "test-cache-${{ github.head_ref }}.${{ github.sha }}"
 
@@ -29,6 +29,11 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -45,6 +50,11 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
