@@ -16,8 +16,7 @@ import java.util.*;
  * Checks that there are not multiple occurrences of the same association between types
  */
 public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
-  
-  /** @param node class to check. */
+
   @Override
   public void check(ASTCDDefinition node) {
     
@@ -71,18 +70,7 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
       }
     }
   }
-  
-  private static boolean isNavigable(ASTCDAssociation assoc1, AssocSide side1) {
-    if (side1.equals(AssocSide.LEFT)) {
-      return assoc1.getCDAssocDir().isDefinitiveNavigableLeft() || (!assoc1.getCDAssocDir()
-          .isDefinitiveNavigableLeft() && !assoc1.getCDAssocDir().isDefinitiveNavigableRight());
-    }
-    else {
-      return assoc1.getCDAssocDir().isDefinitiveNavigableRight() || (!assoc1.getCDAssocDir()
-          .isDefinitiveNavigableLeft() && !assoc1.getCDAssocDir().isDefinitiveNavigableRight());
-    }
-  }
-  
+
   /** helper-method to find types by full-name */
   protected ASTCDType findTypeByFullName(ASTCDAssociation node, String fullName) {
     
@@ -99,8 +87,14 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
   protected void checkRef(ASTCDAssociation assoc1, ASTCDAssociation assoc2, ASTCDType type1,
       ASTCDType type2) {
     if (type1.equals(type2)) {
-      Log.error(String.format("0xCDCE1: %s has duplicate associations at %s and %s.", type1
-          .getName(), assoc1.get_SourcePositionStart(), assoc2.get_SourcePositionStart()), assoc2
+      Log.error(String.format("0xCDCE1: %s has duplicate associations %s at %s and %s, "
+          + "i.e. 2 different associations with the same target role-name for a given source-type."
+              + "This may lead to conflicts in the generated code and is therefore not permitted "
+              + "for code generation purposes.",
+          type1
+          .getName(), assoc1.getPrintableName(), assoc1.get_SourcePositionStart(),
+              assoc2.get_SourcePositionStart()),
+          assoc2
               .get_SourcePositionStart());
     }
   }
