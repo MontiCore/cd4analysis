@@ -116,7 +116,7 @@ processing models, including:
 * computing the semantic difference of 2 CDs, and
 * merging 2 CDs (iff the result is semantically sound)
 
-The requirements for building and using the CD tool are that Java 11, Git, 
+The requirements for building and using the CD tool are that Java 21, Git, 
 and Gradle are installed and available for use (e.g., in bash). 
 
 ### Downloading the Latest Version of the Tool
@@ -186,8 +186,8 @@ As alternative to a download,
 it is possible to build an executable JAR of the tool from the source files
 located in GitHub.
 Make sure you have installed the following dependencies:
-* Java 11 or 17 (check it with java -version)
-* Gradle 7.6.4 (check it with gradle --version)
+* Java 21 (check it with java -version)
+* Gradle 8.4 (check it with gradle --version)
 
 In order to build an executable Jar of the tool with
 Bash from the source files available in GitHub, execute the following commands.
