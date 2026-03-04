@@ -16,7 +16,7 @@ import java.util.*;
  * Checks that there are not multiple occurrences of the same association between types
  */
 public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
-
+  
   @Override
   public void check(ASTCDDefinition node) {
     
@@ -70,7 +70,7 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
       }
     }
   }
-
+  
   /** helper-method to find types by full-name */
   protected ASTCDType findTypeByFullName(ASTCDAssociation node, String fullName) {
     
@@ -89,13 +89,10 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
     if (type1.equals(type2)) {
       Log.error(String.format("0xCDCE1: %s has duplicate associations %s at %s and %s, "
           + "i.e. 2 different associations with the same target role-name for a given source-type."
-              + "This may lead to conflicts in the generated code and is therefore not permitted "
-              + "for code generation purposes.",
-          type1
-          .getName(), assoc1.getPrintableName(), assoc1.get_SourcePositionStart(),
-              assoc2.get_SourcePositionStart()),
-          assoc2
-              .get_SourcePositionStart());
+          + "This may lead to conflicts in the generated code and is therefore not permitted "
+          + "for code generation purposes.", type1.getName(), assoc1.getPrintableName(), assoc1
+              .get_SourcePositionStart(), assoc2.get_SourcePositionStart()), assoc2
+                  .get_SourcePositionStart());
     }
   }
   

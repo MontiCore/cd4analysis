@@ -39,9 +39,9 @@ public class CDAssociationUniqueInHierarchy extends CDAssociationUnique {
       final TypeSymbol nextType = typesToVisit.pop();
       if (nextType.getFullName().equals(type2.getSymbol().getFullName())) {
         Log.error(String.format("0xCDCE6: %s redefines an association of %s from %s at %s."
-            + "Redefining associations are not supported by code generators.", type1
-            .getName(), type2.getName(), assoc2.get_SourcePositionStart(), assoc1
-                .get_SourcePositionStart()), assoc1.get_SourcePositionStart());
+            + "Redefining associations are not supported by code generators.", type1.getName(),
+            type2.getName(), assoc2.get_SourcePositionStart(), assoc1.get_SourcePositionStart()),
+            assoc1.get_SourcePositionStart());
         return;
       }
       
