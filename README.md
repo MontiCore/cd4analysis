@@ -137,13 +137,13 @@ parameters.
 These commands are examples for calling the tool:
 
 ```shell
-java -jar MCCd.jar -i src/MyCompany --path symbols -o out --gen
+java -jar MCCD.jar -i src/MyCompany.cd -o out --gen
 java -jar MCCD.jar -i src/MyAddress.cd -s symbols/MyAddress.cdsym
-java -jar MCCD.jar -i src/MyLife --path symbols -pp 
+java -jar MCCD.jar -i src/MyLife.cd --path symbols -pp 
 ```
 
 To try them out for yourself download and put the files
-[MyAddress.cd](doc/MyAddress.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. 
+[MyCompany.cd](doc/MyCompany.cd), [MyAddress.cd](doc/MyAddress.cd), and [MyLife.cd](doc/MyLife.cd) into your `src` directory. 
 The second command needs to be executed before the third.
 
 The possible options are:
@@ -209,7 +209,7 @@ gradle build
 gradle shadowJar
 ```
 Congratulations! The  executable JAR file `MCCD.jar` is now in
-the directory `target/libs`.
+the directory `cdtool/target/libs/`.
 
 ## Tutorial: Getting Started Using the CD Tool
 
