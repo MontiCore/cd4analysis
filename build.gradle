@@ -6,7 +6,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
   id 'java'
   id "maven-publish"
-  id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false)
+  id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false) // Eclipse compiler as it's much faster than javac
   id "de.se_rwth.codestyle" version "$mc_version"
 }
 
