@@ -187,7 +187,7 @@ it is possible to build an executable JAR of the tool from the source files
 located in GitHub.
 Make sure you have installed the following dependencies:
 * Java 21 (check it with java -version)
-* Gradle 8.4 (check it with gradle --version)
+* Gradle 8.5 (check it with gradle --version)
 
 In order to build an executable Jar of the tool with
 Bash from the source files available in GitHub, execute the following commands.
