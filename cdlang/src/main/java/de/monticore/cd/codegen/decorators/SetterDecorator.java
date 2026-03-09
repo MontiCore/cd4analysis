@@ -11,7 +11,7 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
@@ -48,7 +48,7 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     
     if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
       var originalClazz = decoratorData.getParent(attribute);
-      var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz.get());
+      var decClazz = (ASTCDType) decoratorData.getAsDecorated(originalClazz.get());
       
       var info = decoratorData.getAttrHelper().getFromSymTypeExpr(attribute.getSymbol().getType());
       
@@ -80,14 +80,14 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     }
   }
   
-  protected MethodInformation decorateMandatory(ASTCDClass clazz, ASTCDAttribute attribute) {
+  protected MethodInformation decorateMandatory(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     return decorate(clazz, attribute, SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.Set", name,
         CDParameterFacade.getInstance().createParameters(attribute), attribute);
   }
   
-  protected MethodInformation decorateOptSet(ASTCDClass clazz, ASTCDAttribute attribute) {
+  protected MethodInformation decorateOptSet(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
@@ -96,14 +96,14 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
         attribute, "--unused--");
   }
   
-  protected MethodInformation decorateOptionalAbsent(ASTCDClass clazz, ASTCDAttribute attribute) {
+  protected MethodInformation decorateOptionalAbsent(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName())) + "Absent";
     return decorate(clazz, attribute, SetterMethodKind.UNSET_OPTIONAL, "methods.opt.SetAbsent",
         name, List.of(), attribute);
   }
   
-  protected MethodInformation decorateAddWithIndex(ASTCDClass clazz, ASTCDAttribute attribute) {
+  protected MethodInformation decorateAddWithIndex(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "add" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
@@ -112,7 +112,7 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
             .getInstance().createParameter(type, attribute.getName())), attribute);
   }
   
-  protected MethodInformation decorateRemoveWithIndex(ASTCDClass clazz, ASTCDAttribute attribute) {
+  protected MethodInformation decorateRemoveWithIndex(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "remove" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
@@ -123,7 +123,7 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     return m;
   }
   
-  protected MethodInformation decorateAddUnordered(ASTCDClass clazz, ASTCDAttribute attribute) {
+  protected MethodInformation decorateAddUnordered(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "add" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
@@ -134,7 +134,7 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     return m;
   }
   
-  protected MethodInformation decorateRemoveUnordered(ASTCDClass clazz, ASTCDAttribute attribute) {
+  protected MethodInformation decorateRemoveUnordered(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "remove" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
@@ -145,7 +145,7 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     return m;
   }
   
-  protected MethodInformation decorate(ASTCDClass decParent, ASTCDAttribute attribute,
+  protected MethodInformation decorate(ASTCDType decParent, ASTCDAttribute attribute,
       SetterMethodKind kind, String templateName, String methodName, List<ASTCDParameter> params,
       Object... templateParams) {
     

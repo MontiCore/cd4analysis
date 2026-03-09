@@ -11,7 +11,7 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
@@ -39,28 +39,28 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
       // Retrieve the parent of the attribute
       var originalClazz = decoratorData.getParent(attribute).get();
       //
-      var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz);
+      var decType = (ASTCDType) decoratorData.getAsDecorated(originalClazz);
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-        decorateMandatory(decClazz, attribute);
+        decorateMandatory(decType, attribute);
       }
       else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-        decorateList(decClazz, attribute);
-        decorateWithAssocFunctions(decClazz, attribute, true);
+        decorateList(decType, attribute);
+        decorateWithAssocFunctions(decType, attribute, true);
       }
       else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-        decorateSet(decClazz, attribute);
-        decorateWithAssocFunctions(decClazz, attribute, false);
+        decorateSet(decType, attribute);
+        decorateWithAssocFunctions(decType, attribute, false);
       }
       else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-        decorateOptional(decClazz, attribute);
+        decorateOptional(decType, attribute);
       }
       else {
-        decorateMandatory(decClazz, attribute);
+        decorateMandatory(decType, attribute);
       }
     }
   }
   
-  protected void decorateMandatory(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+  protected void decorateMandatory(ASTCDType decoratedClazz, ASTCDAttribute attribute) {
     String name = (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType()) ? "is" : "get")
         + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = attribute.getMCType().deepClone();
@@ -75,7 +75,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     this.updateModifier(attribute);
   }
   
-  protected void decorateOptional(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+  protected void decorateOptional(ASTCDType decoratedClazz, ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
@@ -102,7 +102,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     this.updateModifier(attribute);
   }
   
-  protected void decorateSet(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+  protected void decorateSet(ASTCDType decoratedClazz, ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
@@ -116,7 +116,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     this.updateModifier(attribute);
   }
   
-  protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+  protected void decorateList(ASTCDType decoratedClazz, ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
@@ -130,7 +130,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     this.updateModifier(attribute);
   }
   
-  protected void decorateWithAssocFunctions(ASTCDClass decoratedClazz, ASTCDAttribute attribute,
+  protected void decorateWithAssocFunctions(ASTCDType decoratedClazz, ASTCDAttribute attribute,
       boolean isList) {
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
