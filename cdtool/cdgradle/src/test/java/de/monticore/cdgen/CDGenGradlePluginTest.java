@@ -19,30 +19,18 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class CDGenGradlePluginTest {
   
   @TempDir
   File testProjectDir;
   
-  @Test
-  public void testCDGen_v7_4_2() throws IOException {
-    testCDGen("7.4.2");
-  }
-  
-  @Test
-  public void testCDGen_v8_0_1() throws IOException {
-    this.testCDGen("8.0.1");
-  }
-  
-  @Test
-  public void testCDGen_v8_7() throws IOException {
-    this.testCDGen("8.7");
-  }
-  
-  void testCDGen(String version) throws IOException {
+  @ParameterizedTest
+  @ValueSource(strings = { "8.5", "8.7", "8.14" })
+  public void testCDGen(String version) throws IOException {
     FileUtils.copyDirectory(new File("src/test/resources/cdgradle-it"), testProjectDir);
     
     BuildResult result = GradleRunner.create().withPluginClasspath().withGradleVersion(version)
@@ -77,21 +65,6 @@ public class CDGenGradlePluginTest {
     CD4CodeMill.reset();
   }
   
-  @Test
-  public void testCDGenOwnDecorator_v7_4_2() throws IOException {
-    this.testCDGenOwnDecorator("7.4.2");
-  }
-  
-  @Test
-  public void testCDGenOwnDecorator_v8_0_1() throws IOException {
-    this.testCDGenOwnDecorator("8.0.1");
-  }
-  
-  @Test
-  public void testCDGenOwnDecorator_v8_7() throws IOException {
-    this.testCDGenOwnDecorator("8.7");
-  }
-  
   /**
    * Test the CDGenPlugin with a decorator written in a custom sourceSet and a custom config
    * template
@@ -99,7 +72,9 @@ public class CDGenGradlePluginTest {
    * @param version gradle version
    * @throws IOException in case of errors
    */
-  void testCDGenOwnDecorator(String version) throws IOException {
+  @ParameterizedTest
+  @ValueSource(strings = { "8.5", "8.7", "8.14" })
+  public void testCDGenOwnDecorator(String version) throws IOException {
     FileUtils.copyDirectory(new File("src/test/resources/cdgradle-it"), testProjectDir);
     
     BuildResult result = GradleRunner.create().withPluginClasspath().withGradleVersion(version)

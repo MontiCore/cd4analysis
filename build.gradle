@@ -4,10 +4,12 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 /* (c) https://github.com/MontiCore/monticore */
 
 plugins {
+  id 'java'
   id "maven-publish"
   id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false) // Eclipse compiler as it's much faster than javac
   id "de.se_rwth.codestyle" version "$mc_version"
 }
+
 
 description = "CD4Analysis"
 buildDir = file("$projectDir/target")
@@ -24,7 +26,7 @@ ext {
   junit_platform_version = "1.14.1"
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
-  mockito_version = "3.11.1"
+  mockito_version = "5.11.0"
   logback_version = "1.2.3"
   apache_commons_version = '4.4'
 }
@@ -37,12 +39,17 @@ repositories {
 }
 
 subprojects {
+
   apply plugin: 'java-library'
   apply plugin: 'io.github.themrmilchmann.ecj'
   apply plugin: 'maven-publish'
   apply plugin: 'de.se_rwth.codestyle'
 
-  sourceCompatibility = JavaVersion.VERSION_11
+    ecj {
+        compilerVersion = "3.43.0"
+    }
+
+  sourceCompatibility = JavaVersion.VERSION_21
 
   allprojects {
     group = "de.monticore.lang.cd4analysis"
@@ -105,7 +112,7 @@ subprojects {
   }
   java {
     toolchain {
-      languageVersion = JavaLanguageVersion.of(11)
+      languageVersion = JavaLanguageVersion.of(21)
     }
   }
 }

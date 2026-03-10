@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
-  id "com.github.johnrengelman.shadow" version "$shadow_plugin_version"
+    id 'com.gradleup.shadow' version "$shadow_plugin_version"
 }
 
 description = "CD4Analysis: Tool"
