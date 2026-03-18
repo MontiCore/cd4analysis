@@ -8,115 +8,30 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import javax.annotation.Nullable;
+
+import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class CDGenGradlePluginTest {
   
   @TempDir
   File testProjectDir;
-  File settingsFile;
-  File propertiesFile;
-  File buildFile;
-  File cdsDir;
-  File javaMainDir;
   
-  File resourceMainDir;
-  
-  @BeforeEach
-  public void setup() throws IOException {
-    settingsFile = new File(testProjectDir, "settings.gradle");
-    buildFile = new File(testProjectDir, "build.gradle");
-    propertiesFile = new File(testProjectDir, "gradle.properties");
-    cdsDir = new File(testProjectDir, "src/main/cds");
-    cdsDir.mkdirs();
-    resourceMainDir = new File(testProjectDir, "src/main/resources");
-    resourceMainDir.mkdirs();
-    javaMainDir = new File(testProjectDir, "src/main/java");
-    javaMainDir.mkdirs();
-  }
-  
-  @Test
-  public void testCDGen_v7_4_2() throws IOException {
-    testCDGen("7.4.2");
-  }
-  
-  @Test
-  public void testCDGen_v8_0_1() throws IOException {
-    this.testCDGen("8.0.1");
-  }
-  
-  @Test
-  public void testCDGen_v8_7() throws IOException {
-    this.testCDGen("8.7");
-  }
-  
-  void testCDGen(String version) throws IOException {
-    writeFile(settingsFile, "rootProject.name = 'hello-world'");
-    File langLibs = new File("../../cdlang/target/libs");
-    File runtimeLibs = new File("../../cd-runtime/target/libs");
-    
-    String projVersion = loadProperties().getProperty("version");
-    File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar");
-    File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar");
-    
-    assertTrue(cd4aJarFile.exists());
-    assertTrue(runtimeJarFile.exists());
-    // @formatter:off
-    String buildFileContent =
-        "plugins {"
-            + "    id 'de.rwth.se.cdgen' "
-            + "}\n "
-            + "repositories {\n"
-            + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
-            + "  mavenLocal()\n"
-            + " }\n"
-            + " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
-            + " mavenCentral()\n"
-            + "}\n"
-            +
-            // We have to inject the cdlang jar for this project (as it is not yet published)
-            "dependencies {\n"
-            + " cdTool files('"
-            + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
-            + "')\n"
-            + "  api files('"
-            + runtimeJarFile.getAbsolutePath().replace("\\", "\\\\")
-            + "')\n"
-            // add the custom Log dependency
-            + "implementation \"de.monticore:monticore-runtime:"
-            + projVersion
-            + "\" \n"
-            +
-            // Along with the transitive dependencies
-            " cdTool \"de.monticore:monticore-grammar:"
-            + projVersion
-            + "\" \n "
-            + "}\n"
-            // Exclude runtime
-            + " configurations.api {\n exclude group:'de.monticore.lang', module: 'cd-runtime'\n}\n";
-    // @formatter:on
-    writeFile(buildFile, buildFileContent);
-    Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
-        .toPath());
-    Files.copy(new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd")
-        .toPath());
-    var myCDJava = new File(javaMainDir, "MyCD");
-    myCDJava.mkdirs();
-    Files.copy(new File("src/test/resources/IncompleteA.java").toPath(), new File(myCDJava,
-        "IncompleteA.java").toPath());
+  @ParameterizedTest
+  @ValueSource(strings = { "8.5", "8.7", "8.14" })
+  public void testCDGen(String version) throws IOException {
+    FileUtils.copyDirectory(new File("src/test/resources/cdgradle-it"), testProjectDir);
     
     BuildResult result = GradleRunner.create().withPluginClasspath().withGradleVersion(version)
         .withProjectDir(testProjectDir).withArguments(withProperties("build", "--info",
@@ -150,21 +65,6 @@ public class CDGenGradlePluginTest {
     CD4CodeMill.reset();
   }
   
-  @Test
-  public void testCDGenOwnDecorator_v7_4_2() throws IOException {
-    this.testCDGenOwnDecorator("7.4.2");
-  }
-  
-  @Test
-  public void testCDGenOwnDecorator_v8_0_1() throws IOException {
-    this.testCDGenOwnDecorator("8.0.1");
-  }
-  
-  @Test
-  public void testCDGenOwnDecorator_v8_7() throws IOException {
-    this.testCDGenOwnDecorator("8.7");
-  }
-  
   /**
    * Test the CDGenPlugin with a decorator written in a custom sourceSet and a custom config
    * template
@@ -172,71 +72,15 @@ public class CDGenGradlePluginTest {
    * @param version gradle version
    * @throws IOException in case of errors
    */
-  void testCDGenOwnDecorator(String version) throws IOException {
-    writeFile(settingsFile, "rootProject.name = 'hello-world'");
-    File langLibs = new File("../../cdlang/target/libs");
-    File runtimeLibs = new File("../../cd-runtime/target/libs");
-    
-    String projVersion = loadProperties().getProperty("version");
-    File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar");
-    File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar");
-    
-    assertTrue(cd4aJarFile.exists());
-    assertTrue(runtimeLibs.exists());
-    // @formatter:off
-    String buildFileContent = "plugins {"
-        + "    id 'de.rwth.se.cdgen' "
-        + "}\n "
-        + "repositories {\n"
-        + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
-        + "  mavenLocal()\n"
-        + " }\n"
-        + " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
-        + " mavenCentral()\n"
-        + "}\n" +
-        // Define a sourceset in which we write our own decorator
-        "sourceSets{\n"
-        + "  decorators {\n"
-        + "   java.srcDir('src/dec/java') \n"
-        + " }" + "}\n" +
-        // We have to inject the cdlang jar for this project (as it is not yet published)
-        "dependencies {\n"
-        + " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\") + "')\n" +
-        // Along with the transitive dependencies
-        " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n "
-        + "  api files('"
-        + runtimeJarFile.getAbsolutePath().replace("\\", "\\\\")
-        + "')\n"
-        + "}\n"
-        // the decorator sourceset requires the same dependencies as cdTool
-        + "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n"
-        + "generateClassDiagrams {\n" + "  configTemplate='CD2OwnDecorator' \n "
-        + "  tmplDir=file('src/main/resources') \n "
-        + "  getExtraClasspathElements().from(sourceSets.decorators.output) \n "
-        + "}\n"
-        // Exclude runtime
-        + "configurations.api {\n exclude group:'de.monticore.lang', module: 'cd-runtime'\n}\n";
-    // @formatter:on
-    writeFile(buildFile, buildFileContent);
-    Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
-        .toPath());
-    Files.copy(new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd")
-        .toPath());
-    File srcSet = new File(testProjectDir, "src/dec/java/mc");
-    srcSet.mkdirs();
-    Files.copy(new File("src/test/resources/MyOwnDecorator.java").toPath(), new File(srcSet,
-        "MyOwnDecorator.java").toPath());
-    Files.copy(new File("src/test/resources/CD2OwnDecorator.ftl").toPath(), new File(
-        resourceMainDir, "CD2OwnDecorator.ftl").toPath());
-    
-    var myCDJava = new File(javaMainDir, "MyCD");
-    myCDJava.mkdirs();
-    Files.copy(new File("src/test/resources/IncompleteA.java").toPath(), new File(myCDJava,
-        "IncompleteA.java").toPath());
+  @ParameterizedTest
+  @ValueSource(strings = { "8.5", "8.7", "8.14" })
+  public void testCDGenOwnDecorator(String version) throws IOException {
+    FileUtils.copyDirectory(new File("src/test/resources/cdgradle-it"), testProjectDir);
     
     BuildResult result = GradleRunner.create().withPluginClasspath().withGradleVersion(version)
         .withProjectDir(testProjectDir).withArguments(withProperties("build", "--info",
-            "--stacktrace")).build();
+            "--stacktrace", "-PwithCustomDec=true" // with custom decorator
+        )).build();
     assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
     
@@ -244,12 +88,6 @@ public class CDGenGradlePluginTest {
       System.err.println(result.getOutput());
       fail("Failed to find \"I am decorating\" in output");
     }
-  }
-  
-  void writeFile(File destination, String content) throws IOException {
-    destination.getParentFile().mkdirs();
-    destination.createNewFile();
-    Files.write(destination.toPath(), Collections.singleton(content));
   }
   
   Properties loadProperties() {
@@ -272,13 +110,28 @@ public class CDGenGradlePluginTest {
     @Nullable
     String mavenRepo = System.getProperty("maven.repo.local");
     if (mavenRepo != null && !mavenRepo.isEmpty()) {
-      ret.add("-Dmaven.repo.local=" + mavenRepo + "");
+      ret.add("-Dmaven.repo.local=" + mavenRepo);
     }
     @Nullable
     String useLocalRepo = System.getProperty("useLocalRepo");
     if (useLocalRepo != null && !useLocalRepo.isEmpty()) {
       ret.add("-PuseLocalRepo=" + useLocalRepo);
     }
+    
+    File langLibs = new File("../../cdlang/target/libs");
+    File runtimeLibs = new File("../../cd-runtime/target/libs");
+    
+    String projVersion = loadProperties().getProperty("version");
+    File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar").getAbsoluteFile();
+    File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar")
+        .getAbsoluteFile();
+    assertTrue(cd4aJarFile.exists());
+    assertTrue(runtimeJarFile.exists());
+    
+    ret.add("-Pversion=" + projVersion);
+    ret.add("-Pcdgen_cd4aJarFile=" + cd4aJarFile);
+    ret.add("-Pcdgen_runtimeJarFile=" + runtimeJarFile);
+    
     return ret;
   }
   

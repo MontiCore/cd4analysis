@@ -4,6 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 /* (c) https://github.com/MontiCore/monticore */
 
 plugins {
+  id 'java'
   id "maven-publish"
   id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false) // Eclipse compiler as it's much faster than javac
   id "de.se_rwth.codestyle" version "$mc_version"
@@ -18,14 +19,13 @@ ext {
   antlr_version = "4.12.0"
   plantuml_version = "1.2020.15"
   jackson_version = "2.20.1"
-  junit_version = "5.14.1"
-  junit_platform_version = "1.14.1"
+  junit_version = "6.0.3"
   commons_cli_version = "1.11.0"
   commons_lang_version = "3.20.0"
   commons_text_version = "1.15.0"
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
-  mockito_version = "3.11.1"
+  mockito_version = "5.11.0"
   logback_version = "1.2.3"
   apache_commons_version = '4.4'
 }
@@ -43,7 +43,11 @@ subprojects {
   apply plugin: 'maven-publish'
   apply plugin: 'de.se_rwth.codestyle'
 
-  sourceCompatibility = JavaVersion.VERSION_11
+    ecj {
+        compilerVersion = "3.43.0"
+    }
+
+  sourceCompatibility = JavaVersion.VERSION_21
 
   allprojects {
     group = "de.monticore.lang.cd4analysis"
@@ -106,7 +110,7 @@ subprojects {
   }
   java {
     toolchain {
-      languageVersion = JavaLanguageVersion.of(11)
+      languageVersion = JavaLanguageVersion.of(21)
     }
   }
 }
@@ -123,7 +127,6 @@ publishing {
     // the bootstrap property causes us to only build the main projects,
     // which are required by most downstream projects (cdlang & the symtabdef tool)
     if (!project.hasProperty('bootstrap')) {
-      println("bootstrapbootstrapbootstrapbootstrapbootstrap")
       // trafolib is different
       // cdtool as -tool
       def subprojectsToBePublished = [

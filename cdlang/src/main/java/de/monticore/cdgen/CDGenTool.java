@@ -124,12 +124,16 @@ public class CDGenTool extends CDGeneratorTool {
       // Create the symbol-table (symbol table creation phase 1)
       List<ICD4CodeArtifactScope> scopes = new ArrayList<>(asts.size());
       for (ASTCDCompilationUnit ast : asts) {
+        Log.enableFailQuick(false); // ST creation might report multiple errors
         scopes.add(this.createSymbolTable(ast, c2mc));
+        Log.enableFailQuick(true);
       }
       
       // Complete the symbol-table (symbol table creation phase 2)
       for (ASTCDCompilationUnit ast : asts) {
+        Log.enableFailQuick(false); // ST completition might report multiple errors
         this.completeSymbolTable(ast);
+        Log.enableFailQuick(true);
       }
       
       // Run CoCos

@@ -9,7 +9,7 @@ plugins {
 group 'de.monticore.lang'
 version mc_version
 
-sourceCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
   mavenCentral()
@@ -72,8 +72,37 @@ task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
     including(TaskTypes.VSCODE_PLUGIN)
   }
 }
+
+task autoconfigureCD4Code(type: de.mclsg.task.AutoconfigureTask) {
+  mclsg {
+    languageName = "de.monticore.CD4Code"
+    fileExtension = "cd"
+  }
+  if(("true").equals(getProperty('buildVscodePlugin'))){
+    including(TaskTypes.VSCODE_PLUGIN)
+  }
+}
+
 compileJava.dependsOn autoconfigure
+compileJava.dependsOn autoconfigureCD4Code
+
+packCD4AnalysisLanguageServer {
+  getArchiveBaseName().set("cd4a-language-server")
+}
+
+packCD4CodeLanguageServer {
+  getArchiveBaseName().set("cd4c-language-server")
+}
 
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsForVariantJar)
 tasks.packCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.jar)
+
+tasks.generateCD4CodeLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)
+tasks.generateCD4CodeLanguageServer.dependsOn(project(":cdlang").tasks.grammarsForVariantJar)
+tasks.packCD4CodeLanguageServer.dependsOn(project(":cdlang").tasks.jar)
+
+if(("true").equals(getProperty('buildVscodePlugin'))) {
+  tasks.buildCD4CodeVscodePlugin.dependsOn(tasks.packageCD4CodeVscodePlugin)
+  tasks.buildCD4AnalysisVscodePlugin.dependsOn(tasks.packageCD4AnalysisVscodePlugin)
+}

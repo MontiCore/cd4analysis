@@ -116,7 +116,7 @@ processing models, including:
 * computing the semantic difference of 2 CDs, and
 * merging 2 CDs (iff the result is semantically sound)
 
-The requirements for building and using the CD tool are that Java 11, Git, 
+The requirements for building and using the CD tool are that Java 21, Git, 
 and Gradle are installed and available for use (e.g., in bash). 
 
 ### Downloading the Latest Version of the Tool
@@ -137,13 +137,13 @@ parameters.
 These commands are examples for calling the tool:
 
 ```shell
-java -jar MCCd.jar -i src/MyCompany --path symbols -o out --gen
+java -jar MCCD.jar -i src/MyCompany.cd -o out --gen
 java -jar MCCD.jar -i src/MyAddress.cd -s symbols/MyAddress.cdsym
-java -jar MCCD.jar -i src/MyLife --path symbols -pp 
+java -jar MCCD.jar -i src/MyLife.cd --path symbols -pp 
 ```
 
 To try them out for yourself download and put the files
-[MyAddress.cd](doc/MyAddress.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. 
+[MyCompany.cd](doc/MyCompany.cd), [MyAddress.cd](doc/MyAddress.cd), and [MyLife.cd](doc/MyLife.cd) into your `src` directory. 
 The second command needs to be executed before the third.
 
 The possible options are:
@@ -186,8 +186,8 @@ As alternative to a download,
 it is possible to build an executable JAR of the tool from the source files
 located in GitHub.
 Make sure you have installed the following dependencies:
-* Java 11 or 17 (check it with java -version)
-* Gradle 7.6.4 (check it with gradle --version)
+* Java 21 (check it with java -version)
+* Gradle 8.5 (check it with gradle --version)
 
 In order to build an executable Jar of the tool with
 Bash from the source files available in GitHub, execute the following commands.
@@ -209,7 +209,7 @@ gradle build
 gradle shadowJar
 ```
 Congratulations! The  executable JAR file `MCCD.jar` is now in
-the directory `target/libs`.
+the directory `cdtool/target/libs/`.
 
 ## Tutorial: Getting Started Using the CD Tool
 
