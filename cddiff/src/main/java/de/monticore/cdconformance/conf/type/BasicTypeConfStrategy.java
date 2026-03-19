@@ -93,10 +93,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     boolean associations = checkAssocIncarnation(concrete, ref);
     
     // check if all reference super-types are incarnated
-    boolean superTypes = CDDiffUtil.getAllSuperTypes(ref, refCD.getCDDefinition()).stream()
-        .allMatch(refSuper -> CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition())
-            .stream().anyMatch(conSuper -> incMapping.getReferenceElements(conSuper).contains(
-                refSuper)));
+    boolean superTypes = checkSuperTypes(concrete, ref);
     if (attributes && methods && associations && superTypes) {
       return true;
     }
@@ -115,6 +112,12 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
       System.out.println("Incarnations of super-types are missing or incorrect!");
     }
     return false;
+  }
+  
+  protected boolean checkSuperTypes(ASTCDType concrete, ASTCDType ref) {
+    return CDDiffUtil.getAllSuperTypes(ref).stream().allMatch(refSuper -> CDDiffUtil
+        .getAllSuperTypes(concrete).stream().anyMatch(conSuper -> incMapping.getReferenceElements(
+            conSuper).contains(refSuper)));
   }
   
   /** We check that all reference enum constants are preserved in relative order. */
