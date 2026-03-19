@@ -7,6 +7,8 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.exceptions.ConfigurationException;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -240,6 +242,12 @@ public class ASTCDHelper {
   public Optional<ASTCDClass> getClass(final String className) {
     if (this.classes.containsKey(className)) {
       return Optional.of(this.classes.get(className));
+    }
+    else {
+      String simpleName = StringUtils.substringAfterLast(className, ".");
+      if (this.classes.containsKey(simpleName)) {
+        return Optional.of(this.classes.get(simpleName));
+      }
     }
     return Optional.empty();
   }

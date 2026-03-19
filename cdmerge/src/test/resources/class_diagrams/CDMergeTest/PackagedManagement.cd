@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram PackagedManagement {
+  package work {
+     abstract class Employee {
+      String name;
+    }
+  }
+
+  package uni {
+    class Professor extends work.Employee{
+      int salary;
+    }
+    class Lecture{
+      int courseID;
+    }
+    association Professor (lecturer) -> (holds) Lecture [1..*];
+  }
+}
