@@ -1,5 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package inheritanceAttributePullup3;
+
+import java.util.Date;
+
 classdiagram B {
 
 	class Human{
@@ -13,5 +16,5 @@ classdiagram B {
 		String name;
 		int enrollmentNumber;
 	}
-	
+
 }

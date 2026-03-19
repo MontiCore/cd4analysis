@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +50,7 @@ public class BaseTest {
   
   @BeforeEach
   public void initBefore() {
+    LogStub.init();
     CD4CodeMill.reset();
     CD4CodeMill.init();
     parser = CD4CodeMill.parser();
@@ -97,7 +100,7 @@ public class BaseTest {
       }
     }
     if (PRINTOUT_TRACE | getSystemProperty("test.printout.trace").equals("1")) {
-      result.getMergeLog().getAllLogs(false).forEach(log -> System.out.println(log
+      result.getMergeLog().getAllLogs(false).forEach(log -> Log.println(log
           .toStringWithTimeStamp()));
     }
   }
@@ -111,9 +114,9 @@ public class BaseTest {
     int i = 1;
     if (result.getIntermediateResults().size() > 1) {
       for (MergeStepResult step : result.getIntermediateResults()) {
-        System.out.println(">>>>  STEP " + i + " >>>>");
+        Log.println(">>>>  STEP " + i + " >>>>");
         processResult(step);
-        System.out.println();
+        Log.println("");
       }
     }
     else if (result.getIntermediateResults().size() == 1) {
