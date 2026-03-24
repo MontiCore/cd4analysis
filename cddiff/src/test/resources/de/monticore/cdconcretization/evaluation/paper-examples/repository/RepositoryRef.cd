@@ -1,0 +1,15 @@
+import java.lang.String;
+
+classdiagram RepositoryRef {
+
+  class Entity {
+    any key;
+  }
+
+  <<forEach="Entity">> class EntityRepository {
+    <<forEach="Entity.key">> Optional<Entity> findByKey(any key);
+    List<Entity> findAll();
+    Entity save(Entity entity);
+    <<forEach="Entity.key">> void removeByKey(any key);
+  }
+}
