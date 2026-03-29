@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.inc.*;
 import de.monticore.cdconformance.inc.association.*;
+import de.monticore.cdconformance.inc.attribute.AdaptedNameAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
@@ -159,7 +160,18 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
             compTypeIncStrategy, concreteCD, referenceCD, mapping));
       }
     }
-    
+    if (conformanceParams.contains(CDConfParameter.ADAPTED_NAME_MAPPING)) {
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcherForAdapted =
+          conformanceParams.contains(CDConfParameter.INHERITANCE) ? compSubTypeIncStrategy
+              : compTypeIncStrategy;
+      compAssocIncStrategy.addIncStrategy(
+          new AdaptedRoleNameAssocIncStrategy(typeMatcherForAdapted, concreteCD, referenceCD));
+      compAttributeIncStrategy.addIncStrategy(
+          new AdaptedNameAttributeIncStrategy(typeMatcherForAdapted));
+      compMethodIncStrategy.addIncStrategy(
+          new AdaptedNameMethodIncStrategy(typeMatcherForAdapted, mcTypeMatcher));
+    }
+
     return new DefaultCDConformanceContext(concreteCD, referenceCD, mapping,
         underspecifiedPlaceholderTypeName, conformanceParams, compTypeIncStrategy,
         compSubTypeIncStrategy, compAssocIncStrategy, compAttributeIncStrategy,
