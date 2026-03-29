@@ -10,6 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
+import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
 import java.util.List;
@@ -89,7 +90,15 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
         StereotypeUtil.addStereotype(attributeIncarnation.getModifier(), context.getMappingName(),
             referenceAttribute.getSymbol().getFullName());
       }
-      
+      if (context.isImplicitNameAdaptationEnabled()) {
+        NameUtil.adaptTemplatedName(attributeIncarnation.getName(),
+            rAttributeType.getName(), cAttributeType.getName()).ifPresent(adapted -> {
+              attributeIncarnation.setName(adapted);
+              StereotypeUtil.addStereotype(attributeIncarnation.getModifier(),
+                  context.getMappingName(), referenceAttribute.getSymbol().getFullName());
+            });
+      }
+
       // 2. set type of incarnation
       // use FQ name to avoid messing with imports / name conflicts
       attributeIncarnation.setMCType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(

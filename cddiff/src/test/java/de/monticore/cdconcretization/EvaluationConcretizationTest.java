@@ -139,6 +139,8 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     
     @Test
     void banking2() {
+      // TODO Remove once we support method parameters in incarnation mapping
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut("evaluation/banking2/BankingConc.cd",
           "evaluation/banking2/BankingRef.cd", "evaluation/banking2/BankingOut.cd");
     }

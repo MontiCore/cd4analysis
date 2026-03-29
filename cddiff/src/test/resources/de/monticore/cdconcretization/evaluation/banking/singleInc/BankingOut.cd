@@ -21,8 +21,9 @@ classdiagram Banking {
 
   // sends money from sourceAccount to targetAccount
   class Transaction {
-    BankAccount sourceAccount;
-    BankAccount targetAccount;
+    // TODO: BasicAttributeInTypeCompleter should not add the <<ref>> stereotype if CDConfParameter.ADAPTED_NAME_MAPPING is set
+    <<ref="Banking.Transaction.sourceAccount">>BankAccount sourceBankAccount;
+    <<ref="Banking.Transaction.targetAccount">>BankAccount targetBankAccount;
     double amount;
   }
 

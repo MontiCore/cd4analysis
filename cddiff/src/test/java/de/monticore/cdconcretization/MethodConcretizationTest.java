@@ -34,6 +34,8 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testParameterTypeMI() {
+    // TODO Remove once we support method parameters in incarnation mapping
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut("methods/multiIncarnation/ParameterTypeMIConc.cd",
         "methods/multiIncarnation/Reference.cd", "methods/multiIncarnation/ParameterTypeMIOut.cd");
   }
@@ -62,6 +64,8 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testParameterAndReturnTypeMI() {
+    // TODO Remove once we support method parameters in incarnation mapping
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "methods/multiIncarnation/ParameterAndReturnTypeMIConc.cd",
         "methods/multiIncarnation/Reference.cd",
