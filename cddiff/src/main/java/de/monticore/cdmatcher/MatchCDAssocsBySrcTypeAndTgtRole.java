@@ -65,50 +65,55 @@ public class MatchCDAssocsBySrcTypeAndTgtRole implements
     
     return match;
   }
-  
-  /** Match two associations, assuming both are written in opposite orientations. */
+
+  /**
+   * Match two associations, assuming both are written in opposite orientations.
+   * <p>
+   * Note: {@link #checkRole} is always called with the src side first and the tgt side second,
+   * consistent with {@link #check} and all {@code checkRole} overrides.
+   */
   protected boolean checkReverse(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
-    
+
     boolean match = false;
-    
+
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableRight() || !tgtElem.getCDAssocDir()
         .isDefinitiveNavigableLeft()) && (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
             || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
       match = checkReference(srcElem.getRightQualifiedName().getQName(), tgtElem
-          .getLeftQualifiedName().getQName()) && checkRole(tgtElem.getRight(), srcElem.getLeft());
+          .getLeftQualifiedName().getQName()) && checkRole(srcElem.getLeft(), tgtElem.getRight());
     }
-    
+
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableLeft() || !tgtElem.getCDAssocDir()
         .isDefinitiveNavigableRight()) && (srcElem.getCDAssocDir().isDefinitiveNavigableRight()
             || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
       match = match || (checkReference(srcElem.getLeftQualifiedName().getQName(), tgtElem
-          .getRightQualifiedName().getQName()) && checkRole(tgtElem.getLeft(), srcElem.getRight()));
+          .getRightQualifiedName().getQName()) && checkRole(srcElem.getRight(), tgtElem.getLeft()));
     }
-    
+
     return match;
   }
-  
+
   /** We check if the referenced types match using the provided type-matcher. */
   protected boolean checkReference(String srcElem, String tgtElem) {
     Optional<ASTCDType> srcType = resolveConcreteCDTyp(srcElem);
     Optional<ASTCDType> tgtType = resolveReferenceCDTyp(tgtElem);
-    
+
     if (srcType.isPresent() && tgtType.isPresent()) {
       return typeMatcher.isMatched(srcType.get(), tgtType.get());
     }
     return false;
   }
-  
+
   protected Optional<ASTCDType> resolveConcreteCDTyp(String qName) {
     return srcCD.getEnclosingScope().resolveCDTypeDown(qName).map(CDTypeSymbol::getAstNode);
   }
-  
+
   protected Optional<ASTCDType> resolveReferenceCDTyp(String qName) {
     return tgtCD.getEnclosingScope().resolveCDTypeDown(qName).map(CDTypeSymbol::getAstNode);
   }
-  
+
   protected boolean checkRole(ASTCDAssocSide srcElem, ASTCDAssocSide tgtElem) {
     return CDDiffUtil.inferRole(srcElem).equals(CDDiffUtil.inferRole(tgtElem));
   }
-  
+
 }
