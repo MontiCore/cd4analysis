@@ -87,6 +87,10 @@ public class StereotypeUtil {
     ASTStereotype stereotype;
     if (modifier.isPresentStereotype()) {
       stereotype = modifier.getStereotype();
+      // Avoid duplicates: skip if a stereotype with the same name and value already exists
+      if (stereotype.streamValues().anyMatch(v -> v.getName().equals(name) && v.getValue().equals(content))) {
+        return;
+      }
     }
     else {
       stereotype = CD4CodeMill.stereotypeBuilder().build();
