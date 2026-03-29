@@ -10,5 +10,6 @@ classdiagram TicketSystemConc {
 
   <<ref="Project">> class Workspace {
     <<ref="name">> String label;
+    boolean archived;
   }
 }
