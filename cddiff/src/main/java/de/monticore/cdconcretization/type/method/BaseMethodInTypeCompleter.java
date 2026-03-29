@@ -12,6 +12,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
@@ -279,7 +280,8 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
         if (context.isImplicitNameAdaptationEnabled()) {
           methodName = adaptMethodNameFromTypePairs(methodName, referenceMethod,
               returnTypeIncarnation, parameterCombination, context);
-          if (!methodName.equals(referenceMethod.getName())) {
+          if (!methodName.equals(referenceMethod.getName())
+              && !context.getConformanceParams().contains(CDConfParameter.ADAPTED_NAME_MAPPING)) {
             StereotypeUtil.addStereotype(methodClone.getModifier(), context.getMappingName(),
                 MethodSignatureString.printSignatureIfOverloaded(referenceMethod.getSymbol()));
           }

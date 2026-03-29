@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
@@ -94,8 +95,10 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
         NameUtil.adaptTemplatedName(attributeIncarnation.getName(),
             rAttributeType.getName(), cAttributeType.getName()).ifPresent(adapted -> {
               attributeIncarnation.setName(adapted);
-              StereotypeUtil.addStereotype(attributeIncarnation.getModifier(),
-                  context.getMappingName(), referenceAttribute.getSymbol().getFullName());
+              if (!context.getConformanceParams().contains(CDConfParameter.ADAPTED_NAME_MAPPING)) {
+                StereotypeUtil.addStereotype(attributeIncarnation.getModifier(),
+                    context.getMappingName(), referenceAttribute.getSymbol().getFullName());
+              }
             });
       }
 
