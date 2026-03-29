@@ -12,6 +12,7 @@ import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.association.AssocMatchDirection;
 import de.monticore.cdconcretization.association.AssociationMatch;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
+import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDAssocsGreedy;
@@ -249,23 +250,61 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
             .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(rightTypeInc.getSymbol()
                 .getInternalQualifiedName())).build());
         
-        // If the right type does not have a role name, it is implicitly the type incarnation's
-        // name (first character lowercase) anyway.
-        // If a role name is already present and there are multiple incarnations of the
-        // type, append the type incarnation's name to it to avoid name conflicts.
-        // NOTE: leftTypesIncs, and rightTypeIncs are ONLY the sets of type incarnations that still need an
-        // association incarnation. We need to consider the TOTAL number of type incarnations to decide
-        // whether we need to append the type incarnation name or not.
+        // Capture original role names (from the reference) before implicit adaptation, so we can
+        // detect whether adaptation changed them and avoid adding a redundant suffix afterwards.
+        String originalRightRoleName = association.getRight().isPresentCDRole()
+            ? association.getRight().getCDRole().getName() : null;
+        String originalLeftRoleName = association.getLeft().isPresentCDRole()
+            ? association.getLeft().getCDRole().getName() : null;
+
+        // Apply implicit name adaptation for role names and association name, using only the
+        // specific endpoint type incarnation pairs for this association (avoids chaining issues).
+        if (context.isImplicitNameAdaptationEnabled()) {
+          ASTCDType rRightType = ConcretizationHelper.getAssocRightType(context.getReferenceCD(),
+              referenceAssociation);
+          ASTCDType rLeftType = ConcretizationHelper.getAssocLeftType(context.getReferenceCD(),
+              referenceAssociation);
+          if (association.getRight().isPresentCDRole()) {
+            NameUtil.adaptTemplatedName(association.getRight().getCDRole().getName(),
+                rRightType.getName(), rightTypeInc.getName()).ifPresent(
+                    n -> association.getRight().getCDRole().setName(n));
+          }
+          if (association.getLeft().isPresentCDRole()) {
+            NameUtil.adaptTemplatedName(association.getLeft().getCDRole().getName(),
+                rLeftType.getName(), leftTypeInc.getName()).ifPresent(
+                    n -> association.getLeft().getCDRole().setName(n));
+          }
+          if (association.isPresentName()) {
+            // Apply both endpoint type pairs sequentially (left first, then right)
+            String assocName = association.getName();
+            assocName = NameUtil.adaptTemplatedName(assocName, rLeftType.getName(),
+                leftTypeInc.getName()).orElse(assocName);
+            assocName = NameUtil.adaptTemplatedName(assocName, rRightType.getName(),
+                rightTypeInc.getName()).orElse(assocName);
+            association.setName(assocName);
+          }
+        }
+
+        // If a role name is present and there are multiple incarnations of the type, append the
+        // type incarnation's name as a suffix to avoid name conflicts — unless implicit name
+        // adaptation already produced a unique name for this incarnation (in which case the suffix
+        // would be redundant and misleading).
+        // NOTE: leftTypesIncs and rightTypeIncs are ONLY the sets still needing an association
+        // incarnation. We use the TOTAL incarnation count to decide whether a suffix is needed.
         int totalRightTypeIncs = context.getIncarnationMapping().getIncarnations(
             ConcretizationHelper.getAssocRightType(context.getReferenceCD(), referenceAssociation))
             .size();
-        if (association.getRight().isPresentCDRole() && totalRightTypeIncs > 1) {
+        boolean rightRoleAdapted = originalRightRoleName != null && !originalRightRoleName.equals(
+            association.getRight().getCDRole().getName());
+        if (association.getRight().isPresentCDRole() && totalRightTypeIncs > 1 && !rightRoleAdapted) {
           association.getRight().getCDRole().setName(association.getRight().getCDRole().getName()
               + "_" + rightTypeInc.getName());
         }
         int totalLeftTypeIncs = context.getIncarnationMapping().getIncarnations(ConcretizationHelper
             .getAssocLeftType(context.getReferenceCD(), referenceAssociation)).size();
-        if (association.getLeft().isPresentCDRole() && totalLeftTypeIncs > 1) {
+        boolean leftRoleAdapted = originalLeftRoleName != null && !originalLeftRoleName.equals(
+            association.getLeft().getCDRole().getName());
+        if (association.getLeft().isPresentCDRole() && totalLeftTypeIncs > 1 && !leftRoleAdapted) {
           association.getLeft().getCDRole().setName(association.getLeft().getCDRole().getName()
               + "_" + leftTypeInc.getName());
         }

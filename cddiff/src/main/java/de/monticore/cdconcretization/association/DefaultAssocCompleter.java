@@ -7,19 +7,31 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
+import de.monticore.cdconcretization.cd.CDCompletionContext;
+import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cddiff.CDDiffUtil;
+import de.se_rwth.commons.logging.Log;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DefaultAssocCompleter implements IAssociationCompleter {
   
   private final ASTCDCompilationUnit ccd;
-  
+
   private final IAssocSideCompleter assocSideCompleter;
-  
+
+  /** Nullable; when non-null, implicit name adaptation is applied if enabled in context. */
+  private final CDCompletionContext context;
+
   public DefaultAssocCompleter(ASTCDCompilationUnit ccd, IAssocSideCompleter assocSideCompleter) {
+    this(ccd, assocSideCompleter, null);
+  }
+
+  public DefaultAssocCompleter(ASTCDCompilationUnit ccd, IAssocSideCompleter assocSideCompleter,
+      CDCompletionContext context) {
     this.ccd = ccd;
     this.assocSideCompleter = assocSideCompleter;
+    this.context = context;
   }
   
   @Override
@@ -41,6 +53,45 @@ public class DefaultAssocCompleter implements IAssociationCompleter {
         break;
     }
     
+    // Apply implicit name adaptation for role names and association name using the
+    // specific endpoint type pairs only (avoids chaining bugs).
+    if (context != null && context.isImplicitNameAdaptationEnabled()) {
+      try {
+        ASTCDType rRightType = ConcretizationHelper.getAssocRightType(context.getReferenceCD(),
+            rAssoc);
+        ASTCDType rLeftType = ConcretizationHelper.getAssocLeftType(context.getReferenceCD(),
+            rAssoc);
+        ASTCDType cRightType = ConcretizationHelper.getAssocRightType(ccd, cAssoc);
+        ASTCDType cLeftType = ConcretizationHelper.getAssocLeftType(ccd, cAssoc);
+        // In REVERSE_DIRECTION the right side of cAssoc corresponds to the left side of rAssoc
+        ASTCDType rTypeForConRight = matchDirection == AssocMatchDirection.SAME_DIRECTION
+            ? rRightType : rLeftType;
+        ASTCDType rTypeForConLeft = matchDirection == AssocMatchDirection.SAME_DIRECTION
+            ? rLeftType : rRightType;
+        if (cAssoc.getRight().isPresentCDRole()) {
+          NameUtil.adaptTemplatedName(cAssoc.getRight().getCDRole().getName(),
+              rTypeForConRight.getName(), cRightType.getName())
+              .ifPresent(n -> cAssoc.getRight().getCDRole().setName(n));
+        }
+        if (cAssoc.getLeft().isPresentCDRole()) {
+          NameUtil.adaptTemplatedName(cAssoc.getLeft().getCDRole().getName(),
+              rTypeForConLeft.getName(), cLeftType.getName())
+              .ifPresent(n -> cAssoc.getLeft().getCDRole().setName(n));
+        }
+        if (cAssoc.isPresentName()) {
+          String name = cAssoc.getName();
+          name = NameUtil.adaptTemplatedName(name, rTypeForConLeft.getName(),
+              cLeftType.getName()).orElse(name);
+          name = NameUtil.adaptTemplatedName(name, rTypeForConRight.getName(),
+              cRightType.getName()).orElse(name);
+          cAssoc.setName(name);
+        }
+      } catch (CompletionException e) {
+        Log.warn("0xCDCONC1: Could not resolve association endpoint types for implicit name"
+            + " adaptation, skipping.");
+      }
+    }
+
     // Handle potential role name conflicts in a post-processing step
     renameRoleIfConflicting(cAssoc);
   }

@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AssocNameImplicitNameAdaptConc {
+  <<ref="Task">>    class Ticket;
+  <<ref="Project">> class Sprint;
+  // association name "taskAssignment" copied from reference and adapted: "task" -> "ticket"
+  association ticketAssignment Sprint -> Ticket [*];
+}

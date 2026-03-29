@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AssocRoleImplicitNameAdaptConc {
+  <<ref="Task">>    class Ticket;
+  <<ref="Project">> class Sprint;
+  // existing association without role name — DefaultAssocCompleter adds and adapts it
+  association Sprint -> Ticket [*];
+}
