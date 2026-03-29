@@ -1,10 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.method;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
 import de.monticore.cdmatcher.BooleanMatchingStrategy;
@@ -30,12 +31,17 @@ public class AdaptedNameMethodIncStrategy implements CDMethodMatchingStrategy {
 
   private final BooleanMatchingStrategy<ASTCDType> typeMatcher;
   private final MCTypeMatchingStrategy mcTypeMatcher;
+  private final ICDBasisScope conScope;
+  private final ICDBasisScope refScope;
   private ASTCDType refType;
 
   public AdaptedNameMethodIncStrategy(BooleanMatchingStrategy<ASTCDType> typeMatcher,
-      MCTypeMatchingStrategy mcTypeMatcher) {
+      MCTypeMatchingStrategy mcTypeMatcher,
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD) {
     this.typeMatcher = typeMatcher;
     this.mcTypeMatcher = mcTypeMatcher;
+    this.conScope = concreteCD.getEnclosingScope();
+    this.refScope = referenceCD.getEnclosingScope();
   }
 
   @Override
@@ -54,8 +60,8 @@ public class AdaptedNameMethodIncStrategy implements CDMethodMatchingStrategy {
     String adaptedName = ref.getName();
 
     if (ref.getMCReturnType().isPresentMCType() && concrete.getMCReturnType().isPresentMCType()) {
-      Optional<ASTCDType> refRetType = resolveCDType(ref.getMCReturnType().getMCType());
-      Optional<ASTCDType> conRetType = resolveCDType(concrete.getMCReturnType().getMCType());
+      Optional<ASTCDType> refRetType = resolveCDType(ref.getMCReturnType().getMCType(), refScope);
+      Optional<ASTCDType> conRetType = resolveCDType(concrete.getMCReturnType().getMCType(), conScope);
       if (refRetType.isPresent() && conRetType.isPresent()
           && typeMatcher.isMatched(conRetType.get(), refRetType.get())) {
         adaptedName = NameUtil.adaptTemplatedName(adaptedName, refRetType.get().getName(),
@@ -65,9 +71,9 @@ public class AdaptedNameMethodIncStrategy implements CDMethodMatchingStrategy {
 
     for (int i = 0; i < ref.getCDParameterList().size(); i++) {
       Optional<ASTCDType> refParamType = resolveCDType(
-          ref.getCDParameterList().get(i).getMCType());
+          ref.getCDParameterList().get(i).getMCType(), refScope);
       Optional<ASTCDType> conParamType = resolveCDType(
-          concrete.getCDParameterList().get(i).getMCType());
+          concrete.getCDParameterList().get(i).getMCType(), conScope);
       if (refParamType.isPresent() && conParamType.isPresent()
           && typeMatcher.isMatched(conParamType.get(), refParamType.get())) {
         adaptedName = NameUtil.adaptTemplatedName(adaptedName, refParamType.get().getName(),
@@ -94,16 +100,13 @@ public class AdaptedNameMethodIncStrategy implements CDMethodMatchingStrategy {
     this.refType = refType;
   }
 
-  private Optional<ASTCDType> resolveCDType(ASTMCType mcType) {
-    // Only qualified types can be CD types; primitives and collection types cannot
+  private Optional<ASTCDType> resolveCDType(ASTMCType mcType, ICDBasisScope scope) {
     if (!(mcType instanceof ASTMCQualifiedType)) {
       return Optional.empty();
     }
-    // Use global scope lookup to avoid NPE on types without enclosing scope (e.g., deep-cloned
-    // elements added during concretization that have not been through symbol table construction)
     String typeName = ((ASTMCQualifiedType) mcType).getMCQualifiedName().getQName();
-    return CD4CodeMill.globalScope().resolveCDTypeDown(typeName)
-        .filter(sym -> sym.isPresentAstNode())
+    return scope.resolveCDTypeDown(typeName)
+        .filter(CDTypeSymbol::isPresentAstNode)
         .map(CDTypeSymbol::getAstNode);
   }
 

@@ -166,10 +166,13 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
               : compTypeIncStrategy;
       compAssocIncStrategy.addIncStrategy(
           new AdaptedRoleNameAssocIncStrategy(typeMatcherForAdapted, concreteCD, referenceCD));
+      // Attributes and methods use exact incarnation matching (compTypeIncStrategy), not
+      // subtype matching: a supertype must not be treated as an adapted incarnation of a
+      // reference parameter type just because one of its subtypes incarnates that type.
       compAttributeIncStrategy.addIncStrategy(
-          new AdaptedNameAttributeIncStrategy(typeMatcherForAdapted));
+          new AdaptedNameAttributeIncStrategy(compTypeIncStrategy, concreteCD, referenceCD));
       compMethodIncStrategy.addIncStrategy(
-          new AdaptedNameMethodIncStrategy(typeMatcherForAdapted, mcTypeMatcher));
+          new AdaptedNameMethodIncStrategy(compTypeIncStrategy, mcTypeMatcher, concreteCD, referenceCD));
     }
 
     return new DefaultCDConformanceContext(concreteCD, referenceCD, mapping,

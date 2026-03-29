@@ -1,10 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.attribute;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdmatcher.BooleanMatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -25,10 +26,15 @@ import java.util.stream.Collectors;
 public class AdaptedNameAttributeIncStrategy implements CDAttributeMatchingStrategy {
 
   private final BooleanMatchingStrategy<ASTCDType> typeMatcher;
+  private final ICDBasisScope conScope;
+  private final ICDBasisScope refScope;
   private ASTCDType referenceType;
 
-  public AdaptedNameAttributeIncStrategy(BooleanMatchingStrategy<ASTCDType> typeMatcher) {
+  public AdaptedNameAttributeIncStrategy(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD) {
     this.typeMatcher = typeMatcher;
+    this.conScope = concreteCD.getEnclosingScope();
+    this.refScope = referenceCD.getEnclosingScope();
   }
 
   @Override
@@ -39,8 +45,10 @@ public class AdaptedNameAttributeIncStrategy implements CDAttributeMatchingStrat
 
   @Override
   public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
-    Optional<ASTCDType> refAttrType = resolveCDType(ref);
-    Optional<ASTCDType> conAttrType = resolveCDType(concrete);
+    Optional<ASTCDType> refAttrType = resolveCDType(ref.getMCType() instanceof ASTMCQualifiedType
+        ? ((ASTMCQualifiedType) ref.getMCType()).getMCQualifiedName().getQName() : null, refScope);
+    Optional<ASTCDType> conAttrType = resolveCDType(concrete.getMCType() instanceof ASTMCQualifiedType
+        ? ((ASTMCQualifiedType) concrete.getMCType()).getMCQualifiedName().getQName() : null, conScope);
     if (refAttrType.isPresent() && conAttrType.isPresent()
         && typeMatcher.isMatched(conAttrType.get(), refAttrType.get())) {
       return NameUtil.adaptTemplatedName(ref.getName(), refAttrType.get().getName(),
@@ -55,16 +63,12 @@ public class AdaptedNameAttributeIncStrategy implements CDAttributeMatchingStrat
     this.referenceType = referenceType;
   }
 
-  private Optional<ASTCDType> resolveCDType(ASTCDAttribute attribute) {
-    // Only qualified types can be CD types; primitives and collection types cannot
-    if (!(attribute.getMCType() instanceof ASTMCQualifiedType)) {
+  private Optional<ASTCDType> resolveCDType(String typeName, ICDBasisScope scope) {
+    if (typeName == null) {
       return Optional.empty();
     }
-    // Use global scope lookup to avoid NPE on types without enclosing scope (e.g., deep-cloned
-    // elements added during concretization that have not been through symbol table construction)
-    String typeName = ((ASTMCQualifiedType) attribute.getMCType()).getMCQualifiedName().getQName();
-    return CD4CodeMill.globalScope().resolveCDTypeDown(typeName)
-        .filter(sym -> sym.isPresentAstNode())
+    return scope.resolveCDTypeDown(typeName)
+        .filter(CDTypeSymbol::isPresentAstNode)
         .map(CDTypeSymbol::getAstNode);
   }
 
