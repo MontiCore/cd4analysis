@@ -16,8 +16,10 @@ dependencies {
   cdTool "de.monticore.lang:cd4analysis:$mc_version"
   compileOnly(project(":cdlang")) // As the main/cdtool dependency does not have an api dependency to cdlang
 
-  testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
-  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
   testImplementation gradleTestKit()
   testImplementation(project(":cdlang")) // For symbol table tests, etc.
 }
