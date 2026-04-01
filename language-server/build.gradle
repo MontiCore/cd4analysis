@@ -6,17 +6,15 @@ plugins {
   id 'maven-publish'
 }
 
-group 'de.monticore.lang'
-version mc_version
-
-sourceCompatibility = JavaVersion.VERSION_21
+group = 'de.monticore.lang'
+version = mc_version
 
 repositories {
   mavenCentral()
   maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
+    url = repo
   }
 }
 
@@ -68,7 +66,7 @@ task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
     languageName = "de.monticore.CD4Analysis"
     fileExtension = "cd"
   }
-  if(("true").equals(getProperty('buildVscodePlugin'))){
+  if (("true").equals(getProperty('buildVscodePlugin'))) {
     including(TaskTypes.VSCODE_PLUGIN)
   }
 }
@@ -78,7 +76,7 @@ task autoconfigureCD4Code(type: de.mclsg.task.AutoconfigureTask) {
     languageName = "de.monticore.CD4Code"
     fileExtension = "cd"
   }
-  if(("true").equals(getProperty('buildVscodePlugin'))){
+  if (("true").equals(getProperty('buildVscodePlugin'))) {
     including(TaskTypes.VSCODE_PLUGIN)
   }
 }

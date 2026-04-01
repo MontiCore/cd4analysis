@@ -53,7 +53,7 @@ dependencies {
   }
 }
 
-task toolJar(type: Jar) {
+tasks.register('toolJar', Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
   archiveClassifier = "tool"
 }

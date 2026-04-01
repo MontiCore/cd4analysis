@@ -23,7 +23,7 @@ dependencies {
   testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 }
 
-task toolJar(type: Jar) {
+tasks.register('toolJar', Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
 }
 

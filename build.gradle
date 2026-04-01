@@ -11,7 +11,7 @@ plugins {
 }
 
 description = "CD4Analysis"
-buildDir = file("$projectDir/target")
+layout.buildDirectory = layout.projectDirectory.dir("target")
 
 ext {
   findbugs_version = "3.0.2"
@@ -43,27 +43,25 @@ subprojects {
   apply plugin: 'maven-publish'
   apply plugin: 'de.se_rwth.codestyle'
 
-    ecj {
-        compilerVersion = "3.43.0"
-    }
-
-  sourceCompatibility = JavaVersion.VERSION_21
+  ecj {
+      compilerVersion = "3.43.0"
+  }
 
   allprojects {
     group = "de.monticore.lang.cd4analysis"
   }
 
   ext.grammarDir = 'src/main/grammars'
-  buildDir = file("$projectDir/target")
+  layout.buildDirectory = layout.projectDirectory.dir("target")
 
   repositories {
     if (("true").equals(getProperty('useLocalRepo'))) {
       mavenLocal()
     }
     maven {
-      credentials.username mavenUser
-      credentials.password mavenPassword
-      url repo
+      credentials.username = mavenUser
+      credentials.password = mavenPassword
+      url = repo
     }
     mavenCentral()
   }
@@ -73,19 +71,19 @@ subprojects {
     archiveClassifier = project.name
   }
 
-  tasks.withType(Test) {
+  tasks.withType(Test).configureEach {
     useJUnitPlatform()
     testLogging {
       // controls whether test output is shown
-      showExceptions true
-      showCauses true
-      showStackTraces true
-      exceptionFormat TestExceptionFormat.FULL
+      showExceptions = true
+      showCauses = true
+      showStackTraces = true
+      exceptionFormat = TestExceptionFormat.FULL
       info {
         events TestLogEvent.FAILED,
-          TestLogEvent.PASSED,
-          TestLogEvent.SKIPPED,
-          TestLogEvent.STANDARD_OUT
+            TestLogEvent.PASSED,
+            TestLogEvent.SKIPPED,
+            TestLogEvent.STANDARD_OUT
       }
     }
     afterTest { desc, result ->
@@ -100,9 +98,9 @@ subprojects {
     }
   }
 
-  tasks.withType(JavaCompile) {
+  tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
-    options.deprecation false
+    options.deprecation = false
     options.warnings = false
     options.forkOptions.jvmArgs += ["-Xmx4G"]
     // TODO: reevaluate with new ecj plugin
@@ -141,13 +139,13 @@ publishing {
         .findAll { it != ':cdlang' }
         .each { subprojectName ->
           publ.artifact(project(subprojectName).tasks.jar) {
-            group "de.monticore.lang"
+            group = "de.monticore.lang"
           }
         }
 
       publ.artifact(project(":cdtool").tasks.jar) {
-        group "de.monticore.lang"
-        classifier "tool"
+        group = "de.monticore.lang"
+        classifier = "tool"
       }
 
       publ.artifact(project(":cdtool").tasks.shadowJar)
@@ -157,13 +155,13 @@ publishing {
 
     if (("false").equals(getProperty('publishMain'))) {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {
-        group "de.monticore.lang"
+        group = "de.monticore.lang"
       }
     }
   }
   repositories.maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl

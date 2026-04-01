@@ -40,8 +40,8 @@ gradlePlugin {
 
 publishing {
   repositories.maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
@@ -68,7 +68,7 @@ processResources {
   dependsOn generateResources
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
   dependsOn project.tasks.getByPath(":cdlang:jar")
   dependsOn project.tasks.getByPath(":cd-runtime:jar")

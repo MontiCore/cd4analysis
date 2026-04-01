@@ -19,10 +19,10 @@ def withDSTLGen = ("true").equals(getProperty('genTR'))
 ext {
   grammar_classifier = "grammars"
   grammarDir = "src/main/grammars"
-  grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
-  trGrammarOutDir = "$buildDir/generated-sources/monticore-tr/sourcecode"
+  grammarOutDir = layout.buildDirectory.dir("generated-sources/monticore/sourcecode")
+  trGrammarOutDir = layout.buildDirectory.dir("generated-sources/monticore-tr/sourcecode")
   testGrammarDir = "src/test/grammars"
-  testGrammarOutDir = "$buildDir/generated-test-sources/monticore/trafo-sourcecode"
+  testGrammarOutDir = layout.buildDirectory.dir("generated-test-sources/monticore/trafo-sourcecode")
 }
 
 
@@ -116,31 +116,31 @@ compileTestJava {
   dependsOn generateTestTrafos
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
   options.encoding = "UTF-8"
-  options.deprecation false
+  options.deprecation = false
   options.warnings = false
   options.headerOutputDirectory.convention(null)
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   // this won't work with setting the mills, as they can interleave and break thigs
   // maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
   testLogging {
     // controls whether test output is shown
-    showExceptions true
-    showCauses true
-    showStackTraces true
-    exceptionFormat TestExceptionFormat.FULL
+    showExceptions = true
+    showCauses = true
+    showStackTraces = true
+    exceptionFormat = TestExceptionFormat.FULL
     info {
       events TestLogEvent.FAILED,
-        TestLogEvent.PASSED,
-        TestLogEvent.SKIPPED,
-        TestLogEvent.STANDARD_OUT
+          TestLogEvent.PASSED,
+          TestLogEvent.SKIPPED,
+          TestLogEvent.STANDARD_OUT
     }
   }
   afterTest { desc, result ->
@@ -170,25 +170,25 @@ tasks.check.dependsOn(tasks.compileCd4cIntegTestJava)
 
 
 // build javadoc jar in addition
-task javadocJar(type: Jar) {
+tasks.register('javadocJar', Jar) {
   from javadoc
   archiveClassifier = "javadoc"
 }
 // generated java doc contains errors, disable for now
-javadoc.failOnError(false)
+javadoc.failOnError = false
 
 // build test sources jar in addition
-task testSourcesJar(type: Jar) {
+tasks.register('testSourcesJar', Jar) {
   from sourceSets.test.output + sourceSets.test.allSource
   archiveClassifier = "testSources"
 }
 
-tasks.withType(Jar) {
+tasks.withType(Jar).configureEach {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-task testReport(type: TestReport) {
-  destinationDirectory = file("$buildDir/reports/allTests")
+tasks.register('testReport', TestReport) {
+  destinationDirectory = layout.buildDirectory.dir("reports/allTests")
   // Include the results from the 'test' task
   testResults.from(tasks.withType(Test))
 }
