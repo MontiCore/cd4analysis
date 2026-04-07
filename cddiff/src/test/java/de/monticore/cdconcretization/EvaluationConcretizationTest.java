@@ -315,10 +315,10 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     }
     
   }
-
+  
   @Nested
   class PaperExamples {
-
+    
     @Test
     void testTaskManagement() {
       testConcretizedConformsToRefAndExpectedOut(
@@ -326,7 +326,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
           "evaluation/paper-examples/task-management/TaskManagementRef.cd",
           "evaluation/paper-examples/task-management/TicketSystemOut.cd");
     }
-
+    
     @Test
     void testRepository() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -335,5 +335,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
           "evaluation/paper-examples/repository/RepositoryRef.cd",
           "evaluation/paper-examples/repository/RepositoryOut.cd");
     }
+    
   }
+  
 }

@@ -69,7 +69,7 @@ public class ConcretizationCompleter {
    * elements annotated with 'forEach'.
    */
   private boolean forEachNameAdaptationEnabled = true;
-
+  
   /**
    * If true, names of reference elements being copied to the concrete CD are adapted using the
    * implicit type incarnation bindings available in the context. For every reference type with a
@@ -166,8 +166,8 @@ public class ConcretizationCompleter {
                 new DefaultEnumConstantsCompleter()).build();
     
     IAssocSideCompleter assocSideCompleter = new DefaultAssocSideCompleter();
-    IAssociationCompleter assocCompleter = new DefaultAssocCompleter(concreteCD,
-        assocSideCompleter, context);
+    IAssociationCompleter assocCompleter = new DefaultAssocCompleter(concreteCD, assocSideCompleter,
+        context);
     
     ChainBuilder<AbstractCDCompleter> completerChainBuilder =
         new ChainBuilder<AbstractCDCompleter>().add(new ImportsCompleter()).add(
@@ -213,7 +213,7 @@ public class ConcretizationCompleter {
   public void setForEachNameAdaptationEnabled(boolean forEachNameAdaptationEnabled) {
     this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
   }
-
+  
   public void setImplicitNameAdaptationEnabled(boolean implicitNameAdaptationEnabled) {
     this.implicitNameAdaptationEnabled = implicitNameAdaptationEnabled;
   }
@@ -226,7 +226,7 @@ public class ConcretizationCompleter {
     
     private final boolean forEachNameAdaptationEnabled;
     private final boolean implicitNameAdaptationEnabled;
-
+    
     protected DefaultCompletionContext(ASTCDCompilationUnit concreteCD,
         ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
         Set<CDConfParameter> conformanceParams,
@@ -271,7 +271,7 @@ public class ConcretizationCompleter {
     
     @Override
     public boolean isForEachNameAdaptationEnabled() { return forEachNameAdaptationEnabled; }
-
+    
     @Override
     public boolean isImplicitNameAdaptationEnabled() { return implicitNameAdaptationEnabled; }
     

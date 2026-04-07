@@ -97,7 +97,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     public boolean isForEachNameAdaptationEnabled() {
       return parentContext.isForEachNameAdaptationEnabled();
     }
-
+    
     @Override
     public boolean isImplicitNameAdaptationEnabled() {
       return parentContext.isImplicitNameAdaptationEnabled();

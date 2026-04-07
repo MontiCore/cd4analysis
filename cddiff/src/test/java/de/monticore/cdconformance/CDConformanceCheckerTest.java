@@ -305,7 +305,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
   
   // ---- ADAPTED_NAME_MAPPING: attributes ----
-
+  
   @ParameterizedTest
   @ValueSource(strings = { "AdaptedName.cd" })
   public void testAttributeAdaptedNameValid(String concrete) {
@@ -315,7 +315,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
         ADAPTED_NAME_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   @ParameterizedTest
   @ValueSource(strings = { "WrongName.cd" })
   public void testAttributeAdaptedNameInvalid(String concrete) {
@@ -325,7 +325,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
         ADAPTED_NAME_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   /** Adapted name is rejected when ADAPTED_NAME_MAPPING is not enabled. */
   @Test
   public void testAttributeAdaptedNameRequiresParam() {
@@ -334,43 +334,40 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
     checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   // ---- ADAPTED_NAME_MAPPING: methods ----
-
+  
   @ParameterizedTest
   @ValueSource(strings = { "AdaptedName.cd" })
   public void testMethodAdaptedNameValid(String concrete) {
-    parseModels("methods/adapted_name/valid/" + concrete,
-        "methods/adapted_name/Reference.cd");
+    parseModels("methods/adapted_name/valid/" + concrete, "methods/adapted_name/Reference.cd");
     checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
         ADAPTED_NAME_MAPPING, STRICT_PARAMETER_ORDER));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   @ParameterizedTest
   @ValueSource(strings = { "WrongName.cd" })
   public void testMethodAdaptedNameInvalid(String concrete) {
-    parseModels("methods/adapted_name/invalid/" + concrete,
-        "methods/adapted_name/Reference.cd");
+    parseModels("methods/adapted_name/invalid/" + concrete, "methods/adapted_name/Reference.cd");
     checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
         ADAPTED_NAME_MAPPING, STRICT_PARAMETER_ORDER));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   /** Adapted method name is rejected when ADAPTED_NAME_MAPPING is not enabled. */
   @Test
   public void testMethodAdaptedNameRequiresParam() {
-    parseModels("methods/adapted_name/valid/AdaptedName.cd",
-        "methods/adapted_name/Reference.cd");
+    parseModels("methods/adapted_name/valid/AdaptedName.cd", "methods/adapted_name/Reference.cd");
     checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
         STRICT_PARAMETER_ORDER));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   // ---- ADAPTED_NAME_MAPPING: association roles ----
   // Uses custom (non-implicit) role names to specifically exercise AdaptedRoleNameAssocIncStrategy
   // rather than ImplicitRoleNameAssocIncStrategy.
-
+  
   @ParameterizedTest
   @ValueSource(strings = { "AdaptedRoles.cd" })
   public void testAssocAdaptedRoleNameValid(String concrete) {
@@ -380,7 +377,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
         SRC_TARGET_ASSOC_MAPPING, ADAPTED_NAME_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   @ParameterizedTest
   @ValueSource(strings = { "WrongRoles.cd" })
   public void testAssocAdaptedRoleNameInvalid(String concrete) {
@@ -390,7 +387,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
         SRC_TARGET_ASSOC_MAPPING, ADAPTED_NAME_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   /** Custom adapted role names are rejected when ADAPTED_NAME_MAPPING is not enabled. */
   @Test
   public void testAssocAdaptedRoleNameRequiresParam() {
@@ -400,7 +397,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
         SRC_TARGET_ASSOC_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
-
+  
   /**
    * Example from KMR24 for multiple mappings.
    */

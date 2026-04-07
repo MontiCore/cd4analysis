@@ -41,7 +41,8 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
     List<ASTCDMethod> allConcreteAttributesInHierarchy = CDSymbolTables.getMethodsInHierarchy(
         concreteType);
     List<ASTCDMethod> incarnations = allConcreteAttributesInHierarchy.stream().filter(
-        cMethod -> context.getIncarnationMapping().isIncarnation(cMethod, referenceMethod)).toList();
+        cMethod -> context.getIncarnationMapping().isIncarnation(cMethod, referenceMethod))
+        .toList();
     if (incarnations.isEmpty()) {
       createMethodIncarnations(concreteType, referenceMethod, context);
     }
@@ -196,47 +197,52 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
   }
   
   private String adaptMethodNameFromTypePairs(String name, ASTCDMethod referenceMethod,
-      ASTMCReturnType returnTypeIncarnation, List<ASTMCType> parameterCombination, TypeCompletionContext context) {
+      ASTMCReturnType returnTypeIncarnation, List<ASTMCType> parameterCombination,
+      TypeCompletionContext context) {
     String result = name;
-    if (referenceMethod.getMCReturnType().isPresentMCType()
-        && returnTypeIncarnation.isPresentMCType()) {
-      Optional<ASTCDType> refRetType = resolveReferenceCDType(referenceMethod.getMCReturnType().getMCType(), context);
-      Optional<ASTCDType> conRetType = resolveConcreteCDType(returnTypeIncarnation.getMCType(), context);
+    if (referenceMethod.getMCReturnType().isPresentMCType() && returnTypeIncarnation
+        .isPresentMCType()) {
+      Optional<ASTCDType> refRetType = resolveReferenceCDType(referenceMethod.getMCReturnType()
+          .getMCType(), context);
+      Optional<ASTCDType> conRetType = resolveConcreteCDType(returnTypeIncarnation.getMCType(),
+          context);
       if (refRetType.isPresent() && conRetType.isPresent()) {
-        result = NameUtil.adaptTemplatedName(result, refRetType.get().getName(),
-            conRetType.get().getName()).orElse(result);
+        result = NameUtil.adaptTemplatedName(result, refRetType.get().getName(), conRetType.get()
+            .getName()).orElse(result);
       }
     }
     for (int i = 0; i < referenceMethod.getCDParameterList().size(); i++) {
-      Optional<ASTCDType> refParamType = resolveReferenceCDType(
-          referenceMethod.getCDParameterList().get(i).getMCType(), context);
-      Optional<ASTCDType> conParamType = resolveConcreteCDType(parameterCombination.get(i), context);
+      Optional<ASTCDType> refParamType = resolveReferenceCDType(referenceMethod.getCDParameterList()
+          .get(i).getMCType(), context);
+      Optional<ASTCDType> conParamType = resolveConcreteCDType(parameterCombination.get(i),
+          context);
       if (refParamType.isPresent() && conParamType.isPresent()) {
-        result = NameUtil.adaptTemplatedName(result, refParamType.get().getName(),
-            conParamType.get().getName()).orElse(result);
+        result = NameUtil.adaptTemplatedName(result, refParamType.get().getName(), conParamType
+            .get().getName()).orElse(result);
       }
     }
     return result;
   }
-
-  private Optional<ASTCDType> resolveReferenceCDType(ASTMCType mcType, TypeCompletionContext context) {
+  
+  private Optional<ASTCDType> resolveReferenceCDType(ASTMCType mcType,
+      TypeCompletionContext context) {
     return resolveCDType(mcType, context.getReferenceCD().getEnclosingScope());
   }
-
-  private Optional<ASTCDType> resolveConcreteCDType(ASTMCType mcType, TypeCompletionContext context) {
+  
+  private Optional<ASTCDType> resolveConcreteCDType(ASTMCType mcType,
+      TypeCompletionContext context) {
     return resolveCDType(mcType, context.getConcreteCD().getEnclosingScope());
   }
-
+  
   private Optional<ASTCDType> resolveCDType(ASTMCType mcType, ICDBasisScope scope) {
     if (!(mcType instanceof ASTMCQualifiedType)) {
       return Optional.empty();
     }
     String typeName = ((ASTMCQualifiedType) mcType).getMCQualifiedName().getQName();
-    return scope.resolveCDTypeDown(typeName)
-        .filter(TypeSymbolTOP::isPresentAstNode)
-        .map(CDTypeSymbolTOP::getAstNode);
+    return scope.resolveCDTypeDown(typeName).filter(TypeSymbolTOP::isPresentAstNode).map(
+        CDTypeSymbolTOP::getAstNode);
   }
-
+  
   protected ASTMCTypeArgument createTypeArgument(ASTMCType mcType) {
     if (mcType instanceof ASTMCQualifiedType) {
       return CD4CodeMill.mCBasicTypeArgumentBuilder().setMCQualifiedType(
@@ -256,16 +262,17 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
    * Adds one method for each return type and combination of the cartesian product of parameter
    * types.
    *
-   * @param concreteType              the concrete type to add the method to
-   * @param referenceMethod           the reference method to clone
-   * @param context                   the completion context
-   * @param returnTypeIncarnations    the incarnations of the return type
+   * @param concreteType the concrete type to add the method to
+   * @param referenceMethod the reference method to clone
+   * @param context the completion context
+   * @param returnTypeIncarnations the incarnations of the return type
    * @param parameterTypeIncarnations the incarnations of each parameter type
    * @param typeCompletionContext
    */
   private void addMethodIncarnations(ASTCDType concreteType, ASTCDMethod referenceMethod,
-                                     TypeCompletionContext context, List<ASTMCReturnType> returnTypeIncarnations,
-                                     List<List<ASTMCType>> parameterTypeIncarnations, TypeCompletionContext typeCompletionContext) {
+      TypeCompletionContext context, List<ASTMCReturnType> returnTypeIncarnations,
+      List<List<ASTMCType>> parameterTypeIncarnations,
+      TypeCompletionContext typeCompletionContext) {
     
     List<List<ASTMCType>> parameterCombinations = Lists.cartesianProduct(parameterTypeIncarnations);
     
@@ -280,8 +287,8 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
         if (context.isImplicitNameAdaptationEnabled()) {
           methodName = adaptMethodNameFromTypePairs(methodName, referenceMethod,
               returnTypeIncarnation, parameterCombination, context);
-          if (!methodName.equals(referenceMethod.getName())
-              && !context.getConformanceParams().contains(CDConfParameter.ADAPTED_NAME_MAPPING)) {
+          if (!methodName.equals(referenceMethod.getName()) && !context.getConformanceParams()
+              .contains(CDConfParameter.ADAPTED_NAME_MAPPING)) {
             StereotypeUtil.addStereotype(methodClone.getModifier(), context.getMappingName(),
                 MethodSignatureString.printSignatureIfOverloaded(referenceMethod.getSymbol()));
           }
@@ -292,27 +299,27 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
           // TODO not necessarily! If we change the parameter signature at the same time, we can
           // keep the original method name!
           //  -> see how we did it in ForEachMethodCompleter
-          methodName = methodName + "_" + NameUtil
-              .escapeQualifiedNameAsIdentifier(returnTypeIncarnation.printType());
+          methodName = methodName + "_" + NameUtil.escapeQualifiedNameAsIdentifier(
+              returnTypeIncarnation.printType());
         }
         methodClone.setName(methodName);
-
+        
         // 2. set return type of the incarnation
         // use FQ name to avoid messing with imports / name conflicts
         methodClone.setMCReturnType(returnTypeIncarnation);
-
+        
         // 3. set parameter types of the incarnation
         for (int i = 0; i < methodClone.getCDParameterList().size(); i++) {
           ASTCDParameter parameterClone = methodClone.getCDParameterList().get(i);
           parameterClone.setMCType(parameterCombination.get(i));
           if (context.isImplicitNameAdaptationEnabled()) {
-            Optional<ASTCDType> refParamType = resolveReferenceCDType(
-                referenceMethod.getCDParameterList().get(i).getMCType(), context);
-            Optional<ASTCDType> conParamType = resolveConcreteCDType(parameterCombination.get(i), context);
+            Optional<ASTCDType> refParamType = resolveReferenceCDType(referenceMethod
+                .getCDParameterList().get(i).getMCType(), context);
+            Optional<ASTCDType> conParamType = resolveConcreteCDType(parameterCombination.get(i),
+                context);
             if (refParamType.isPresent() && conParamType.isPresent()) {
-              NameUtil.adaptTemplatedName(parameterClone.getName(),
-                  refParamType.get().getName(), conParamType.get().getName())
-                  .ifPresent(parameterClone::setName);
+              NameUtil.adaptTemplatedName(parameterClone.getName(), refParamType.get().getName(),
+                  conParamType.get().getName()).ifPresent(parameterClone::setName);
             }
           }
           methodClone.setCDParameter(i, parameterClone);

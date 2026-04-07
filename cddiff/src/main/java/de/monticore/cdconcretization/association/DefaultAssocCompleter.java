@@ -17,16 +17,16 @@ import java.util.Set;
 public class DefaultAssocCompleter implements IAssociationCompleter {
   
   private final ASTCDCompilationUnit ccd;
-
+  
   private final IAssocSideCompleter assocSideCompleter;
-
+  
   /** Nullable; when non-null, implicit name adaptation is applied if enabled in context. */
   private final CDCompletionContext context;
-
+  
   public DefaultAssocCompleter(ASTCDCompilationUnit ccd, IAssocSideCompleter assocSideCompleter) {
     this(ccd, assocSideCompleter, null);
   }
-
+  
   public DefaultAssocCompleter(ASTCDCompilationUnit ccd, IAssocSideCompleter assocSideCompleter,
       CDCompletionContext context) {
     this.ccd = ccd;
@@ -66,32 +66,33 @@ public class DefaultAssocCompleter implements IAssociationCompleter {
         // In REVERSE_DIRECTION the right side of cAssoc corresponds to the left side of rAssoc
         ASTCDType rTypeForConRight = matchDirection == AssocMatchDirection.SAME_DIRECTION
             ? rRightType : rLeftType;
-        ASTCDType rTypeForConLeft = matchDirection == AssocMatchDirection.SAME_DIRECTION
-            ? rLeftType : rRightType;
+        ASTCDType rTypeForConLeft = matchDirection == AssocMatchDirection.SAME_DIRECTION ? rLeftType
+            : rRightType;
         if (cAssoc.getRight().isPresentCDRole()) {
-          NameUtil.adaptTemplatedName(cAssoc.getRight().getCDRole().getName(),
-              rTypeForConRight.getName(), cRightType.getName())
-              .ifPresent(n -> cAssoc.getRight().getCDRole().setName(n));
+          NameUtil.adaptTemplatedName(cAssoc.getRight().getCDRole().getName(), rTypeForConRight
+              .getName(), cRightType.getName()).ifPresent(n -> cAssoc.getRight().getCDRole()
+                  .setName(n));
         }
         if (cAssoc.getLeft().isPresentCDRole()) {
-          NameUtil.adaptTemplatedName(cAssoc.getLeft().getCDRole().getName(),
-              rTypeForConLeft.getName(), cLeftType.getName())
-              .ifPresent(n -> cAssoc.getLeft().getCDRole().setName(n));
+          NameUtil.adaptTemplatedName(cAssoc.getLeft().getCDRole().getName(), rTypeForConLeft
+              .getName(), cLeftType.getName()).ifPresent(n -> cAssoc.getLeft().getCDRole().setName(
+                  n));
         }
         if (cAssoc.isPresentName()) {
           String name = cAssoc.getName();
-          name = NameUtil.adaptTemplatedName(name, rTypeForConLeft.getName(),
-              cLeftType.getName()).orElse(name);
-          name = NameUtil.adaptTemplatedName(name, rTypeForConRight.getName(),
-              cRightType.getName()).orElse(name);
+          name = NameUtil.adaptTemplatedName(name, rTypeForConLeft.getName(), cLeftType.getName())
+              .orElse(name);
+          name = NameUtil.adaptTemplatedName(name, rTypeForConRight.getName(), cRightType.getName())
+              .orElse(name);
           cAssoc.setName(name);
         }
-      } catch (CompletionException e) {
+      }
+      catch (CompletionException e) {
         Log.warn("0xCDCONC1: Could not resolve association endpoint types for implicit name"
             + " adaptation, skipping.");
       }
     }
-
+    
     // Handle potential role name conflicts in a post-processing step
     renameRoleIfConflicting(cAssoc);
   }

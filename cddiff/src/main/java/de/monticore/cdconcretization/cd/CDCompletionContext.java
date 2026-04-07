@@ -16,7 +16,7 @@ import java.util.Set;
 public interface CDCompletionContext extends CDConformanceContext {
   
   boolean isForEachNameAdaptationEnabled();
-
+  
   boolean isImplicitNameAdaptationEnabled();
   
   /**

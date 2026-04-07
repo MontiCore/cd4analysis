@@ -92,16 +92,16 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
             referenceAttribute.getSymbol().getFullName());
       }
       if (context.isImplicitNameAdaptationEnabled()) {
-        NameUtil.adaptTemplatedName(attributeIncarnation.getName(),
-            rAttributeType.getName(), cAttributeType.getName()).ifPresent(adapted -> {
+        NameUtil.adaptTemplatedName(attributeIncarnation.getName(), rAttributeType.getName(),
+            cAttributeType.getName()).ifPresent(adapted -> {
               attributeIncarnation.setName(adapted);
               if (!context.getConformanceParams().contains(CDConfParameter.ADAPTED_NAME_MAPPING)) {
-                StereotypeUtil.addStereotype(attributeIncarnation.getModifier(),
-                    context.getMappingName(), referenceAttribute.getSymbol().getFullName());
+                StereotypeUtil.addStereotype(attributeIncarnation.getModifier(), context
+                    .getMappingName(), referenceAttribute.getSymbol().getFullName());
               }
             });
       }
-
+      
       // 2. set type of incarnation
       // use FQ name to avoid messing with imports / name conflicts
       attributeIncarnation.setMCType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(

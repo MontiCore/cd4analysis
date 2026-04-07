@@ -37,8 +37,7 @@ public class DefaultAssocSideCompleter implements IAssocSideCompleter {
       // Build a fresh CDRole with just the name, rather than sharing the reference AST node.
       // Sharing the node would allow implicit name adaptation (which calls setName()) to silently
       // corrupt the reference association's role name, breaking subsequent mapping passes.
-      cAssocSide.setCDRole(CD4CodeMill.cDRoleBuilder()
-          .setName(rAssocSide.getCDRole().getName())
+      cAssocSide.setCDRole(CD4CodeMill.cDRoleBuilder().setName(rAssocSide.getCDRole().getName())
           .build());
     }
   }

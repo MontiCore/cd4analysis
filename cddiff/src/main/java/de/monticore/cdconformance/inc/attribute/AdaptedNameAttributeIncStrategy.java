@@ -24,52 +24,49 @@ import java.util.stream.Collectors;
  * adaptTemplatedName("assignedTasks", "Task", "Ticket")} produces {@code "assignedTickets"}.
  */
 public class AdaptedNameAttributeIncStrategy implements CDAttributeMatchingStrategy {
-
+  
   private final BooleanMatchingStrategy<ASTCDType> typeMatcher;
   private final ICDBasisScope conScope;
   private final ICDBasisScope refScope;
   private ASTCDType referenceType;
-
+  
   public AdaptedNameAttributeIncStrategy(BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD) {
     this.typeMatcher = typeMatcher;
     this.conScope = concreteCD.getEnclosingScope();
     this.refScope = referenceCD.getEnclosingScope();
   }
-
+  
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
     return referenceType.getCDAttributeList().stream().filter(attr -> isMatched(concrete, attr))
         .collect(Collectors.toList());
   }
-
+  
   @Override
   public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
     Optional<ASTCDType> refAttrType = resolveCDType(ref.getMCType() instanceof ASTMCQualifiedType
         ? ((ASTMCQualifiedType) ref.getMCType()).getMCQualifiedName().getQName() : null, refScope);
-    Optional<ASTCDType> conAttrType = resolveCDType(concrete.getMCType() instanceof ASTMCQualifiedType
-        ? ((ASTMCQualifiedType) concrete.getMCType()).getMCQualifiedName().getQName() : null, conScope);
-    if (refAttrType.isPresent() && conAttrType.isPresent()
-        && typeMatcher.isMatched(conAttrType.get(), refAttrType.get())) {
-      return NameUtil.adaptTemplatedName(ref.getName(), refAttrType.get().getName(),
-          conAttrType.get().getName()).map(adapted -> adapted.equals(concrete.getName()))
-          .orElse(false);
+    Optional<ASTCDType> conAttrType = resolveCDType(concrete
+        .getMCType() instanceof ASTMCQualifiedType ? ((ASTMCQualifiedType) concrete.getMCType())
+            .getMCQualifiedName().getQName() : null, conScope);
+    if (refAttrType.isPresent() && conAttrType.isPresent() && typeMatcher.isMatched(conAttrType
+        .get(), refAttrType.get())) {
+      return NameUtil.adaptTemplatedName(ref.getName(), refAttrType.get().getName(), conAttrType
+          .get().getName()).map(adapted -> adapted.equals(concrete.getName())).orElse(false);
     }
     return false;
   }
-
+  
   @Override
-  public void setReferenceType(ASTCDType referenceType) {
-    this.referenceType = referenceType;
-  }
-
+  public void setReferenceType(ASTCDType referenceType) { this.referenceType = referenceType; }
+  
   private Optional<ASTCDType> resolveCDType(String typeName, ICDBasisScope scope) {
     if (typeName == null) {
       return Optional.empty();
     }
-    return scope.resolveCDTypeDown(typeName)
-        .filter(CDTypeSymbol::isPresentAstNode)
-        .map(CDTypeSymbol::getAstNode);
+    return scope.resolveCDTypeDown(typeName).filter(CDTypeSymbol::isPresentAstNode).map(
+        CDTypeSymbol::getAstNode);
   }
-
+  
 }

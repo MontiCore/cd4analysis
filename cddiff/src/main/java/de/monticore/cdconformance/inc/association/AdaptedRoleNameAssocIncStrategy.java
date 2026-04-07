@@ -21,30 +21,29 @@ import java.util.Optional;
  * "Task", "Ticket")} produces {@code assignedTickets}.
  */
 public class AdaptedRoleNameAssocIncStrategy extends MatchCDAssocsBySrcTypeAndTgtRole {
-
-  public AdaptedRoleNameAssocIncStrategy(
-      ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  
+  public AdaptedRoleNameAssocIncStrategy(ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }
-
+  
   @Override
   protected boolean checkRole(ASTCDAssocSide concrete, ASTCDAssocSide reference) {
-    Optional<ASTCDType> conType = resolveConcreteCDTyp(
-        concrete.getMCQualifiedType().getMCQualifiedName().getQName());
-    Optional<ASTCDType> refType = resolveReferenceCDTyp(
-        reference.getMCQualifiedType().getMCQualifiedName().getQName());
-
-    if (conType.isPresent() && refType.isPresent()
-        && typeMatcher.isMatched(conType.get(), refType.get())) {
+    Optional<ASTCDType> conType = resolveConcreteCDTyp(concrete.getMCQualifiedType()
+        .getMCQualifiedName().getQName());
+    Optional<ASTCDType> refType = resolveReferenceCDTyp(reference.getMCQualifiedType()
+        .getMCQualifiedName().getQName());
+    
+    if (conType.isPresent() && refType.isPresent() && typeMatcher.isMatched(conType.get(), refType
+        .get())) {
       if (reference.isPresentCDRole() && concrete.isPresentCDRole()) {
         String refRoleName = reference.getCDRole().getName();
         String conRoleName = concrete.getCDRole().getName();
-        return NameUtil.adaptTemplatedName(refRoleName, refType.get().getName(),
-            conType.get().getName()).map(adapted -> adapted.equals(conRoleName)).orElse(false);
+        return NameUtil.adaptTemplatedName(refRoleName, refType.get().getName(), conType.get()
+            .getName()).map(adapted -> adapted.equals(conRoleName)).orElse(false);
       }
     }
     return false;
   }
-
+  
 }
