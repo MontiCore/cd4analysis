@@ -1,31 +1,38 @@
 
-classdiagram BankManagementSystem {
+classdiagram bank {
+
+    class Bank {
+        String name; // represents the name of the bank
+        List<Branch> branches;
+    }
+
+    class Branch {
+        String name; // represents the name of the branch
+        List<Customer> customers;
+    }
 
     class Customer {
         String firstName;
         String lastName;
+        List<Account> accounts; // a customer can have 1 to 5 accounts
     }
 
-    class Bank {
-        // A bank consists of any number of branches
-    }
-
-    class Branch {
-        // A branch can be part of the bank
-    }
-
-    class Account {
+    abstract class Account {
         int accountNumber;
         double balance;
+        Customer owner;
     }
 
     class CheckingAccount extends Account {
         double overdraftLimit;
     }
 
-    class SavingsAccount extends Account {}
+    class SavingsAccount extends Account {
+        // Additional functionality for savings account can be added here
+    }
 
-    association [1..5] Customer -> (owns) Account [*];
-    association [0..*] Bank -> Branch [*];
+    association [0..*] Bank -> (branches) Branch [0..*];
+    association [1] Branch -> (customers) Customer [1..5];
+    association [1] Customer -> (accounts) Account [1..5];
     association [1] Account -> (owner) Customer [1];
 }

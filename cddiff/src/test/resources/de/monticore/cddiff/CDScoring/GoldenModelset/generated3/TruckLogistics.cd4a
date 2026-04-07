@@ -1,13 +1,18 @@
 
-// CD4A Class Diagram for Location Management System
-classdiagram LocationManagement {
+// Class Diagram for Locations, Drivers, Vehicles, and Orders
+classdiagram locations {
+
+    class Location {
+        String address;
+    }
 
     class Driver {
         String firstName;
         String lastName;
+        // Each driver carries out a maximum of one order at a time
     }
 
-    class Vehicle {
+    abstract class Vehicle {
         String vehicleNumber;
     }
 
@@ -20,22 +25,27 @@ classdiagram LocationManagement {
     }
 
     class Van extends Vehicle {
-        // Additional attributes for Van can be added here
-    }
-
-    class Location {
-        String address;
+        // No additional attributes specified
     }
 
     class Order {
-        String origin;
-        String destination;
+        Location origin;
+        Location destination;
+        Driver assignedDriver; // At least one assigned driver
         Date executionDate;
     }
 
-    association [1] Location -> Driver [0..*]; // A location can have multiple drivers
-    association [1] Location -> Vehicle [0..*]; // A location can have multiple vehicles
-    association [1] Driver -> Order [0..1]; // A driver can carry out a maximum of one order at a time
-    association [1] Order -> Driver [1..*]; // An order must have at least one assigned driver
-    association [1] Driver -> Vehicle [0..1]; // A driver can drive up to one vehicle
+    // Association: Each Location can have multiple Drivers
+    association [*] Location -> (drivers) Driver [*];
+
+    // Association: Each Driver can drive up to one Vehicle
+    association [0..1] Driver -> (assignedVehicle) Vehicle [1];
+
+    // Association: Each Order has exactly one Driver and two Locations
+    association [1] Order -> (origin) Location [1];
+    association [1] Order -> (destination) Location [1];
+    association [1] Order -> (assignedDriver) Driver [1];
+
+    // Association: Each Vehicle is driven by up to one Driver
+    association [0..1] Vehicle -> (drivenBy) Driver [1];
 }

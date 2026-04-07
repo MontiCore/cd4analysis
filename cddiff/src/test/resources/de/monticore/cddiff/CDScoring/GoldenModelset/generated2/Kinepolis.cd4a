@@ -1,54 +1,65 @@
 
-classdiagram KinepolisCinema {
+classdiagram kinepolis {
 
-class Cinema {
-    String address;
-}
+    class Kinepolis {
+        String name;
+        List<Cinema> cinemas;
+    }
 
-class Theatre {
-    int number;
-    int totalSeats;
-}
+    class Cinema {
+        String location;
+        List<Theatre> theatres;
+        List<MovieCopy> movieCopies;
+    }
 
-class Movie {
-    String title;
-}
+    class Theatre {
+        String name;
+        List<Show> shows;
+        int totalSeats;
+        int availableSeats;
+    }
 
-class Copy {
-    String id; // unique identifier for each copy
-}
+    class MovieCopy {
+        Movie movie;
+        Cinema location;
+    }
 
-class Show {
-    Date startTime;
-    Date endTime;
-}
+    class Movie {
+        String title;
+        String genre;
+    }
 
-class Reservation {
-    String customerName;
-    String creditCardInfo;
-    boolean isPaid;
-}
+    class Show {
+        MovieCopy movieCopy;
+        String startTime;
+        String endTime;
+        boolean isPublished;
+        List<Reservation> reservations;
+    }
 
-class Ticket {
-    String seatNumber;
-}
+    class Reservation {
+        Customer customer;
+        Show show;
+        int seatNumber;
+        Payment payment;
+    }
 
-class Offer {
-    boolean isAccepted;
-}
+    class Customer {
+        String name;
+        String email;
+        String creditCardNumber;
+    }
 
-class CancellationPolicy {
-    int hoursBeforeShow;
-}
+    class Payment {
+        boolean isPaid;
+        String paymentMethod; // e.g., credit card
+        boolean isRefundable;
+    }
 
-association [1] Cinema <-> Theatre [0..*];
-association [1] Theatre <-> Show [0..*];
-association [1] Cinema <-> Copy [0..*];
-association [1] Movie <-> Copy [0..*];
-association [1] Copy <-> Show [0..*];
-association [1] Show <-> Reservation [0..*];
-association [1] Show <-> Ticket [0..*];
-association [1] Reservation <-> Offer [0..1];
-association [1] Show <-> CancellationPolicy [0..1];
-
+    association [1..*] Kinepolis -> (owns) Cinema [*];
+    association [1..*] Cinema -> (has) Theatre [*];
+    association [1..*] Theatre -> (shows) Show [*];
+    association [1..*] Show -> (has) Reservation [*];
+    association [1] MovieCopy -> (isFor) Movie [1];
+    association [1] MovieCopy -> (locatedIn) Cinema [1];
 }

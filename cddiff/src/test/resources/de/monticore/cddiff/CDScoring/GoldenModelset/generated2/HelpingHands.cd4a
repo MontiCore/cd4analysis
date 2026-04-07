@@ -1,86 +1,75 @@
 
-classdiagram HelpingHandsStore {
+// Class Diagram for Helping Hands Store (H2S)
+classdiagram h2s {
 
     class H2S {
         String name;
-        List<Location> locations;
+        List<Location> locations; // Different operating cities
     }
 
     class Location {
-        String city;
+        String cityName;
+        List<PickupRequest> pickupRequests;
+        List<VolunteerDriver> volunteerDrivers;
         DistributionCenter distributionCenter;
-        List<VolunteerDriver> drivers;
     }
 
     class PickupRequest {
         String residentName;
         String streetAddress;
         String phoneNumber;
-        String email; // optional
-        String itemDescription;
-        Time pickupTime;
-    }
-
-    class Vehicle {
-        String licensePlate;
-        int storageCapacity; // in liters or cubic meters
-        List<Item> scheduledItems; // items picked up
+        String emailAddress; // Optional
+        String description;
+        Time pickupTime; // Scheduled time for pickup
     }
 
     class VolunteerDriver {
         String name;
-        List<DayOfWeek> availableDays;
-        void indicateAvailability();
+        List<Day> availableDays;
+        List<PickupRequest> assignedRequests;
+        void indicateAvailability(); // Method for indicating available days
+    }
+
+    class Fleet {
+        List<Vehicle> vehicles; // Group of pickup vehicles
+        void determinePickupRoute(); // Method to plan routes based on availability
+    }
+
+    class Vehicle {
+        String licensePlate;
+        double storageSpace; // Available storage space of the vehicle
     }
 
     class DistributionCenter {
-        List<ReceivedArticle> receivedArticles;
-        void examineArticle(ReceivedArticle article);
+        List<Article> receivedArticles;
+        void examineQuality(Article article); // Method to check quality
     }
 
-    class ReceivedArticle {
+    class Article {
         String description;
-        String rfidTag;
-        String category;
-        void tag();
+        String rfidTag; // RFID tag for the article
+        Category category; // Article category
     }
 
-    class DeliveryService {
-        Client client;
-        List<String> requestedCategories;
-        void arrangeDelivery(ReceivedArticle article);
+    enum Category {
+        BABY_CLOTHING,
+        WOMENS_WINTER_BOOTS,
+        FRIDGE,
+        MICROWAVE;
+        // ... other categories up to 134
     }
 
     class Client {
         String name;
-        String contactNumber;
-        String address;
-        List<String> requestedCategories;
+        List<Category> requestedCategories; // Categories of articles needed
+        void requestArticles(); // Method for requesting articles
     }
 
-    class Item {
-        String name;
-        double weight; // in kilograms
-        double dimension; // e.g., volume
-    }
-
-    enum DayOfWeek {
-        Monday,
-        Tuesday,
-        Wednesday,
-        Thursday,
-        Friday,
-        Saturday,
-        Sunday;
-    }
-
-    association [*] H2S -> (location) Location [*];
-    association [*] Location -> (pickupRequest) PickupRequest [*];
+    association [*] H2S -> (locations) Location [*];
+    association [*] Location -> (pickupRequests) PickupRequest [*];
+    association [*] Location -> (volunteerDrivers) VolunteerDriver [*];
     association [1] Location -> (distributionCenter) DistributionCenter [1];
-    association [1] DistributionCenter <-> ReceivedArticle [0..*];
-    association [*] Vehicle <-> (scheduledForPickup) PickupRequest [*];
-    association [*] VolunteerDriver <-> PickupRequest [*];
-    association [1] Client <-> DeliveryService [0..*];
-    association [*] DeliveryService <-> ReceivedArticle [*];
-    
+    association [*] DistributionCenter -> (receivedArticles) Article [*];
+    association [*] Article -> (category) Category [1];
+    association [*] Client -> (requestedCategories) Category [*];
 }

@@ -1,66 +1,73 @@
 
-// CD4A Class Diagram for Film Set Management System
-classdiagram FilmSetManagement {
+// CD4A class diagram for the film set structure
 
-enum Genre {
-    THRILLER,
-    ACTION,
-    HORROR,
-    COMEDY;
-}
+classdiagram filmSet {
 
-class Employee {
-    String name;
-    String socialSecurityNumber;
-}
+    class Employee {
+        String name;
+        String socialSecurityNumber;
+        boolean hasOscar;
+    }
 
-class CreativeEmployee extends Employee {
-    boolean hasOscar;
-}
+    class CreativeEmployee extends Employee {
+        // Creative employees include directors and actors
+    }
 
-class Director extends CreativeEmployee {
-    String assistantName;
-}
+    class Director extends CreativeEmployee {
+        String assistantName;
+    }
 
-class Actor extends CreativeEmployee {
-    String education;
-}
+    class Actor extends CreativeEmployee {
+        String educationCompleted;
+    }
 
-class Technician extends Employee {
-    String fieldOfActivity;
-}
+    class Technician extends Employee {
+        String fieldOfActivity;
+    }
 
-class FilmSet {
-    String location;
-}
+    enum Genre {
+        THRILLER,
+        ACTION,
+        HORROR,
+        COMEDY;
+    }
 
-class Film {
-    String title;
-    int yearOfRelease;
-}
+    class FilmSet {
+        String location;
+    }
 
-class Screenwriter extends Employee {
-    String mostSuccessfulFilm;
-}
+    class Film {
+        String title;
+        int yearOfRelease;
+    }
 
-class Screenplay {
-    String title;
-    String version;
-    Date date;
-    int numberOfScenes;
-    String plot;
-}
+    class Screenwriter {
+        String name;
+        Film mostSuccessfulFilm;
+    }
 
-class Novel {
-    String title;
-    String author;
-}
+    class Screenplay {
+        String title;
+        String version;
+        String date;
+        int numberOfScenes;
+        String plot;
+    }
 
-association [1] FilmSet <-> Film [*];
-association [*] Film <-> Screenplay [1];
-association [1] Screenwriter <-> Screenplay [*];
-association [1] Novel <-> Screenplay [0..1];
-association [*] Film <-> Actor [*]; // Actors must prepare for their roles
-association [1] Film <-> Director [1]; // Each film has one director
-association [1] Screenplay -> (implementsScreenplay) Director [1]; // Director implements the screenplay
+    class Novel {
+        String title;
+        String author;
+    }
+
+    class Concept {
+        String description;
+    }
+
+    association [*] FilmSet <-> Film [*];
+    association [*] Film <-> Screenplay [1];
+    association [*] Screenwriter <-> Screenplay [*];
+    association [1] Actor -> (preparesFor) Screenplay [*];
+    association [1] Director -> (implementsScreenplay) Screenplay [1];
+    association [1] Screenplay -> (basedOn) Novel [1];
+    association [1] Screenplay -> (basedOn) Concept [1];
 }

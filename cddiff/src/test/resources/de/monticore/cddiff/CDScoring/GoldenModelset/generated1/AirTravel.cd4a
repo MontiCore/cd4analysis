@@ -1,73 +1,70 @@
 
-// CD4A Class Diagram
-classdiagram AircraftSystem {
+// CD4A Class Diagram for Aircraft Management System
+classdiagram aircraftManagement {
 
-class Aircraft {
-    String name;
-    String type;
-    int yearOfManufacture;
-    DateTime nextInspection;
-}
+    class Aircraft {
+        String name;
+        String type;
+        int yearOfManufacture;
+        String nextInspectionDate;
+        Airport homeAirport;
+    }
 
-class Flight {
-    int flightNumber;
-    DateTime flightDate;
-}
+    class Flight {
+        String flightNumber;
+        String date;
+        Airport departureAirport;
+        Airport destinationAirport;
+    }
 
-class Passenger {
-    String name;
-    String passportNumber;
-}
+    class Passenger {
+        String name;
+        String passportNumber;
+    }
 
-class Ticket {
-    int ticketNumber;
-    double price;
-    boolean upgradeDesired;
-}
+    class Ticket {
+        String ticketNumber;
+        double price;
+        boolean upgradeDesired;
+        SeatCategory seatCategory;
+    }
 
-class PassengerAircraft extends Aircraft {
-    int numberOfSeats;
-}
+    class PassengerAircraft extends Aircraft {
+        int numberOfSeats;
+    }
 
-class SeatCategory {
-    String designation;
-    boolean entertainmentProgramAvailable;
-    int numberOfSeats;
-}
+    class SeatCategory {
+        String designation;
+        boolean entertainmentProgram;
+        int numberOfSeats;
+    }
 
-class Airline {
-    String name;
-}
+    class Airline {
+        String name;
+    }
 
-class FlightAttendant {
-    String name;
-    DateTime dateOfEmployment;
-    boolean isChiefSteward;
-}
+    class FlightAttendant {
+        String name;
+        String dateOfEmployment;
+        boolean isChiefSteward;
+    }
 
-class Pilot {
-    String name;
-    DateTime dateOfEmployment;
-    String license;
-}
+    class Pilot {
+        String name;
+        String dateOfEmployment;
+        String license;
+    }
 
-class Airport {
-    String name;
-    String address;
-    int numberOfRunways;
-}
+    class Airport {
+        String name;
+        String address;
+        int numberOfRunways;
+    }
 
-
-association [0..*] Passenger <-> Ticket [0..*];
-association [1] Flight <-> Passenger [0..*];
-association [1] Ticket <-> Passenger [0..1];
-association [1] Flight <-> FlightAttendant [0..*];
-association [1] Flight <-> Pilot [1]; // One pilot flies as captain
-association [0..2] Flight <-> Pilot [0..2]; // Co-pilots
-association [1] PassengerAircraft <-> SeatCategory [0..*];
-association [1] Aircraft <-> Airline [0..1];
-association [1] Aircraft <-> Airport [0..1];
-association [1] Flight <-> (departureAirport) Airport [1];
-association [1] Flight <-> (destinationAirport) Airport [1];
-
+    association [0..*] Flight -> Aircraft [1];
+    association [0..*] Passenger -> Flight [0..*];
+    association [0..*] Ticket -> Passenger [0..*];
+    association [0..*] SeatCategory -> PassengerAircraft [*];
+    association [0..*] FlightAttendant -> Airline [*];
+    association [0..*] Pilot -> Airline [*];
 }

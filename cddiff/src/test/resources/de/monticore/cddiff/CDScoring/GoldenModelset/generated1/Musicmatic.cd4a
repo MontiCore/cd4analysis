@@ -1,51 +1,53 @@
 
-// CD4A class diagram for Musicmatic music streaming website
-classdiagram Musicmatic {
+// CD4A class diagram for Musicmatic
+
+classdiagram musicmatic {
 
     class Song {
         String title;
         int year;
-        float length; // length in minutes
+        int length; // in seconds
         String genre;
+        Artist artist;
     }
 
     class Artist {
         String name; // unique identifier
-        DateTime dateOfBirth;
-        String websiteUrl;
+        Date dateOfBirth;
+        String websiteURL;
     }
 
     class User {
-        int id; // unique identifier
+        String id; // unique identifier
         String name;
         String address;
     }
 
     class RegularUser extends User {
-        // Regular user specific attributes can be added
+        void buyMusic(Song song);
     }
 
     class BusinessUser extends User {
         String vatNumber;
+        void uploadSong(Song song);
+    }
+
+    class Single extends Song {
+        // additional details if necessary
+    }
+
+    class Hit extends Song {
+        int trackNumber; // position in an album
     }
 
     class Album {
-        String title;
+        List<Hit> hits; // no singles allowed
+        void addHit(Hit hit);
     }
 
-    class Hit {
-        int trackNumber; // position in album
-    }
-
-    enum SongType {
-        SINGLE,
-        HIT;
-    }
-
-    association [1] Artist <-> Song [0..*]; // Each Song has exactly one Artist
-    association [0..*] RegularUser <-> Song [0..*]; // Regular users can buy Songs
-    association [0..*] BusinessUser <-> Song [0..1]; // Business users can upload Songs
-    association [0..*] RegularUser <-> Album [0..*]; // Regular users can have Albums
-    association [1] Album <-> Hit [1..*]; // An Album consists of multiple Hits
-
+    // Associations
+    association [1] Song -> Artist [1]; // Each song has exactly one artist.
+    association [*] Album -> Hit [*]; // An album can have multiple hits.
+    association [*] RegularUser -> Song [*]; // Regular users can buy multiple songs.
+    association [1] BusinessUser <-> Song [1]; // Business users upload individual songs.
 }

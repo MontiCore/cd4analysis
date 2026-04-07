@@ -1,33 +1,42 @@
 
-// CD4A class diagram for research project management in a university
-classdiagram ResearchProjectManagement {
-    
-    class University {}
+// CD4A Class Diagram for Research Project Management
 
-    class Department {}
+classdiagram research_project_management {
+
+    class University {
+        List<Department> departments;
+        List<ResearchGroup> researchGroups;
+    }
+    
+    class Department {
+        List<ResearchGroup> researchGroups;
+    }
 
     class ResearchGroup {
-        // Each research group belongs to one department
+        String name;
+        List<Researcher> researchers;
+        List<WorkPackage> workPackages;
     }
 
     class Researcher {
-        // Each researcher belongs to exactly one research group
+        String name;
+        ResearchGroup researchGroup;
+
+        void assignToWorkPackage(WorkPackage wp);
+        void changeResearchGroup(ResearchGroup newGroup);
     }
 
-    class Project {
-        // A project is decomposed into Work Packages (WP)
-    }
-    
     class WorkPackage {
-        // Each WP has one research group as leader
+        String title;
+        ResearchGroup wpLeader;
+        List<Researcher> teamMembers;
+
+        void reassignTeamMembers();
     }
 
-    association [*] University -> Department [*];
-    association [*] Department -> ResearchGroup [*];
-    association [1] ResearchGroup -> Researcher [*];
-    association [1] WorkPackage -> ResearchGroup [1]; // WP leader
-    association [*] WorkPackage -> Researcher [*]; // Researchers can be assigned to any WP
-
-    // Service delivery implication on assignments
-    association [0..*] ResearchGroup <-> Researcher [*]; // Traceable service delivery from one group to another
+    association [*] University -> (departments) Department [*];
+    association [*] Department -> (researchGroups) ResearchGroup [*];
+    association [*] ResearchGroup -> (researchers) Researcher [*];
+    association [*] ResearchGroup -> (workPackages) WorkPackage [*];
+    association [*] WorkPackage -> (teamMembers) Researcher [*];
 }

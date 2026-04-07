@@ -1,67 +1,65 @@
 
-// Class diagram for the Transport Company
-classdiagram TransportCompany {
+// CD4A class diagram for Transport Company
 
-class Employee {
-    String name;
-    String ssn;
-}
+classdiagram transportCompany {
 
-class Driver extends Employee {
-    // Additional driver-specific attributes can be added here
-}
+    class Employee {
+        String name;
+        String socialSecurityNumber;
+    }
 
-class Planner extends Employee {
-    // Additional planner-specific attributes can be added here
-}
+    class Planner extends Employee {
+        String username;
+        String password;
+    }
 
-class AdministrativeStaff extends Employee {
-    String fieldOfActivity;
-    String username;
-    String password;
-}
+    class AdministrativeStaff extends Employee {
+        String fieldOfActivity;
+        String username;
+        String password;
+    }
 
-class Customer {
-    String name;
-    String billingAddress;
-}
+    class Customer {
+        String name;
+        String billingAddress;
+    }
 
-class Vehicle {
-    String licensePlate;
-    int mileage;
-}
+    class Vehicle {
+        String licensePlateNumber;
+        int mileage;
+    }
 
-enum VehicleType {
-    RefrigeratedTruck,
-    SmallVan,
-    LoadingPlatform,
-    BoxTruck;
-}
+    class RepairShop {
+        String name;
+        String address;
+    }
 
-class RepairShop {
-    String name;
-    String address;
-}
+    class Repair {
+        RepairShop repairShop;
+        Employee employee;
+        int duration;
+        double cost;
+    }
 
-class Order {
-    String pickupAddress;
-    String deliveryAddress;
-    String comment;
-    Date startTime;
-    Date endTime;
-}
+    class Order {
+        Customer customer;
+        Vehicle vehicle;
+        Planner planner;
+        String comments;
+        Date startTime;
+        Date endTime;
+        String pickupAddress;
+        String deliveryAddress;
+        PartnerCompany partnerCompany;
+    }
 
-class PartnerCompany {
-        //comment: The LLM did not generated the class, added to avoid errors
-}
+    class PartnerCompany {
+        String name;
+        String address;
+    }
 
-// Association between classes
-association [1] Planner <-> (assigns) Order [*];
-association [1] Driver <-> (completes) Order [*];
-association [1] Order <-> Customer [1];
-association [1] Vehicle <-> (assignedTo) Order [1];
-association [1] Order <-> RepairShop [0..*]; // An Order can be related to multiple repair instances
-association [1] AdministrativeStaff <-> (takesOrder) Order [0..*];
-association [1] PartnerCompany <-> (places) Order [*]; // Partner company is not defined in detail but linked
-
+    association [*] Employee -> (assignedTo) Order [*]; // Employees can be assigned to multiple orders
+    association [*] Customer -> (places) Order [*]; // Customers can place multiple orders
+    association [1] Planner -> (makes) Order [*]; // Each order is made by one planner
+    association [*] Vehicle -> (usedIn) Repair [*]; // Vehicles can be used in multiple repairs
 }

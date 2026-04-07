@@ -1,73 +1,72 @@
 
-// Class diagram for the E-Home-2020 system
-classdiagram EHome2020 {
+// CD4A Model for E-Home-2020 system
+classdiagram ehome2020 {
 
-enum Unit {
-    CELSIUS,
-    WATT;
-}
+    enum Unit {
+        CELSIUS,
+        WATT;
+    }
 
-class Sensor {
-    String vendorId;
-    String description;
-    Unit unit;
-}
+    class Apartment {
+        String address;
+        List<Room> rooms; // association with Room
+        String emailAddress; // for alert messages
 
-class TemperatureSensor extends Sensor {
-    float minValue;
-    float maxValue;
-}
+        void addRoom(Room room);
+        void removeRoom(Room room);
+    }
 
-class PowerSensor extends Sensor {
-    float totalConsumption;
-}
+    class Room {
+        String description;
 
-class Room {
-    String description;
-}
+        void setDescription(String description);
+    }
 
-class Apartment {
-    String address;
-}
+    class Sensor {
+        String vendorId; // unique identifier
+        String description;
+        Unit unit;
 
-class SensorController {
-    String username;
-    String password;
-    String email;
-}
+        void queryValue();
+        void setThreshold(float threshold);
+    }
 
-class Inhabitant {
-    String name;
-    boolean isAdmin; // Indicates if the inhabitant has administrative rights
-}
+    class TemperatureSensor extends Sensor {
+        float minValue; // valid range minimum
+        float maxValue; // valid range maximum
 
-class MeasuredValue {
-    float value;
-    Date timestamp;
-}
+        void queryValue();
+    }
 
-class Threshold {
-    float thresholdValue;  
-}
+    class PowerSensor extends Sensor {
+        float totalConsumption; // total power consumption
 
-class EMonitor {
-    // Monitors sensor thresholds and sends alerts
-}
+        void queryValue();
+    }
 
-association [1] Apartment -- (inhabitants) Inhabitant [*];
-association [1] Apartment -- Room [2..*];
-association [1] Room -> (assignedSensors) Sensor [*];
+    class SensorController {
+        List<Sensor> sensors; // association with Sensor
+        List<Inhabitant> inhabitants; // association with Inhabitant
 
-// Associations to signify relationships between sensors and their measured values
-association [1] Sensor -- (measuredValues) MeasuredValue [*];
-association [1] Sensor -- Threshold [0..1];
+        void reportSensorValue(Sensor sensor, float value);
+        void configureSensor(Sensor sensor, Room room);
+    }
 
-// Each sensor is associated with exactly one room
-association [1] Sensor -> Room [1];
+    class Inhabitant {
+        String username;
+        String password;
+        boolean isAdmin; // to determine administrative rights
 
-// EMonitor checks thresholds for all sensors
-association [1] EMonitor -- Sensor [*];
+        void logIn(String username, String password);
+        void querySensorValue(Sensor sensor);
+    }
 
-// Each SensorController is associated with one Apartment
-association [1] Apartment <-> SensorController [1];
+    class EMonitor {
+        void checkThreshold(Sensor sensor);
+    }
+
+    association [*] Apartment -> (rooms) Room [*]; // One apartment has multiple rooms
+    association [*] Room -> (sensors) Sensor [*]; // One room can have multiple sensors
+    association [1] SensorController <-> (sensors) Sensor [*]; // SensorController manages multiple sensors
+    association [*] SensorController <-> (inhabitants) Inhabitant [*]; // SensorController has multiple inhabitants
 }

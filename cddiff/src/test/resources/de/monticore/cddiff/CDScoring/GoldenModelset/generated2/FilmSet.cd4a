@@ -1,67 +1,72 @@
 
-// CD4A Model representing a film set with various employee roles and film details
-classdiagram FilmSet {
+// CD4A class diagram for film production scenario
+classdiagram filmProduction {
 
-class Employee {
-    String name;
-    String ssNo; // Social security number
-}
+    class Employee {
+        String name;
+        String socialSecurityNumber;
+        boolean hasOscar;
+    }
 
-class CreativeEmployee extends Employee {
-    boolean hasOscar; // Whether the person has an Oscar
-}
+    class CreativeEmployee extends Employee {
+        // CreativeEmployee can inherit common properties of Employee
+    }
 
-class Actor extends CreativeEmployee {
-    String education; // Education completed by actor
-}
+    class Director extends CreativeEmployee {
+        String assistantName;
+    }
 
-class Director extends CreativeEmployee {
-    String assistantName; // Name of the director's assistant
-}
+    class Actor extends CreativeEmployee {
+        String education;
+    }
 
-class Technician extends Employee {
-    String fieldOfActivity; // Field of activity for each technician
-}
+    class Technician extends Employee {
+        String fieldOfActivity;
+    }
 
-class FilmSet {
-    String location; // Specific location of the film set
-}
+    class FilmSet {
+        String location;
+    }
 
-class Film {
-    String title; // Title of the film
-    int releaseYear; // Year of release
-}
+    class Film {
+        String title;
+        int yearOfRelease;
+    }
 
-enum Genre {
-    thriller,
-    action,
-    horror,
-    comedy;
-}
+    enum Genre {
+        THRILLER,
+        ACTION,
+        HORROR,
+        COMEDY;
+    }
 
-class Screenwriter {
-    String name; // Name of the screenwriter
-    String mostSuccessfulFilm; // Most successful film
-}
+    class Screenwriter {
+        String name;
+        Film mostSuccessfulFilm;
+    }
 
-class Screenplay {
-    String title; // Title of the screenplay
-    String version; // Version of the screenplay
-    Date date; // Date of screenplay
-    int numberOfScenes; // Number of scenes
-    String plot; // Plot of the screenplay
-}
+    class Screenplay {
+        String title;
+        String version;
+        Date date;
+        int numberOfScenes;
+        String plot;
+    }
 
-class Novel {
-    String title; // Title of the novel
-    String author; // Author of the novel
-}
+    class Novel {
+        String title;
+        String author;
+    }
 
-// Associations
-association [1..*] FilmSet <-> Film [0..*]; // A film set can be used for several films
-association [1..*] Film <-> Screenplay [1]; // A screenplay is written for exactly one film
-association [1] Screenwriter <-> Screenplay [0..*]; // A screenwriter creates several screenplays
-association [1] Screenplay <-> (basedOn) Novel [0..1]; // A screenplay is based on a novel
-association [0..*] Film <-> Actor [1..*]; // Actors appear in a film and prepare for roles by reading the screenplay
-association [1] Film <-> (implementedBy) Director [1]; // Director implements the screenplay
+    // Associations
+    association [*] FilmSet <-> Film [*];
+    association [1] Screenwriter <-> Screenplay [*];
+    association [1] Screenplay -> Film [1];
+    association [1] Film <-> Screenplay [*];
+    association [*] Film <-> Actor [*];
+    association [1] Film -> Director [1];
+    association [1] Actor -> Screenplay [1];
+    association [1] Director -> Screenplay [1];
+    
+    // Indicating a screenplay can be based on either a Novel or a Concept (not defined in the description, hence not explicitly noted)
 }

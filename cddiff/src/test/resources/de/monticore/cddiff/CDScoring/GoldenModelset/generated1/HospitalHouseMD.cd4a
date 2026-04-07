@@ -1,26 +1,52 @@
 
-// Class diagram for HospitalHouseMD
-classdiagram HospitalHouseMD {
+// Class Diagram for HospitalHouseMD system
+
+classdiagram hospital {
+    
+    class HospitalHouseMD {
+        List<Patient> patients;
+        List<Doctor> doctors;
+        Database database; // Holds treatments for illnesses
+        void approveDiagnosis(Doctor doctor, Diagnosis diagnosis);
+    }
 
     class Patient {
-        boolean consentGiven; // Indicates if the patient has signed consent
+        String name;
+        boolean consentGiven; // Indicates if patient has signed consent
+        void signConsent();
+        void retractConsent();
     }
 
     class Doctor {
-        String name; // Name of the doctor
+        String name;
+        void makeDiagnosis(Patient patient, Illness illness);
+        void downgradeTreatment(Treatment treatment);
     }
 
-    class HeadDoctor extends Doctor {
-        // Specialization for head doctor, if needed
+    class Diagnosis {
+        Illness illness;
+        Doctor doctor;
+        // Additional attributes can be added as necessary
     }
 
     class Treatment {
-        int stage; // Current stage of the treatment
+        Stage stage;
+        void apply(Patient patient);
+        void upgradeStage(); // Upgrades treatment to a higher stage
+        void downgradeStage(); // Downgrades treatment to a lower stage
+    }
+
+    enum Stage {
+        STAGE_1,
+        STAGE_2,
+        STAGE_3;
     }
 
     class Illness {
         String name;
-        PriorityScore priorityScore; // The priority score of the illness
+        PriorityScore priorityScore;
+        List<Treatment> treatments; // Applied treatments for this illness
+        void updatePriorityScore(PriorityScore newScore); // Updates priority score
     }
 
     enum PriorityScore {
@@ -28,12 +54,10 @@ classdiagram HospitalHouseMD {
         LOW;
     }
 
-    association [1..*] Patient -> (assignedTo) Doctor [*]; // Patients assigned to one or more doctors
-    association [1] Doctor -> (approvedBy) HeadDoctor [*]; // Doctor's diagnosis approved by head doctor
-    association [1] Illness -> (managedBy) Treatment [*]; // Illness can have one or more treatments
-    association [0..*] Treatment -> (appliesTo) Patient [*]; // Treatments applied to patients
-    
-    // Upgrading treatment stages based on consent
-    association [1..*] Treatment -> (requiresConsent) Patient [0..1]; // Upgrades require patient consent
-
+    association [*] HospitalHouseMD -> (patients) Patient [*]; // Hospital has many Patients
+    association [*] HospitalHouseMD -> (doctors) Doctor [*]; // Hospital has many Doctors
+    association [*] Patient -> (diagnosis) Diagnosis [*]; // A Patient can have multiple Diagnoses
+    association [*] Diagnosis -> (illness) Illness [1]; // Diagnosis is for one Illness
+    association [*] Illness -> (treatments) Treatment [*]; // An Illness can have multiple Treatments
 }
+

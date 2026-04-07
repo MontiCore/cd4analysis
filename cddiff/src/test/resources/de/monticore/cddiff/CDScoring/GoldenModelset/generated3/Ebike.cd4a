@@ -1,50 +1,57 @@
 
-// Class diagram for the EBike system
-classdiagram EBikeSystem {
+classdiagram ebike {
 
-class EBike {
-    Frame frame;
-    DriveSystem driveSystem;
-    Controller controller;
-    Battery battery;
-}
+    class EBike {
+        Frame frame;
+        DriveSystem driveSystem;
+        Controller controller;
+        List<Wheel> wheels; // Two wheels in the frame
+        Battery battery; // Optional removable battery
+    }
 
-class Frame {
-    String material; // "steel"
-}
+    class Frame {
+        String material = "steel";
+    }
 
-class DriveSystem {
-    Motor motor;
-}
+    class DriveSystem {
+        Motor motor;
+    }
 
-class Motor {}
+    class Controller {
+        State state; // current state of the controller
+        void controlBattery(Battery battery);
+        void commandDriveSystem(DriveSystem driveSystem);
+    }
 
-class Battery {
-    double storedEnergy; // in Watt-hours (Wh)
-}
+    class Battery {
+        double storedEnergy; // in Watt-hours (Wh)
+    }
 
-enum ControllerState {
-    On,
-    Off,
-    Charging;
-}
+    class Motor {
+        // Motor specifics can be added if needed
+    }
 
-// Base class for controllers
-abstract class Controller {
-    ControllerState state;
-}
+    enum State {
+        ON,
+        OFF,
+        CHARGING;
+    }
 
-// Basic Controller class
-class BasicController extends Controller {}
+    class Wheel {
+        // Wheel specifics can be added if needed
+    }
 
-// Advanced Controller class with additional functionality
-class AdvancedController extends Controller {
-    Date estimateNextInspectionDate();
-}
+    class BasicController extends Controller {
+        // Basic controller implementations
+    }
 
-association [1] EBike -- Frame [1];
-association [1] EBike -- DriveSystem [1];
-association [1] EBike -- Controller [1];
-association [0..1] EBike -- Battery [1];
+    class AdvancedController extends Controller {
+        Date estimateNextInspection();
+    }
 
+    association [2] EBike -> (wheels) Wheel [2]; // Two wheels inserted into each frame
+    association [1] EBike -> Frame [1]; // One frame per EBike
+    association [1] EBike -> DriveSystem [1]; // One drive system per EBike
+    association [1] EBike -> Controller [1]; // One controller per EBike
+    association [0..1] EBike -> Battery [1]; // Optional removable battery
 }

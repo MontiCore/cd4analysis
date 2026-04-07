@@ -1,67 +1,64 @@
 
-classdiagram OilCompany {
+// CD4A class diagram for an Oil Company with Gas Stations and Customers
 
-class Customer {
-    int customerId;
-    String name;
-    boolean isSuspended;
+classdiagram oilCompany {
 
-    void payInvoice(Invoice invoice);
-    void requestRefuelCard();
-}
+    class GasStation {
+        List<Pump> pumps;
+        void refuelCar(Customer customer, Pump pump);
+        void refillPump(Pump pump);
+        void generateDailyReport();
+    }
 
-class RefuelCard {
-    int cardNumber;
-    Customer owner;
+    class Pump {
+        GasolineType gasolineType;
+        double level;
+        boolean isBlocked;
+        void startRefueling(Customer customer);
+        void stopRefueling();
+        void checkRefill();
+        void refill(double quantity);
+    }
 
-    void generateInvoice();
-}
+    enum GasolineType {
+        REGULAR,
+        PREMIUM,
+        DIESEL;
+    }
 
-class Invoice {
-    int invoiceNumber;
-    Date invoiceDate;
-    double totalAmount;
-    double discount;
+    class Customer {
+        String name;
+        RefuelCard refuelCard;
+        List<Invoice> invoices;
+        void requestInvoice();
+        void payInvoice(Invoice invoice);
+        void receiveInvoice(Invoice invoice);
+        void suspend();
+        void reactivate();
+    }
 
-    void sendReminder();
-    void markAsPaid();
-}
+    class RefuelCard {
+        Customer customer;
+        boolean isBlocked;
+    }
 
-class Payment {
-    int paymentId;
-    Date paymentDate;
-    double amount;
+    class Invoice {
+        List<RefuelTurn> refuelTurns;
+        double discount;
+        void addRefuelTurn(RefuelTurn refuelTurn);
+        void send();
+        void remind();
+    }
 
-    void processPayment(Invoice invoice);
-}
+    class RefuelTurn {
+        Pump pump;
+        double amount;
+        String date;
+    }
 
-class GasStation {
-    int stationId;
-    String location;
-}
-
-class Pump {
-    int pumpId;
-    double gasolineLevel;
-    boolean isBlocked;
-
-    void startRefueling(Customer customer);
-    void stopRefueling();
-    void refill(double amount);
-}
-
-class Report {
-    Date reportDate;
-    List<Pump> pumpsToRefill;
-
-    void generateDailyReport();
-}
-
-// Association between classes
-association [0..*] GasStation <-> Pump [1];
-association [1] Pump -> Customer [0..1]; // A pump can be used by one customer at a time
-association [0..*] Customer <-> Invoice [0..*]; // A customer can have many invoices
-association [1] Invoice <-> Payment [0..*]; // An invoice can have multiple payments, but must be paid at least once
-association [0..*] RefuelCard <-> Customer [1]; // A refuel card is owned by one customer
-
+    association [*] GasStation -> (pumps) Pump [*]; 
+    association [0..1] Customer -> RefuelCard [1]; 
+    association [*] Customer -> (invoices) Invoice [*];
+    association [*] Invoice -> (refuelTurns) RefuelTurn [*];
+    association [*] Invoice -> (pumps) Pump [1];
 }

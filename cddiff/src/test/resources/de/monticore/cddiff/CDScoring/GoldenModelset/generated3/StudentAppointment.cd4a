@@ -1,32 +1,38 @@
 
-// CD4A Model for Appointment Management System
+// Class diagram for managing student appointments with teaching assistants
 
-classdiagram AppointmentManagementSystem {
+classdiagram appointmentSystem {
 
     class Student {
         String name;
         String studentId;
-    }
-
-    class Course {
-        String courseId;
-        String courseName;
+        void requestAppointment(Course course, TeachingAssistant ta);
     }
 
     class TeachingAssistant {
         String name;
         String taId;
+        void provideHelp(Course course);
+    }
+
+    class Course {
+        String courseName;
+        String courseCode;
+        List<TeachingAssistant> teachingAssistants;
+        List<Student> enrolledStudents;
     }
 
     class Appointment {
-        String appointmentId;
-        String dateTime;
+        Student student;
+        TeachingAssistant teachingAssistant;
+        Course course;
+        Date appointmentDateTime;
     }
 
-    association [1] Student -> Course [1..*]; // A student can register for multiple courses
-    association [1] TeachingAssistant -> Course [1..*]; // A TA can teach multiple courses
-    association [1] Course -> Appointment [0..*]; // A course can have multiple appointments
-    association [1] TeachingAssistant <-> Appointment [0..*]; // A TA can have multiple appointments
-    association [1] Student <-> Appointment [0..*]; // A student can have multiple appointments
-
+    association [*] Student -> (enrolledIn) Course [*]; // Students can enroll in multiple courses
+    association [*] Course -> (has) TeachingAssistant [*]; // Course can have multiple TAs
+    association [*] TeachingAssistant -> (providesHelpFor) Course [*]; // TAs can help in multiple courses
+    association [1] Appointment -> (involves) Student [1]; // Each appointment involves one student
+    association [1] Appointment -> (involves) TeachingAssistant [1]; // Each appointment involves one TA
+    association [1] Appointment -> (for) Course [1]; // Each appointment is for one specific course
 }

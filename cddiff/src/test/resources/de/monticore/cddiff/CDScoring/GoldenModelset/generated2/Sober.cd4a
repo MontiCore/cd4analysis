@@ -1,60 +1,82 @@
 
-// Class Diagram for Sober Taxi Company using self-driving cars
-classdiagram SoberTaxi {
+// Class diagram representing the Sober taxi service structure
 
-class SoberApp {
-    // Represents the application used to hail taxis
-}
+classdiagram sober {
 
-class TaxiService {
-    // Base class for different taxi services
-}
+    class Sober {
+        Fleet fleet;
+        List<Customer> customers;
+        void registerCar(Car car);
+        void requestRideHail(RideHailRequest request);
+        void requestRideShare(RideShareRequest request);
+    }
 
-class RideHailing extends TaxiService {
-    Date pickupTime;
-    Date dropoffTime;
-    String pickupLocation;
-    String dropoffLocation;
-    int rideDuration; // in minutes
-    double distance; // in kilometers
-    int passengerCount;
-    double fee;
-    String requestType; // "Sober App" or "Hand-waving"
-    String leadCustomerName;
-}
+    class Fleet {
+        List<Car> selfDrivingCabs;
+        List<Car> registeredCars;
+    }
 
-class RideSharing extends TaxiService {
-    Date pickupTime;
-    Date dropoffTime;
-    String pickupLocation;
-    String dropoffLocation;
-    int rideDuration; // in minutes
-    double distance; // in kilometers
-    int passengerCount;
-    List<String> customerNames; // Names of all customers
-    double negotiatedFee;
-}
+    class Car {
+        String licensePlate;
+        Owner owner; // reference to car owner
+        List<Accident> accidents;
+    }
 
-class SelfDrivingCab {
-    String licensePlate;
-    String model;
-}
+    class Owner {
+        String name;
+        String contactInfo;
+        List<Car> cars;
+    }
 
-class RegisteredCar {
-    String ownerName;
-    String licensePlate;
-}
+    class Customer {
+        String name;
+        String contactInfo;
+        List<RideHail> rideHails;
+        List<RideShare> rideShares;
+    }
 
-class Accident {
-    Date date;
-    String location;
-    double damageAmount;
-}
+    class RideHail {
+        DateTime pickUpTime;
+        String pickUpLocation;
+        DateTime dropOffTime;
+        String dropOffLocation;
+        Duration rideDuration;
+        double distance;
+        int numberOfPassengers;
+        double fee;
+        RequestType requestType;
+        Customer leadCustomer;
+    }
 
-association [1] SelfDrivingCab <-> RideHailing [0..*];
-association [1] SelfDrivingCab <-> RideSharing [0..*];
-association [0..*] RegisteredCar <-> RideHailing [0..*];
-association [0..*] RegisteredCar <-> RideSharing [0..*];
-association [1] SelfDrivingCab <-> Accident [0..*];
+    class RideShare {
+        DateTime pickUpTime;
+        String pickUpLocation;
+        DateTime dropOffTime;
+        String dropOffLocation;
+        Duration rideDuration;
+        double distance;
+        List<Customer> customerList;
+        double negotiatedFee;
+    }
 
+    class Accident {
+        DateTime accidentDate;
+        String accidentLocation;
+        double damageAmount;
+    }
+
+    enum RequestType {
+        SoberApp,
+        HandWaving;
+    }
+
+    // Associations
+    association [1] Sober -> (fleet) Fleet [1];
+    association [*] Fleet -> (selfDrivingCabs) Car [*];
+    association [*] Fleet -> (registeredCars) Car [*];
+    association [0..*] Sober -> (customers) Customer [*];
+    association [1] Owner -> (cars) Car [*];
+    association [*] Customer -> (rideHails) RideHail [*];
+    association [*] Customer -> (rideShares) RideShare [*];
+    association [*] Car -> (accidents) Accident [*];
 }

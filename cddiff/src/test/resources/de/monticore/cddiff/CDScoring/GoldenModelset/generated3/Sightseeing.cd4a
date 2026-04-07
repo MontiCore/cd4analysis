@@ -1,36 +1,33 @@
 
-// CD4A class diagram for City Attractions
-classdiagram CityAttractions {
+classdiagram cityAttractions {
 
-class City {
-    String name;
-    int inhabitants;
-}
+    class City {
+        String name;
+        int inhabitants;
+    }
 
-class Attraction {
-    String name;
-    String address;
-}
+    class Attraction {
+        String name;
+        String address;
+    }
 
-class GuidedTour {
-    int duration; // in minutes
-    int number; // tour number
-    double discount; // discount amount for certain visitors
-    boolean hasDiscountFor(Visitor visitor); // method to check if a visitor has a discount
-}
+    class GuidedTour {
+        int duration; // duration in minutes
+        int number;   // tour number
+        double discountAmount; // discount amount for certain visitors
+    }
 
-class Visitor {
-    String name;
-}
+    class Visitor {
+        String name;
+        boolean isDiscounted; // indicates if the visitor is eligible for a discount
+    }
 
-class Guide {
-    String name;
-}
+    class Guide {
+        String name;
+    }
 
-// Association between entities
-association [1..*] City <-> Attraction [0..*];
-association [1] Attraction <-> GuidedTour [0..*];
-association [1..20] GuidedTour <-> Visitor [0..*]; // maximum 20 visitors per guided tour
-association [1] GuidedTour <-> Guide [1];
-
+    association [*] City -> (attractions) Attraction [*];
+    association [*] Attraction -> (tours) GuidedTour [*];
+    association [*] GuidedTour -> (visitors) Visitor [0..20]; // max of 20 visitors
+    association [1] GuidedTour -> (guide) Guide [1]; // each guided tour has one guide
 }

@@ -1,33 +1,48 @@
 
-// CD4A Class Diagram for Game Area
-classdiagram GameArea {
+// CD4A class diagram for a game area and its elements
+classdiagram gameArea {
 
-class GameArea {
-    String name;
-}
+    class GameArea {
+        String name;
 
-class GameElement {
-    protected long x;
-    private long y;
-}
+        // Game area must have at least one GameElement and one or two GamePieces
+    }
 
-class Shape extends GameElement {
-    // Shapes can be connected to any number of other shapes
-}
+    class GameElement {
+        protected long x;
+        private long y;
+    }
 
-class Object extends GameElement {}
+    class Shape extends GameElement {
+    }
 
-class Opponent extends GameElement {
-    protected int lives;
-    boolean isKilled();
-}
+    class GameObject extends GameElement {
+        // Other functionalities for GameObject can be defined here
+    }
 
-// Boss is a specific type of opponent
-class Boss extends Opponent {}
+    class Opponent extends GameElement {
+        protected int lives;
 
-// Association to represent the relationship between GameArea and its elements
-association [1] GameArea <-> GameElement [1..*];
-association [1] GameArea <-> Opponent [1];
-association [0..*] Shape <-> Shape [*]; // Shapes can connect to each other
+        void kill();
+    }
 
+    class Boss extends Opponent {
+        // Boss is a specific type of opponent known to the game area
+    }
+
+    // Association indicating that a GameArea knows exactly one Boss
+    association [1] GameArea -> (boss) Boss [1];
+
+    // Association indicating that a GameArea can contain one or two GamePieces
+    association [1..2] GameArea -> (gamePieces) GamePiece [1..2];
+
+    class GamePiece {
+        // Attributes and methods for GamePieces are defined here
+    }
+
+    // Association for GameArea to have at least one GameElement
+    association [1] GameArea -> (elements) GameElement [1..*];
+
+    // A Shape can connect to any number of other Shapes
+    association [0..*] Shape -> (connectedShapes) Shape [0..*];
 }

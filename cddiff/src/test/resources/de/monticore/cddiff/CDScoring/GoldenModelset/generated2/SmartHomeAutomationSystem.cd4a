@@ -1,52 +1,71 @@
 
-// CD4A class diagram for Smart Home Automation System (SHAS)
+// Smart Home Automation System (SHAS) class diagram
+classdiagram shas {
 
-classdiagram SmartHomeAutomationSystem {
+    class SmartHome {
+        String address;
+        List<Room> rooms;
+    }
 
-class SmartHome {
-    String address;
-}
+    class Room {
+        String name;
+        List<Device> devices;
+    }
 
-class Room {
-    String name;
-}
+    abstract class Device {
+        String deviceId; // Unique device identifier
+    }
 
-class Device {
-    String deviceId;
-}
+    class Sensor extends Device {
+        List<SensorReading> readings;
+        void activate();
+        void deactivate();
+    }
 
-class Sensor extends Device {
-    double measuredValue;
-    Date timestamp;
-}
+    class Actuator extends Device {
+        List<ControlCommand> commands;
+        void activate();
+        void deactivate();
+    }
 
-class Actuator extends Device {
-    String status; // e.g. requested, completed, failed
-    Date commandTimestamp;
-    String controlCommand; // e.g. lockDoor, turnOnHeating
-}
+    class SensorReading {
+        double value; // Measured value
+        Date timestamp; // Timestamp of reading
+    }
 
-class ActivityLog {
-    String action;
-    Date timestamp;
-}
+    class ControlCommand {
+        String command; // Command such as lockDoor or turnOnHeating
+        Date timestamp; // Timestamp of command
+        String status; // Status can be requested, completed, failed, etc.
+    }
 
-class AutomationRule {
-    String precondition; // Boolean expression
-    String action; // sequence of control commands
-    boolean isActive; // status of the rule
-}
+    class ActivityLog {
+        List<SensorReading> sensorReadings;
+        List<ControlCommand> controlCommands;
+        List<RuleTrigger> ruleTriggers;
+    }
 
-class RuleTrigger {
-    Date timestamp;
-}
+    class AutomationRule {
+        String precondition; // Boolean expression for rule
+        List<ControlCommand> actions; // Sequence of control commands
+        void create();
+        void edit();
+        void activate();
+        void deactivate();
+        boolean canEdit(); // Only deactivated rules can be edited
+    }
 
-association [*] SmartHome <-> Room [0..*];
-association [0..*] Room <-> Sensor [0..*];
-association [0..*] Room <-> Actuator [0..*];
-association [1] ActivityLog <-> (records) Sensor [0..*];
-association [1] ActivityLog <-> (records) Actuator [0..*];
-association [0..*] AutomationRule <-> (basedOn) AutomationRule [0..*]; // Rule dependencies
-association [0..*] AutomationRule <-> RuleTrigger [0..*];
+    class RuleTrigger {
+        Date timestamp; // Timestamp when rule was triggered
+    }
 
+    // Associations
+    association [*] SmartHome -> (rooms) Room [*];
+    association [*] Room -> (devices) Device [*];
+    association [*] Device -> (readings) SensorReading [*];
+    association [*] Device -> (commands) ControlCommand [*];
+    association [*] ActivityLog -> (sensorReadings) SensorReading [*];
+    association [*] ActivityLog -> (controlCommands) ControlCommand [*];
+    association [*] ActivityLog -> (ruleTriggers) RuleTrigger [*];
+    association [*] AutomationRule <-> ControlCommand [*]; // Actions can be sequences of control commands
 }

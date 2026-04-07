@@ -1,63 +1,63 @@
 
-classdiagram HouseManagement {
+// Class diagram for the House structure
 
-enum BuildingMaterial {
-    Wood,
-    Brick,
-    Concrete;
-}
+classdiagram houseStructure {
 
-class Address {
-    String street;
-    String city;
-    String postalCode;
-}
+    class House {
+        String address;
+        BuildingMaterial buildingMaterial;
+        Basement basement;
+        List<JobLog> jobLogs;
+    }
 
-class House {
-    Address address;
-    BuildingMaterial material;
-}
+    enum BuildingMaterial {
+        WOOD,
+        BRICK,
+        CONCRETE;
+    }
 
-class Basement {
-    String name;
-    double size;
-}
+    class Basement {
+        String name;
+        double size;
+    }
 
-class EarthBasement extends Basement {
-    double humidityLevel;
-}
+    class EarthBasement extends Basement {
+        double humidityLevel;
+    }
 
-class ConcreteBasement extends Basement {}
+    class ConcreteBasement extends Basement {
+        // additional properties for concrete basement can be added here
+    }
 
-class SemiDetachedHouse extends House {
-    boolean hasGarden;
-    int numberOfWindows;
-    Carport carport;
-    Garage garage;
-}
+    class SemiDetachedHouse extends House {
+        boolean hasOwnGarden;
+        int numberOfWindows;
+        Carport carport;
+        Garage garage; // can only have one of either carport or garage
+    }
 
-class Carport {
-    boolean isDoubleCarport;
-    boolean hasFlatRoof;
-}
+    class Carport {
+        boolean isDoubleCarport;
+        boolean hasFlatRoof;
+    }
 
-class Garage {
-    boolean hasAutomaticDoor;
-}
+    class Garage {
+        boolean hasAutomaticDoor;
+    }
 
-class Company {
-    String name;
-    Address address;
-}
+    class Company {
+        String name;
+        String address;
+    }
 
-class JobLog {
-    double hours;
-    double agreedPrice;
-}
+    class JobLog {
+        int hours;
+        double agreedPrice;
+    }
 
-association [1] House <-> (has) Basement [0..1];
-association [1] House <-> (servicedBy) Company [*];
-association [1] Company <-> (conductsJob) JobLog [*];
-association [0..1] SemiDetachedHouse <-> (has) Carport [0..1];
-association [0..1] SemiDetachedHouse <-> (has) Garage [0..1];
+    association [*] House -> (jobLogs) JobLog [*];
+    association [*] House -> (servicedBy) Company [*];
+    association [1] House -> (basement) Basement [0..1];
+    association [0..1] SemiDetachedHouse -> (carport) Carport [0..1];
+    association [0..1] SemiDetachedHouse -> (garage) Garage [0..1];
 }

@@ -1,101 +1,87 @@
 
-// Class diagram for Helping Hands Store (H2S)
-classdiagram HelpingHandsStore {
+// CD4A Class Diagram for Helping Hands Store (H2S)
+
+classdiagram helpingHandsStore {
 
     class H2S {
         String name;
-        String location;
+        String city;
+        List<Pickup> pickups;
+        List<VolunteerDriver> volunteerDrivers;
+        List<DistributionCenter> distributionCenters;
+        void schedulePickup(PickupRequest request);
     }
 
-    class Resident {
-        String name;
+    class PickupRequest {
+        String residentName;
         String streetAddress;
         String phoneNumber;
         String emailAddress; // optional
         String itemDescription;
-    }
-
-    class PickupRequest {
-        Resident resident;
         Date pickupDate;
-        Time pickupTime; // between 8:00 and 14:00
+        Time pickupTime;
     }
 
-    class PickupVehicle {
-        String vehicleID;
-        float storageSpace; // in cubic meters
+    class Pickup {
+        Vehicle vehicle;
+        List<PickupRequest> scheduledRequests;
+        void determineRoute();
+        void executePickup();
     }
 
     class VolunteerDriver {
         String name;
-        String availableDays;
+        List<Day> availableDays;
+        void indicateAvailability(List<Day> days);
+    }
+
+    class Vehicle {
+        String vehicleId;
+        double storageCapacity; // in cubic meters
+        List<PickupRequest> currentItems;
     }
 
     class DistributionCenter {
-        H2SEmployee employee;
-        List<Article> receivedArticles;
-        
-        void examineArticle(Article article);
-        void assignCategory(Article article, Category category);
+        List<SecondHandArticle> articlesReceived;
+        void examineArticle(SecondHandArticle article);
     }
 
-    class H2SEmployee {
-        String name;
-    }
-
-    class Article {
+    class SecondHandArticle {
         String description;
-        RFID rfidTag;
-        Category category;
-        boolean isUsable;
-    }
-
-    class RFID {
-        String tagID;
-    }
-
-    class Category {
-        String name;
+        String rfidTag;
+        String category;
+        void assignCategory(String category);
     }
 
     class FoodBank {
-        void receiveFoodItems(FoodItem foodItem);
+        List<NonPerishableFood> foodsReceived;
+        void processFood(NonPerishableFood food);
     }
 
-    class FoodItem {
+    class NonPerishableFood {
         String description;
+        void dropOff();
     }
 
     class Client {
         String name;
-        String homeAddress;
-        List<Category> requestedCategories;
+        String address;
+        List<String> requestedCategories;
+        void indicateNeededCategories(List<String> categories);
     }
 
-    class Delivery {
-        Article article;
-        VolunteerDriver driver;
-        Client client;
+    association [*] H2S <-> (locations) DistributionCenter [*];
+    association [*] DistributionCenter -> (receivedArticles) SecondHandArticle [*];
+    association [*] DistributionCenter -> (receivedFoods) NonPerishableFood [*];
+    association [1] VolunteerDriver -> (assignedPickup) Pickup [*];
+    association [*] Pickup -> (pickupRequests) PickupRequest [*];
+    
+    // Enum for available days for VolunteerDriver
+    enum Day {
+        MONDAY,
+        TUESDAY,
+        WEDNESDAY,
+        THURSDAY,
+        FRIDAY;
     }
-
-    class PickupRoute {
-        List<PickupRequest> requests;
-        PickupVehicle vehicle;
-    }
-
-    association [*] H2S -> (locations) Location [*];
-    association [*] Resident -> (pickupRequests) PickupRequest [*];
-    association [1] PickupRequest -> (vehicle) PickupVehicle [1];
-    association [1] PickupRequest -> (resident) Resident [1];
-    association [*] PickupVehicle -> (drivers) VolunteerDriver [*];
-    association [*] PickupVehicle -> (routes) PickupRoute [*];
-    association [*] DistributionCenter -> (receivedArticles) Article [*];
-    association [1] H2S -> (foodBank) FoodBank [1];
-    association [*] DistributionCenter -> (employees) H2SEmployee [1];
-    association [1] FoodBank -> (foodItems) FoodItem [*];
-    association [*] DistributionCenter -> (deliveries) Delivery [*];
-    association [1] Delivery -> (article) Article [1];
-    association [1] Delivery -> (client) Client [1];
-
-    // Note: Include additional details where needed (e.g. constraints or business logic)
 }

@@ -1,58 +1,66 @@
 
-classdiagram HouseSystem {
+// CD4A Model for House Structure
 
-enum BuildingMaterial {
-    Wood,
-    Brick,
-    Concrete;
-}
+classdiagram house {
 
-abstract class Basement {
-    String name;
-}
+    class House {
+        String address;
+        Material buildingMaterial; // Enum for wood, brick, concrete
+        Basement basement;
+        List<Company> servicedBy;
+    }
 
-class EarthBasement extends Basement {
-    int humidityLevel;
-}
+    enum Material {
+        WOOD,
+        BRICK,
+        CONCRETE;
+    }
 
-class ConcreteBasement extends Basement {}
+    class Basement {
+        String size;
+        String name;
+        // For earth basement
+        Integer humidityLevel; // Applicable only for EarthBasement
+    }
 
-class House {
-    String address;
-    BuildingMaterial material;
+    class EarthBasement extends Basement {
+        // Additional properties can be added here if needed
+    }
 
-    // Association with Basement 
-    Basement basement;
-}
+    class ConcreteBasement extends Basement {
+        // Additional properties can be added here if needed
+    }
 
-class SemiDetachedHouse extends House {
-    boolean hasGarden;
-    int numberOfWindows;
-    Carport carport; // Could be either Carport or Garage
-    Garage garage;
-}
+    class SemiDetachedHouse extends House {
+        Boolean hasOwnGarden;
+        Integer numberOfWindows;
+        Carport carport; // References either Carport or Garage
+        Garage garage; // References either Carport or Garage
+    }
 
-class Carport {
-    boolean isDouble;
-    boolean hasFlatRoof;
-}
+    class Carport {
+        Boolean isDoubleCarport;
+        Boolean hasFlatRoof;
+    }
 
-class Garage {
-    boolean hasAutomaticDoor;
-}
+    class Garage {
+        Boolean hasAutomaticDoor;
+    }
 
-class Company {
-    String name;
-    String address;
-}
+    class Company {
+        String name;
+        String address;
+        List<JobLog> jobLogs; // Recording jobs performed
+    }
 
-class JobLog {
-    int hoursWorked;
-    double agreedPrice;
-}
+    class JobLog {
+        Integer numberOfHours;
+        Double agreedPrice;
+    }
 
-association [1..*] House <-> (servicedBy) Company [*];
-association [0..1] House <-> (has) Basement [1];
-association [0..1] SemiDetachedHouse <-> (has) Carport [0..1];
-association [0..1] SemiDetachedHouse <-> (has) Garage [0..1];
+    // Associations
+    association [*] House -> (servicedBy) Company [*];
+    association [0..1] House -> (basement) Basement [0..1];
+    association [1] SemiDetachedHouse -> (carport) Carport [0..1];
+    association [1] SemiDetachedHouse -> (garage) Garage [0..1];
 }

@@ -1,16 +1,16 @@
 
-// CD4A Class Diagram for the EBike system
-classdiagram EBikeSystem {
+// CD4A Class Diagram for the EBike description
+classdiagram ebike {
 
     class EBike {
         Frame frame;
         DriveSystem driveSystem;
         Controller controller;
-        Battery battery; // optional
+        Battery battery;
     }
 
     class Frame {
-        String material; // e.g., "steel"
+        String material = "steel"; // Frame material
     }
 
     class DriveSystem {
@@ -18,40 +18,40 @@ classdiagram EBikeSystem {
     }
 
     class Motor {
-        // motor details can be added here
+        // Motor specifics can be added here
     }
 
     class Battery {
-        double storedEnergy; // in Watt-hours (Wh)
+        int storedEnergy; // Measured in Watt-hours (Wh)
     }
 
     enum ControllerState {
-        ON,
-        OFF,
-        CHARGING;
+        On,
+        Off,
+        Charging;
     }
 
-    class Controller {
+    abstract class Controller {
         ControllerState state;
-        // Method for commanding drive system
-        void commandDriveSystem();
-        // Method for controlling battery
-        void controlBattery();
+
+        // Controls the battery if connected
+        void controlBattery(Battery battery);
+
+        // Commands the drive system
+        void commandDriveSystem(DriveSystem driveSystem);
     }
 
     class BasicController extends Controller {
-        // basic controller features
+        // Basic controller functionality
     }
 
     class AdvancedController extends Controller {
-        // Method for estimating inspection date
-        Date estimateNextInspection();
+        // Advanced controller can estimate the next inspection date
+        Date estimateNextInspectionDate();
     }
 
     association [1] EBike -> Frame [1];
     association [1] EBike -> DriveSystem [1];
     association [1] EBike -> Controller [1];
     association [0..1] EBike -> Battery [1];
-    association [1] DriveSystem -> Motor [1];
-
 }

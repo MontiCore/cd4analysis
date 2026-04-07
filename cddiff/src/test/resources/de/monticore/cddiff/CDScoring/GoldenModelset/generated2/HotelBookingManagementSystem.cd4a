@@ -1,61 +1,85 @@
 
-// CD4A class diagram for Hotel Booking Management System (HBMS)
+// Class Diagram for Hotel Booking Management System (HBMS)
 
-classdiagram HBMS {
+classdiagram hbs {
 
-class Traveller {
-    String name;
-    String billingInfo;
-    String companyName;
-    String address;
-    String travelPreferences; // e.g. breakfast included, free wifi, 24/7 front desk
-    String creditCardInfo;
+    class Traveller {
+        String name;
+        BillingInformation billingInfo; // includes company name and address
+        List<TravelPreference> travelPreferences; // optional
+        List<Booking> pastBookings;
+        ReliabilityRating reliabilityRating;
+
+        void register(String name, BillingInformation billingInfo);
+        void searchAccommodation(String city, Date arrivalDate, Date departureDate, 
+                                 int numberOfRooms, RoomType roomType, 
+                                 int minRating, double budget, 
+                                 List<TravelPreference> additionalPreferences);
+        void finalizeBooking(Booking booking);
+        void cancelBooking(Booking booking);
+    }
+
+    class BillingInformation {
+        String companyName;
+        String address;
+        String creditCardInfo;
+    }
+
+    enum TravelPreference {
+        BREAKFAST_INCLUDED,
+        FREE_WIFI,
+        FRONT_DESK_24_7;
+        // additional preferences can be added
+    }
+
+    class Booking {
+        double price;
+        String cityArea;
+        int hotelRating;
+        List<TravelPreference> keyPreferences;
+        String bookingIdentifier;
+        boolean isPrePaid;
+        Date cancellationDeadline;
+
+        void confirm();
+        void cancel();
+    }
+
+    class Hotel {
+        String name;
+        Address address; // includes city and address details
+        HotelChain chain;
+        List<RoomType> availableRooms;
+
+        void announceAvailableRooms(List<RoomType> roomTypes, Date startDate, Date endDate);
+        void informFullyBooked(RoomType roomType);
+        void sendConfirmation(Booking booking);
+    }
+
+    class RoomType {
+        String type; // e.g., single, double, twin
+        int availability;
+    }
+
+    class Address {
+        String street;
+        String city;
+        String postalCode;
+    }
+
+    class HotelChain {
+        String name;
+        List<Hotel> hotels;
+    }
+    
+    class ReliabilityRating {
+        double score;
+
+        void calculate(List<Booking> pastBookings);
+    }
+
+    association [*] Traveller -> (pastBookings) Booking [*];
+    association [*] Hotel -> (availableRooms) RoomType [*];
+    association [*] HotelChain -> (hotels) Hotel [*];
 }
 
-class Hotel {
-    String name;
-    String city;
-    String address;
-    String hotelChain;
-    int rating; // stars
-}
-
-class Room {
-    String roomType; // e.g. single, double, twin
-    float pricePerNight;
-}
-
-class Booking {
-    String bookingId;
-    float totalCost;
-    boolean prePaid; // true if paid immediately
-    boolean confirmed; // true if booking is confirmed by the hotel
-    DateTime cancellationDeadline;
-}
-
-class SpecialOffer {
-    float offerPrice;
-    String cityArea;
-    int hotelRating;
-    String keyPreferences;
-}
-
-class PastBooking {
-    String bookingId;
-    float cost;
-    boolean isFinalized;
-}
-
-class Competition {
-    String competitorHotel;
-    SpecialOffer offer;
-}
-
-association [1] Traveller <-> Booking [0..*]; // A traveller can have multiple bookings
-association [1] Hotel <-> Booking [0..*]; // A hotel can have multiple bookings
-association [1] Hotel <-> Room [0..*]; // A hotel can have multiple room types
-association [1] Booking <-> SpecialOffer [0..*]; // A booking can receive multiple special offers
-association [0..*] Booking <-> PastBooking [0..*]; // A booking can become a past booking
-association [1] Booking <-> Competition [0..*]; // Booking generates competition with offers from other hotels
-
-}

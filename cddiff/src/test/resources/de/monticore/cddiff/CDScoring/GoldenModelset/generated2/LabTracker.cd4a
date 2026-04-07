@@ -1,72 +1,88 @@
 
-// Class diagram for LabTracker software
-classdiagram LabTracker {
+// CD4A Class Diagram for LabTracker Software
 
-class Doctor {
-    int practitionerNumber;
-    String fullName;
-    String address;
-    String phoneNumber;
-    Image signature; // digital signature
-    Date validFrom;
-}
+classdiagram labtracker {
 
-class Patient {
-    String healthNumber; // alphanumeric
-    String firstName;
-    String lastName;
-    Date dateOfBirth;
-    String address;
-    String phoneNumber;
-}
+    class Doctor {
+        String practitionerNumber;
+        String signature; // digital signature as image
+        String fullName;
+        String address;
+        String phoneNumber;
+        Date requisitionStartDate;
+        
+        void prescribeTest(Test test, Patient patient);
+    }
 
-class Requisition {
-    int id;
-    Date creationDate;
-    Doctor doctor; // cannot prescribe for themselves
-    Patient patient;
-    List<Test> tests; // tests of the same group
-    Repetition repetition; // may indicate repetition
-}
+    class Patient {
+        String healthNumber; // alphanumeric
+        String firstName;
+        String lastName;
+        Date dateOfBirth;
+        String address;
+        String phoneNumber;
+        
+        void bookAppointment(Requisition requisition, Lab lab);
+    }
 
-class Test {
-    String testName;
-    int duration;
-    boolean requiresAppointment;
-    boolean allowsWalkIn;
-}
+    class Requisition {
+        Doctor doctor;
+        Patient patient;
+        List<Test> tests; // Tests must belong to the same group
+        Boolean isRepeat; // indicates if tests are to be repeated
+        Integer repeatCount; // number of times to repeat
+        Interval repeatInterval; // enum defined below
 
-class Appointment {
-    int confirmationNumber;
-    Date appointmentDate;
-    Time startTime;
-    Time endTime;
-    Lab lab; // selected lab for the appointment
-}
+        void viewResults();
+    }
+    
+    class Test {
+        String testName;
+        Integer duration; // defined by lab network
+        Boolean requiresAppointment;
+        Boolean walkInOnly;
+        
+        // For some tests like blood tests, duration covers multiple tests
+        Boolean takesSameTime;
+    }
+    
+    class Lab {
+        String name;
+        String address;
+        String registrationNumber;
+        List<Test> offeredTests; // All tests offered by this lab
+        BusinessHours businessHours; // defined by lab
 
-class Lab {
-    String address;
-    String registrationNumber;
-    String businessHours; // does not change weekly
-    double cancellationFee; // set by the lab
-}
+        void confirmAppointment(Appointment appointment);
+        void changeAppointment(Appointment appointment);
+        void cancelAppointment(Appointment appointment);
+    }
+    
+    class Appointment {
+        String confirmationNumber;
+        Date date;
+        Time startTime;
+        Time endTime;
+        Lab lab;
+    }
 
-class Repetition {
-    int numberOfRepetitions;
-    Interval interval; // weekly, monthly, halfYear, yearly
-}
+    enum Interval {
+        WEEKLY,
+        MONTHLY,
+        EVERY_HALF_YEAR,
+        YEARLY;
+    }
 
-enum Interval {
-    Weekly,
-    Monthly,
-    HalfYear,
-    Yearly;
-}
-
-association [1] Doctor <-> Requisition [*]; // doctor creates requisition
-association [1] Patient <-> Requisition [*]; // patient is linked to requisition
-association [*] Requisition <-> Test [*]; // requisition can have multiple tests
-association [*] Patient <-> Appointment [1]; // patient can have one appointment at a time
-association [1] Lab <-> Appointment [*]; // lab can have multiple appointments
-
+    class BusinessHours {
+        Time startTime;
+        Time endTime; // business hours are consistent every week
+    }
+    
+    // Associations
+    association [1] Requisition -> Patient [1]; // Each requisition is for one patient
+    association [1] Requisition -> Doctor [1]; // Each requisition is made by one doctor
+    association [*] Lab <-> Test [*]; // Labs offer multiple tests, tests can be offered by multiple labs
+    association [1] Lab -> Appointment [*]; // Labs have multiple appointments
+    association [1] Doctor -> Requisition [*]; // A doctor can create multiple requisitions
+    association [*] Patient -> Appointment [*]; // A patient can have multiple appointments
 }

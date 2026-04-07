@@ -1,51 +1,85 @@
 
 // Class diagram for Smart Home Automation System (SHAS)
-classdiagram SmartHomeAutomationSystem {
+classdiagram shas {
 
-class SmartHome {
-    String physicalAddress;
-}
+    class SmartHome {
+        String address;
+        List<Room> rooms;
+        void updateInfrastructureMap();
+    }
 
-class Room {
-    String name;
-}
+    class Room {
+        String name;
+        List<SensorDevice> sensorDevices;
+        List<ActuatorDevice> actuatorDevices;
+    }
 
-class Device {
-    String deviceId;
-}
+    abstract class Device {
+        String deviceId;
+        boolean isActive;
+    }
 
-class Sensor extends Device {
-    float readingValue;
-    Date timestamp;
-}
+    class SensorDevice extends Device {
+        List<SensorReading> readings;
+        void activate();
+        void deactivate();
+    }
 
-class Actuator extends Device {
-    String status; // e.g., requested, completed, failed
-    Date commandTimestamp;
-}
+    class ActuatorDevice extends Device {
+        List<ControlCommand> commands;
+        void activate();
+        void deactivate();
+    }
 
-class ActivityLog {
-    String logEntry; // Description of the activity
-    Date timestamp;
-}
+    class SensorReading {
+        double measuredValue;
+        Date timestamp;
+    }
 
-class AutomationRule {
-    String precondition; // Boolean expression
-    String action; // Sequence of control commands
-    boolean isActive;
-    Date triggeredTimestamp;
-}
+    class ControlCommand {
+        String commandName;
+        Date timestamp;
+        CommandStatus status; // ENUM
+    }
 
-class ControlCommand {
-    String commandType; // e.g., lockDoor, turnOnHeating
-    Date commandTimestamp;
-}
+    enum CommandStatus {
+        REQUESTED,
+        COMPLETED,
+        FAILED;
+    }
 
-association [1] SmartHome <-> Room [*];
-association [*] Room <-> Sensor [*];
-association [*] Room <-> Actuator [*];
-association [0..*] Device <-> ActivityLog [*];
-association [0..*] AutomationRule <-> ActivityLog [*];
-association [0..*] AutomationRule <-> AutomationRule [0..*]; // for rule dependencies and conflicts
+    class ActivityLog {
+        List<LogEntry> entries;
+        void logEntry(LogEntry entry);
+    }
 
+    class LogEntry {
+        Date timestamp;
+        String description;
+    }
+
+    class AutomationRule {
+        BooleanExpression precondition;
+        List<ControlCommand> action;
+        boolean isActive;
+        void activate();
+        void deactivate();
+        void edit();
+    }
+
+    interface BooleanExpression {
+        boolean evaluate();
+    }
+
+    class RelationalTerm {
+        // Represents atomic terms referring to rooms, sensors, actuators, etc.
+        String termReference;
+    }
+
+    association [*] SmartHome -> (contains) Room [*];
+    association [*] Room -> (contains) SensorDevice [*];
+    association [*] Room -> (contains) ActuatorDevice [*];
+    association [*] SensorDevice -> (generates) SensorReading [*];
+    association [*] ActuatorDevice -> (issues) ControlCommand [*];
+    association [*] SmartHome -> (logs) ActivityLog [1];
 }

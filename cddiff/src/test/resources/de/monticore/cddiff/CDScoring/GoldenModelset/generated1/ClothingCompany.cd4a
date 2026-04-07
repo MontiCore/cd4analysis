@@ -1,53 +1,58 @@
 
 // CD4A Class Diagram for Clothing Management Application
-classdiagram ClothingManagementApplication {
+classdiagram clothingManagement {
 
-class Product {
-    String uniqueName;
-    String description;
-    double netPrice; // price before VAT
-}
+    class Product {
+        String uniqueName;
+        String description;
+        double netPrice;
+        Manufacturer manufacturer;
+        Country country;
+        double calculateGrossPrice();
+    }
 
-class Manufacturer {
-    String name;
-    String country;
-}
+    class Manufacturer {
+        String name;
+    }
 
-class Country {
-    String name;
-    double vatRate; // VAT in percentage
-    String currency;
-    double conversionRateToEuro;
-}
+    class Country {
+        String name;
+        double vatRate;
+        String currency;
+        double conversionRateToEuro;
+        boolean isProductAvailable(Product product);
+    }
 
-class Representative {
-    String firstName;
-    String lastName;
-    String socialSecurityNumber;
-    String phoneNumber;
-    String emailAddress;
-}
+    class Representative {
+        String firstName;
+        String lastName;
+        String socialSecurityNumber;
+        String phoneNumber;
+        String emailAddress;
+        Country country;
+    }
 
-class Customer {
-    String name;
-    String address;
-    String phoneNumber;
-    String emailAddress;
-}
+    class Customer {
+        String name;
+        String address;
+        String phoneNumber;
+        String emailAddress;
+        List<Country> countries;
+    }
 
-class Order {
-    String orderId; // unique identifier
-    int quantity;
-    Date orderDate;
-    Date desiredDeliveryDate;
-}
+    class Order {
+        String orderId;
+        Product product;
+        int orderQuantity;
+        Date orderDate;
+        Date deliveryDate;
+        Representative representative;
+    }
 
-// Associations
-association [1] Product <-> Manufacturer [1..1];
-association [1] Product <-> Country [0..*]; // Product may not be available in every country
-association [1] Representative <-> Country [1..1]; // Each representative is responsible for one country
-association [1] Representative <-> Order [0..*]; // A representative can place many orders
-association [1] Customer <-> Order [0..*]; // A customer can have many orders
-association [1] Order <-> Product [1..1]; // Each order refers to exactly one product
-
+    association [1] Representative -> (responsibleFor) Country [1];
+    association [1] Product -> (manufacturedIn) Manufacturer [1];
+    association [1] Product -> (availableIn) Country [*];
+    association [1] Customer -> (resellingIn) Country [*];
+    association [1] Order -> (placedBy) Representative [1];
+    association [1] Order -> (refersTo) Product [1];
 }

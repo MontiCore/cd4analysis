@@ -1,73 +1,84 @@
 
-classdiagram AircraftManagementSystem {
+// Class diagram for an aircraft management system
+classdiagram aircraftManagement {
 
-class Aircraft {
-    String name;
-    String type;
-    int yearOfManufacture;
-    Date nextInspectionDate;
-}
+    class Aircraft {
+        String name;
+        String type;
+        int yearOfManufacture;
+        Date nextInspectionDate;
+        
+        void performFlight(Flight flight);
+    }
 
-class Flight {
-    String flightNumber;
-    Date flightDate;
-}
+    class PassengerAircraft extends Aircraft {
+        int numberOfSeats;
+        
+        void addSeatCategory(SeatCategory category);
+    }
 
-class Passenger {
-    String name;
-    String passportNumber;
-}
+    class Flight {
+        String flightNumber;
+        Date date;
+        List<Passenger> passengers;
+        Airport departureAirport;
+        Airport destinationAirport;
+        
+        void assignPassenger(Passenger passenger);
+    }
 
-class Ticket {
-    String ticketNumber;
-    float price;
-    boolean upgradeDesired;
-}
+    class Passenger {
+        String name;
+        String passportNumber;
+        List<Ticket> tickets;
+        
+        void bookTicket(Ticket ticket);
+    }
 
-class PassengerAircraft extends Aircraft {
-    int numberOfSeats;
-}
+    class Ticket {
+        String ticketNumber;
+        double price;
+        boolean upgradeDesired;
+        SeatCategory category;
+    }
 
-class SeatCategory {
-    String designation;
-    boolean entertainmentProgram;
-    int numberOfSeats;
-}
+    class SeatCategory {
+        String designation;
+        boolean entertainmentProgram;
+        int numberOfSeats;
+    }
 
-class Airline {
-    String name;
-}
+    class Airline {
+        String name;
+        List<FlightAttendant> flightAttendants;
+        List<Pilot> pilots;
+    }
 
-class FlightAttendant {
-    String name;
-    Date dateOfEmployment;
-    boolean isChiefSteward;
-}
+    class FlightAttendant {
+        String name;
+        Date employmentDate;
+        boolean isChiefSteward;
+    }
 
-class Pilot {
-    String name;
-    Date dateOfEmployment;
-    String license;
-}
+    class Pilot {
+        String name;
+        Date employmentDate;
+        String license;
+    }
 
-class Airport {
-    String name;
-    String address;
-    int numberOfRunways;
-}
+    class Airport {
+        String name;
+        String address;
+        int numberOfRunways;
+    }
 
-association [1] Aircraft -- Flight [*];
-association [*] Flight <-> Passenger [*];
-association [1] Passenger -- Ticket [*];
-association [1] PassengerAircraft -- SeatCategory [*];
-
-association [1] Airline -- FlightAttendant [*];
-association [1] Airline -- Pilot [*];
-
-association [1] FlightAttendant -- Flight [*];
-association [1] Pilot -- Flight [1];
-
-association [1] Aircraft -- Airport [1]; // Home airport
-association [1] Flight -- (departure) Airport [1];
-association [1] Flight -- (destination) Airport [1];
+    association [*] Aircraft -> (home) Airport [1];
+    association [*] Flight -> (passengers) Passenger [*];
+    association [*] Flight -> (departure) Airport [1];
+    association [*] Flight -> (destination) Airport [1];
+    association [*] PassengerAircraft -> (seatCategories) SeatCategory [*];
+    association [*] Airline -> (flightAttendants) FlightAttendant [*];
+    association [*] Airline -> (pilots) Pilot [*];
+    association [1] Flight -> (pilot) Pilot [1];
+    association [*] Flight -> (flightAttendants) FlightAttendant [*];
 }

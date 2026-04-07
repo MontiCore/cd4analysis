@@ -1,68 +1,69 @@
 
-classdiagram ElderlyHome {
+// Class diagram for Home for the Elderly
 
-enum StayType {
-    RestHome,
-    RestAndNursingHome,
-    ServiceFlat;
-}
+classdiagram homeForElderly {
 
-class Category {
-    String name;
-    double price;
-}
+    class Home {
+        List<Department> departments;
+    }
 
-class Bed {
-    int bedNumber;
-}
+    class Department {
+        List<Room> rooms;
+    }
 
-class Room {
-    int roomNumber;
-}
+    class Room {
+        List<Bed> beds;
+    }
 
-class Department {
-    String name;
-}
+    class Bed {
+        String category;
+        Price price;
+    }
 
-class Inhabitant {
-    String name;
-    String registrationDate;
-}
+    enum StayType {
+        RH, // Rest Home
+        RNH, // Rest & Nursing Home
+        SF;  // Service Flat
+    }
 
-class Stay {
-    StayType type;
-    String startDate;
-    String endDate;
-}
+    class Inhabitant {
+        List<Stay> stays;
+        void register();
+        void assessAbilities();
+        void acceptProposal(Stay stay);
+        void refuseProposal();
+        void reAssessAbilities();
+    }
 
-class Assessment {
-    String abilities;
-}
+    class Stay {
+        StayType type;
+        Date intakeDate;
+        Boolean proposalAccepted;
+        void validateType();
+        void invalidateProposal();
+        void adjustStayType(StayType newType);
+    }
 
-class Proposal {
-    boolean isValid;
-    String dateProposed;
-}
+    class Registration {
+        void registerPerson();
+        void assessNeeds();
+        void addToWaitingList(Inhabitant inhabitant);
+        void proposeBed(Inhabitant inhabitant);
+    }
 
-class Invoice {
-    double totalAmount;
-    double outstandingAmount;
-    boolean isPaid;
-}
+    class Invoice {
+        Double outstandingAmount;
+        Boolean isPaid;
+        void registerPayment(Double amount);
+        void modifyInvoice();
+        void createCreditNote();
+    }
 
-class PaymentEvent {
-    double amount;
-}
-
-association [1] Department -> Room [*];
-association [1] Room -> Bed [*];
-association [*] Inhabitant <-> Bed [1];
-association [*] Inhabitant -> Stay [*];
-association [*] Inhabitant -> Assessment [0..1];
-association [*] Inhabitant -> Proposal [0..1];
-association [*] Stay -> Category [1];
-association [1] Stay -> Invoice [0..*];
-association [*] Invoice <-> PaymentEvent [0..*];
-association [*] Category <-> Stay [0..*];
-
+    association [1..*] Home -> (departments) Department [*];
+    association [1..*] Department -> (rooms) Room [*];
+    association [1..*] Room -> (beds) Bed [*];
+    association [*] Inhabitant -> (stays) Stay [*];
+    association [1] Registration -> Inhabitant [*];
+    association [1] Stay -> Inhabitant [1];
+    association [1] Invoice -> Inhabitant [1];
 }

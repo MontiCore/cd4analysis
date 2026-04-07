@@ -1,67 +1,54 @@
 
-classdiagram HouseSystem {
+classdiagram house {
 
-enum BuildingMaterial {
-    Wood,
-    Brick,
-    Concrete;
-}
+    class House {
+        String address;
+        String buildingMaterial; // can be wood, brick, or concrete
+        Basement basement;
+        List<Company> companies;
+    }
 
-class Address {
-    String street;
-    String city;
-    String postalCode;
-}
+    class SemiDetachedHouse extends House {
+        boolean hasOwnGarden;
+        int numberOfWindows;
+        Carport carport; // either a carport or a garage
+        Garage garage; // can be null if there is a carport
+    }
 
-class House {
-    Address address;
-    BuildingMaterial material;
-    boolean hasBasement;
-    Basement basement;
-    boolean hasGarden;
-    int numberOfWindows;
+    class Basement {
+        String size;
+        String name;
+    }
 
-    void addCompany(Company company);
-}
+    class EarthBasement extends Basement {
+        int humidityLevel;
+    }
 
-class Basement {
-    String name;
-}
+    class ConcreteBasement extends Basement {
+        // no additional attributes
+    }
 
-class EarthBasement extends Basement {
-    int humidityLevel;
-}
+    class Carport {
+        boolean isDoubleCarport;
+        boolean hasFlatRoof;
+    }
 
-class ConcreteBasement extends Basement {}
+    class Garage {
+        boolean hasAutomaticDoor;
+    }
 
-class SemiDetachedHouse extends House {
-    Carport carport;
-    Garage garage;
-}
+    class Company {
+        String name;
+        String address;
+        List<JobLog> jobLogs;
+    }
 
-class Carport {
-    boolean isDoubleCarport;
-    boolean hasFlatRoof;
-}
+    class JobLog {
+        int hours;
+        double agreedPrice;
+    }
 
-class Garage {
-    boolean hasAutomaticDoor;
-}
-
-class Company {
-    String name;
-    Address address;
-
-    void logJob(House house, int hours, double price);
-}
-
-class JobLog {
-    int hours;
-    double price;
-}
-
-association [*] House -- (has) Company [*];
-association [*] Company -- (performedJob) JobLog [0..*];
-association [*] House <-> (has) Basement [0..1];
-
+    association [1] House <-> (basement) Basement [0..1];
+    association [*] House -> (companies) Company [0..*];
+    association [*] Company -> (jobLogs) JobLog [0..*];
 }

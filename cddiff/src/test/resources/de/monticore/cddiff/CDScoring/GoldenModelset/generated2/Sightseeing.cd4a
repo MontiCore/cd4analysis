@@ -1,5 +1,6 @@
 
-classdiagram CityAttractions {
+// CD4A Class Diagram for City Attractions and Tours
+classdiagram cityAttractions {
 
     class City {
         String name;
@@ -12,22 +13,22 @@ classdiagram CityAttractions {
     }
 
     class GuidedTour {
-        int duration;
-        int numberOfVisitors;
-        double discountAmount; // for certain visitors
+        int duration; // duration in minutes
+        int number; // number of guided tours available
+        Guide guide; // the guide for the tour
     }
 
     class Visitor {
         String name;
+        double discount; // discount for certain tours
     }
 
     class Guide {
-        String name;
+        String name; // name of the guide
     }
 
-    association [1] City <-> Attraction [0..*];
-    association [1] Attraction <-> GuidedTour [0..*];
-    association [0..20] GuidedTour <-> Visitor [0..*]; // max 20 visitors per tour
-    association [1] GuidedTour <-> Guide [1];
-
+    association [*] City -> (attractions) Attraction [*]; // A city has multiple attractions
+    association [1] Attraction -> (tours) GuidedTour [*]; // An attraction can offer multiple guided tours
+    association [1] GuidedTour -> (guide) Guide [1]; // Each guided tour has one guide
+    association [*] GuidedTour <-> (visitors) Visitor [*]; // Visitors can participate in guided tours, max of 20 visitors per tour
 }

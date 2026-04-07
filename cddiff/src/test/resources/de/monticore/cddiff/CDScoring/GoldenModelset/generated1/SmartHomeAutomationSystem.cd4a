@@ -1,57 +1,65 @@
 
-classdiagram SmartHomeAutomationSystem {
+// Class diagram for Smart Home Automation System (SHAS)
 
-class SmartHome {
-    String physicalAddress;
-}
+classdiagram shas {
 
-class Room {
-    String name;
-}
+    class SmartHome {
+        String address;
+        List<Room> rooms;
+    }
 
-abstract class Device {
-    String deviceId;
-}
+    class Room {
+        String name;
+        List<SensorDevice> sensorDevices;
+        List<ActuatorDevice> actuatorDevices;
+    }
 
-class Sensor extends Device {
-    double sensorReading;
-    Date timestamp;
-}
+    abstract class Device {
+        String deviceId; // unique identifier
+    }
 
-class Actuator extends Device {
-    String command;
-    Date timestamp;
-    CommandStatus status;
-}
+    class SensorDevice extends Device {
+        List<SensorReading> readings;
+        void activate();
+        void deactivate();
+    }
 
-enum CommandStatus {
-    Requested,
-    Completed,
-    Failed;
-}
+    class ActuatorDevice extends Device {
+        List<ControlCommand> commands;
+        void activate();
+        void deactivate();
+    }
 
-class ActivityLog {
-    String entryDetails;
-}
+    class SensorReading {
+        double value;
+        Date timestamp;
+    }
 
-class AutomationRule {
-    String precondition; // Boolean expression
-    String action; // Sequence of control commands
-    boolean isActive;
-}
+    class ControlCommand {
+        String commandType; // e.g., lockDoor, turnOnHeating
+        Date timestamp;
+        String status; // e.g., requested, completed, failed
+    }
+    
+    class ActivityLog {
+        List<SensorReading> sensorReadings;
+        List<ControlCommand> controlCommands;
+    }
 
-class Alert {
-    String alertMessage; 
-    Date timestamp;
-}
+    class AutomationRule {
+        String precondition; // Boolean expression
+        List<ControlCommand> action;
+        boolean isActive;
+        void activate();
+        void deactivate();
+        void edit();
+    }
 
-association [1] SmartHome <-> Room [*];
-association [*] Room <-> Device [0..*];
-association [1] SmartHome <-> ActivityLog [0..*];
-association [1] SmartHome <-> AutomationRule [0..*];
-association [0..*] AutomationRule <-> AutomationRule [0..*]; // for dependencies and conflicts
-
-association [*] Sensor <-> ActivityLog [0..*];
-association [*] Actuator <-> ActivityLog [0..*];
-
+    association [*] SmartHome -> (contains) Room [*];
+    association [*] Room -> (has) SensorDevice [*];
+    association [*] Room -> (has) ActuatorDevice [*];
+    association [*] SensorDevice -> (records) SensorReading [*];
+    association [*] ActuatorDevice -> (executes) ControlCommand [*];
+    association [*] SmartHome -> (logs) ActivityLog [1];
+    association [*] SmartHome -> (manages) AutomationRule [*];
 }

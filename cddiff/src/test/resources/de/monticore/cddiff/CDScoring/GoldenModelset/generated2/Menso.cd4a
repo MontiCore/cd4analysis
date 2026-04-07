@@ -1,49 +1,51 @@
 
-// Class Diagram for De Lijn's MENSO Bus Company System
-classdiagram DeLijnBusCompany {
+classdiagram bus_company {
 
-class Trajectory {
-    String id; // Unique identifier for the trajectory
-    boolean isApproved;
-    boolean isSuspended;
-    boolean isCancelled;
-}
+    class BusCompany {
+        String name;
+        void requestApproval(Trajectory trajectory);
+        void assignBusToTrajectory(Bus bus, Trajectory trajectory);
+    }
 
-class Line {
-    String lineNumber; // Line number for the bus
-}
+    class Bus {
+        String lineNumber;
+    }
 
-class Bus {
-    String id; // Unique identifier for the bus
-}
+    class Trajectory {
+        String destination;
+        boolean approved;
+        void requestApproval();
+        void changeTrajectory();
+        void suspend();
+        void cancel();
+    }
 
-class MENSO {
-    int validityInMonths; // Validity of the MENSO ticket
-    double price; // Price of the trip (depends on line category)
-}
+    class Line {
+        String lineName;
+        List<Trajectory> overlappingTrajectories;
+    }
 
-class Invoice {
-    Date date; // Date of the invoice
-    double totalAmount; // Total amount to be invoiced
-    double discount; // Discount applied up to 20%
-}
+    class MENSO {
+        double price;
+        void registerTrip(Date time, String line);
+        void issueInvoice(Customer customer);
+    }
 
-class Customer {
-    String homeAddress; // Home address of the customer
-    String officeAddress; // Office address of the customer
-    String workingHours; // Working hours of the customer
-}
+    class Customer {
+        String homeAddress;
+        String officeAddress;
+        String workingHours;
+        void subscribeToMENSO(MENSO menso);
+    }
 
-class Trip {
-    DateTime timeStamp; // Time and date of the trip
-    Line line; // Line for the trip
-}
+    class Invoice {
+        double amount;
+        void calculateDiscount();
+    }
 
-association [1] Bus <-> Trip [0..*]; // A bus can have many trips
-association [1] Trajectory <-> Line [1]; // A trajectory corresponds to a line
-association [1] Line <-> MENSO [1]; // A line is associated with MENSO
-association [1] MENSO <-> Invoice [0..*]; // MENSO can generate multiple invoices
-association [1] Customer <-> MENSO [1]; // A customer subscribes to one MENSO
-association [1] Customer <-> Trip [0..*]; // A customer can have many trips
-association [*] Trajectory <-> (approvalRequest) TownAuthority [0..*]; // Approval requests to town authorities
+    association [1] BusCompany -> (operates) Bus [*];
+    association [1] BusCompany -> (manages) Trajectory [*];
+    association [*] Line -> (groups) Trajectory [*];
+    association [*] MENSO <-> Invoice [*];
+    association [1] Customer -> (uses) MENSO [*];
 }

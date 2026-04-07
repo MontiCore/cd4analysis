@@ -1,20 +1,36 @@
 
-classdiagram HospitalHouseMD {
+// CD4A Model for HospitalHouseMD
+classdiagram hospitalhousemd {
+
+    class HospitalHouseMD {
+        List<Patient> patients;
+        List<Doctor> doctors;
+        List<Illness> illnesses;
+        void approveDiagnosis(Doctor doctor, Diagnosis diagnosis);
+    }
 
     class Patient {
-        boolean consent; // Indicates if the patient has signed consent
+        String name;
+        boolean consentGiven;
+        void signConsent();
+        void retractConsent();
     }
 
     class Doctor {
-        // Attributes and methods for Doctor can be defined here
+        String name;
+        void diagnose(Patient patient);
     }
 
-    class HeadDoctor extends Doctor {
-        // HeadDoctor specific attributes and methods can be defined here
+    class Diagnosis {
+        String description;
+        Doctor diagnosingDoctor;
+        Illness illness;
     }
 
     class Illness {
-        PriorityScore priorityScore; // high or low
+        String name;
+        PriorityScore priorityScore;
+        void updatePriorityScore(PriorityScore newScore);
     }
 
     enum PriorityScore {
@@ -23,16 +39,22 @@ classdiagram HospitalHouseMD {
     }
 
     class Treatment {
-        int stage; // 1, 2, or 3
+        TreatmentStage stage;
+        void apply(Patient patient);
+        void upgradeStage();
+        void downgradeStage();
     }
 
-    class FollowUp {
-        // Attributes for FollowUp can be defined here, relating to frequency
+    enum TreatmentStage {
+        STAGE1,
+        STAGE2,
+        STAGE3;
     }
 
-    association [1..*] Patient <-> Doctor [1..*]; // Patients can have multiple doctors
-    association [1..*] Illness <-> Treatment [1..*]; // Illnesses can have multiple treatments
-    association [1] HeadDoctor <-> Treatment [0..*]; // HeadDoctor approves treatments
-    association [1..*] Treatment <-> FollowUp [0..*]; // Treatments can have follow-ups
-
+    // Association between classes
+    association [*] HospitalHouseMD -> (patients) Patient [*];
+    association [*] HospitalHouseMD -> (doctors) Doctor [*];
+    association [*] HospitalHouseMD -> (illnesses) Illness [*];
+    association [*] Patient -> (diagnoses) Diagnosis [*];
+    association [*] Diagnosis -> (treatments) Treatment [*];
 }

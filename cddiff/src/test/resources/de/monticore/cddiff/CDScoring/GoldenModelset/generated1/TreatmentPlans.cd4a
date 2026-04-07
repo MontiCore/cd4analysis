@@ -1,32 +1,10 @@
 
-// Class diagram for Hospital Examination System
-classdiagram HospitalExaminationSystem {
+classdiagram hospital {
 
     class Hospital {
         String name;
-        String address;
-    }
-
-    class Doctor {
-        String firstName;
-        String lastName;
-    }
-
-    class Patient {
-        String firstName;
-        String lastName;
-    }
-
-    class Examination {
-        String type;
-    }
-
-    class TreatmentPlan {
-        String problem;
-    }
-
-    class ActualTreatment {
-        String deviationDetails;
+        List<ExaminationType> allowedExaminations;
+        void applyForPermission(ExaminationType type);
     }
 
     enum ExaminationType {
@@ -34,13 +12,51 @@ classdiagram HospitalExaminationSystem {
         ECHOGRAPHY,
         RADIOLOGY,
         SCANNER;
+        // other types can be added here
     }
 
-    association [1] Hospital -> Examination [*];
-    association [1] Hospital <-> TreatmentPlan [0..*];
-    association [1] TreatmentPlan -> Examination [*];  // advised types of examinations
-    association [1] Patient <-> ActualTreatment [0..*]; // A patient can have multiple treatments
-    association [1] Doctor -> Patient [*];  // A doctor can have multiple patients
-    association [1] Doctor -> ActualTreatment [*]; // A doctor defines actual treatments
-    association [1] Examination <-> Hospital [0..*]; // A hospital can apply for permissions for examinations
+    class Examination {
+        ExaminationType type;
+        Patient patient;
+        Doctor doctor;
+        void perform();
+    }
+
+    class TreatmentPlan {
+        ProblemType problem;
+        List<ExaminationType> advisedExaminations;
+    }
+
+    class ActualTreatment {
+        TreatmentPlan treatmentPlan; 
+        List<Examination> examinations; 
+        List<String> medicalActions; // free medical actions can be stored here
+        void documentTreatment();
+    }
+
+    class Doctor {
+        String name;
+        Hospital hospital;
+        void diagnose(Patient patient, ProblemType problem);
+        ActualTreatment defineTreatment(TreatmentPlan plan);
+    }
+
+    class Patient {
+        String name;
+        List<Examination> examinations; // history of examinations
+    }
+
+    enum ProblemType {
+        CARDIOLOGIC_PROBLEM,
+        GASTRO_PROBLEM,
+        NEURO_PROBLEM;
+        // other problems can be added here
+    }
+
+    association [1] Hospital -> (allowedExaminations) ExaminationType [*];
+    association [*] Hospital -> (examinations) Examination [*];
+    association [*] Doctor -> (examinations) Examination [*];
+    association [*] Doctor -> (treatmentPlans) TreatmentPlan [*];
+    association [*] TreatmentPlan -> (advisedExaminations) ExaminationType [*];
+    association [*] ActualTreatment -> (examinations) Examination [*];
 }

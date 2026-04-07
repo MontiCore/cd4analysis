@@ -1,14 +1,19 @@
 
-// Class Diagram for Team Sports Scouting System
-classdiagram TeamSportsScoutingSystem {
+// CD4A representation of the Team Sports Scouting System
+classdiagram teamSportsScouting {
 
     class Employee {
         String name;
-        String role; // e.g. "Head Coach", "Director", "Scout"
+        String role; // Role can be HeadCoach, Director, or Scout
     }
 
-    class Coach extends Employee {
-        void identifyPlayerProfile(String position);
+    class HeadCoach extends Employee {
+        void identifyPlayerProfile(PlayerProfile profile);
+        void evaluateShortList(List<Player> players);
+    }
+
+    class Director extends Employee {
+        void makeOffer(Player player);
     }
 
     class Scout extends Employee {
@@ -16,25 +21,25 @@ classdiagram TeamSportsScoutingSystem {
         ScoutingReport submitScoutingReport(Player player);
     }
 
-    class Director extends Employee {
-        void makeOffer(Player player);
-    }
-
-    class Player {
-        String name;
-        String position; // e.g. "GK", "LB"
+    class PlayerProfile {
+        String position; // e.g., GK, LB
         List<Attribute> attributes;
     }
 
     class Attribute {
         String name;
-        String value; // Value of the attribute
+        String value;
+    }
+
+    class Player {
+        String name;
+        PlayerProfile profile;
     }
 
     class ScoutingReport {
         List<String> pros;
         List<String> cons;
-        Recommendation recommendation; // E.g. Key Player, First Team Player, etc.
+        Recommendation recommendation; // Recommendation is an enum type
     }
 
     enum Recommendation {
@@ -45,31 +50,8 @@ classdiagram TeamSportsScoutingSystem {
         NOT_A_GOOD_SIGNING;
     }
 
-    class LongList {
-        List<Player> players;
-    }
-
-    class ShortList {
-        List<Player> players;
-    }
-
-    class ScoutingAssignment {
-        Player player;
-        Scout scout;
-        ScoutingReport report;
-    }
-
-    class Offer {
-            //comment: The LLM did not generated the class, added to avoid errors
-    }
-
-    association [1] Coach -- (identifies) Player [*];
-    association [*] Scout -- (notes) Player [*];
-    association [1] Scout -- (submits) ScoutingReport [*];
-    association [1] Director -- (makes) Offer [*];
-
-    association [1] LongList -- (evaluates) Player [*];
-    association [1] ShortList -- (contains) Player [*];
-    association [1] ScoutingAssignment -- (involves) Scout [1];
-    association [1] ScoutingAssignment -- (for) Player [1];
+    association [*] Scout -> (notedPlayers) Player [*];
+    association [1] HeadCoach -> (designatedProfiles) PlayerProfile [*];
+    association [*] HeadCoach -> (shortListedPlayers) Player [*];
+    association [*] Scout -> (scoutingReports) ScoutingReport [*];
 }

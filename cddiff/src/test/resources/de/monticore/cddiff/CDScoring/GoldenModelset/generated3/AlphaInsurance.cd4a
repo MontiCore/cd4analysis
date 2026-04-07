@@ -1,61 +1,56 @@
 
-// CD4A Class Diagram for Alpha Insurance
-classdiagram AlphaInsurance {
+classdiagram insurance {
 
-class Customer {
-    String name;
-    String contactInfo;
-}
+    class Customer {
+        Broker assignedBroker;
+        void requestInsurancePolicy(List<InsuranceType> types);
+        void sendClaim(Claim claim);
+    }
 
-class Broker {
-    String name;
-    String registrationId;
-}
+    class Broker {
+        void assessProfile(Customer customer);
+        void sendFileForAnalysis(Customer customer);
+        List<Contract> createOffer(Customer customer);
+    }
 
-class InsurancePolicy {
-    String type;
-    double price;
-    String frequency; // "monthly" or "yearly"
-}
+    class Contract {
+        InsuranceType policyType;
+        boolean isSigned;
+        void signContract();
+        void invoiceCustomer();
+    }
 
-class Contract {
-    Date signingDate;
-    String status; // "active", "pending", etc.
-}
+    class Claim {
+        List<ClaimCase> claimCases;
+        void submitClaim();
+    }
 
-class Claim {
-    String description;
-    Date claimDate;
-}
+    class ClaimCase {
+        List<EstimatorReport> reports;
+        boolean isApproved;
+        void assessClaim();
+        void calculateCompensation();
+    }
 
-class ClaimCase {
-    String caseId;
-    String status; // "open", "closed"
-}
+    class Estimator {
+        void issueReport(ClaimCase claimCase);
+    }
 
-class Estimator {
-    String name;
-    String areaOfExpertise;
-}
+    class EstimatorReport {
+        ClaimCase caseHandled;
+        // This report is stored for legal purposes
+    }
 
-class CompensationDecision {
-    double amount;
-    String details;
-}
+    enum InsuranceType {
+        LIFE,
+        HEALTH,
+        AUTO,
+        HOME;
+    }
 
-class EstimatorReport {
-    String reportId;
-    Date submissionDate;
-}
-
-// Associations
-association [1] Broker <-> Customer [0..1]; // Broker manages Customer
-association [1] Customer <-> InsurancePolicy [0..*]; // Customer can have multiple Insurance Policies
-association [1] InsurancePolicy <-> Contract [0..1]; // Insurance Policy leads to Contract
-association [1] Customer <-> Claim [0..*]; // Customer can file multiple Claims
-association [1] Claim <-> ClaimCase [0..*]; // Claim can lead to one or more Claim Cases
-association [1] ClaimCase <-> Estimator [1..*]; // Each Claim Case is assessed by one or more Estimators
-association [1] Estimator <-> EstimatorReport [0..*]; // Estimator produces multiple Reports
-association [1] ClaimCase <-> CompensationDecision [0..1]; // Claim Case can have a Compensation Decision
-
+    association [1] Broker -> Customer [*]; // A broker can handle multiple customers
+    association [1] Customer -> Contract [*]; // A customer can have multiple contracts
+    association [1] Claim -> ClaimCase [*]; // A claim can have multiple claim cases
+    association [*] ClaimCase -> EstimatorReport [*]; // A claim case can have multiple estimator reports
+    association [1] ClaimCase -> Estimator [*]; // A claim case can be assessed by multiple estimators
 }

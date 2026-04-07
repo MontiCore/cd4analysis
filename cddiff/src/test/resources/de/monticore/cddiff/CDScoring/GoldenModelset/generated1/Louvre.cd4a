@@ -1,56 +1,46 @@
 
-// CD4A Class Diagram for the Louvre Museum Exhibition Management System
-classdiagram LouvreMuseum {
+classdiagram louvreMuseum {
 
-class Employee {
-    int employeeId;
-    String name;
-    String position;
-}
+    class Museum {
+        List<Location> locations;
+    }
 
-class JuniorEmployee extends Employee {
-    Employee coach; // Assigned senior employee as coach
-}
+    class Location {
+        String name;
+        List<Exhibition> exhibitions;
+    }
 
-class SeniorEmployee extends Employee {
-    // Senior employee class
-}
+    class Exhibition {
+        String title;
+        Date openingDate;
+        Employee coordinator;
+        List<ExhibitionItem> desiredItems;
+    }
 
-class Location {
-    int locationId;
-    String description; // Description of the location
-}
+    class ExhibitionItem {
+        String description;
+        List<Piece> potentialPieces;
+    }
 
-class Exhibition {
-    int exhibitionId;
-    String title;
-    Date planningStartDate;
-    Date openingDate;
-    Employee coordinator; // Employee assigned as coordinator
-}
+    class Piece {
+        String name;
+        Collector collector;
+    }
 
-class ExhibitionItem {
-    int itemId;
-    String description;
-}
+    class Employee {
+        String name;
+        Employee coach; // A senior employee for coaching
+    }
 
-class Collector {
-    int collectorId;
-    String name;
-}
+    class Collector {
+        String name;
+        List<Piece> pieces; // Pieces owned by the collector
+    }
 
-class Piece {
-    int pieceId;
-    ExhibitionItem exhibitionItem; // The item for which this piece is sourced
-    Collector collector; // The collector from whom the piece is sourced
-}
-
-
-association [1] Location <-> Exhibition [*]; // A location can host multiple exhibitions
-association [1] Exhibition <-> Employee [1]; // Each exhibition has one coordinator
-association [*] Exhibition <-> ExhibitionItem [*]; // An exhibition can have multiple items
-association [1] Collector <-> Piece [*]; // A collector can have multiple pieces
-association [*] ExhibitionItem <-> Piece [*]; // An exhibition item can correspond to multiple pieces
-
-association [1] SeniorEmployee <-> JuniorEmployee [*]; // Coaching relationship
+    association [*] Museum -> (locations) Location [*];
+    association [*] Location -> (exhibitions) Exhibition [*];
+    association [*] Exhibition -> (desiredItems) ExhibitionItem [*];
+    association [*] ExhibitionItem -> (potentialPieces) Piece [*];
+    association [*] Employee -> (coachedBy) Employee [0..1]; // Coaching relationship
+    association [*] Collector -> (pieces) Piece [*];
 }

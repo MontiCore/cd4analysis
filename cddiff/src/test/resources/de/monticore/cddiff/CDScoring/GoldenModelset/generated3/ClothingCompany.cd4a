@@ -1,52 +1,52 @@
 
-// CD4A Model for Clothing Management Application
-classdiagram ClothingManagement {
+classdiagram clothingStore {
 
-class Product {
-    String name;
-    String description;
-    double netPrice; // price before VAT
-}
+    class Product {
+        String uniqueName;
+        String description;
+        double netPrice;
+        Manufacturer manufacturer; // Reference to Manufacturer
+        Country country; // Reference to Country
+        double calculateGrossPrice();
+    }
 
-class Manufacturer {
-    String name;
-    String country;
-}
+    class Manufacturer {
+        String name; // Name of the manufacturer
+    }
 
-class Country {
-    String name;
-    double vatRate;
-    String currency;
-    double conversionRateToEuro;
-}
+    class Country {
+        String name; // Name of the country
+        double vatRate; // VAT rate applicable in the country
+        String currency; // Currency used in the country
+        double conversionRateToEuro; // Conversion rate to Euro
+    }
 
-class Representative {
-    String firstName;
-    String lastName;
-    String socialSecurityNumber;
-    String telephoneNumber;
-    String emailAddress;
-}
+    class Representative {
+        String firstName;
+        String lastName;
+        String socialSecurityNumber;
+        String telephoneNumber;
+        String emailAddress;
+        Country country; // Each representative is associated with one country
+    }
 
-class Customer {
-    String name;
-    String address;
-    String telephoneNumber;
-    String emailAddress;
-}
+    class Customer {
+        String name;
+        String address;
+        String telephoneNumber;
+        String emailAddress;
+        List<Country> countries; // List of countries where goods are resold
+    }
 
-class Order {
-    int orderId; // unique identifier for the order
-    int quantity;
-    Date orderDate;
-    Date deliveryDate;
-}
+    class Order {
+        String orderId; // Unique identifier for the order
+        Product product; // Reference to a Product
+        int orderQuantity;
+        Date orderDate;
+        Date deliveryDate;
+        Representative representative; // Reference to the Representative placing the order
+    }
 
-association [1] Product -- (manufacturedBy) Manufacturer [1];
-association [1] Country -- (productsAvailable) Product [*];
-association [1] Country -- (rep) Representative [1];
-association [1] Representative -- (responsibleFor) Country [1];
-association [1] Representative -- (orders) Order [*];
-association [1] Customer -- (orders) Order [*];
-
+    association [1] Order -> Product [1]; // Each order refers to exactly one product
+    association [1] Representative -> Country [1]; // Each representative is responsible for one country
 }

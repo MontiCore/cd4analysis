@@ -1,48 +1,54 @@
 
-// Class Diagram for Musicmatic
+// Class Diagram for the Musicmatic Streaming Service
+classdiagram musicmatic {
 
-classdiagram MusicmaticLLM {
+    class Song {
+        String title;
+        int year;
+        int length; // Length in seconds
+        String genre;
+        Artist artist; // Each song belongs to exactly one artist
+    }
 
-class Song {
-    String title;
-    int year;
-    double length; // in minutes
-    String genre;
-}
+    class Artist {
+        String name; // Unique identifier for artist
+        Date dateOfBirth;
+        String websiteURL; // URL to Wikipedia page or other info
+    }
 
-class Artist {
-    String name; // unique identifier
-    Date dateOfBirth;
-    String websiteURL;
-}
+    class User {
+        String id; // Unique ID for user
+        String name;
+        String address;
+    }
 
-class User {
-    int id; // unique identifier
-    String name;
-    String address;
-}
+    class RegularUser extends User {
+        // Regular users can buy music
+    }
 
-class RegularUser extends User {}
+    class BusinessUser extends User {
+        String vatNumber; // VAT number for business users
+        void uploadSong(Song song); // Business users can upload songs
+    }
 
-class BusinessUser extends User {
-    String vatNumber;
-}
+    class Album {
+        List<Hit> hits; // Contains multiple hits
+        void addHit(Hit hit);
+        void removeHit(Hit hit);
+    }
 
-class Album {
-    String title;
-}
+    class Single {
+        Song song; // A single song
+    }
 
-class Hit {
-    int trackNumber;
-}
+    class Hit {
+        Song song; // Each hit is a song
+        int trackNumber; // Position in the album
+    }
 
-class Single extends Song {}
-
-association [1] Artist <-> Song [*]; // A song belongs to exactly one artist
-association [1] User <-> Album [0..*]; // A user can have multiple albums
-association [0..*] Album <-> Hit [0..*]; // An album can have multiple hits
-association [1] Album <-> RegularUser [0..*]; // Regular user can own albums
-association [1] BusinessUser <-> (uploads) Single [0..*]; // Business users upload singles only
-association [1] RegularUser <-> (buys) Single [0..*]; // Regular users buy singles
-
+    association [1] Artist -> Song [*]; // Each artist can have multiple songs
+    association [*] User -> Single [*]; // Users can buy multiple singles
+    association [1] Album -> Hit [*]; // An album has multiple hits
+    association [1] BusinessUser -> Song [1]; // Business users can upload a single song
+    association [*] RegularUser <-> Album [*]; // Regular users can have multiple albums as suggestions
 }

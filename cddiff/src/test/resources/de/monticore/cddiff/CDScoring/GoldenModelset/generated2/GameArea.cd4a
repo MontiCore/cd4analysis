@@ -1,33 +1,32 @@
 
-// Class Diagram for Game Area
-classdiagram GameArea {
+classdiagram gameArea {
 
-class GameArea {
-    String name;
-}
+    class GameArea {
+        String name;
+        GameElement boss;
+    }
 
-class GameElement {
-    protected long x;
-    private long y;
-}
+    abstract class GameElement {
+        protected long x;
+        private long y;
+    }
 
-class Shape extends GameElement {
-    // Shapes can connect to other shapes
-}
+    class Shape extends GameElement {
+    }
 
-class Object extends GameElement {}
+    class Object extends GameElement {
+        // class body, could have specific attributes/methods
+    }
 
-class Opponent extends GameElement {
-    protected int lives;
-    void kill();
-}
+    class Opponent extends GameElement {
+        protected int lives;
+        void kill();
+    }
 
-class Boss extends Opponent {}
+    class Enemy extends Opponent {
+        // class body, could have specific attributes/methods
+    }
 
-class Enemy extends Opponent {}
-
-// Association definitions
-association [1..*] GameArea -> GameElement [*]; // Game Area has at least one Game Element
-association [1..2] GameArea -> GamePiece [*]; // Game Area has one or two Game Pieces (GamePiece class assumed to exist)
-
+    association [1..*] GameElement -> (elements) GamePiece [1..2];
+    association [0..*] Shape -> (connectedShapes) Shape [0..*];
 }

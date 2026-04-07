@@ -1,34 +1,39 @@
 
-// Class Diagram for Appointment System for Teaching Assistants
-classdiagram AppointmentSystem {
+// CD4A class diagram for managing appointments between Students and Teaching Assistants for Courses
+classdiagram appointmentSystem {
 
     class Student {
         String name;
         String studentId;
-        // A student can only be associated with courses they are registered for.
-    }
-
-    class Course {
-        String courseName;
-        String courseCode;
-        // Each course has a unique identifier and a name.
+        // Method to request an appointment
+        void requestAppointment(Appointment appointment);
     }
 
     class TeachingAssistant {
         String name;
         String taId;
-        // A TA can only assist in the courses they are teaching.
+        // Method to provide help
+        void provideHelp(Appointment appointment);
+    }
+
+    class Course {
+        String courseId;
+        String courseName;
+        // Method to check if a student can register
+        boolean canRegister(Student student);
     }
 
     class Appointment {
-        String appointmentId;
-        String dateTime;
-        // An appointment is specific to one course and one TA.
+        Student student;
+        TeachingAssistant teachingAssistant;
+        Course course;
+        // Method to schedule the appointment
+        void schedule();
     }
 
-    association [1] Student -> Course [*];  // A student can be registered in multiple courses
-    association [1] TeachingAssistant -> Course [*];  // A TA can assist multiple courses
-    association [1] Course -> Appointment [0..*];  // A course can have multiple appointments
-    association [1] TeachingAssistant -> Appointment [0..*];  // A TA can have multiple appointments
-    association [1] Student -> Appointment [0..*];  // A student can have multiple appointments
+    // Associations
+    association [*] Student -> (appointments) Appointment [*];
+    association [*] TeachingAssistant -> (appointments) Appointment [*];
+    association [*] Course <-> (students) Student [*];
+    association [*] Course <-> (teachingAssistants) TeachingAssistant [*];
 }

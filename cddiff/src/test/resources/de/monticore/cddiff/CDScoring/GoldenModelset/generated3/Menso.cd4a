@@ -1,71 +1,55 @@
 
-// CD4A Class Diagram for De Lijn Bus Company
+// Class Diagram for De Lijn's Bus Company Operations
+classdiagram delijn {
 
-classdiagram DeLijnBusCompany {
+    class BusCompany {
+        List<Bus> busses;
+        List<Trajectory> trajectories;
+        void requestApproval(Trajectory trajectory);
+        void assignBusToTrajectory(Bus bus, Trajectory trajectory);
+    }
 
-enum ApprovalStatus {
-    Approved,
-    Refused,
-    RevisionRequested;
-}
+    class Bus {
+        String lineNumber;
+    }
 
-class Trajectory {
-    String id;
-    ApprovalStatus approvalStatus;
-    boolean isOperational;
-    boolean isSuspended;
-    boolean isCancelled;
-}
+    class Trajectory {
+        String destination;
+        boolean isApproved;
+        void requestChange();
+        void cancel();
+    }
 
-class Line {
-    String lineNumber;
-}
+    class Line {
+        List<Trajectory> overlappingTrajectories;
+        String category;
+    }
 
-class Bus {
-    String busId;
-    String lineNumber; // can be associated with multiple lines
-}
+    class MENSO {
+        String ticketID;
+        Date validUntil;
+        double price;
+        void registerTrip(Date date, Time time, Line line);
+        double calculateInvoice(List<Trip> trips);
+    }
 
-class MENSO {
-    double price;
-    int discount;
-    String validity; // Limit to one year
-}
+    class Customer {
+        String homeAddress;
+        String officeAddress;
+        String workingHours;
+        void subscribeToMENSO();
+        void makePayment(double amount);
+    }
 
-class Invoice {
-    Date date;
-    double totalAmount;
-}
+    class Trip {
+        Date date;
+        Time time;
+        Line line;
+    }
 
-class Customer {
-    String name;
-    String homeAddress;
-    String officeAddress;
-    String workingHours;
-}
-
-class MENSOCard {
-    String cardId;
-}
-
-class Trip {
-    Date time;
-    String line;
-}
-
-class Category {
-    String categoryName;
-    double pricePerTrip; // Price depends on the category
-}
-
-// Association between classes
-
-association [1] Bus <-> Line [0..*]; 
-association [1] Trajectory <-> Line [0..*]; // A line groups multiple trajectories
-association [1] MENSOCard <-> Customer [1];
-association [*] Customer <-> Trip [0..*]; // Customers register trips 
-association [*] Trip <-> Invoice [0..*]; // Trips are used to generate invoices
-association [*] Line <-> Category [1]; // Lines have a category
-association [1] MENSOCard <-> (user) Customer [1]; // MENSO cards are issued to customers
-
+    association [*] BusCompany -> (owns) Bus [*]; // A company has multiple buses
+    association [*] BusCompany -> (has) Trajectory [*]; // A company has multiple trajectories
+    association [*] BusCompany -> (has) Line [*]; // A company has multiple lines
+    association [1] Customer -> (uses) MENSO [*]; // A customer can use multiple MENSO tickets
+    association [*] MENSO -> (registered) Trip [*]; // A MENSO ticket can register multiple trips
 }

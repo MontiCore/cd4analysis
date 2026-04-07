@@ -1,51 +1,61 @@
 
-// CD4A Class Diagram for a University System
-classdiagram UniversitySystem {
+// Class Diagram for University Structure
+classdiagram university {
 
-class University {
-    int totalEmployees;
-}
+    class University {
+        List<Faculty> faculties;
+        int totalEmployees;
+    }
 
-class Faculty {
-    String name;
-}
+    class Faculty {
+        String name;
+        Dean dean;
+        List<Institute> institutes;
+    }
 
-class Institute {
-    String name;
-    String address;
-}
+    class Institute {
+        String name;
+        String address;
+    }
 
-class Employee {
-    String socialSecurityNumber;
-    String name;
-    String emailAddress;
-}
+    class Employee {
+        String socialSecurityNumber;
+        String name;
+        String email;
+    }
 
-class ResearchAssistant extends Employee {
-    String fieldOfResearch;
-}
+    class ResearchAssistant extends Employee {
+        String fieldOfResearch;
+        List<Institute> institutes;
+        List<Project> projects;
+        List<Course> courses; // RAs can teach courses
+    }
 
-class Project {
-    String name;
-    Date startDate;
-    Date endDate;
-}
+    class AdministrativeStaff extends Employee {
+        // Administrative specific attributes can be added later
+    }
 
-class Lecturer extends ResearchAssistant {}
+    class Dean extends Employee {
+        // Dean specific attributes can be added later
+    }
 
-class Course {
-    String courseId; // unique number
-    String name;
-    int weeklyDuration; // in hours
-}
+    class Project {
+        String name;
+        Date startDate;
+        Date endDate;
+        int hoursAssigned;
+    }
 
-class Dean extends Employee {}
+    class Course {
+        String id; // unique number
+        String name;
+        int weeklyDuration; // hours
+    }
 
-// Associations
-association [1] University -- Faculty [*];
-association [1] Faculty -- Institute [*];
-association [1] Faculty -- Dean [1];
-association [1] Institute <-> ResearchAssistant [*];
-association [*] ResearchAssistant <-> Project [*];
-association [0..*] ResearchAssistant <-> Course [*];
+    association [1..*] University -> Faculty [1];
+    association [1..*] Faculty -> Institute [*];
+    association [1] Faculty -> Dean [1];
+    association [1..*] ResearchAssistant -> Institute [*];
+    association [1..*] ResearchAssistant -> Project [*];
+    association [0..*] ResearchAssistant -> Course [*];
 }

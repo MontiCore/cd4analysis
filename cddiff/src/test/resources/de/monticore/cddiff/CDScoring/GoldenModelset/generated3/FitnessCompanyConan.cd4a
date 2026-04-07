@@ -1,50 +1,52 @@
 
-// Class Diagram for Fitness Company "Conan"
-classdiagram FitnessConan {
+// CD4A Class Diagram for Fitness company "Conan"
+classdiagram conanFitness {
 
-class Address {
-    String street;
-    String city;
-    String postalCode;
-}
+    class Address {
+        String street;
+        String city;
+        String zipCode;
+    }
 
-class Room {
-    int number;
-    int maxCapacity;
-}
+    class Center {
+        String uniqueName; // unique name for the center
+        Address address;
+        List<Room> rooms;
+    }
 
-class FitnessCenter {
-    String name; // Unique name of the fitness center
-    Address address;
-}
+    class Room {
+        int number; // unique number for the room within a center
+        int maxCapacity;
+    }
 
-class Person {
-    String firstName;
-    String familyName;
-    Date birthDate; // Assuming Date type represents birth dates in a suitable format
-}
+    class Person {
+        String firstName;
+        String familyName;
+        Date birthDate;
+    }
 
-class Trainer extends Person {
-    String diploma; // Trainer's diploma information
-}
+    class Trainer extends Person {
+        String diploma;
+    }
 
-class Session {
-    Date date;
-    String startHour;
-}
+    class Session {
+        Date date;
+        Time startHour;
+    }
 
-class GroupSession extends Session {
-    String type; // e.g., aerobics, bodystyling, etc.
-}
+    class IndividualSession extends Session {
+        // No additional attributes
+    }
 
-// This class can represent either individual or group participant
-class Participation {
-    Person participant; // Can represent members or trainers participating
-}
+    class GroupSession extends Session {
+        String type; // e.g., aerobics, bodystyling
+        Trainer trainer; // Requires exactly one trainer
+    }
 
-association [1] FitnessCenter <-> Room [1..*]; // A center has one or more rooms
-association [1] Room <-> Session [0..*]; // A room can have multiple sessions
-association [1..*] Person <-> Participation [*]; // A person can participate in multiple sessions
-association [0..1] Trainer <-> GroupSession [1]; // A trainer supervises exactly one group session
-
+    association [1..*] Center -> (rooms) Room [*]; // A center has one or more rooms
+    association [*] Center -> (sessions) Session [*]; // A center can have multiple sessions
+    association [1..*] Room -> (sessions) Session [*]; // A room can host multiple sessions
+    association [*] Person -> (participates) IndividualSession [*]; // A person can register for individual sessions
+    association [*] Person -> (registers) GroupSession [*]; // A person can register for group sessions
+    association [1] Trainer <-> GroupSession [1]; // A trainer supervises exactly one group session, but can be participant in others
 }

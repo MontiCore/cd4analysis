@@ -1,33 +1,39 @@
 
-// CD4A Class Diagram for the Bank Management System
-classdiagram BankManagement {
+// Class Diagram for the Bank Management System
+classdiagram bank {
 
     class Bank {
-        // A bank consists of multiple branches
+        String name;
+        List<Branch> branches;
     }
 
     class Branch {
-        // A branch belongs to a bank
+        String location;
+        List<Customer> customers;
     }
 
     class Customer {
         String firstName;
         String lastName;
+        List<Account> accounts;
     }
 
-    class Account {
+    abstract class Account {
         int accountNumber;
         double balance;
+        Customer owner;
     }
 
     class CheckingAccount extends Account {
         double overdraftLimit;
     }
 
-    class SavingsAccount extends Account {}
+    class SavingsAccount extends Account {
+        // No additional attributes
+    }
 
-    association [1..*] Bank -> Branch [*];
-    association [1..5] Customer -> Account [*];
-    association [1] Account -> Customer [1];
-
+    association [1..*] Bank -> (branches) Branch [0..*];
+    association [1..*] Branch -> (customers) Customer [0..*];
+    association [1..5] Customer -> (accounts) Account [1..*]; // At least one and at most five accounts
+    association [1] Account -> (owner) Customer [1]; // Each account has one owner
 }

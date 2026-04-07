@@ -1,71 +1,73 @@
 
-// CD4A Class Diagram for Pizza Delivery with Entertainment app
-classdiagram PizzaDeliveryApp {
+// CD4A class diagram for Pizza Delivery with Entertainment app
+classdiagram pizzaDelivery {
 
-enum DayOfWeek {
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday,
-    Sunday;
-}
+    class User {
+        String userId;  // unique identifier
+        String name;
+        String birthday;
+        String address;
+    }
 
-class User {
-    String name;
-    String address;
-    String birthday;
-    String userId; // Unique identifier for every user
-}
+    class BusinessOwner extends User {
+        String linkedIn;
+    }
 
-class BusinessOwner extends User {
-    String linkedInAccount;
-}
+    class HungryCustomer extends User {
+        String deliveryAddress;
+    }
 
-class PizzaRestaurant {
-    String zipCode;
-    String address;
-    String phoneNumber;
-    String website;
-    String openingHours;
-}
+    class Entertainer extends User {
+        String stageName;
+        String bio;
+        double pricePer30Minutes;
+    }
 
-class Pizza {
-    String name; // Pizza name (e.g., margarita)
-    String crustStructure; // Crust type (e.g., classic Italian crust)
-    double price;
-}
+    class PizzaRestaurant {
+        String name;
+        String zipCode;
+        String address;
+        String phoneNumber;
+        String website;
+        String openingHours;
+    }
 
-class HungryCustomer extends User {
-    String deliveryAddress;
-}
+    class Pizza {
+        String name;
+        String crustStructure;
+        double price;
+    }
 
-class Order {
-    int orderId; // Unique identifier for each order
-    Date orderDate;
-    Time orderTime;
-    Time latestDeliveryTime;
-    int numberOfPeople;
-}
+    class Order {
+        String orderId;  // unique identifier
+        DateTime orderDateTime;
+        DateTime latestDeliveryTime;
+        int numberOfPeople;
+        boolean isEntertainmentOrder;
+        // For entertainment orders only
+        String entertainmentType;
+        Duration entertainmentDuration;  // duration of entertainment
+    }
 
-class EntertainmentOrder extends Order {
-    String entertainmentType; // Type of entertainment requested
-    int duration; // Duration in minutes
-}
+    class Availability {
+        Day day; // Enum for days of the week (e.g., MONDAY, TUESDAY, etc.)
+        boolean available;
+    }
 
-class Entertainer extends User {
-    String stageName;
-    String bio;
-    double pricePer30Minutes; // Price for 30 minutes of entertainment
-}
+    enum Day {
+        MONDAY,
+        TUESDAY,
+        WEDNESDAY,
+        THURSDAY,
+        FRIDAY,
+        SATURDAY,
+        SUNDAY;
+    }
 
-association [1] BusinessOwner <-> (owns) PizzaRestaurant [*];
-association [1] PizzaRestaurant <-> (offers) Pizza [*];
-association [1] HungryCustomer <-> (makes) Order [*];
-association [1] Order <-> (includes) Pizza [*];
-association [1] EntertainmentOrder <-> (entertainedBy) Entertainer [1];
-association [1] Entertainer <-> (worksAt) PizzaRestaurant [*];
-association [1] Entertainer <-> (availability) DayOfWeek [0..7]; // Days of availability can be zero or more
-
+    association [1..*] PizzaRestaurant -> (owner) BusinessOwner [1];
+    association [1..*] Order -> (customer) HungryCustomer [1];
+    association [*] PizzaRestaurant -> (entertainer) Entertainer [*];
+    association [*] Availability -> (entertainer) Entertainer [*];
+    association [1..*] Pizza -> (restaurant) PizzaRestaurant [1];
+    association [1..*] Pizza -> (order) Order [1];
 }

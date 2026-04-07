@@ -1,36 +1,38 @@
 
-// Class diagram for Bus Transportation Management System (BTMS)
-classdiagram BTMS {
+classdiagram btms {
 
-class Driver {
-    String name;
-    int driverId; // unique ID
+    class Driver {
+        String name;
+        int id; // unique ID for each driver
+        boolean isSick; // indicates if the driver is on sick leave
+    }
+
+    class Bus {
+        String licensePlate; // up to 10 characters long
+        boolean inRepair; // indicates if the bus is in the repair shop
+    }
+
+    class BusRoute {
+        int routeNumber; // unique number for the bus route
+    }
+
+    class Schedule {
+        Date date; 
+        Driver driver; // assigned driver for the shift
+        Bus bus; // assigned bus for the shift
+        Shift shift; // morning, afternoon, or night 
+        
+        // No constraints on the number of shifts a driver can have per day
+    }
+
+    enum Shift {
+        MORNING,
+        AFTERNOON,
+        NIGHT;
+    }
+
+    association [1] BusRoute <-> Bus [*]; // one route can have multiple buses assigned
+    association [1] Schedule <-> Driver [*]; // schedule can have multiple drivers assigned
+    association [1] Schedule <-> Bus [1]; // each schedule is tied to one bus
 }
 
-class Bus {
-    String licencePlate; // unique licence plate number (up to 10 characters)
-}
-
-class Route {
-    int routeNumber; // unique number (1 to 9999)
-}
-
-class Shift {
-    String shiftType; // morning, afternoon, or night
-}
-
-class Schedule {
-    Date date; // date for the schedule
-}
-
-class Assignment {
-    // association with Driver, Bus, Route, Shift, and Schedule
-}
-
-association [1] Driver <-> Assignment [*];
-association [1] Bus <-> Assignment [*];
-association [1] Route <-> Assignment [*];
-association [1] Shift <-> Assignment [*];
-association [1] Schedule <-> Assignment [*];
-
-}

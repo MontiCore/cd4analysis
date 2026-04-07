@@ -1,26 +1,22 @@
 
-// Class Diagram for the Game
+// CD4A model for a game consisting of players, a deck of cards and a scoring table
 
-classdiagram Game {
+classdiagram game {
 
     class Game {
-        int uniqueId; // Unique identifier for the game
-    }
-
-    class Player {
-        int uniqueId; // Unique identifier for the player
+        Player[] players; // exactly 4 players
+        Deck deck;
+        ScoringTable scoringTable;
     }
 
     class Deck {
-        int uniqueId; // Unique identifier for the deck
+        Card[] cards; // up to 48 cards
     }
 
     class Card {
-        int uniqueId; // Unique identifier for the card
-        Suit suit; // Suit of the card
-        int height; // Height of the card for comparison
-
-        ComparisonResult compare(Card other);
+        int id; // unique ID attribute
+        Suit suit; // suit of the card
+        ComparisonResult compareHeight(Card otherCard); // method for card height comparison
     }
 
     enum Suit {
@@ -37,23 +33,20 @@ classdiagram Game {
     }
 
     class ScoringTable {
-        int uniqueId; // Unique identifier for the scoring table
+        Round[] rounds; // any number of rounds
     }
 
     class Round {
-        int uniqueId; // Unique identifier for the round
-        Player[] winningPlayers; // Winning players of the round
-        int pointValue; // Points awarded for the round
+        Player[] winningPlayers; // winning players for the round
+        int pointValue; // point value of the round
+        boolean isJackRound; // jack round flag
+        boolean isSoloRound; // solo round flag
     }
 
     class SoloRound extends Round {
-        SoloType soloType; // Type of solo
-        Player soloPlayer; // The player who is solo
+        SoloType soloType; // type of solo
+        Player soloPlayer; // exactly one solo player
     }
-
-    class JackRound extends Round {}
-
-    class MandatorySoloRound extends SoloRound {}
 
     enum SoloType {
         TRUMP,
@@ -61,11 +54,4 @@ classdiagram Game {
         QUEEN;
     }
 
-    association [4] Game <-> Player [4]; // A game consists of 4 players
-    association [1] Game -> Deck [1]; // A game has one deck
-    association [*] Game -> ScoringTable [1]; // A game has one scoring table
-    association [*] ScoringTable -> Round [*]; // A scoring table has many rounds
-    association [0..1] Round <-> JackRound [0..*]; // Round can be a Jack round
-    association [0..1] Round <-> SoloRound [0..*]; // Round can be a Solo round
-    association [0..1] SoloRound <-> MandatorySoloRound [0..*]; // Mandatory Solo rounds are a special case of Solo rounds
 }

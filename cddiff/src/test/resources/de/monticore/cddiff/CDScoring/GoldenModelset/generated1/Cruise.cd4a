@@ -1,69 +1,70 @@
 
-// CD4A model for a cruise booking system
-classdiagram CruiseBookingSystem {
+// CD4A model for cruise management system
+classdiagram cruiseManagement {
 
-class Provider {
-    String name;
-    String location;
-}
+    class Provider {
+        String name;
+        String location;
+    }
 
-class Cruise {
-    int cruiseNumber;
-    String name;
-    Date startDate;
-    Date endDate;
-}
+    class Cruise {
+        String number;
+        String name;
+        Date startDate;
+        Date endDate;
+    }
 
-class Employee {
-    String name;
-    String socialSecurityNumber;
-}
+    class Employee {
+        String name;
+        String socialSecurityNumber;
+    }
 
-class Guest {
-    String name;
-    boolean isVIP; // true if VIP, false otherwise
-}
+    class Guest {
+        String name;
+        boolean isVIP;
+    }
 
-class Ship {
-    String name;
-    int numberOfDecks;
-    double length; // in meters
-    int numberOfPassengers;
-}
+    class Ship {
+        String name;
+        int numberOfDecks;
+        double length;
+        int numberOfPassengers;
+    }
 
-class TravelAgency {
-    String name;
-    String address;
-}
+    class TravelAgency {
+        String name;
+        String address;
+    }
 
-class Booking {
-    int bookingNumber; // unique identifier
-    Date bookingDate;
-}
+    class Booking {
+        String bookingNumber;
+        Date bookingDate;
+    }
 
-class DestinationArea {
-    String name;
-    String seaName; // name of the sea
-}
+    class DestinationArea {
+        String name;
+        String seaName;
+    }
 
-class Show {
-    String title;
-    int duration; // in minutes
-}
+    class Show {
+        String title;
+        Duration duration;
+    }
 
-class Ticket {
-    // Ticket does not need specific attributes; its association is sufficient
-}
+    class Ticket {
+        String ticketId;
+    }
 
-association [*] Provider <-> Cruise [*];
-association [*] Cruise -- (requires) Employee [*];
-association [*] Cruise -- (attends) Guest [*];
-association [*] Cruise <-> Ship [*];
-association [1] TravelAgency <-> Booking [*];
-association [1] Booking -> Cruise [1];
-association [1] Cruise -> DestinationArea [1];
-association [*] Cruise -- (offers) Show [*];
-association [*] Ticket <-> Cruise [1];
-association [1] Guest <-> Ticket [*];
-
+    // Associations
+    association [1] Cruise -> (provider) Provider [1];
+    association [*] Cruise -> (employees) Employee [*];
+    association [*] Cruise -> (guests) Guest [*];
+    association [*] Guest -> (cruises) Cruise [*];
+    association [*] Cruise -> (ships) Ship [*];
+    association [1] Cruise -> (destination) DestinationArea [1];
+    association [*] Cruise -> (shows) Show [*];
+    association [1] Booking -> (cruise) Cruise [1];
+    association [1] Booking -> (travelAgency) TravelAgency [1];
+    association [*] Ticket -> (cruise) Cruise [1];
+    association [*] Guest -> (tickets) Ticket [*];
 }

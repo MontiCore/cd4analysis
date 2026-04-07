@@ -1,49 +1,54 @@
 
-// CD4A Class Diagram for EBike System
-classdiagram EBikeSystem {
+classdiagram ebike {
 
-class EBike {
-    Frame frame;
-    DriveSystem driveSystem;
-    Controller controller;
-}
+    class EBike {
+        Frame frame;
+        DriveSystem driveSystem;
+        Controller controller;
+        List<Wheel> wheels;
+        Battery battery; // optional
+    }
 
-class Frame {
-    String material; // e.g., "steel"
-}
+    class Frame {
+        String material = "steel";
+    }
 
-class DriveSystem {
-    Motor motor;
-}
+    class DriveSystem {
+        Motor motor;
+    }
 
-class Motor {}
+    class Motor {
+    }
 
-class Battery {
-    double storedEnergy; // in Watt-hours (Wh)
-}
+    class Wheel {
+    }
 
-class Controller {
-    ControllerState state; // On, Off, Charging
-}
+    class Battery {
+        double storedEnergy; // in Watt-hours (Wh)
+    }
 
-enum ControllerState {
-    On,
-    Off,
-    Charging;
-}
+    enum ControllerState {
+        On,
+        Off,
+        Charging;
+    }
 
-class BasicController extends Controller {
-    // Basic controller functionalities
-}
+    abstract class Controller {
+        ControllerState state;
+        void controlBattery(Battery battery); // if connected
+        void commandDriveSystem();
+    }
 
-class AdvancedController extends Controller {
-    Date estimateNextInspection(); // Method to estimate the next inspection date
-}
+    class BasicController extends Controller {
+        void controlBattery(Battery battery);
+        void commandDriveSystem();
+    }
 
-association [1] EBike -- Frame [1];
-association [1] EBike -- DriveSystem [1];
-association [1] EBike -> (connectsTo) Battery [0..1]; // Battery is removable
-association [1] EBike -- Controller [1];
-association [1] DriveSystem -- Motor [1];
+    class AdvancedController extends Controller {
+        void controlBattery(Battery battery);
+        void commandDriveSystem();
+        Date estimateNextInspectionDate();
+    }
 
+    association [2] EBike -> (wheels) Wheel [2];
 }

@@ -1,74 +1,66 @@
 
-// Class Diagram for Tile-O Application
-classdiagram TileO {
+// CD4A Class Diagram for Tile-O Game
 
-    class GameDesigner {
-        void defineGame();
-        void placeTile(Tile tile, ConnectionPiece connectionPiece);
-        void defineHiddenTile(Tile tile);
-        void defineStartingPositions(Player player, Tile tile);
-        void defineActionTiles(Tile tile);
-        void defineActionCardDeck();
-    }
+classdiagram tileO {
 
     class Game {
         Board board;
-        Player[] players; // 2 to 4 players
+        List<Player> players;
+        int currentPlayerIndex;
         void startGame();
+        void nextTurn();
     }
 
     class Board {
-        Tile[][] tiles; // Represents the layout
-        ConnectionPiece[] connectionPieces;
-    }
-
-    class Color {
-            //comment: The LLM did not generated the class, added to avoid errors
+        Tile[][] tiles;
+        Tile hiddenTile;
+        List<ActionTile> actionTiles;
+        void setupBoard();
+        void connectTiles(Tile tile1, Tile tile2);
     }
 
     class Tile {
-        Color color; // Initially white
-        boolean isHiddenTile;
+        String color; // white or black
+        boolean isHidden;
         boolean isActionTile;
-        int turnsAsRegularTile; // Number of turns as specified by designer
+        Tile left;
+        Tile right;
+        Tile top;
+        Tile bottom;
+        void visit();
+    }
+
+    class ActionTile extends Tile {
+        int turnsToRegular;
+        void executeAction(Player player);
     }
 
     class Player {
-        String name;
-        Color color; // Each player has a different color
-        PlayingPiece playingPiece;
+        String color; // unique color for each player
+        PlayingPiece piece;
         void rollDie();
-        void movePlayingPiece(Tile tile);
+        void move(PlayingPiece piece, Tile destination);
     }
 
     class PlayingPiece {
-        Color color; // Matches player's color
+        String color;
         Tile currentTile;
+        void moveTo(Tile destination);
     }
 
-    class Die {
-        int roll();
+    class Designer {
+        void defineBoard(Board board);
+        void defineActionCards(List<ActionCard> actionCards);
+        void setHiddenTile(Tile hiddenTile);
+        void setPlayerStarts(List<Tile> startPositions);
     }
 
     class ActionCard {
-        ActionType actionType; // Defines the action associated with the card
+        String description; // e.g., roll the die for an extra turn, etc.
+        void execute(Player player);
     }
 
-    enum ActionType {
-        EXTRA_TURN,
-        CONNECT_TILES,
-        REMOVE_CONNECTION,
-        MOVE_TO_ARBITRARY_TILE,
-        LOSE_TURN;
-    }
-
-    class ConnectionPiece {}
-
-    association [1] GameDesigner -> Game [1];
-    association [1] Game -> Board [1];
-    association [1] Board -> Tile [*];
-    association [2..4] Game -> Player [2..4];
-    association [1] Player -> PlayingPiece [1];
-    association [1] Player -> Tile [1]; // Current position of the player
-    association [1] Tile <-> ActionCard [0..*];
+    // Association indicating players can be one of 2-4
+    association [2..4] Game -> (players) Player [1];
+    association [*] Board -> (tiles) Tile [*];
 }

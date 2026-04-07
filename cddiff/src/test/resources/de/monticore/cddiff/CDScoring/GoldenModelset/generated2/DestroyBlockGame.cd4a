@@ -1,63 +1,79 @@
 
 // CD4A Class Diagram for the DestroyBlock application
-classdiagram DestroyBlock {
 
-class User {
-    String username; // unique identifier for a user
-    String password; // shared password for both admin and player
-}
+classdiagram destroyblock {
 
-class Player extends User {
-    int lives; // number of lives, starts at 3
-    int score; // player's score in the game
-}
+    class User {
+        String username; // unique username
+        String password; // shared password for player and admin
+        boolean isAdmin; // true if user is an admin, false if player
+    }
 
-class Admin extends User {
-    // Admin can create a game
-}
+    class Game {
+        String name; // unique game name
+        HallOfFame hallOfFame; // associated hall of fame
+        List<Block> blocks; // set of game blocks
+        List<Level> levels; // list of game levels
+        int minSpeed; // minimum speed of the ball
+        int speedIncreaseFactor; // speed increase factor for ball
+        int maxPaddleLength; // maximum length of paddle
+        int minPaddleLength; // minimum length of paddle
+        void publish(); // publish the game
+    }
 
-class Game {
-    String name; // unique name for the game
-    HallOfFame hallOfFame; // hall of fame for the game
-}
+    class Block {
+        String color; // color of the block
+        int points; // points awarded for hitting the block
+    }
 
-class HallOfFame {
-    List<Player> players; // players competing for high scores
-}
+    class Level {
+        int levelNumber; // starting from Level 1
+        boolean isRandom; // defines if the level arrangement is random
+        List<Block> startingArrangement; // starting arrangement of blocks
+        void defineStartingArrangement(List<Block> blocks); // define the arrangement
+    }
 
-class Level {
-    int number; // level number, starting from 1
-    List<Block> blocks; // blocks defined by the admin for the level
-    boolean isRandom; // true if level is random
-}
+    class HallOfFame {
+        List<ScoreEntry> entries; // list of score entries for players
+        void display(); // display hall of fame
+    }
 
-class Block {
-    String color; // color of the block
-    int points; // points assigned to the block (1 to 1000)
-}
+    class ScoreEntry {
+        User player; // the player scoring the entry
+        int score; // score of the player
+    }
 
-class GameSettings {
-    int minSpeed; // minimum speed of the ball
-    int speedIncreaseFactor; // how much speed increases with each level
-    int maxPaddleLength; // maximum length of the paddle
-    int minPaddleLength; // minimum length of the paddle
-    int numberOfBlocks; // number of blocks at the start of each level
-}
+    class PlayArea {
+        Ball ball; // the ball in the play area
+        Paddle paddle; // the player's paddle
+        void startGame(Game game); // start the game in play area
+        void update(); // update the play area state
+    }
 
-class Ball {
-    int speed; // speed of the ball
-    String direction; // current direction of the ball
-}
+    class Ball {
+        int speed; // speed of the ball
+        Direction direction; // current direction of the ball
+        void bounce(); // bounce logic for the ball
+    }
 
-class Paddle {
-    int length; // current length of the paddle
-}
+    class Paddle {
+        int length; // current length of the paddle
+        void moveLeft(); // move paddle left
+        void moveRight(); // move paddle right
+    }
 
-association [1] Admin -> Game [1]; // one admin can create one game
-association [1] Game -> Level [1..99]; // a game has multiple levels
-association [1] Level -> Block [*]; // a level consists of multiple blocks
-association [1] Game -> HallOfFame [1]; // each game has one hall of fame
-association [*] Player <-> Game [*]; // players may play multiple games
-association [1] Player <-> Player [*]; // players compete with each other
+    enum Direction {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT;
+    }
 
+    association [1] User -> Game [0..1]; // A user can be player for one game or admin for another
+    association [1] Game -> User [1]; // Only one admin per game
+    association [1] Game -> HallOfFame [1]; // Each game has a hall of fame
+    association [1..*] Game <-> Block [*]; // A game has multiple blocks
+    association [1..*] Game <-> Level [*]; // A game has several levels
+    association [1] PlayArea -> Ball [1]; // Play area has one ball
+    association [1] PlayArea -> Paddle [1]; // Play area has one paddle
 }

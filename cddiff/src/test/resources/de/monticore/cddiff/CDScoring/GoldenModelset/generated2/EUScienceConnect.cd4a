@@ -1,52 +1,52 @@
 
-// CD4A Class Diagram for the European Union Cross-National Research Database
+// CD4A Class Diagram for EU Cross-National Research Database
 
-classdiagram ScienceConnectDatabase {
+classdiagram researchDatabase {
 
     class Person {
-        String personID; // Unique identifier for each person
+        String personID; // uniquely identifies a person
         String phoneNumber;
-        String keywords; // Keywords for research topics
-        Institution institution; // Reference to the institution the person works for
+        List<String> keywords; // identifies research topics
+        Institution institution; // works for
+
+        Article authoredArticle; // author of an article
+        Review reviewedArticle; // reviewer of a peer-reviewed article
     }
 
     class Institution {
-        String institutionCode; // Unique identifier for each institution
+        String institutionCode; // uniquely identifies an institution
+        List<TechnicalReport> technicalReports; // publishes multiple technical reports
     }
 
-    class ScientificArticle {
-        String DOI; // Unique identifier for each article
+    class Article {
+        String DOI; // uniquely identifies a scientific article
         String title;
-        List<AuthorPosition> authors; // List of authors with positions
+        List<AuthorPosition> authors; // stores authors with their positions
     }
 
-    class AuthorPosition {
-        Person author; // The author of the article
-        int position; // Position of the author in the list
+    class PeerReviewedPaper extends Article {
+        int citationCount; // citation count for peer-reviewed papers
+        Review reviewer; // who reviewed the paper
     }
 
-    class PeerReviewedPaper extends ScientificArticle {
-        int citationCount; // Number of citations
-        Person reviewer; // Reference to the reviewer
-    }
-
-    class TechnicalReport extends ScientificArticle {
-        Institution publishedBy; // Reference to the institution that published the report
+    class TechnicalReport extends Article {
+        Institution publishedBy; // published by a single research institution
     }
 
     class Publisher {
-        String name; // Name of the publisher
+        String name; // uniquely identifies a publisher
+        List<Journal> journals; // can publish multiple journals
     }
 
     class Journal {
-        String name; // Name of the journal
-        float impactFactor; // Impact factor of the journal
+        String name; // journal name
+        double impactFactor; // measures scientific impact
     }
 
-    association [1] Institution <-> (publishes) TechnicalReport [0..*]; 
-    association [1] Institution <-> (employs) Person [0..*];
-    association [1] Person -- (authored) ScientificArticle [0..1]; 
-    association [1] Person <-> (reviewed) ScientificArticle [0..1];
-    association [1] Publisher -- Journal [1..*]; 
-    association [1] Journal <-> (publishes) PeerReviewedPaper [0..*];
+    association [*] Person -> (worksFor) Institution [*];
+    association [*] Institution -> (publishes) TechnicalReport [*];
+    association [*] Article -> (has) AuthorPosition [*];
+    association [1] PeerReviewedPaper -> (reviewedBy) Review [1];
+    association [*] Publisher -> (publishes) Journal [*];
+    association [*] Journal -> (publishedIn) PeerReviewedPaper [*];
 }

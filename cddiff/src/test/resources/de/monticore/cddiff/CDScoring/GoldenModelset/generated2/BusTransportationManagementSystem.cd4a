@@ -1,36 +1,42 @@
 
-// Class diagram for Bus Transportation Management System (BTMS)
-classdiagram BTMS {
+// CD4A Model for Bus Transportation Management System (BTMS)
+classdiagram btms {
 
-class Driver {
-    String name;
-    int driverID; // unique ID assigned to each driver
-}
+    class Driver {
+        String name;
+        int id; // unique ID for the driver
+        boolean isSick; // indicates if the driver is on sick leave
+    }
 
-class Bus {
-    String licensePlate; // unique license plate number, up to 10 characters
-}
+    class Bus {
+        String licencePlate; // unique licence plate number (up to 10 characters)
+        boolean inRepair; // indicates if the bus is in the repair shop
+    }
 
-class BusRoute {
-    int routeNumber; // unique bus route number, max 9999
-}
+    class BusRoute {
+        int routeNumber; // unique route number (maximum 9999)
+    }
 
-class Schedule {
-    Date date;
-}
+    class Shift {
+        // morning, afternoon, night shifts will be treated as constants or enumerations
+        static final String MORNING = "Morning";
+        static final String AFTERNOON = "Afternoon";
+        static final String NIGHT = "Night";
+    }
 
-class Shift {
-    String shiftType; // morning, afternoon, or night
-}
+    class Schedule {
+        Date date; // for which the schedule is assigned
+        Shift shift; // shift type assigned for a driver
+    }
 
-class Assignment {
-    // This class indicates the relationship between drivers, buses, and shifts
-}
+    // Associations
+    association [*] BusRoute -> Bus [*]; // a route can have multiple buses assigned
+    association [*] BusRoute -> Schedule [*]; // a route can have multiple schedules for drivers
+    association [*] Schedule -> Driver [*]; // multiple drivers can be assigned
+    association [*] Schedule -> Bus [*]; // multiple buses can be assigned
 
-association [1] Driver <-> Assignment [*];
-association [1] Bus <-> Assignment [*];
-association [1] BusRoute <-> Assignment [*];
-association [1] Schedule <-> Assignment [*];
-association [1] Shift <-> Assignment [*];
-
+    // Overview of routes
+    class Overview {
+        void displayOverview();
+    }
 }

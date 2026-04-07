@@ -1,69 +1,70 @@
 
-// CD4A Class Diagram for Film Set Management
+// CD4A Class Diagram for Film Set Scenario
+classdiagram filmSet {
 
-classdiagram FilmSet {
+    class Employee {
+        String name;
+        String socialSecurityNumber;
+        boolean hasOscar;
+    }
 
-class Employee {
-    String name;
-    String ssNo;
-}
+    class CreativeEmployee extends Employee {
+        // A CreativeEmployee can be Director or Actor
+    }
 
-class CreativeEmployee extends Employee {
-    boolean hasOscar;
-}
+    class Director extends CreativeEmployee {
+        String assistantName;
+        // A Director can have an Oscar
+    }
 
-class Director extends CreativeEmployee {
-    String assistantName;
-}
+    class Actor extends CreativeEmployee {
+        String educationCompleted;
+        // An Actor can have an Oscar
+    }
 
-class Actor extends CreativeEmployee {
-    String education;
-}
+    class Technician extends Employee {
+        String fieldOfActivity;
+    }
 
-class Technician extends Employee {
-    String fieldOfActivity;
-}
+    class FilmSet {
+        String location;
+    }
 
-class FilmSet {
-    String location;
-}
+    class Film {
+        String title;
+        int yearOfRelease;
+    }
 
-class Film {
-    String title;
-    int year;
-}
+    enum Genre {
+        THRILLER,
+        ACTION,
+        HORROR,
+        COMEDY;
+    }
 
-enum Genre {
-    THRILLER,
-    ACTION,
-    HORROR,
-    COMEDY;
-}
+    class Screenwriter {
+        String name;
+        Film mostSuccessfulFilm;
+    }
 
-class Screenwriter {
-    String name;
-    String mostSuccessfulFilm;
-}
+    class Screenplay {
+        String title;
+        String version;
+        Date date;
+        int numberOfScenes;
+        String plot;
+    }
 
-class Screenplay {
-    String title;
-    String version;
-    Date date;
-    int numberOfScenes;
-    String plot;
-}
+    class Novel {
+        String title;
+        String author;
+    }
 
-class Novel {
-    String title;
-    String author;
-}
-
-association [0..*] FilmSet <-> Film [0..*];
-association [1] Film <-> (writtenBy) Screenplay [1];
-association [1] Screenplay <-> (createdBy) Screenwriter [1];
-association [1] Screenplay -- Novel [0..1];
-association [1..*] Film <-> (features) Actor [0..*];
-association [1] Film <-> (directedBy) Director [1];
-association [1] Screenplay <-> Film [1];
-
+    association [*] FilmSet <-> Film [*];
+    association [1] Screenwriter <-> Screenplay [*];
+    association [1] Screenplay -> Film [1];  // Each screenplay is written for exactly one film
+    association [1] Screenplay <-> Novel [1]; // A screenplay is based on either a novel or a concept
+    association [*] Film <-> Actor [*]; // Multiple actors can appear in a single film
+    association [1] Director <-> Film [1]; // Each film has exactly one director
+    association [*] Actor <-> Screenplay [*]; // Actors read screenplays to prepare for their roles
 }

@@ -1,30 +1,38 @@
 
-classdiagram ResearchProjectManagement {
+// Class diagram for research project management in a university
+classdiagram researchProjectManagement {
 
-    class University {}
-
-    class Department {}
-
-    class ResearchGroup {
-        // A research group belongs to one department
+    class University {
+        // Holds multiple departments
     }
     
+    class Department {
+        // Holds multiple research groups
+    }
+    
+    class ResearchGroup {
+        String name; // Name of the research group
+        // Holds researchers and Work Packages
+    }
+
     class Researcher {
-        // A researcher belongs to exactly one research group
+        String name; // Name of the researcher
+        ResearchGroup researchGroup; // Research group of the researcher
+    }
+
+    class Project {
+        // Holds multiple Work Packages
     }
 
     class WorkPackage {
-        // Each WP has exactly one research group as WP leader
+        ResearchGroup wpLeader; // The research group leading the Work Package
+        List<Researcher> teamMembers; // Assigned researchers to the Work Package
     }
 
-    association [*] University -> ResearchGroup [*];
-    association [*] Department -> ResearchGroup [*];
-    association [1] Researcher -> ResearchGroup [1];
-    association [1] WorkPackage -> ResearchGroup [1];
-    association [*] Researcher -> WorkPackage [0..*];
-
-    // "Service delivery" traceability
-    // When a researcher changes research group, current WP assignments are terminated and new ones created.
-    // If WP leadership is reassigned, team member assignments are re-recorded.
-
+    // Association establishing the relationship between classes
+    association [*] University -> (departments) Department [*];
+    association [*] Department -> (researchGroups) ResearchGroup [*];
+    association [1] ResearchGroup <-> Researcher [*]; // Each researcher belongs to exactly one research group
+    association [1] ResearchGroup -> (wpLeadership) WorkPackage [*]; // Research Group leads Work Packages
+    association [*] WorkPackage -> (teamMembers) Researcher [*]; // Researcher can be assigned to any Work Package
 }

@@ -1,33 +1,38 @@
 
-// CD4A Class Diagram for Bus Transportation Management System (BTMS)
-classdiagram BusTransportationManagementSystem {
+classdiagram btms {
 
-class Driver {
-    String name;
-    int driverId; // Unique ID for each driver
-    boolean isSickLeave; // Indicates if the driver is on sick leave
-}
+    class Driver {
+        String name;
+        int id; // unique ID assigned to each driver
+        boolean isSickLeave; // indicates driver's sick leave status
+    }
 
-class Bus {
-    String licencePlate; // Unique licence plate identifier
-    boolean isInRepair; // Indicates if the bus is in the repair shop
-}
+    class Bus {
+        String licencePlate; // unique licence plate number (up to 10 characters)
+        boolean inRepair; // indicates if the bus is in the repair shop
+    }
 
-class BusRoute {
-    int routeNumber; // Unique identifier for each bus route
-}
+    class Route {
+        int routeNumber; // unique route number (max 9999)
+    }
 
-class Shift {
-    String shiftType; // Morning, Afternoon, or Night
-    Date assignedDate; // Date for the assigned shift
-}
+    class Schedule {
+        Date date; // date of the schedule
+        List<Shift> shifts; // list of shifts assigned for the date
+    }
 
-class Schedule {
-    Date scheduleDate; // Date for the schedule
-}
+    class Shift {
+        String time; // time of the shift (morning, afternoon, night)
+        Bus bus; // bus assigned to the shift
+        Driver driver; // driver assigned to the shift
+    }
 
-association [1] BusRoute <-> (assignedTo) Bus [0..*]; // A route can have several buses assigned
-association [1] Bus <-> (serves) Driver [0..*]; // A bus serves one driver per day
-association [1] Driver <-> (assignedTo) Shift [0..*]; // Drivers can be assigned to multiple shifts
-association [1] Shift <-> (scheduledOn) Schedule [1]; // Shift is associated with a specific schedule
+    // Associations
+    association [*] CityStaff -> (assigns) Bus [*]; // City staff can assign multiple buses
+    association [*] CityStaff -> (assigns) Driver [*]; // City staff can assign multiple drivers
+    association [*] Route -> (assignedBuses) Bus [*]; // Each route can have multiple buses assigned per day
+    association [*] Route -> (schedules) Schedule [*]; // Each route can have multiple schedules
+    association [1] Shift -> (assignedTo) Bus [1]; // Each shift is assigned to one bus
+    association [1] Shift -> (assignedTo) Driver [1]; // Each shift is assigned to one driver
+
 }

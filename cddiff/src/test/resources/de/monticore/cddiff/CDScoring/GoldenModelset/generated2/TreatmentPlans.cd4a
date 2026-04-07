@@ -1,37 +1,47 @@
 
-classdiagram HospitalExamination {
+classdiagram hospital {
+
+    class Examination {
+        String type; // e.g., "cardiologic test", "echography", etc.
+    }
 
     class Hospital {
         String name;
-        String address;
+        List<Examination> permittedExaminations;
+        void applyForPermission(Examination examination);
+    }
+
+    class TreatmentPlan {
+        List<Examination> advisedExaminations;
+        String problemType; // type of problem
     }
 
     class Doctor {
         String name;
+        Hospital hospital;
+        Treatment defineTreatment(Patient patient, String problemType);
     }
 
     class Patient {
         String name;
+        Problem problem;
+        Treatment treatment;
     }
 
-    class Examination {
-        String type;
+    class Problem {
+        String description;
     }
 
-    class TreatmentPlan {
-        String problem;
+    class Treatment {
+        List<Examination> actualExaminations;
+        List<String> medicalActions; // additional chosen actions
     }
 
-    class ActualTreatment {
-        // Can consist of both advised examinations and freely chosen medical actions
-    }
-
-    association [1] Hospital -- Doctor [*];
-    association [1] Hospital -- Patient [*];
-    association [1] Hospital <-> Examination [*]; // Hospitals have permissions for certain examinations
-    association [1] TreatmentPlan -- Examination [*]; // Advised examinations per treatment plan
-    association [1] TreatmentPlan <-> ActualTreatment [0..*]; // Actual treatments based on treatment plans
-    association [1] Doctor -- ActualTreatment [*];
-    association [1] Patient -- ActualTreatment [*];
-    
+    association [1] Hospital -> (permittedExaminations) Examination [*];
+    association [*] Hospital -> (treatmentPlans) TreatmentPlan [*];
+    association [1] Doctor -> (affiliatedHospital) Hospital [1];
+    association [1] Doctor -> (treatments) Treatment [*];
+    association [1] Patient -> (problem) Problem [1];
+    association [1] Patient -> (treatment) Treatment [1];
+    association [1] Problem -> (treatmentPlan) TreatmentPlan [1];
 }

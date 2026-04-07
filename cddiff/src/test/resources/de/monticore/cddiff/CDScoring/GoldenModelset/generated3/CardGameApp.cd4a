@@ -1,57 +1,65 @@
 
-// Class diagram for a Game
-classdiagram Game {
+classdiagram game {
 
-enum Suit {
-    Diamonds,
-    Hearts,
-    Spades,
-    Clubs;
-}
+    class Game {
+        Player[] players; // Exactly 4 players
+        Deck deck; 
+        ScoringTable scoringTable;
+    }
 
-class Card {
-    int id; // Unique ID for each card
-    Suit suit;
+    class Deck {
+        Card[] cards; // Up to 48 cards
+    }
 
-    int compare(Card otherCard);
-}
+    class Card {
+        String id; // Unique identifier
+        Suit suit;
+        
+        ComparisonResult compareHeight(Card otherCard);
+    }
 
-class Deck {
-    List<Card> cards; // Up to 48 cards
-}
+    enum Suit {
+        DIAMONDS,
+        HEARTS,
+        SPADES,
+        CLUBS;
+    }
 
-class Player {
-    int id; // Unique ID for each player
-}
+    class ScoringTable {
+        Round[] rounds; // Any number of rounds
+    }
 
-class ScoringTable {
-    List<Round> rounds; // Any number of rounds
-}
+    class Round {
+        Player[] winningPlayers; // Can be multiple winning players
+        int pointValue;
+    }
 
-class Round {
-    List<Player> winningPlayers; // Winning players of the round
-    int pointValue; // Point value of the round
-}
+    class JackRound extends Round {
+        // Inherits all properties from Round
+    }
 
-class JackRound extends Round {
-    // Specific attributes/methods for jack round (if any)
-}
+    class SoloRound extends Round {
+        SoloType soloType; // Type of solo
+        Player soloPlayer; // Exactly one solo player
+    }
 
-class SoloRound extends Round {
-    SoloType soloType; // Type of solo (trump, jack, queen)
-    Player soloPlayer; // Exactly one solo player
-}
+    class MandatorySoloRound extends SoloRound {
+        // Inherits all properties from SoloRound
+    }
 
-enum SoloType {
-    Trump,
-    Jack,
-    Queen;
-}
+    enum SoloType {
+        TRUMP,
+        JACK,
+        QUEEN;
+    }
 
-association [4] Game <-> Player [4]; // A game consists of 4 players
-association [1] Game <-> Deck [1]; // A game consists of a deck of cards
-association [1] Game <-> ScoringTable [1]; // A game has a scoring table
-association [*] ScoringTable <-> Round [*]; // Scoring table consists of any number of rounds
-association [*] Round <-> Player [*]; // Each round has winning players
+    class Player {
+        String id; // Unique identifier
+    }
 
+    enum ComparisonResult {
+        LOWER,
+        EQUAL,
+        HIGHER;
+    }
 }

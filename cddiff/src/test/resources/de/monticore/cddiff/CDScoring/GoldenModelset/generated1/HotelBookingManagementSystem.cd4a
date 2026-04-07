@@ -1,55 +1,100 @@
 
-// Class diagram for Hotel Management Booking System (HMBS)
-classdiagram HMBS {
+classdiagram hmbs {
 
     class Traveller {
         String name;
-        String billingCompany;
-        String billingAddress;
-        String travelPreferences; // e.g. breakfast, free wifi, 24/7 front desk
-        String creditCardInfo;
+        BillingInformation billingInfo; // containing company name and address
+        List<TravelPreference> travelPreferences; // optional
+        List<Booking> pastBookings;
+
+        void register(String name, BillingInformation billingInfo);
+        void searchAccommodation(String city, Date arrivalDate, Date departureDate, int numberOfRooms, RoomType roomType, int minRating, double budget, List<TravelPreference> additionalPreferences);
+        void finalizeBooking(CreditCardInfo cardInfo);
+        void cancelBooking(Booking booking);
+        void receiveOffers(List<SpecialOffer> offers);
+    }
+
+    class BillingInformation {
+        String companyName;
+        String address;
+    }
+
+    enum TravelPreference {
+        BREAKFAST_INCLUDED,
+        FREE_WIFI,
+        FRONT_DESK_24_7;
+        // other preferences
+    }
+
+    class AccommodationSearch {
+        String city;
+        Date arrivalDate;
+        Date departureDate;
+        int numberOfRooms;
+        RoomType roomType;
+        int minRating;
+        double budget;
+        List<TravelPreference> additionalPreferences;
+
+        List<HotelOffer> availableOffers;
+    }
+
+    class Booking {
+        String bookingID;
+        double price;
+        String cityArea;
+        int hotelRating;
+        List<TravelPreference> keyPreferences;
+        boolean isPrePaid;
+        Date cancellationDeadline;
+
+        void confirm();
+        void cancel();
     }
 
     class Hotel {
         String name;
-        String address;
-        String city;
-        HotelChain hotelChain; // Optional association with hotel chain
+        Address address;
+        HotelChain hotelChain; // optional
+
+        List<RoomType> availableRoomTypes;
+
+        void announceRoomAvailability(RoomType roomType, Date startDate, Date endDate);
+        void informFullBooking(RoomType roomType);
     }
 
-    class Booking {
-        String bookingIdentifier;
-        float price;
-        String cityArea;
-        int hotelRating; // Stars
-        String keyPreferences; // e.g. traveller preferences
-        boolean isPrePaid; // True if paid immediately
-        DateTime cancellationDeadline;
-        boolean isConfirmed;
+    class Address {
+        String street;
+        String city;
+        String postalCode;
     }
 
     class HotelChain {
-        String chainName;
+        String name;
+        List<Hotel> hotels; // list of hotels under this chain
     }
 
-    class RoomType {
-        String type; // e.g. single, double, twin
-        int availableRooms;
+    enum RoomType {
+        SINGLE,
+        DOUBLE,
+        TWIN;
+        // other types
     }
 
     class SpecialOffer {
-        float offerPrice;
-        String hotelName;
+        String offerDetails; // details of the offer
+        double price;
     }
 
-    class ReliabilityRating {
-        float rating;
+    class CreditCardInfo {
+        String cardNumber;
+        String expiryDate;
+        String cvv;
     }
 
-    association [1] Traveller <-> Booking [0..*];
-    association [0..*] Hotel <-> RoomType [1..*];
-    association [0..*] Hotel <-> (runs) HotelChain [0..1];
-    association [0..*] Booking <-> SpecialOffer [0..*];
-    association [1] Traveller <-> ReliabilityRating [0..1];
-    
+    association [1] Traveller -- Booking [*];
+    association [1] Hotel -- RoomType [*];
+    association [*] Hotel <-> HotelChain [0..1]; // optional association
+    association [*] Booking -- TravelPreference [*]; // optional preferences
+    association [*] Hotel <-> SpecialOffer [*]; // hotels provide offers
 }

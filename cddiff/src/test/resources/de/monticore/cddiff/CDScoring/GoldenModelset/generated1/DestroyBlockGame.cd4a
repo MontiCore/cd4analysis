@@ -1,49 +1,59 @@
 
-// Class Diagram for the DestroyBlock application
-classdiagram DestroyBlock {
+// CD4A class diagram for the DestroyBlock application
 
-class User {
-    String username;
-    String password;
-}
+classdiagram destroyBlock {
 
-// Player and Admin are specialized roles of User
-class Player extends User {
-    int lives = 3; // Default starting lives
-    int score;
-}
+    class User {
+        String username; // Unique identifier for each user
+        String password; // Same for player and admin
+        boolean isAdmin; // True if user is admin, false if player
+    }
 
-class Admin extends User {}
+    class Game {
+        String name; // Unique name of the game
+        HallOfFame hallOfFame; // Each game has its own hall of fame
+        List<Level> levels; // A game can have several levels
+        List<Block> blocks; // Set of blocks defined by the admin
+        void createGame(User admin); // Only an admin may create a game
+        void publishGame(); // Publish the game for players to play
+    }
 
-class Game {
-    String name;
-    HallOfFame hallOfFame;
-    int maxLevels = 99;
-    int currentLevel;
-}
+    class HallOfFame {
+        List<PlayerScore> scores; // Scores of players competing for high score
+        void addScore(PlayerScore score); // Add player score to hall of fame
+    }
 
-class HallOfFame {
-    List<PlayerScore> scores;
-}
+    class Level {
+        int levelNumber; // Numbered starting from Level 1
+        List<Block> startingArrangement; // Starting arrangement of blocks
+        boolean isRandom; // Indicates if the level is random
+    }
 
-class Level {
-    int levelNumber;
-    List<Block> blocks; // Collection of blocks defined for this level
-    boolean isRandom;
-    int ballSpeed; // Speed of the ball at this level
-    int paddleLength; // Length of the paddle at this level
-}
+    class Block {
+        String color; // Color of the block
+        int points; // Worth between 1 and 1000
+    }
 
-class Block {
-    String color;
-    int points; // Points worth between 1 and 1000
-}
+    class Player {
+        int lives = 3; // Start with three lives
+        int score; // Player's score
+        void playGame(Game game); // Player can play the game
+        void movePaddle(String direction); // Move paddle left or right
+        void hitBlock(Block block); // Method to handle block hit
+        void loseLife(); // Method to handle life lost
+        void saveGame(); // Save the current game state
+        void resumeGame(); // Resume paused game
+    }
 
-association [1] Admin <-> Game [1]; // One admin per game
-association [1] Game <-> Level [*]; // A game has multiple levels
-association [1] Game <-> HallOfFame [1]; // Each game has its own hall of fame
-association [*] Player <-> Game [*]; // Players may play multiple games
-association [1] Player <-> (scores) HallOfFame [*]; // Players compete in the hall of fame
-association [1] Level <-> Block [*]; // Levels consist of multiple blocks
+    class Ball {
+        int speed; // Current speed of the ball
+        String direction; // Direction in which the ball is moving
+        void bounce(); // Handle ball bouncing logic
+    }
 
+    association [1] Game -> HallOfFame [1]; // Each game has one hall of fame
+    association [*] Game -> (admin) User [1]; // One admin per game
+    association [*] User -> (player) Player [*]; // A user can be a player
+    association [*] Game -> Level [*]; // A game can have multiple levels
+    association [*] Level -> Block [*]; // Each level has multiple blocks
 }

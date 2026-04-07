@@ -1,71 +1,68 @@
 
 // Class diagram for a transport company management system
-classdiagram TransportCompany {
 
-class Employee {
-    String name;
-    String ssn;
-}
+classdiagram transportCompany {
 
-class Planner extends Employee {
-    // Additional functionality for planners
-}
+    class Employee {
+        String name;
+        String socialSecurityNumber;
+    }
 
-class AdminStaff extends Employee {
-    String fieldOfActivity;
-    String username;
-    String password;
-}
+    class Planner extends Employee {
+        String username;
+        String password;
+    }
 
-class Customer {
-    String name;
-    String billingAddress;
-}
+    class AdministrativeStaff extends Employee {
+        String username;
+        String password;
+        String fieldOfActivity;
+    }
 
-abstract class Vehicle {
-    String licensePlate;
-    int mileage;
-}
+    class Customer {
+        String name;
+        String billingAddress;
+    }
 
-class RefrigeratedTruck extends Vehicle {}
+    abstract class Vehicle {
+        String licensePlateNumber;
+        int mileage;
+    }
 
-class SmallVan extends Vehicle {}
+    class RefrigeratedTruck extends Vehicle {}
+    class SmallVan extends Vehicle {}
+    class LoadingPlatform extends Vehicle {}
+    class BoxTruck extends Vehicle {}
 
-class LoadingPlatform extends Vehicle {}
+    class RepairShop {
+        String name;
+        String address;
+        Employee employee;
+        int duration; // duration of repair
+        double cost; // cost of repair
+    }
 
-class BoxTruck extends Vehicle {}
+    class Order {
+        Customer customer;
+        Vehicle vehicle;
+        Planner planner;
+        String comment;
+        Date startTime;
+        Date endTime;
+        String pickupAddress;
+        String deliveryAddress;
+        PartnerCompany partnerCompany; // optional, if the order is through a partner
+    }
 
-class RepairShop {
-    String name;
-    String address;
-}
+    class PartnerCompany {
+        String name;
+        String address;
+    }
 
-class Repair {
-    int duration; // in days
-    double cost;
-}
-
-class Order {
-    String pickupAddress;
-    String deliveryAddress;
-    String additionalInfo;
-    Date startDate;
-    Date endDate;
-}
-
-class PartnerCompany {
-    String name;
-    String address;
-}
-
-association [1] Customer <-> Order [0..*];
-association [1] Employee (assignedBy) <-> Order [0..*];
-association [1] Planner <-> Order [0..*];
-association [1] Driver <-> Order [0..*];
-association [1] Order <-> Vehicle [1];
-association [1] RepairShop <-> Repair [0..*];
-association [1] Vehicle <-> Repair [0..*];
-association [1] Vehicle <-> (tookToRepair) Employee [0..1];
-association [1] Order <-> PartnerCompany [0..1];
-association [1] Employee <-> Vehicle [0..*];
+    association [*] Employee -> (assignedTo) Order [*];
+    association [*] Planner -> (assigns) Order [*];
+    association [1] Order -> (vehicle) Vehicle [1];
+    association [1] Order -> (customer) Customer [1];
+    association [*] Order -> (processedBy) AdministrativeStaff [0..*];
+    association [1] RepairShop -> (forVehicle) Vehicle [1];
 }

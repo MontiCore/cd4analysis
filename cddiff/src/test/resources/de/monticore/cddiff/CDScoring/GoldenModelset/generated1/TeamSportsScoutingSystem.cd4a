@@ -1,47 +1,45 @@
 
-// Class Diagram for Team Sports Scouting System
-classdiagram TeamSportsScoutingSystem {
+classdiagram teamSportsScoutingSystem {
 
     class Employee {
         String name;
-        String role;
     }
 
     class HeadCoach extends Employee {
-        // identifies designated player profiles for future signings
+        void identifyPlayerProfile(String position);
+        void evaluateShortList();
     }
 
-    class HeadScout extends Employee {
-        // manages scouting assignments
+    class Director extends Employee {
+        void makeOffer(Player player);
     }
 
     class Scout extends Employee {
-        // performs scouting assignments and submits reports
+        void notePlayer(Player player);
+        void submitScoutingReport(Player player, String pros, String cons, Recommendation recommendation);
     }
 
-    class PlayerProfile {
-        String targetPosition; // e.g. GK, LB, etc.
-        List<PlayerAttribute> attributes; // list of player attributes
+    class Player {
+        String name;
+        String position; // e.g., GK for goalkeeper, LB for left back
+        List<Attribute> attributes; // player attributes identified by name and value
     }
 
-    class PlayerAttribute {
+    class Attribute {
         String name;
         String value;
     }
 
-    class LongList {
-        List<Player> players; // players that may match the designated target profile
-    }
-
     class ScoutingAssignment {
-        Player player; // player under investigation
-        HeadScout assignedScout; // scout assigned to the assignment
+        Player player;
+        List<Scout> scouts;
+        void evaluateScoutingResults();
     }
 
     class ScoutingReport {
-        String pros; // positive attributes of the player
-        String cons; // negative attributes of the player
-        Recommendation recommendation; // e.g. key player, first team player, etc.
+        String pros;
+        String cons;
+        Recommendation recommendation;
     }
 
     enum Recommendation {
@@ -52,21 +50,9 @@ classdiagram TeamSportsScoutingSystem {
         NOT_A_GOOD_SIGNING;
     }
 
-    class ShortList {
-        List<Player> players; // selected players for further consideration
-    }
-
-    class Player {
-        String name;
-        PlayerProfile profile;
-    }
-
-    association [1] HeadCoach -- PlayerProfile [*]; 
-    association [1] HeadScout -- ScoutingAssignment [*];
-    association [1] Scout -- ScoutingReport [*];
-    association [1] LongList -> Player [*];
-    association [1] ScoutingAssignment -> Player [1];
-    association [1] ScoutingAssignment -> HeadScout [1];
-    association [1] ScoutingReport -> Player [1];
-    association [1] ShortList -> Player [*];
+    association [*] HeadCoach -> (designatedProfiles) Player [*]; // Designated target profiles
+    association [*] Scout -> (longList) Player [*]; // Players noted on the long list
+    association [1] HeadScout -> (shortList) Player [*]; // Players on the short list
+    association [*] ScoutingAssignment -> (evaluatedBy) Scout [*]; // Scouts assigned to evaluate players
+    association [1] ScoutingAssignment -> Player [1]; // Each assignment relates to one player
 }

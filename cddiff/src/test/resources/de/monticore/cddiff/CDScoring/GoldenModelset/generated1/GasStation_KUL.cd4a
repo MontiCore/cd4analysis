@@ -1,69 +1,82 @@
 
-// Class Diagram for Oil Company Gas Stations
-classdiagram OilCompanyGasStations {
+// CD4A Class Diagram for an oil company gas station system
+classdiagram gasStationSystem {
 
-class Customer {
-    String name;
-    String contactInfo;
-    boolean isSuspended;
+    class OilCompany {
+        List<GasStation> gasStations;
+    }
+
+    class GasStation {
+        List<Pump> pumps;
+        void produceDailyReport();
+    }
+
+    class Pump {
+        GasolineType gasolineType;
+        double currentLevel;
+        double reorderingLevel;
+        double criticalLevel;
+        boolean isBlocked;
+
+        void refuel();
+        void block();
+        void unblock();
+    }
+
+    class Customer {
+        String name;
+        CreditCard creditCard;
+        RefuelCard refuelCard;
+        List<Invoice> invoices;
+
+        void payInvoice(Invoice invoice);
+        void receiveInvoice(Invoice invoice);
+        void suspend();
+        void resume();
+    }
+
+    class Invoice {
+        List<RefuelTurn> refuelTurns;
+        double totalAmount;
+        double discount;
+        boolean isPaid;
+
+        void createInvoice();
+        void remindPayment();
+    }
+
+    class RefuelTurn {
+        Pump pump;
+        double amount;
+        Date date;
+    }
+
+    class RefuelCard {
+        boolean isBlocked;
+
+        void issueCard();
+        void blockCard();
+        void unblockCard();
+    }
+
+    class CreditCard {
+        void makePayment(double amount);
+    }
+
+    // Enumeration for types of gasoline
+    enum GasolineType {
+        REGULAR,
+        PREMIUM,
+        DIESEL;
+    }
+
+    // Associations
+    association [*] OilCompany -> (gasStations) GasStation [*];
+    association [*] GasStation -> (pumps) Pump [*];
+    association [*] Customer -> (invoices) Invoice [*];
+    association [*] Invoice -> (refuelTurns) RefuelTurn [*];
+    association [1] Customer -> (refuelCard) RefuelCard [0..1];
+    association [1] Customer -> (creditCard) CreditCard [0..1];
 }
 
-class RefuelCard {
-    String cardNumber;
-    Customer customer; // card is associated with a specific customer
-}
 
-class Invoice {
-    int invoiceNumber;
-    Date invoiceDate;
-    double totalAmount;
-    boolean isPaid;
-}
-
-class Payment {
-    int paymentId;
-    Date paymentDate;
-    double amount;
-}
-
-class GasStation {
-    String name;
-    String location;
-}
-
-class Pump {
-    int pumpId;
-    double gasolineLevel;
-    boolean isBlocked;
-}
-
-class GasolineType {
-    String typeName;
-}
-
-class RefuelTurn {
-    double amount;
-    Date refuelDate;
-}
-
-class Report {
-    String reportDate;
-    List<PumpStatus> pumpStatus; // list of pump statuses for the report
-}
-
-class PumpStatus {
-    Pump pump;
-    double currentLevel;
-    double quantityToOrder;
-}
-
-association [1] Customer <-> RefuelCard [0..1]; // customer can have one card
-association [1] RefuelCard <-> Invoice [*]; // card can generate multiple invoices
-association [1] Invoice <-> Payment [*]; // invoice can have multiple payments
-association [1] GasStation <-> Pump [*]; // gas station has multiple pumps
-association [1] Pump <-> GasolineType [0..*]; // pump can contain different gasoline types
-association [0..*] Pump <-> RefuelTurn [*]; // pumps can have multiple refuel turns
-association [1] GasStation <-> Report [*]; // each gas station can produce multiple reports
-association [0..1] Report <-> PumpStatus [*]; // report can include multiple pump statuses
-
-}

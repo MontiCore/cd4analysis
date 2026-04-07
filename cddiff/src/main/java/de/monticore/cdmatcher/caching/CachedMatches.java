@@ -92,7 +92,7 @@ public class CachedMatches {
   /**
    * Returns the attribute matches stored in the cache.
    * The lists will be used to add equivalent attributes from the lists to the result.
-   * The resulting CachedMatch will contain a separate entry for each pair of attributes even if they have the same name (as opposed to the method without parameters).
+   * The resulting CachedMatch will contain a separate entry for each pair of attributes even if they have the same name and type (as opposed to the method without parameters).
    * @param srcAttributes List of attributes in the source CD
    * @param tgtAttributes List of attributes in the target CD
    * @return CachedMatch containing the attribute matches

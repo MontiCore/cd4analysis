@@ -1,32 +1,44 @@
 
-// Class diagram for managing appointments between students and teaching assistants for courses
-classdiagram CourseAppointmentSystem {
+// CD4A Class Diagram for Course Appointment System
+
+classdiagram appointmentSystem {
 
     class Student {
         String name;
-        int studentId;
+        String studentID;
+        List<Course> registeredCourses;
+
+        void requestAppointment(Course course, TeachingAssistant ta);
+    }
+
+    class TeachingAssistant {
+        String name;
+        String employeeID;
+        List<Course> coursesTeaching;
+
+        void assist(Student student);
     }
 
     class Course {
         String courseName;
         String courseCode;
-    }
+        TeachingAssistant ta;
 
-    class TeachingAssistant {
-        String name;
-        int taId;
+        // Course specific details can be added here
     }
 
     class Appointment {
-        String appointmentTime;
-        String appointmentDate;
+        Student student;
+        TeachingAssistant ta;
+        Course course;
+        Date appointmentTime;
+
+        // Additional appointment details can be included here
     }
 
-    association [1] Course <-> Student [0..*]; // A student can register for multiple courses
-    association [1] Course <-> TeachingAssistant [1]; // A course is taught by one teaching assistant
-    association [1] TeachingAssistant <-> Appointment [0..*]; // A teaching assistant can have multiple appointments
-    association [1] Student <-> Appointment [0..*]; // A student can request multiple appointments
-    association [1] Appointment -> Course [1]; // An appointment is for one specific course
-    association [1] Appointment -> TeachingAssistant [1]; // An appointment is with one specific teaching assistant
-
+    association [*] Student -> (registeredFor) Course [*];
+    association [*] TeachingAssistant -> (teaches) Course [*];
+    association [1] Appointment -> (student) Student [1];
+    association [1] Appointment -> (teachingAssistant) TeachingAssistant [1];
+    association [1] Appointment -> (course) Course [1];
 }

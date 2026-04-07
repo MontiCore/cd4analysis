@@ -1,40 +1,37 @@
 
-// CD4A Class Diagram for Boeing Aircraft Sales
+// CD4A class diagram based on the description of Boeing's aircraft sales to airline companies
 
-classdiagram BoeingAircraftSales {
+classdiagram aircraftSales {
 
-class Aircraft {
-    String model;
-    double price;
-    String deliveryDate;
-    String options;
-    String customizations;
-}
+    class AirlineCompany {
+        String name;
+        // other attributes related to airline company can be added
+    }
 
-class SalesAgreement {
-    Date agreementDate;
-}
+    class Contract {
+        String commonElements; // includes delivery conditions, legal aspects, etc.
+        List<Acquisition> acquisitions;
+        Salesperson salesperson;
+    }
 
-class Contract {
-    String deliveryConditions;
-    String legalAspects;
-}
+    class Acquisition {
+        String model; // chosen model of airplane
+        double negotiatedPrice; // negotiated price for airplane
+        String options; // chosen options & customizations
+        Date deliveryDate; // delivery date of the airplane
+    }
 
-class Employee {
-    String name;
-    String employeeId;
-}
+    class Salesperson {
+        String name;
+        List<Contract> contracts; // salesperson can manage several contracts
+    }
 
-class Salesperson extends Employee {}
+    class Employee {
+        String name;
+        // additional employee attributes can be defined
+    }
 
-class AirlineCompany {
-    String name;
-    AirlineCompany parentCompany; // reference to parent company
-}
-
-association [1] SalesAgreement -> Contract [1..*]; // A Sales Agreement can have multiple Contracts
-association [1] Contract <-> Aircraft [0..*]; // A Contract can consist of multiple Aircraft acquisitions
-association [1] Salesperson <-> Contract [0..*]; // A Salesperson can manage multiple Contracts
-association [1] AirlineCompany <-> AirlineCompany [0..*]; // Relationship between main and daughter airlines
-
+    association [1] AirlineCompany <-> (parent) AirlineCompany [*]; // tracks mother-daughter relationships
+    association [*] Contract -> Salesperson [1]; // each contract has one salesperson
+    association [*] Contract -> Acquisition [*]; // each contract can consist of multiple acquisitions
 }

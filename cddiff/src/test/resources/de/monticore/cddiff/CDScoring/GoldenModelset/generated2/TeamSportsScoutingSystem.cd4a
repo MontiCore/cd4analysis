@@ -1,13 +1,15 @@
 
-classdiagram TeamSportsScoutingSystem {
+// CD4A Model for Team Sports Scouting System
+classdiagram scoutingSystem {
 
     class Employee {
         String name;
-        String role; // Possible roles: Head Coach, Director, Scout
+        String role; // Roles can be Head Coach, Director, Scout
     }
 
     class HeadCoach extends Employee {
-        void identifyPlayerProfile(String targetPosition, Attribute[] attributes);
+        void identifyPlayerProfile(String position, List<Attribute> attributes);
+        void evaluateLongList(List<Player> longList);
     }
 
     class Director extends Employee {
@@ -16,12 +18,13 @@ classdiagram TeamSportsScoutingSystem {
 
     class Scout extends Employee {
         void notePlayer(Player player);
-        ScoutingReport submitScoutingReport(Player player);
+        void submitScoutingReport(Player player, List<String> pros, List<String> cons, Recommendation recommendation);
     }
 
     class Player {
         String name;
         String position; // e.g. GK, LB
+        List<Attribute> attributes; // List of attributes (name and value)
     }
 
     class Attribute {
@@ -29,34 +32,23 @@ classdiagram TeamSportsScoutingSystem {
         String value;
     }
 
-    class ScoutingReport {
-        Player player;
-        String pros; // summarization of positive aspects
-        String cons; // summarization of negative aspects
-        Recommendation recommendation; // e.g. key player, first team player, etc.
-    }
-
     enum Recommendation {
         KEY_PLAYER,
         FIRST_TEAM_PLAYER,
         RESERVE_TEAM_PLAYER,
         PROSPECTIVE_PLAYER,
-        NOT_A_GOOD_SIGNING;
+        NOT_GOOD_SIGNING;
     }
 
-    class LongList {
-        Player[] players; // Players noted by scouts
+    class ScoutingReport {
+        Player player;
+        List<String> pros;
+        List<String> cons;
+        Recommendation recommendation;
     }
 
-    class ShortList {
-        Player[] players; // Players shortlisted for further evaluation
-    }
-
-    association [0..*] Employee -> (managedBy) Employee [1]; // Employees may be managed by other employees
-    association [1] HeadCoach -> (identifies) Player [*];
-    association [1] Scout -> (notes) Player [*];
-    association [1] Scout -> (submits) ScoutingReport [*];
-    association [1] HeadCoach -> (evaluates) LongList [1];
-    association [1] HeadCoach -> (decides) ShortList [1];
-    association [1] Director -> (makes) Player [*]; // Director can make offers for multiple players
+    association [*] HeadCoach -> (designatedProfiles) Player [*];
+    association [*] Scout -> (longList) Player [*];
+    association [1] Scout -> (scoutingReport) ScoutingReport [*];
+    association [1] Director -> (offers) Player [*];
 }

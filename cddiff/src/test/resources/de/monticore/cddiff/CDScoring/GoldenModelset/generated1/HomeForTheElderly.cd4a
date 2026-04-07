@@ -1,63 +1,67 @@
 
 // CD4A Class Diagram for Home for the Elderly
-classdiagram HomeForElderly {
 
-class Home {
-    String name;
+classdiagram homeElderly {
+
+    class Home {
+        List<Department> departments;
+    }
+
+    class Department {
+        List<Room> rooms;
+    }
+
+    class Room {
+        List<Bed> beds;
+    }
+
+    class Bed {
+        Category category;
+        Inhabitant inhabitant; // A bed can only have one inhabitant at a time.
+    }
+
+    enum Category {
+        RH, // Rest Home
+        RNH, // Rest & Nursing Home
+        SF; // Service Flat
+    }
+
+    class Inhabitant {
+        List<Stay> stays; // An inhabitant can have multiple stays at a time.
+        void register(); // The registration process.
+        void assessNeeds(); // Assessment for type of stay.
+    }
+
+    class Stay {
+        Category category;
+        Date intakeDate;
+        boolean isProposalAccepted;
+        boolean isProposalInvalidated; 
+        void reassess(); // Re-assessment of abilities.
+        void startStay(); // Start stay on intake date.
+    }
+
+    class Proposal {
+        Inhabitant inhabitant;
+        Category category;
+        Date registrationDate;
+        void acceptProposal(); // Accept the proposal for stay.
+        void refuseProposal(); // Refuse the proposal.
+    }
+
+    class Invoice {
+        float outstandingAmount;
+        boolean isPaid;
+        void registerPayment(float amount); // Registering payment.
+        void modifyInvoice(); // Modify the invoice if needed.
+    }
+
+    association [*] Home -> (departments) Department [*];
+    association [*] Department -> (rooms) Room [*];
+    association [*] Room -> (beds) Bed [*];
+    association [*] Inhabitant -> (stays) Stay [*];
+    association [1] Bed -> Inhabitant [1]; // A bed is assigned to one inhabitant.
+    association [1] Stay -> Category [1];
+    association [*] Inhabitant -> Proposal [*]; // Inhabitants can have proposals.
 }
 
-class Department {
-    String name;
-}
-
-class Room {
-    int roomNumber;
-}
-
-class Bed {
-    String category;
-}
-
-class Stay {
-    String type;
-    Date intakeDate;
-    boolean isActive;
-    double amountInvoiced;
-}
-
-class Inhabitant {
-    String name;
-    String identificationData;
-    int waitingListPosition;
-}
-
-class Assessment {
-    String needsForHelp;
-    Stay assignedStay;
-}
-
-class Invoice {
-    double outstandingAmount;
-    boolean isPaid;
-}
-
-class PaymentEvent {
-    double amountPaid;
-}
-
-// Registration process for individuals 
-class Registration {
-    Inhabitant inhabitant; // Reference to the person being registered
-}
-
-// Association for registration process
-association [1] Registration <-> Inhabitant [1];
-association [*] Home <-> Department [*];
-association [*] Department <-> Room [*];
-association [*] Room <-> Bed [*];
-association [1] Inhabitant <-> Stay [*];
-association [1] Inhabitant <-> Assessment [1];
-association [1] Stay <-> Invoice [0..*];
-association [1] Invoice <-> PaymentEvent [0..*];
-
-}

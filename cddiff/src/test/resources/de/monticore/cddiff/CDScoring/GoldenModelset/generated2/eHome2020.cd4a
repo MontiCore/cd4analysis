@@ -1,68 +1,68 @@
 
-// CD4A Class Diagram for E-Home-2020 system
-classdiagram EHome2020 {
+classdiagram ehome2020 {
 
-enum Unit {
-    CELSIUS,
-    WATT;
-}
+    class Apartment {
+        String address;
+        List<Room> rooms;
+        List<Inhabitant> inhabitants;
+        String emailAddress; // for alerts
+    }
 
-class Sensor {
-    String vendorId;
-    String description;
-    Unit unit;
-    Room room; // Each sensor assigned to exactly one room
-}
+    class Room {
+        String description;
+        List<Sensor> sensors;
+    }
 
-class TemperatureSensor extends Sensor {
-    float validMin;
-    float validMax;
-}
+    class Sensor {
+        String vendorId; // Unique identifier
+        String description; // e.g. "temperature radiator living room"
+        Unit unit; // e.g. CELSIUS, WATT
+        float lastValue; // The last measured value
+        List<MeasuredValue> measuredValues; // history of values
+        Room room; // assigned to one room
+    }
 
-class PowerSensor extends Sensor {
-    float totalConsumption; // Counter reading
-}
+    class TemperatureSensor extends Sensor {
+        float minValue; // Minimum valid value
+        float maxValue; // Maximum valid value
+    }
 
-class SensorController {
-    Apartment apartment; // SensorController stores information about the apartment
-}
+    class PowerSensor extends Sensor {
+        float counterReading; // Total power consumption
+    }
 
-class Apartment {
-    String address;
-}
+    class MeasuredValue {
+        float value; // Measured value
+        Timestamp timestamp; // Time of measurement
+    }
 
-class Room {
-    String description;
-}
+    class SensorController {
+        List<Sensor> sensors; // Connected sensors
+        void querySensorValues(); // Method to query sensor values
+        void setThreshold(Sensor sensor, float threshold); // Set threshold for sensors
+    }
 
-class Inhabitant {
-    String username;
-    String password;
-    String email; // Email for alert messages
-    boolean isAdmin; // Indicates if the inhabitant has administrative rights
-}
+    class Inhabitant {
+        String username;
+        String password;
+        boolean isAdmin; // Administrative rights
 
-class MeasuredValue {
-    float value; // The sensor's measured value
-    Date timestamp; // Timestamp of the measured value
-}
+        void logIn(String username, String password); // Method to log in
+    }
 
-class EMonitor {
-    // External system that checks sensor thresholds
-}
+    class EMonitor {
+        void checkThresholds(); // Method to check sensor thresholds
+    }
 
-class Alert {
-    String message; // Message to be sent to the email address
-}
+    enum Unit {
+        CELSIUS,
+        WATT;
+    }
 
-// Associations
-association [1] Apartment <-> Room [2..*]; // An apartment consists of at least two rooms
-association [1] Room <-> Sensor [*]; // Each room can have multiple sensors
-association [1] SensorController <-> Sensor [*]; // SensorController manages multiple sensors
-association [1] Apartment <-> Inhabitant [1..*]; // An apartment can have multiple inhabitants
-association [1] Inhabitant -> (logsInTo) SensorController [0..1]; // Inhabitant can log in to the SensorController
-association [1] Sensor <-> MeasuredValue [0..*]; // Each sensor has multiple measured values
-association [1] EMonitor -> Sensor [*]; // E-Monitor checks all thresholds for each sensor
-association [1] Alert -> EMonitor [0..*]; // Alerts are sent through E-Monitor
-
+    association [*] Apartment -> (rooms) Room [2..*];
+    association [*] Apartment -> (inhabitants) Inhabitant [2..*];
+    association [*] Room -> (sensors) Sensor [*];
+    association [1] SensorController -> (sensors) Sensor [*];
+    association [*] Sensor -> (measuredValues) MeasuredValue [*];
+    association [1] Sensor -> (room) Room [1];
 }

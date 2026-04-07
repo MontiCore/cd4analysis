@@ -1,58 +1,68 @@
 
-// CD4A class diagram for the E-Home-2020 system
-classdiagram EHome2020 {
+// CD4A Class Diagram for E-Home-2020 System
+classdiagram eHome2020 {
 
-class Sensor {
-    String vendorId;
-    String description;
-    String unit;
-}
+    // Enumeration for possible units
+    enum Unit {
+        CELSIUS,
+        WATT;
+    }
 
-class TemperatureSensor extends Sensor {
-    float minValue;
-    float maxValue;
-    float getLastValue();
-}
+    class Apartment {
+        String address;
+        List<Room> rooms; // Each apartment has at least two rooms
+        List<Inhabitant> inhabitants; // Inhabitants of the apartment
+    }
 
-class PowerSensor extends Sensor {
-    float totalPowerConsumption;
-    float getLastValue();
-}
+    class Room {
+        String description; // Description of the room
+        List<Sensor> sensors; // Each room can have multiple sensors
+    }
 
-class Room {
-    String description;
-}
+    class Inhabitant {
+        String username; // Login username
+        String password; // Login password
+        boolean isAdmin; // If the inhabitant has administrative rights
+        String email; // Email address for alerts
+    }
 
-class SensorController {
-    void querySensorValues();
-    void configureSensor();
-}
+    class SensorController {
+        List<Sensor> sensors; // All sensors managed by the controller
+        Apartment apartment; // Reference to the apartment
+        void querySensorValues(); // Method to query values for each sensor
+        void setThreshold(Sensor sensor, float threshold); // Set threshold for a specific sensor
+    }
 
-class Apartment {
-    String address;
-}
+    abstract class Sensor {
+        String vendorId; // Unique identifier for each sensor
+        String description; // Description of the sensor
+        Unit unit; // Measurement unit
+        float threshold; // Threshold value for alerts
+        List<MeasuredValue> measuredValues; // List of measured values
+        MeasuredValue getLastValue(); // Method to get the last measured value
+    }
 
-class Inhabitant {
-    String username;
-    String password;
-    boolean hasAdminRights; 
-}
+    class TemperatureSensor extends Sensor {
+        float minValue; // Minimum valid value
+        float maxValue; // Maximum valid value
+    }
 
-class EMonitor {
-    void checkThresholds();
-    void sendAlert();
-}
+    class PowerSensor extends Sensor {
+        float totalPowerConsumption; // Total power consumption as counter reading
+    }
 
-class SensorValue {
-    float value;
-    Date timestamp;
-}
+    class MeasuredValue {
+        float value; // Measured value as a floating point number
+        long timestamp; // Timestamp of the measured value
+    }
 
-association [1] Apartment -- Room [2..*];
-association [1] Room <-> Sensor [1..*];
-association [1] Inhabitant <-> Apartment [1];
-association [1] SensorController <-> Apartment [1];
-association [1] EMonitor <-> Sensor [*];
-association [1..*] Sensor <-> (measures) SensorValue [*];
+    class EMonitor {
+        void checkThresholds(); // Method to check thresholds for each sensor
+        void sendAlert(Inhabitant inhabitant); // Send alert to inhabitant if thresholds are exceeded
+    }
 
+    association [*] Apartment -> (rooms) Room [*];
+    association [*] Room -> (sensors) Sensor [*];
+    association [*] Apartment -> (inhabitants) Inhabitant [*];
+    association [*] SensorController -> (sensors) Sensor [*];
 }

@@ -317,6 +317,17 @@ The matching strategies are used both in the syntactic difference analysis and
 the conformance checker to identify incarnations.
 In both cases multiple matching strategies are used in combination.
 
+## Embedding for CDDiff
+
+The FastText embedding can be used to increase the accuracy of the matchings when using iterative matching.
+This can be configured using the `useEmbedding` parameter `de.monticore.cddiff.syndiff.CDSynDiffMatches.CDSynDiffMatches`.
+FastText need a vector file, which can be downloaded via the `downloadVectors` gradle task. The downloaded file is located in `resources/crawl-300d-2M-subword.bin`.
+Before using the embedding for the first time in the current runtime, the file needs to be loaded using the `initialize` method of `CDEmbeddingSimilarity`:
+
+```
+  CDEmbeddingSimilarity.initialize("src/main/resources/crawl-300d-2M-subword.bin");
+```
+
 ## Completing Concretizations of Reference Class Diagrams (upcoming)
 
 We are currently developing a tool that would allow for automatic completion of

@@ -1,31 +1,40 @@
 
-classdiagram BankManagement {
+classdiagram bank {
+
+    class Bank {
+        List<Branch> branches;
+        void addBranch(Branch branch);
+        List<Branch> getBranches();
+    }
+
+    class Branch {
+        List<Customer> customers;
+        void addCustomer(Customer customer);
+        List<Customer> getCustomers();
+    }
 
     class Customer {
         String firstName;
         String lastName;
+        List<Account> accounts;
+        void addAccount(Account account);
+        List<Account> getAccounts();
     }
 
-    class Bank {
-        // A bank consists of multiple branches
-    }
-
-    class Branch {
-        // Branch details can be added here
-    }
-
-    class Account {
+    abstract class Account {
         int accountNumber;
-        double currentBalance;
+        double balance;
     }
 
     class CheckingAccount extends Account {
         double overdraftLimit;
     }
 
-    class SavingsAccount extends Account {}
+    class SavingsAccount extends Account {
+        // Additional attributes can be added if necessary
+    }
 
-    association [1..5] Customer -> (owner) Account [*];
-    association [1] Account -> (owner) Customer [1];
-    association [0..*] Bank -> Branch [*];
+    association [*] Bank -> (branches) Branch [*];
+    association [*] Branch -> (customers) Customer [*];
+    association [1] Customer -> (accounts) Account [1..5];
 }

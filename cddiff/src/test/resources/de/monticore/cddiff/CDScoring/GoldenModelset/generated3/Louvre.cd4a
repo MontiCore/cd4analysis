@@ -1,50 +1,48 @@
 
-// Class Diagram for Louvre Museum Exhibition Management System
-classdiagram LouvreMuseumExhibition {
+// CD4A class diagram for the Louvre Museum management system
 
-class Location {
-    String name;
-    String description;
-}
+classdiagram louvre {
 
-class Exhibition {
-    String title;
-    Date openingDate;
-    int advancementStage; // e.g., planning, ongoing, completed
-}
+    class Museum {
+        List<Location> locations;
+        List<Exhibition> exhibitions;
+    }
 
-class Employee {
-    String firstName;
-    String lastName;
-    String id;
-}
+    class Location {
+        String name;
+        List<Exhibition> exhibitions;
+    }
 
-class Coordinator extends Employee {}
+    class Exhibition {
+        String title;
+        Employee coordinator;
+        List<ExhibitionItem> desiredItems;
+    }
 
-class ExhibitionItem {
-    String description;
-}
+    class ExhibitionItem {
+        String description;
+        List<Piece> requestedPieces;
+    }
 
-class Collector {
-    String name;
-    String contactInfo;
-}
+    class Piece {
+        String name;
+        Collector collector;
+    }
 
-class Piece {
-    String title;
-    int year;
-}
+    class Employee {
+        String name;
+        Employee coach; // senior employee
+    }
 
-class CoachingRelationship {
-    // Represents the relationship between junior and senior employees
-}
+    class Collector {
+        String name;
+        List<Piece> pieces;
+    }
 
-association [1] Location <-> Exhibition [0..*];
-association [1] Exhibition <-> Coordinator [0..1];
-association [1] Exhibition <-> ExhibitionItem [0..*];
-association [1] ExhibitionItem <-> Piece [0..*];
-association [1] Piece <-> Collector [1..*];
-association [1] Employee <-> CoachingRelationship [0..*];
-association [1] Employee <-> Employee [0..*]; // junior -> senior relationship
-
+    association [*] Museum -> (locations) Location [*];
+    association [*] Location -> (exhibitions) Exhibition [*];
+    association [*] Exhibition -> (desiredItems) ExhibitionItem [*];
+    association [*] ExhibitionItem -> (requestedPieces) Piece [*];
+    association [*] Employee <-> (coach) Employee [0..1]; // coaching relationship
+    association [*] Collector -> (pieces) Piece [*];
 }

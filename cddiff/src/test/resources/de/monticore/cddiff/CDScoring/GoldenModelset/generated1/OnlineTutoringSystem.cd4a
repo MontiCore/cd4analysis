@@ -1,49 +1,59 @@
 
-// CD4A Class Diagram for Online Tutoring System (OTS)
-classdiagram OnlineTutoringSystem {
+classdiagram ots {
 
-    class User {
+    class Person {
         String name;
         String email;
     }
 
-    class Tutor extends User {
+    class Tutor extends Person {
         String bankAccount;
-        double hourlyPrice;
-        String levelOfExpertise;
-        String subject;
-        String availability; // e.g., "Thursdays from 10:00 to 11:30"
+        List<TutoringOffer> offers;
+        Availability availability; // Weekly availability
+        void offerTutoring(TutoringOffer offer);
     }
 
-    class Student extends User {
-        // Student specific details can be added here
+    class Student extends Person {
+        List<TutoringRequest> requests;
+        void browseTutoringOffers(String subject);
+        void makeTutoringRequest(TutoringOffer offer, String dateTime);
+    }
+
+    class TutoringOffer {
+        String subject;
+        String expertiseLevel; // e.g., primary school level, high school level, university level
+        double hourlyPrice;
     }
 
     class TutoringRequest {
-        Date suggestedDateTime;
-        String levelOfTutoring; // e.g., primary, high school, university
+        TutoringOffer offer;
+        String suggestedDateTime;
+        boolean isConfirmed;
+        void confirmSession();
+        void proposeAlternativeDateTime(String newDateTime);
     }
 
     class TutoringSession {
-        Date sessionTime;
-        boolean cancelledByStudent;
-        boolean cancelledByTutor;
-        double sessionPrice;
-    }
-
-    class Payment {
-        String paymentMethod; // e.g., credit card, wire transfer
-        double amountPaid;
+        Tutor tutor;
+        Student student;
+        String dateTime;
+        double price;
+        boolean isCompleted;
+        void cancelSession();
+        void completeSession();
     }
 
     enum CancellationPolicy {
-        STUDENT_CANCELLATION,
-        TUTOR_CANCELLATION;
+        STUDENT_LATE_CANCEL, // 75% refund applies
+        TUTOR_LATE_CANCEL;   // 25% discount offered
     }
 
-    association [1] Tutor <-> (offers) TutoringRequest [*];
-    association [1] Student <-> (makes) TutoringRequest [*];
-    association [1] TutoringRequest <-> (resultsIn) TutoringSession [1];
-    association [1] TutoringSession <-> (paidBy) Payment [1];
+    class MonthlyAward {
+        Tutor bestTutor;
+        String subject;
+    }
 
+    association [*] Tutor -> (offers) TutoringOffer [*];
+    association [*] Student -> (requests) TutoringRequest [*];
+    association [*] TutoringOffer <-> TutoringRequest [*];
 }

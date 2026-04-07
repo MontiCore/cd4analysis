@@ -1,38 +1,43 @@
 
-classdiagram GasStationManagement {
+classdiagram gasStationChain {
 
-class GasStation {
-    String uniqueID;
-    String address;
-}
+    class GasStation {
+        String id; // unique identifier for the gas station
+        String address; // address of the gas station
+        List<FuelPump> fuelPumps; // List of fuel pumps at the gas station
+        List<DailyPrice> dailyPrices; // List of daily fuel prices
+    }
 
-class FuelPump {
-    int number;
-    boolean isSelfService;
-}
+    class FuelPump {
+        int number; // identifier for the fuel pump
+        boolean isSelfService; // whether the pump is self-service
+        List<Fuel> offeredFuels; // list of fuels offered at this pump
+    }
 
-class Fuel {
-    String name;
-    double octaneRating;
-}
+    class Fuel {
+        String name; // unique identifier for the fuel
+        float octaneRating; // octane rating of the fuel
+    }
 
-class DailyFuelPrice {
-    Date date;
-    double pricePerLiter;
-}
+    class DailyPrice {
+        String date; // date of the daily price
+        Fuel fuel; // fuel to which this daily price applies
+        GasStation gasStation; // gas station this daily price is related to
+        float pricePerLiter; // price per liter for the fuel
+    }
 
-class FuelPurchase {
-    String uniqueID;
-    int litersDispensed;
-}
+    class FuelPurchase {
+        String id; // unique identifier for the fuel purchase
+        FuelPump fuelPump; // fuel pump where the purchase occurred
+        DailyPrice dailyPrice; // daily price that applies to the purchase
+        float litersDispensed; // number of liters of fuel dispensed
+    }
 
-association [1] GasStation -> (pumps) FuelPump [0..12];
-association [1] FuelPump -> (fuels) Fuel [0..*];
-association [1] GasStation -> (dailyPrices) DailyFuelPrice [0..*];
-association [1] DailyFuelPrice -> (fuel) Fuel [1];
-association [1] DailyFuelPrice -> (gasStation) GasStation [1];
-association [1] FuelPurchase -> (fuelPump) FuelPump [1];
-association [1] FuelPurchase -> (dailyPrice) DailyFuelPrice [1];
-association [1] FuelPurchase -> (fuel) Fuel [1];
-
+    association [*] GasStation -> (pumps) FuelPump [1..12];
+    association [*] GasStation -> (dailyPrices) DailyPrice [*];
+    association [1] FuelPump -> (offeredFuels) Fuel [*];
+    association [*] DailyPrice -> (fuels) Fuel [1];
+    association [*] DailyPrice -> (gasStation) GasStation [1];
+    association [*] FuelPurchase -> (fuelPump) FuelPump [1];
+    association [*] FuelPurchase -> (dailyPrice) DailyPrice [1];
 }

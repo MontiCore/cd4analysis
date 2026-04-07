@@ -1,68 +1,60 @@
 
-// CD4A Class Diagram for the Online Tutoring System (OTS)
+// Class diagram for an Online Tutoring System (OTS)
+classdiagram ots {
 
-classdiagram OTS {
+    class Person {
+        String name;
+        String email;
+    }
+    
+    class Tutor extends Person {
+        String bankAccount;
+        List<SubjectTutoring> offeredTutoring;
+        List<Availability> weeklyAvailability;
+        void offerTutoring(SubjectTutoring tutoring);
+        void confirmSession(TutoringSession session);
+        void cancelSession(TutoringSession session);
+        void awardDiscount(Student student);
+    }
 
-class User {
-    String name;
-    String email;
-}
+    class Student extends Person {
+        void browseTutoringOffers(String subject);
+        void makeRequest(TutoringSessionRequest request);
+    }
 
-class Tutor extends User {
-    String bankAccount;
-    List<TutoringOffer> offers; // A tutor can have multiple offers
-}
+    class SubjectTutoring {
+        String subject;
+        String expertiseLevel; // e.g., primary, high school, university
+        double hourlyPrice;
+    }
 
-class Student extends User {
-    List<TutoringRequest> requests; // A student can make multiple requests
-}
+    class Availability {
+        String day; // e.g., Thursday
+        String startTime; // e.g., 10:00
+        String endTime; // e.g., 11:30
+    }
 
-class TutoringOffer {
-    String subject;
-    String expertiseLevel; // e.g., primary school, high school, university
-    double hourlyPrice;
-    String availability; // e.g., "Thursdays from 10:00 to 11:30"
-    Tutor tutor; // Offer is provided by a specific tutor
-}
+    class TutoringSession {
+        Tutor tutor;
+        Student student;
+        String date; // date of the session
+        String time; // time of the session
+        void scheduleFollowUp();
+        void cancelSession();
+        double getPrice();
+    }
 
-class TutoringRequest {
-    String requestedLevel; // Level of tutoring requested
-    Date targetDateTime; // Suggested date and time for the session
-    Tutor tutor; // Request directed to a specific tutor
-    Student student; // Request made by a specific student
-}
+    class TutoringSessionRequest {
+        Tutor tutor;
+        String subject;
+        String preferredDateTime; // the date and time suggested for the session
+        String level; // level of tutoring requested
+    }
 
-class TutoringSession {
-    Date dateTime; // Scheduled date and time
-    Tutor tutor; // Tutor in the session
-    Student student; // Student in the session
-    boolean isCancelled; // Indicates if the session was cancelled
-    double price; // Price of the session
-}
-
-class Payment {
-    Tutor tutor; // Tutor receiving the payment
-    double amount; // Amount paid
-    String paymentMethod; // e.g., credit card or wire transfer
-}
-
-class CancellationPolicy {
-    double cancellationFee; // e.g., 75% for student and 25% discount for tutor
-}
-
-class TutorOfTheMonth {
-    Tutor tutor;
-    String subject; // Subject for which they are awarded
-}
-
-// Associations
-association [0..*] Tutor <-> (offers) TutoringOffer [*];
-association [0..*] Student <-> (requests) TutoringRequest [*];
-association [0..*] TutoringRequest <-> (isFor) TutoringOffer [1];
-association [0..*] TutoringSession <-> (involves) Tutor [1];
-association [0..*] TutoringSession <-> (involves) Student [1];
-association [1] Payment <-> Tutor [1];
-association [1] Payment <-> TutoringSession [1];
-association [1] TutoringSession <-> (policy) CancellationPolicy [1];
-
+    association [*] Tutor -> (offers) SubjectTutoring [*];
+    association [*] Tutor -> (has) Availability [*];
+    association [*] Student -> (makes) TutoringSessionRequest [*];
+    association [*] TutoringSessionRequest -> (requests) TutoringSession [1];
+    association [1] TutoringSession <- (isFor) Student [1];
+    association [1] TutoringSession <- (isConductedBy) Tutor [1];
 }

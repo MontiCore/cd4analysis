@@ -1,50 +1,46 @@
 
-// CD4A class diagram for School Management System
-classdiagram SchoolManagement {
+classdiagram school {
 
-class School {
-    String name;
+    class School {
+        String name;
+        Teacher principal; // Only one principal per school
+    }
+
+    class Person {
+        String firstName;
+        String lastName;
+    }
+
+    class Teacher extends Person {
+        String email;
+    }
+
+    class Student extends Person {
+        ClassGroup classGroup;
+        School school; // Attends exactly one school
+    }
+
+    class ClassGroup {
+        String name;
+        List<Student> students; // Between 10 and 31 students
+        Classroom classroom; // Assigned to exactly one classroom
+    }
+
+    class Room {
+        String name;
+    }
+
+    class Classroom extends Room {
+        int capacity; // Capacity of the classroom
+    }
+
+    class Gym extends Room {
+        double size; // Size specification in square meters
+    }
+
+    association [1] School -> (principal) Teacher [1]; // Each school has exactly one principal
+    association [1] Teacher <-> (teaches) School [0..3]; // Teacher can teach at a maximum of three schools
+    association [1] Student -> (classGroup) ClassGroup [1]; // Each student is in exactly one class group
+    association [1] ClassGroup <-> (classroom) Classroom [1]; // Class group is assigned to exactly one classroom
 }
 
-class Person {
-    String firstName;
-    String lastName;
-}
-
-class Teacher extends Person {
-    String email;
-}
-
-class Student extends Person {
-    // A student is always in exactly one class group
-}
-
-class Principal extends Teacher {
-    // A principal is a teacher who manages one school
-}
-
-class Room {
-    String name;
-}
-
-class Classroom extends Room {
-    int capacity;
-}
-
-class OtherRoom extends Room {
-    int sizeInSquareMeters;
-}
-
-class ClassGroup {
-    String name; // e.g., 5a
-}
-
-association [1] School <-> (has) Principal [1]; // Each school has exactly one principal
-association [1] School <-> (employs) Teacher [0..3]; // A teacher can teach at a maximum of three schools
-association [1] School <-> Student [*]; // Students attend exactly one school
-association [1] Teacher <-> (teaches) School [0..3]; // Teachers can teach at multiple schools
-association [0..*] Student <-> (in) ClassGroup [1]; // A student is in exactly one class group
-association [1] ClassGroup <-> (assignedTo) Classroom [1]; // A class group is assigned to exactly one classroom
-association [1] Classroom <-> (has) Room [1]; // Each classroom is a type of room
-
-}

@@ -1,68 +1,68 @@
 
-// CD4A Class Diagram for the Tile-O application
-classdiagram TileO {
+classdiagram tileo {
+
+    class Color {
+        // The LLM did not generate this class, adding it to avoid errors
+    }
 
     class Game {
         Board board;
-        Player[] players; // up to 4 players
-        Player currentPlayer;
+        Player[] players; // Up to 4 players
+        int currentPlayerIndex;
+        void startGame();
+        void nextTurn();
         void rollDie();
-        void movePiece(Player player, Tile targetTile);
-        boolean checkWin(Player player);
+        void movePiece(Player player, Tile tile);
+        void endGame(Player winner);
     }
 
     class Board {
-        Tile[][] tiles;
+        Tile[][] tiles; // 2D array of tiles
         ConnectionPiece[] spareConnectionPieces;
         Tile hiddenTile;
-    }
-
-    class Color {
-     //Comment: LLM did not generate the class, add to avoid errors
+        void setHiddenTile(Tile tile);
+        void setStartingPositions(Player[] players);
+        void addActionTile(Tile tile, int duration);
     }
 
     class Tile {
-        Color color; // assume Color is a predefined type
+        Color color; // Color of the tile
+        Tile[] connectedTiles; // Up to 4 connected tiles (left, right, top, bottom)
         boolean isActionTile;
-        int turnsAsRegular;
-        Tile rightConnection;
-        Tile leftConnection;
-        Tile topConnection;
-        Tile bottomConnection;
-        void changeColorToBlack();
+        boolean isVisited;
+        void changeColor();
+        void connectTile(Tile tile, String direction); // direction: left, right, top, bottom
     }
-
-    class ConnectionPiece {}
 
     class Player {
         String name;
-        Color pieceColor; // piece color for the player
+        Color pieceColor; // Color of the player's piece
         Tile currentTile;
-        void takeTurn();
+        void rollDie();
+        void moveToTile(Tile tile);
     }
 
     class ActionCard {
-        ActionType actionType; // predefined enumeration
-        void execute(Player player);
+        ActionType actionType;
+        void execute(Player player, Game game);
     }
 
     class Designer {
-        void defineGame(Board board, Player[] players);
-        void defineActionCardDeck(ActionCard[] deck);
+        void defineGame(Board board);
+        void defineActionDeck(ActionCard[] actionCards);
     }
 
     enum ActionType {
         EXTRA_TURN,
-        CONNECT_TWO_TILES,
+        CONNECT_TILES,
         REMOVE_CONNECTION,
-        MOVE_TO_ARBITRARY_TILE,
-        LOSE_NEXT_TURN;
+        MOVE_TO_TILE,
+        LOSE_TURN;
     }
 
-    association [1] Game -> Board [1];
-    association [1] Game -> Player [2..4];
-    association [1] Board -> Tile [*];
-    association [0..32] Board -> ActionCard [0..32];
-    association [1] Designer -> Game [1];
-    association [1] Player -> Tile [1];
+    association [1] Game -> (players) Player [2..4];
+    association [1] Board -> (tiles) Tile [*];
+    association [1] Designer -> Board [*];
+    association [1] Board -> ActionCard [32]; // A deck of 32 action cards
+    association [1] Tile -> Tile [0..4]; // Each tile can connect to at most 4 tiles
 }

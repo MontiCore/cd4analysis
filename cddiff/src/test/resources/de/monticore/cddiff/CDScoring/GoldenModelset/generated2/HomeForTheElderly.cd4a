@@ -1,65 +1,67 @@
 
 // Class Diagram for Home for the Elderly
-classdiagram HomeForElderly {
 
-enum StayType {
-    RestHome,
-    RestAndNursingHome,
-    ServiceFlat;
-}
+classdiagram homeElderly {
 
-class Person {
-    String name;
-    String identificationData;
-    Date registrationDate;
-    StayType assessedStayType;
-}
+    enum StayType {
+        RH, // Rest Home
+        RNH, // Rest & Nursing Home
+        SF;  // Service Flat
+    }
 
-class Inhabitant extends Person {
-    // An inhabitant can have multiple stays
-}
+    class Home {
+        List<Department> departments;
+    }
 
-class Room {
-    int roomNumber;
-}
+    class Department {
+        List<Room> rooms;
+    }
 
-class Bed {
-    String category;  // corresponds to a category with a price
-}
+    class Room {
+        List<Bed> beds;
+    }
 
-class Category {
-    String name;  // e.g., Rest Home, Rest & Nursing Home, Service Flat
-    double price;
-}
+    class Bed {
+        Category category; // Each bed belongs to a particular category
+    }
 
-class Department {
-    String name;
-    Room[] rooms;  // Each department consists of multiple rooms
-}
+    class Category {
+        double price; // Each category has a price
+    }
 
-class WaitingList {
-    List<Person> persons;  // Persons queued for assessment and stay
-}
+    class Inhabitant {
+        List<Stay> stays; // An inhabitant can have multiple stays
+        Bed assignedBed;
+        void register(); // Registration process
+        void assessAbilities(); // Assessment of needs
+    }
 
-class Stay {
-    StayType type;
-    Date intakeDate;
-    boolean isValid;  // Indicates if the proposal is accepted
-    double outstandingAmount;
-}
+    class Stay {
+        StayType type; // Type of stay assigned to the inhabitant
+        Date intakeDate; // Date of effective stay
+        boolean isActive; // Indicates if the stay is currently active
+        void propose(); // Proposals made when a bed is free
+        void acceptProposal(); // Accept proposal
+        void refuseProposal(); // Refuse proposal
+        void reassess(); // Re-assess after proposal acceptance
+    }
 
-class Invoice {
-    double totalAmount;
-    double remainingAmount;
-    boolean isPaid;  // If the invoice has been paid or not
-}
+    class Registration {
+        void registerData(); // Register basic identification data
+        void assessNeeds(); // Assess needs for basic activities
+        void onWaitingList(); // Add inhabitant to waiting list
+    }
 
-association [*] Department <-> Room [1..*]; // Departments have multiple rooms
-association [1] Room <-> Bed [1..*]; // Each room has multiple beds
-association [1] Bed <-> Category [1];  // Each bed belongs to a specific category
-association [*] Person <-> Inhabitant [1]; // A person can become an inhabitant
-association [1] Inhabitant <-> Stay [*]; // An inhabitant can have multiple stays
-association [1] Person <-> WaitingList [0..1]; // Assessed persons are on a waiting list
-association [1] Inhabitant <-> Invoice [0..*]; // Inhabitants can have multiple invoices
+    class Invoice {
+        double outstandingAmount; // Outstanding amount of the invoice
+        boolean isPaid; // Indicates if the invoice is paid
+        void receivePayment(double amount); // Process payment
+        void modifyInvoice(); // Modify invoice if complaints arise
+    }
 
+    association [*] Home -> (departments) Department [*];
+    association [*] Department -> (rooms) Room [*];
+    association [*] Room -> (beds) Bed [*];
+    association [*] Inhabitant -> (stays) Stay [*];
+    association [1] Bed -> Category [1]; // A bed belongs to a particular category
 }

@@ -1,59 +1,59 @@
 
-// Class diagram for the Web Portal System
-classdiagram WebPortalSystem {
+// CD4A Class Diagram for the Web Portal System
+classdiagram webPortal {
 
-enum EnergyClass {
-    A,
-    B,
-    C,
-    D;
-}
+    class WebPortal {
+        String versionNumber;
+        String url;
+        List<Building> catalog; // Catalog of buildings
+    }
 
-class WebPortal {
-    String version;
-    String url;
-}
+    class Building {
+        String uniqueID; // Unique identifier
+        String name;
+        EnergyClass energyClass; // Energy classes: A, B, C, D
+        String address;
+        int yearOfConstruction;
+        User owner; // Building owner
+        List<Entry> additionalEntries; // Additional entries for the building
+        List<Image> images; // List of images for the building
+        Image profilePhoto; // Profile photo
+    }
 
-class Building {
-    String uniqueID; // Unique identifier for the building
-    String name;
-    EnergyClass energyClass; // Using the EnergyClass enum
-    String address;
-    int yearOfConstruction;
-}
+    enum EnergyClass {
+        A,
+        B,
+        C,
+        D;
+    }
 
-class User {
-    String userName; // Unique user name
-    String emailAddress;
-    String password;
-}
+    class Entry {
+        String name;
+        String text; // This can hold textual information
+        Float numericValue; // This can hold a floating-point number
+        String unit; // Freely definable text for the unit
+        boolean isPublic; // Indicates if entry is publicly released
+    }
 
-class Entry {
-    String name;
-    String textInfo; // Optional textual information
-    float numericValue; // Optional floating point number
-    String unit; // Additional unit as freely definable text
-}
+    class Image {
+        String fileName; // File name of the image
+    }
 
-class Image {
-    String fileName; // File name of the image
-}
+    class User {
+        String userName; // Unique user name
+        String email; // Email address
+        String password; // User password
+        boolean isActive; // Indicates if the user is activated
+        String adminIDCardNumber; // Only for administrators
+    }
 
-class Comment {
-    String content; // Content of the comment
-}
+    class Administrator extends User {
+        // Inherits all properties from User
+        // Additional administrator-specific functions can be defined here
+    }
 
-class Administrator extends User {
-    String idCardNumber; // ID card number for administrators
-}
-
-// Association definitions
-association [1] WebPortal <-> Building [*]; // A web portal has many buildings
-association [1] User <-> Building [*]; // A user can own multiple buildings
-association [0..*] Building <-> Entry [*]; // A building can have multiple entries
-association [1] Building <-> Image [*]; // A building can have multiple images
-association [1..*] User <-> Comment [*]; // Users can comment on buildings
-association [1] Building <-> Comment [*]; // Comments are related to buildings
-association [1] Administrator <-> User [0..*]; // Administrators manage users
-
+    association [*] WebPortal -> (catalog) Building [*]; // Web portal has multiple buildings
+    association [*] Building -> (owner) User [1]; // Building has one owner
+    association [*] User -> (additionalEntries) Entry [*]; // User can manage additional entries
+    association [*] Building -> (images) Image [*]; // Building can have multiple images
 }

@@ -1,38 +1,42 @@
 
-// CD4A class diagram for Gas Station Management System
+classdiagram gas_station_chain {
 
-classdiagram GasStationManagementSystem {
+    class GasStation {
+        String id; // unique identifier
+        String address;
+        List<FuelPump> fuelPumps; // maximum of 12
+        List<DailyPrice> dailyPrices; // archives daily fuel prices
+    }
 
-class GasStation {
-    String id;
-    String address;
-}
+    class FuelPump {
+        int number; // identifier for the fuel pump
+        boolean isSelfService;
+        List<Fuel> offeredFuels; // fuels offered at this pump
+    }
 
-class FuelPump {
-    int number;
-    boolean isSelfService;
-}
+    class Fuel {
+        String name; // unique identifier for the fuel
+        float octaneRating; // octane rating of the fuel
+    }
 
-class Fuel {
-    String name;
-    double octaneRating;
-}
+    class DailyPrice {
+        Date date; // date for the price
+        Fuel fuel; // fuel to which the price applies
+        GasStation gasStation; // gas station where the price applies
+        float pricePerLiter; // price per liter of the fuel
+    }
 
-class DailyPrice {
-    Date date;
-    double pricePerLiter;
-}
+    class FuelPurchase {
+        String id; // unique identifier for the purchase
+        FuelPump fuelPump; // fuel pump where the purchase was made
+        DailyPrice dailyPrice; // daily price for the bought fuel
+        float litersDispensed; // number of liters dispensed
+    }
 
-class FuelPurchase {
-    String purchaseId;
-    double litersDispensed;
-}
-
-association [1] GasStation -> FuelPump [0..12]; // A gas station has up to 12 fuel pumps
-association [1] FuelPump -> Fuel [0..*]; // Each fuel pump offers multiple fuels
-association [1] DailyPrice -> Fuel [1..1]; // Daily price applies to one specific fuel
-association [1] DailyPrice -> GasStation [1..1]; // Daily price is related to one specific gas station
-association [1] FuelPurchase -> FuelPump [1..1]; // A fuel purchase is made at one fuel pump
-association [1] FuelPurchase -> DailyPrice [1..1]; // A fuel purchase refers to a specific daily price
-
+    association [1..12] GasStation -> (fuelPump) FuelPump [*];
+    association [*] FuelPump -> (offeredFuel) Fuel [*];
+    association [*] GasStation -> (dailyPrice) DailyPrice [*];
+    association [*] DailyPrice -> (appliedFuel) Fuel [1];
+    association [1] FuelPurchase -> (purchasedAt) FuelPump [1];
+    association [1] FuelPurchase -> (purchasedPrice) DailyPrice [1];
 }

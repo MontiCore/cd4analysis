@@ -1,74 +1,61 @@
 
-// Class Diagram for a Card Game
-classdiagram CardGame {
+// CD4A Model for the Game
+classdiagram game {
 
-enum Suit {
-    Diamonds,
-    Hearts,
-    Spades,
-    Clubs;
-}
+    class Game {
+        Player[] players; // Contains 4 players
+        Deck deck;
+        ScoringTable scoringTable;
+    }
 
-// Class representing a Card
-class Card {
-    int uniqueId; // Unique identifier for each card
-    Suit suit;
-    
-    // Comparison method for card height
-    int compareHeight(Card otherCard);
-}
+    class Deck {
+        Card[] cards; // Up to 48 cards
+    }
 
-// Class representing a Deck of Cards
-class Deck {
-    Card[] cards; // Up to 48 cards in the deck
-}
+    class Card {
+        String id; // Unique ID
+        Suit suit; // Suit of the card
+        ComparisonResult compareHeight(Card other); // Comparison method for card height
+    }
 
-// Class representing a Player
-class Player {
-    int uniqueId; // Unique identifier for each player
-}
+    enum Suit {
+        DIAMONDS,
+        HEARTS,
+        SPADES,
+        CLUBS;
+    }
 
-// Class representing a Round
-class Round {
-    Player[] winningPlayers; // Players who won the round
-    int pointValue; // Points awarded for this round
-}
+    class ScoringTable {
+        Round[] rounds; // Any number of rounds
+    }
 
-// Class representing a Scoring Table
-class ScoringTable {
-    Round[] rounds; // Any number of rounds
-}
+    class Round {
+        Player[] winningPlayers; // Winning players of the round
+        int pointValue; // Point value of the round
+    }
 
-// Class representing a Solo Round (inheritance)
-class SoloRound extends Round {
-    SoloType soloType; // Type of solo: trump, jack, or queen
-    Player soloPlayer; // Exactly one solo player
-}
+    class JackRound extends Round {
+        // Additional attributes or methods for JackRound if needed
+    }
 
-// Class representing a Jack Round (inheritance)
-class JackRound extends Round {
-}
+    class SoloRound extends Round {
+        Solo soloType; // Type of solo
+        Player soloPlayer; // Exactly one solo player
+    }
 
-// Class representing a Mandatory Solo Round (inheritance)
-class MandatorySoloRound extends SoloRound {
-}
+    enum Solo {
+        TRUMP,
+        JACK,
+        QUEEN;
+    }
 
-// Enumeration for Solo Types
-enum SoloType {
-    Trump,
-    Jack,
-    Queen;
-}
+    enum ComparisonResult {
+        LOWER,
+        EQUAL,
+        HIGHER;
+    }
 
-// Association between Game, Player, Deck, and Scoring Table
-class Game {
-    Deck deck;
-    Player[] players; // 4 players
-    ScoringTable scoringTable;
-}
-
-association [4] Player <-> Game [1]; // 4 players in the game
-association [1] Deck <-> Game [1]; // One deck for the game
-association [1] ScoringTable <-> Game [1]; // One scoring table for the game
-
+    class Player {
+        String id; // Unique ID
+    }
 }

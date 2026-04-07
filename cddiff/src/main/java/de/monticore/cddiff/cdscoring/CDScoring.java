@@ -40,7 +40,6 @@ public class CDScoring {
    * scores the two CDs using the given parameters, embedding and a greedy matching approach.
    * This is equivalent to calling {@link #score(int, double, boolean, boolean)} with useEmbedding set to true and useOptimalMatching set to false.
    */
-  //TODO: explain embedding usage in the readme
   public double score(int iterations, double threshold) {
     return score(iterations, threshold, true, false);
   }
@@ -49,7 +48,6 @@ public class CDScoring {
    * scores the two CDs using the given parameters and a greedy matching approach.
    * This is equivalent to calling {@link #score(int, double, boolean, boolean)} with useOptimalMatching set to false.
    */
-  //TODO: explain embedding usage in the readme
   public double score(int iterations, double threshold, boolean useEmbedding) {
     return score(iterations, threshold, useEmbedding, false);
   }
@@ -98,7 +96,7 @@ public class CDScoring {
     }
 
     // Calculate the scores for all types in the source CD, if a type is not matched, it will be the default value 0.0
-    // If two different types are matched to the same type, the average will be lower because both matches were scaled down
+    // If two different types are matched to the same type, the average will be smaller because both matches were scaled down
     List<Double> typeScores = srcTypes.stream().map(
         combinedTypeMatches::getMatchesForSource
       ).map(Map::values).map(list -> list.isEmpty() ? 0.0 : DoubleMath.mean(list))
@@ -269,7 +267,7 @@ public class CDScoring {
    * Close matches are defined as those with a score in the range of [0.9 * threshold, 1.11 * threshold].
    * These matches can be used for further analysis or debugging.
    * This is only meaningful if the score method was called before, otherwise this will return an empty CachedMatches.
-   *
+   * Close matches are also not available if the score method was called with useOptimalMatching set to true.
    * @return CachedMatches containing matches close to the threshold
    */
   public CachedMatch<ASTCDType> getCloseTypeMatches() {

@@ -1,60 +1,43 @@
 
-// Class Diagram for Online Tutoring System (OTS)
+// CD4A Class Diagram for the Online Tutoring System (OTS)
 
-classdiagram OTS {
+classdiagram ots {
 
-class Tutor {
-    String name;
-    String email;
-    String bankAccount;
+    class Person {
+        String name;
+        String emailAddress;
+    }
+
+    class Tutor extends Person {
+        String bankAccount;
+        void offerTutoring(String subject, String expertiseLevel, double hourlyPrice);
+        void specifyAvailability(String availability);
+    }
+
+    class Student extends Person {
+        void browseTutoringOffers(String subject);
+        void makeTutoringRequest(Tutor tutor, String level, String suggestedDateTime);
+    }
+
+    class TutoringSession {
+        Tutor tutor;
+        Student student;
+        String subject;
+        String level;
+        String dateTime;
+        double price;
+        void confirmSession();
+        void cancelSession();
+    }
+
+    enum CancellationPolicy {
+        STUDENT_CANCEL_BEFORE_24_HOURS,
+        TUTOR_CANCEL_WITHIN_24_HOURS;
+    }
+    
+    association [*] Tutor -> (offers) TutoringSession [*];
+    association [*] Student -> (requests) TutoringSession [*];
+    association [1] TutoringSession -> Tutor [1];
+    association [1] TutoringSession -> Student [1];
 }
 
-class Subject {
-    String name;
-    String expertiseLevel; // e.g. primary, high school, university
-    double hourlyPrice;
-}
-
-class Student {
-    String name;
-    String email;
-}
-
-class TutoringRequest {
-    DateTime suggestedDateTime;
-    String level; // e.g. primary, high school, university
-}
-
-class TutoringSession {
-    boolean confirmed;
-    DateTime startTime;
-    double price;
-    String cancellationPolicy;
-}
-
-class Payment {
-    String paymentMethod; // e.g. credit card, wire transfer
-    double amount;
-}
-
-class TutorOfTheMonth {
-    Tutor tutor;
-    Subject subject;
-}
-
-class Availability {
-    String dayOfWeek; // e.g. Thursdays
-    String timeRange; // e.g. 10:00 to 11:30
-}
-
-association [1..*] Tutor <-> (offers) Subject [1..*];
-association [1..*] Student <-> (makes) TutoringRequest [*];
-association [1] TutoringRequest <-> (for) Tutor [1];
-association [1] TutoringRequest <-> (leadsTo) TutoringSession [0..1];
-association [1] TutoringSession <-> (paidBy) Student [0..1];
-association [1] TutoringSession <-> (canceledBy) Student [0..1];
-association [1] TutoringSession <-> (canceledBy) Tutor [0..1];
-association [1..*] Tutor <-> (has) Availability [0..*];
-association [1] Tutor <-> (receives) TutorOfTheMonth [0..*];
-
-}

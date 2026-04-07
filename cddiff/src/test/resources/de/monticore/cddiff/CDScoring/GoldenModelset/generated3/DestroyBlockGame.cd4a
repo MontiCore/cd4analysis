@@ -1,69 +1,69 @@
 
-// CD4A Class Diagram for DestroyBlock application
-
-classdiagram DestroyBlock {
+// Class Diagram for DestroyBlock Application
+classdiagram destroyBlock {
 
     class User {
-        String username;
-        String password;
-        // User can be either Player or Admin
+        String username; // unique username
+        String password; // shared for player and admin
+        boolean isAdmin; // true if user is an admin
     }
-
-    class Player extends User {}
-
-    class Admin extends User {}
 
     class Game {
-        String name;
-        int maxLevels = 99; // Constant for maximum number of levels
-        Speed speed; // Speed attributes specified by the admin
-        PaddleLength paddleLength; // Paddle attributes specified by the admin
-    }
-
-    class Level {
-        int levelNumber;
-        BlockArrangement arrangement;
-        boolean isRandom; // Whether level is random or not
+        String gameName; // unique game name
+        HallOfFame hallOfFame; // associated hall of fame
+        List<Block> blocks; // set of blocks defined by admin
+        List<Level> levels; // levels defined by admin
+        int minSpeed; // minimum speed of the ball
+        int speedIncrementFactor; // speed increase factor
+        int maxLength; // maximum length of the paddle
+        int minLength; // minimum length of the paddle
+        boolean isPublished; // true if the game is published
     }
 
     class Block {
-        String color;
-        int points; // Points between 1 and 1000
+        String color; // color of the block
+        int points; // points between 1 and 1000
     }
 
-    class BlockArrangement {
-        Block[][] grid; // Blocks are placed in a grid
-    }
-
-    class Speed {
-        int minimumSpeed;
-        int speedIncreaseFactor;
-    }
-
-    class PaddleLength {
-        int maximumLength;
-        int minimumLength;
+    class Level {
+        int levelNumber; // 1 to 99
+        List<Block> startingArrangement; // arrangement of blocks
+        boolean isRandom; // true if the level is random
+        int numBlocks; // number of blocks to show
     }
 
     class Ball {
-        int speed; // Speed of the ball
-        String direction; // Direction of the ball
+        int speed; // speed of the ball
+        String direction; // current direction of the ball
+    }
+
+    class Paddle {
+        int length; // length of the paddle
+        int position; // position of the paddle
+    }
+
+    class Player {
+        int lives; // number of lives (3)
+        int score; // current score
+        Game currentGame; // game being played
+        void movePaddle(String direction); // move paddle left or right
+        void pauseGame(); // pause the game
+        void resumeGame(); // resume paused game
     }
 
     class HallOfFame {
-        Player[] players; // Players who scored
+        List<PlayerScore> scores; // high scores of players
     }
 
-    class GameSession {
-        int lives = 3; // Starting lives
-        int totalScore; // Total score when game ends
-        boolean isPaused; // Indicates paused state
+    class PlayerScore {
+        Player player; // reference to the player
+        int score; // score of the player
     }
 
-    association [1] Game <-> Admin [1]; // One admin per game
-    association [1] Game <-> Level [*]; // A game has multiple levels
-    association [*] Level <-> BlockArrangement [1]; // Each level has a block arrangement
-    association [*] Game <-> Player [*]; // Players may play multiple games
-    association [1] HallOfFame <-> Player [*]; // Players are recorded in the hall of fame
-    association [1] GameSession <-> Game [1]; // Game session is related to one game
+    // Associations
+    association [1] Game -> (admin) User [1]; // one admin per game
+    association [1] Game -> Level [*]; // game has multiple levels
+    association [1] Game -> Block [*]; // game has multiple blocks
+    association [*] User -> (admin) Game [1]; // user can be admin for one game
+    association [*] User -> (player) Game [*]; // user can be player for many games
 }

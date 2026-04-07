@@ -1,47 +1,52 @@
 
-// Class diagram for Musicmatic streaming platform
+classdiagram musicmatic {
 
-classdiagram MusicmaticLLM {
+    class Song {
+        String title;
+        int year;
+        int length;
+        String genre;
+        Artist artist;
+    }
 
-class Artist {
-    String name; // unique identifier for artist
-    DateTime dateOfBirth;
-    String websiteUrl;
-}
+    class Artist {
+        String name; // unique identifier
+        String dateOfBirth;
+        String websiteURL;
+    }
 
-class Song {
-    String title;
-    int year;
-    double length;
-    String genre;
-}
+    class User {
+        String id; // unique identifier
+        String name;
+        String address;
+    }
 
-class User {
-    String id; // unique identifier for user
-    String name;
-    String address;
-}
+    class RegularUser extends User {
+        void buyMusic(Song song);
+        void makeSuggestion(Album album);
+    }
 
-class RegularUser extends User {}
+    class BusinessUser extends User {
+        String vatNumber;
+        void uploadSong(Song song);
+    }
 
-class BusinessUser extends User {
-    String vatNumber;
-}
+    class Album {
+        List<Hit> hits;
+    }
 
-class Single extends Song {}
+    class Hit {
+        Song song; // Individual hit
+        int trackNumber; // Position in album
+    }
 
-class Hit extends Song {
-    int trackNumber; // position in the album
-}
+    enum SongType {
+        SINGLE,
+        HIT;
+    }
 
-class Album {
-    String title; // title of the album
-}
-
-association [1] Artist <-> Song [0..*]; // Each song belongs to one artist
-association [1] User <-> Song [0..*]; // Users can buy multiple songs
-association [1] BusinessUser <-> Single [0..*]; // Business users can upload singles
-association [1] Album <-> Hit [0..*]; // An album consists of multiple hits
-association [0..1] RegularUser <-> Album [0..*]; // Regular users can suggest albums
-
+    association [1] Song -> Artist [1];
+    association [*] RegularUser -> Song [*]; // can buy multiple songs
+    association [1] Album -> Hit [*]; // an album can have multiple hits
+    association [1] BusinessUser -> Song [1]; // can upload individual songs
 }

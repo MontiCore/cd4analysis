@@ -1,42 +1,63 @@
 
-// Class diagram for hospital examination and treatment management system
-classdiagram HospitalSystem {
+// Class diagram representing the hospital examination and treatment system
+classdiagram hospital {
 
     class Hospital {
         String name;
-        String location;
+        List<ExaminationType> allowedExaminations;
+        void applyForPermission(ExaminationType examinationType);
     }
 
-    class Doctor {
-        String firstName;
-        String lastName;
-    }
-
-    class Patient {
-        String firstName;
-        String lastName;
+    enum ExaminationType {
+        CARDIOLOGIC_TEST,
+        ECHOGRAPHY,
+        RADIOLOGY,
+        SCANNER;
     }
 
     class Examination {
-        String type;
+        ExaminationType type;
+        String description;
+        // Each examination is of one type
     }
 
     class TreatmentPlan {
-        String problemType;
+        ProblemType problem;
+        List<ExaminationType> advisedExaminations;
     }
 
-    class ActualTreatment {
+    enum ProblemType {
+        PROBLEM_A,
+        PROBLEM_B;
+        // Add other types as necessary
+    }
+
+    class Doctor {
+        String name;
+        Hospital hospital;
+        Treatment createTreatment(ProblemType problem, Patient patient);
+    }
+
+    class Patient {
+        String name;
+    }
+
+    class Treatment {
+        List<Examination> actualExaminations;
+        List<MedicalAction> additionalActions;
+        void addExamination(Examination examination);
+        void addAction(MedicalAction action);
+    }
+
+    class MedicalAction {
         String description;
     }
 
-    association [1] Hospital -> Doctor [*];
-    association [1] Hospital -> Patient [*];
-    association [1] Hospital -> Examination [*];
-    association [1] Hospital -> TreatmentPlan [*];
-    association [1] Doctor -> Patient [*];
-    association [1] Doctor -> ActualTreatment [*];
-    association [1] TreatmentPlan -> Examination [*]; // Advised examinations per treatment plan
-    association [0..*] Examination -> Hospital [0..*]; // Allowed examinations per hospital
-    association [1] Patient -> ActualTreatment [*]; // Patient has one or more actual treatments
-
+    // Associations
+    association [*] Hospital -> (allowedExaminations) ExaminationType [*]; // Hospitals with allowed examinations
+    association [*] TreatmentPlan -> (advisedExaminations) ExaminationType [*]; // Treatment plans with advised examinations
+    association [1] Doctor -> Hospital [1]; // Each doctor belongs to one hospital
+    association [1] TreatmentPlan -> (problem) ProblemType [1]; // Treatment plan for a specific problem
+    association [1] Treatment -> (patient) Patient [1]; // Each treatment relates to one patient
+    association [*] Treatment -> (actualExaminations) Examination [*]; // Treatments can have multiple examinations
 }

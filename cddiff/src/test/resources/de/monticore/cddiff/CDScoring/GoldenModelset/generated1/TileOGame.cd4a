@@ -1,70 +1,66 @@
 
-// CD4A Class Diagram for the Tile-O application
+// CD4A class diagram for the Tile-O application
 
-classdiagram TileO {
+classdiagram tileO {
 
     class Game {
         Board board;
-        Player[] players;
-        Player currentPlayer;
+        List<Player> players;
+        int currentPlayerIndex;
+        void startGame();
         void rollDie();
-        void movePiece(Player player, Tile destination);
+        void movePiece(Player player, Tile targetTile);
+        void checkForEndGame(Player player);
     }
 
     class Board {
-        Tile[][] tiles;
-        ActionTile actionTile;
+        List<Tile> tiles;
         Tile hiddenTile;
-        ConnectionPiece spareConnectionPieces;
+        List<ConnectionPiece> connectionPieces;
+        void layoutTiles();
+        void placeHiddenTile(Tile tile);
+        void placeActionTiles(List<Tile> actionTiles);
     }
 
     class Tile {
-        Color color; // Color can be WHITE or BLACK
-        Tile leftConnection;
-        Tile rightConnection;
-        Tile topConnection;
-        Tile bottomConnection;
+        String color; // color could be "white" or "black"
+        boolean isHidden;
+        boolean isActionTile;
+        List<Tile> connections;
+        void changeColor();
+        void setAsActionTile(int turns);
     }
 
-    class ActionTile extends Tile {
-        int turnsToRegular;
+    class ConnectionPiece {
+        Tile tileA;
+        Tile tileB;
+        void connectTiles(Tile tileA, Tile tileB);
     }
-
-    class ConnectionPiece {}
 
     class Player {
         String name;
-        Color pieceColor; // Color of the player's piece
+        String color; // Different color for each player
         Tile currentTile;
-        void takeTurn();
-    }
-
-    class Die {
-        int roll();
+        void rollDie();
+        void performAction(ActionCard card);
     }
 
     class ActionCard {
-        String description; // e.g., "roll the die for an extra turn"
-        void executeAction(Player player, Game game);
+        String instruction; // Description of the action
+        void execute(Player player);
     }
 
-    class ActionCardDeck {
-        ActionCard[] actionCards;
-        ActionCard drawCard();
+    class Designer {
+        Game game;
+        void defineGame();
+        void placeTilesOnBoard(List<Tile> tiles);
+        void defineHiddenTile(Tile tile);
+        void defineActionCards(List<ActionCard> actionCards);
     }
 
-    enum Color {
-        WHITE,
-        BLACK;
-    }
-
-    association [2..4] Game (player) <-> Player [*];
+    association [1] Game -> (players) Player [2..4];
     association [1] Game -> Board [1];
-    association [1] Board -> Tile [*];
-    association [0..1] Board -> ActionTile [1];
-    association [1] Board -> ConnectionPiece [*];
-    association [1] Player -> Tile [1];
-    association [1] Player -> Die [1];
-    association [1] Board -> ActionCardDeck [1];
+    association [*] Board -> (tiles) Tile [*];
+    association [*] Tile -> (connections) Tile [0..4]; // Up to one connection per side
+    association [*] Board -> (sparePieces) ConnectionPiece [*];
 }
-

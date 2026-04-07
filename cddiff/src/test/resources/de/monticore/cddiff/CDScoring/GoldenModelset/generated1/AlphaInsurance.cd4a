@@ -1,77 +1,72 @@
 
-// CD4A Class Diagram for Alpha Insurance
-classdiagram AlphaInsurance {
+classdiagram insurance {
 
-class Customer {
-    String name;
-    String contactInfo;
-}
+    class Customer {
+        String name;
+        String contactInfo;
+        List<InsurancePolicy> policies;
+        
+        void sendClaim(Claim claim);
+    }
 
-class Broker {
-    String name;
-    String id;
-}
+    class Broker {
+        String name;
+        String registrationId;
+        void assessProfile(Customer customer);
+        void sendFileForAnalysis(Customer customer);
+    }
 
-class InsurancePolicy {
-    String policyType;
-    double price;
-    String billingFrequency; // monthly or yearly
-}
+    class InsurancePolicy {
+        String type;
+        double price;
+        String paymentFrequency; // monthly or yearly
+        void signContract(Customer customer);
+    }
 
-class Contract {
-    Broker broker;
-    Customer customer;
-    InsurancePolicy insurancePolicy;
-    Date signingDate;
-}
+    class Claim {
+        String claimId;
+        String details;
+        void submit();
+    }
 
-class Claim {
-    String claimId;
-    Date claimDate;
-    String description;
-}
+    class ClaimCase {
+        String caseId;
+        Claim claim;
+        List<EstimatorReport> reports;
+        boolean isApproved;
+        
+        void openCase(Claim claim);
+        void assessClaim(EstimatorReport report);
+    }
 
-class ClaimCase {
-    Claim claim;
-    String status; // e.g., pending, approved, rejected
-    // possibly more attributes related to claim cases
-}
+    class Estimator {
+        String name;
+        String areaOfExpertise;
+        
+        void assessClaim(ClaimCase claimCase);
+    }
 
-class Estimator {
-    String name;
-    String areaOfExpertise;
-}
+    class EstimatorReport {
+        String reportId;
+        String findings;
+        double compensationAmount;
+        
+        void storeReport();
+    }
 
-class CompensationDecision {
-    String decisionId;
-    double eligibleAmount;
-}
+    class CompensationDecision {
+        ClaimCase claimCase;
+        List<String> eligibleCosts;
+        double totalCompensation;
+        
+        void registerDecision();
+        void processPayment(Customer customer);
+    }
 
-class Report {
-    String reportId;
-    String content; // details of the estimator's report
-}
-
-class Payment {
-    double amount;
-    Date paymentDate;
-}
-
-class ClaimDocumentation {
-    // Documentation related attributes
-}
-
-
-// Associations
-association [1] Customer <-> (assignedTo) Broker [1];
-association [1] Customer <-> (has) InsurancePolicy [1..*];
-association [1] Broker <-> Contract [0..*];
-association [1] Contract <-> Customer [0..1];
-association [1] Claim <-> ClaimCase [1];
-association [1] ClaimCase <-> Estimator [*];
-association [1] ClaimCase <-> CompensationDecision [0..1];
-association [1] CompensationDecision <-> Payment [0..1];
-association [1] Estimator <-> Report [*];
-association [*] Report <-> ClaimDocumentation [*];
-
+    // Associations
+    association [1] Broker -> Customer [1];
+    association [*] Claim -> ClaimCase [1];
+    association [*] Estimator -> ClaimCase [*];
+    association [1] ClaimCase -> EstimatorReport [*];
+    association [1] CompensationDecision -> ClaimCase [1];
 }

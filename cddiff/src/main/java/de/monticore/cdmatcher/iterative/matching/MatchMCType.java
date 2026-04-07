@@ -25,6 +25,14 @@ public class MatchMCType implements MatchingStrategy<ASTMCType> {
     this.tgtScope = tgtScope;
   }
 
+  /**
+   * For nested types the similarity is calculated as the product of the similarities of each nesting level.
+   * For example the similarity of a nested type A(B(C)) and a nested type D(E(F)) is the product s(A, D) * s(B, E) * s(C, F), where s is the similarity of two types.
+   * If the nesting depth is different, the similarity is 0.
+   * @param srcElem The source type to compare
+   * @param tgtElem The target type to compare
+   * @return A similarity value between 0 and 1, where 1 means the types are identical and 0 means they are completely different.
+   */
   @Override
   public double getScore(ASTMCType srcElem, ASTMCType tgtElem) {
     MatchCDTypeFromCache typeMatcher = new MatchCDTypeFromCache(cachedMatches);

@@ -1,46 +1,55 @@
 
-// CD4A class diagram for clothing company application
-classdiagram ClothingCompany {
+classdiagram clothingManagement {
 
-class Product {
-    String uniqueName;
-    String description;
-    double netPrice;
-}
+    class Product {
+        String uniqueName;
+        String description;
+        double netPrice;
+        Manufacturer manufacturer;
+        Country country;
+        double grossPrice(); // calculated using VAT rate
+    }
 
-class Country {
-    String name;
-    double vatRate;
-    String currency;
-    double conversionRateToEuro;
-}
+    class Manufacturer {
+        String name;
+        String country;
+    }
 
-class Representative {
-    String firstName;
-    String lastName;
-    String socialSecurityNumber;
-    String telephoneNumber;
-    String emailAddress;
-}
+    class Country {
+        String name;
+        double vatRate;
+        String currency;
+        double conversionRateToEuro;
+        boolean isProductAvailable(Product product);
+    }
 
-class Customer {
-    String name;
-    String address;
-    String telephoneNumber;
-    String emailAddress;
-}
+    class Representative {
+        String firstName;
+        String lastName;
+        String socialSecurityNumber;
+        String telephoneNumber;
+        String emailAddress;
+        Country country; // Responsible for exactly one country
+    }
 
-class Order {
-    int orderId; // unique identifier for an order
-    int quantity;
-    Date orderDate;
-    Date deliveryDate;
-}
+    class Customer {
+        String name;
+        String address;
+        String telephoneNumber;
+        String emailAddress;
+        List<Country> countries; // Countries where they resell goods
+    }
 
-association [1] Country <-> (manufacturedProducts) Product [*];
-association [1] Representative <-> (responsibleCountry) Country [1];
-association [1] Representative <-> (orders) Order [*];
-association [1] Customer <-> (ordersPlaced) Order [*];
-association [1] Order -> (product) Product [1];
+    class Order {
+        String orderId; // unique identifier
+        Product product; // refers to exactly one product
+        int orderQuantity;
+        Date orderDate;
+        Date desiredDeliveryDate;
+    }
 
+    association [1] Representative -> Country [1]; // Each representative is responsible for exactly one country
+    association [*] Customer -> Country [*]; // Customers may operate in multiple countries
+    association [1] Order -> Product [1]; // Each order refers to exactly one product
+    association [*] Representative -> Order [*]; // Representatives place multiple orders
 }

@@ -1,53 +1,72 @@
 
-// CD4A model for Kinepolis Cinema Management System
-classdiagram KinepolisCinema {
+// CD4A Class Diagram for Kinepolis Cinema System
+classdiagram kinepolis {
 
-class Cinema {
-    String name;
-    String location;
-}
+    class Kinepolis {
+        List<Cinema> cinemas;
+    }
 
-class Theatre {
-    int numberOfSeats;
-}
+    class Cinema {
+        String location;
+        List<Theatre> theatres;
+        List<MovieCopy> movieCopies;
 
-class Movie {
-    String title;
-    String duration;
-}
+        void moveMovieCopy(MovieCopy movieCopy, Cinema targetCinema);
+    }
 
-class MovieCopy {
-    String copyId;
-}
+    class Theatre {
+        String name;
+        List<Show> shows;
 
-class Show {
-    Date startTime;
-    Date endTime;
-}
+        int availableSeats;
+        void displayAvailableSeats();
+    }
 
-class Reservation {
-    String reservationId;
-    Date reservationTime;
-}
+    class MovieCopy {
+        Movie movie;
+    }
 
-class Ticket {
-    String ticketId;
-    String seatNumber;
-}
+    class Show {
+        MovieCopy movieCopy;
+        DateTime startTime;
+        List<Reservation> reservations;
 
-class Customer {
-    String customerId;
-    String name;
-    String creditCardDetails;
-}
+        void publish();
+        void cancel();
+    }
 
-association [1] Cinema <-> Theatre [*];
-association [1] Cinema <-> MovieCopy [*];
-association [1] Movie <-> MovieCopy [*];
-association [1] Theatre <-> Show [*];
-association [1] Show <-> Reservation [*];
-association [1] Show <-> Ticket [*];
-association [1] Customer <-> Reservation [*];
-association [1] Customer <-> Ticket [*];
+    class Reservation {
+        Show show;
+        Customer customer;
+        CreditCard creditCard;
+        DateTime reservationTime;
+
+        void cancel();
+        boolean isCancelable();
+    }
+
+    class Customer {
+        String name;
+        List<Reservation> reservations;
+        void acceptOffer();
+        void declineOffer();
+    }
+
+    class CreditCard {
+        String cardNumber;
+        DateTime expirationDate;
+        void charge();
+        // Payment is finalized after the cancellation period expires
+    }
+
+    association [0..*] Kinepolis -> (owns) Cinema [*];
+    association [1..*] Cinema -> (has) Theatre [*];
+    association [1..*] Theatre -> (features) Show [*];
+    association [1..*] Show -> (has) Reservation [*];
+    association [0..*] Reservation -> (madeBy) Customer [1];
+    association [1] Reservation -> (paidWith) CreditCard [1];
+    association [1] MovieCopy -> (of) Movie [1];
+    // A MovieCopy can be associated with multiple theatres in the same cinema
+    association [1] MovieCopy -> (locatedIn) Cinema [1];
 
 }

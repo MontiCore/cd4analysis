@@ -1,77 +1,75 @@
 
-classdiagram LabTracker {
+// Class Diagram for LabTracker software
+classdiagram labtracker {
 
-class Doctor {
-    int practitionerNumber;
-    String fullName;
-    String address;
-    String phoneNumber;
-    String signature; // Digital signature image
-    Date validFrom;
-}
+    class Doctor {
+        String practitionerNumber;
+        String signature; // digital signature as an image
+        String fullName;
+        String address;
+        String phoneNumber;
+        Date requisitionValidityDate;
+        // Cannot prescribe tests for themselves
+        void prescribeTest(Patient patient, Requisition requisition);
+    }
 
-class Patient {
-    String healthNumber;
-    String firstName;
-    String lastName;
-    Date dateOfBirth;
-    String address;
-    String phoneNumber;
-}
+    class Patient {
+        String healthNumber; // alpha-numeric
+        String firstName;
+        String lastName;
+        Date dateOfBirth;
+        String address;
+        String phoneNumber;
+        void bookAppointment(Requisition requisition, Lab lab);
+        void viewTestResults();
+    }
 
-class Requisition {
-    int id;
-    Date date;
-    Doctor doctor;
-    Patient patient;
-    TestGroup testGroup;
-    int repeatCount;
-    Interval repeatInterval;
+    class Requisition {
+        Doctor doctor;
+        Patient patient;
+        List<Test> tests; // tests can be combined if they belong to the same group
+        void addTest(Test test);
+        void indicateRepetition(int numberOfTimes, Interval interval);
+        // Viewing results
+        List<Result> viewResults();
+    }
+
+    class Test {
+        String name;
+        Duration duration; // defined by the lab network
+        boolean isAppointmentRequired; // true for those needing an appointment
+        boolean isWalkInOnly; // true for tests that are walk-in only
+    }
+
+    class Lab {
+        String name;
+        String registrationNumber;
+        String address;
+        List<BusinessHours> businessHours;
+        Fee cancellationFee; // determined by the lab
+        void acceptAppointment(Appointment appointment);
+        // Labs are always open and offer all tests
+    }
+
+    class Appointment {
+        String confirmationNumber;
+        Date date;
+        Time startTime;
+        Time endTime;
+        Lab lab;
+        void changeAppointment();
+        void cancelAppointment();
+    }
+
+    enum Interval {
+        WEEKLY,
+        MONTHLY,
+        HALF_YEARLY,
+        YEARLY;
+    }
     
-    void addTest(Test test);
-}
-
-class Test {
-    String name;
-    int duration; // Duration defined by lab network
-    boolean requiresAppointment;
-    boolean isWalkInOnly;
-    boolean requiresSampleDropOff;
-}
-
-class TestGroup {
-    String groupName;
-}
-
-class Appointment {
-    int confirmationNumber;
-    Date appointmentDate;
-    Time startTime;
-    Time endTime;
-    Lab lab;
-}
-
-class Lab {
-    String name;
-    String address;
-    String registrationNumber;
-    String businessHours;
-    double cancellationFee;
-}
-
-enum Interval {
-    Weekly,
-    Monthly,
-    HalfYearly,
-    Yearly;
-}
-
-association [1] Doctor -> Requisition [*];  // Doctor can create multiple requisitions
-association [1] Patient -> Requisition [*];  // Patient can have multiple requisitions
-association [1] Requisition -> TestGroup [1]; // Each requisition belongs to one test group
-association [1] Requisition -> Patient [1];   // Each requisition is for one patient
-association [*] Requisition -> Test [*];       // A requisition can have multiple tests
-association [1] Lab -> Appointment [*];        // A lab can have multiple appointments
-association [1] Appointment -> Lab [1];        // Each appointment is for one lab
-
+    association [1] Doctor -> (prescribes) Requisition [*]; // A doctor can prescribe multiple requisitions
+    association [1] Patient -> (books) Appointment [*]; // A patient can book multiple appointments
+    association [1] Requisition -> (contains) Test [*]; // A requisition can contain multiple tests
+    association [1] Lab -> (offers) Test [*]; // Each lab offers all tests
 }

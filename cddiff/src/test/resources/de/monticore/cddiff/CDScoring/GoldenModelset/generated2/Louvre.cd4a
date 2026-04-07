@@ -1,52 +1,47 @@
 
-// CD4A Class Diagram for Louvre Museum Exhibition Management System
-classdiagram LouvreMuseum {
+// CD4A class diagram for the Louvre Museum exhibition management system
+classdiagram louvre {
 
-class MuseumLocation {
-    String name;
-    String description;
-}
+    class Museum {
+        List<Location> locations;
+        // method to manage locations and exhibitions
+    }
 
-class Exhibition {
-    Date openingDate;
-    String title;
-}
+    class Location {
+        String name;
+        List<Exhibition> exhibitions;
+    }
 
-class Employee {
-    String firstName;
-    String lastName;
-}
+    class Exhibition {
+        String title;
+        Employee coordinator;
+        List<ExhibitionItem> desiredItems;
+    }
 
-class JuniorEmployee extends Employee {}
+    class ExhibitionItem {
+        String description; // Description of the desired item
+        List<Piece> sourcedPieces; // Pieces sourced for this exhibition item
+    }
 
-class SeniorEmployee extends Employee {
-    // Senior employee can coach junior employees
-}
+    class Piece {
+        String identifier;  // Unique identifier for the artwork piece
+        Collector collector; // The collector who owns the piece
+    }
 
-class ExhibitionItem {
-    String description;
-}
+    class Employee {
+        String name;
+        Employee coach; // Senior employee assigned as coach
+    }
 
-class Collector {
-    String name;
-    String contactDetails;
-}
+    class Collector {
+        String name;
+        List<Piece> pieces; // Pieces held by the collector
+    }
 
-class ExhibitionRequest {
-    ExhibitionItem item;
-    Collector collector;
-}
-
-// Coaching relationship between employees
-association [0..*] SeniorEmployee <-> JuniorEmployee [0..*];
-
-// Relationship between locations and exhibitions
-association [1] MuseumLocation <-> Exhibition [0..*];
-
-// Relationship between exhibitions and items
-association [1] Exhibition <-> ExhibitionItem [0..*];
-
-// Requests from collectors for exhibition items
-association [1] ExhibitionItem <-> ExhibitionRequest [1];
-
+    association [*] Museum -> Location [*];
+    association [*] Location -> Exhibition [*];
+    association [*] Exhibition -> ExhibitionItem [*];
+    association [*] ExhibitionItem -> Piece [*];
+    association [*] Employee -> Employee [0..1];
+    association [*] Collector -> Piece [*];
 }

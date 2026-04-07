@@ -1,41 +1,35 @@
 
-// Class diagram for Boeing aircraft sales management
-classdiagram BoeingAircraftSales {
+// Class Diagram for Boeing Aircraft Sales and Contracts
+classdiagram boeing {
 
-class Aircraft {
-    String model;
-    double price;
-    String deliveryDate;
-    String options;
-}
+    class AirlineCompany {
+        String name; // Name of the airline company
+        AirlineCompany parent; // Parent company
+        List<AirlineCompany> subsidiaries; // List of daughter companies
+    }
 
-class SalesAgreement {
-    Date agreementDate;
-}
+    class Contract {
+        AirlineCompany airlineCompany; // Associated airline company
+        List<Acquisition> acquisitions; // List of acquisitions under this contract
+        String deliveryConditions; // Common delivery conditions
+        String legalAspects; // Common legal aspects
+        Salesperson salesperson; // Assigned salesperson
+    }
 
-class Contract {
-    String deliveryConditions;
-    String legalAspects;
-}
+    class Acquisition {
+        String airplaneModel; // Chosen model of airplane
+        double negotiatedPrice; // Negotiated price for the airplane
+        List<String> options; // List of chosen options and customizations
+        String deliveryDate; // Delivery date for the airplane
+    }
 
-class Acquisition {
-    Aircraft aircraftDetails;
-    double negotiatedPrice;
-}
+    class Salesperson {
+        String name; // Name of the salesperson
+        List<Contract> contracts; // List of contracts managed by this salesperson
+    }
 
-class SalesPerson {
-    String name;
-    String employeeId;
-}
-
-class AirlineCompany {
-    String name;
-    AirlineCompany parentCompany;
-}
-
-association [1] SalesAgreement <-> Contract [*]; // A sales agreement can lead to multiple contracts
-association [1] Contract <-> Acquisition [*]; // A contract can consist of multiple acquisitions
-association [1] SalesPerson <-> Contract [*]; // A salesperson can manage multiple contracts
-association [0..1] AirlineCompany <-> AirlineCompany [0..*]; // Mother-daughter relationship between airline companies
-
+    // Associations
+    association [*] AirlineCompany <-> (subsidiaries) AirlineCompany [*]; // Mother-daughter relationships
+    association [*] Salesperson <-> Contract [*]; // Salesperson manages multiple contracts
+    association [*] Contract <-> (acquisitions) Acquisition [*]; // Contract consists of multiple acquisitions
 }

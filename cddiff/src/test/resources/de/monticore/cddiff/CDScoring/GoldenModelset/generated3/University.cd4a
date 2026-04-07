@@ -1,56 +1,68 @@
 
-// Class Diagram for University Structure
-classdiagram UniversitySystem {
+// CD4A Class Diagram for a University Structure
 
-class University {
-    int totalEmployees;
-}
+classdiagram university {
 
-class Faculty {
-    String name;
-}
+    class University {
+        String name;
+        List<Faculty> faculties;
+        int totalEmployees;
+    }
 
-class Institute {
-    String name;
-    String address;
-}
+    class Faculty {
+        String name;
+        Dean dean; // Association to Dean
+        List<Institute> institutes;
+    }
 
-class Employee {
-    String socialSecurityNumber;
-    String name;
-    String emailAddress;
-}
+    class Institute {
+        String name;
+        String address;
+    }
 
-class ResearchAssistant extends Employee {
-    String fieldOfResearch;
-}
+    class Employee {
+        String socialSecurityNumber;
+        String name;
+        String email;
+    }
 
-class Project {
-    String name;
-    Date startDate;
-    Date endDate;
-}
+    class ResearchStaff extends Employee {
+        // Research Staff specific properties can be defined here
+    }
 
-class Lecturer extends ResearchAssistant {
-    // Lecturers can teach courses
-}
+    class AdministrativeStaff extends Employee {
+        // Administrative Staff specific properties can be defined here
+    }
 
-class Course {
-    String uniqueID;
-    String name;
-    int weeklyDurationHours;
-}
+    class ResearchAssistant extends ResearchStaff {
+        String fieldOfResearch;
+        List<Institute> institutes; // Association to at least one Institute
+        List<Project> projects; // Association to projects
+        List<Course> courses; // Association to courses
+    }
 
-class Dean extends Employee {
-    // A Dean heads a Faculty
-}
+    class Dean extends AdministrativeStaff {
+        // Dean specific properties can be defined here
+    }
 
-// Associations
-association [1] University <-> Faculty [*];
-association [1] Faculty <-> Institute [*];
-association [1] Faculty <-> Dean [1];
-association [*] Institute <-> ResearchAssistant [*];
-association [*] ResearchAssistant <-> Project [*];
-association [*] ResearchAssistant <-> Course [*];
-association [1] Course <-> Lecturer [*];
+    class Project {
+        String name;
+        Date startDate;
+        Date endDate;
+        int hoursAssigned; // Total hours assigned to the RA
+    }
+
+    class Course {
+        String id; // Unique number
+        String name;
+        int weeklyDuration; // Duration in hours
+    }
+
+    // Associations
+    association [*] University -> Faculty [*];
+    association [*] Faculty -> Institute [*];
+    association [1] Faculty -> Dean [1];
+    association [*] ResearchAssistant -> Institute [*]; // RAs associated with institutes
+    association [*] ResearchAssistant -> Project [*]; // RAs involved in projects
+    association [*] ResearchAssistant -> Course [*]; // RAs teach courses
 }

@@ -1,54 +1,62 @@
 
-// Kinepolis Cinema Class Diagram
-classdiagram KinepolisCinema {
+// CD4A Class Diagram for Kinepolis Cinema System
+classdiagram kinepolis {
 
-class Cinema {
-    String location;
-}
+    class Kinepolis {
+        List<Cinema> cinemas;
+    }
 
-class Theatre {
-    int seatCount;
-}
+    class Cinema {
+        List<Theatre> theatres;
+        void transferMovieCopy(MovieCopy copy, Cinema newCinema);
+    }
 
-class Movie {
-    String title;
-}
+    class Theatre {
+        List<Show> shows;
+        int totalSeats;
+        int availableSeats;
+        void showAvailability();
+    }
 
-class MovieCopy {
-    // A copy of a movie located at a specific cinema
-}
+    class Show {
+        MovieCopy movieCopy;
+        Date startTime;
+        List<Reservation> reservations;
+        void publish();
+        void cancel();
+        void offerNewSeat(Reservation reservation);
+    }
 
-class Show {
-    DateTime startTime;
-    boolean isCancelled;
-}
+    class MovieCopy {
+        Movie movie;
+        Cinema cinema; // A copy only shown in the cinema it belongs to
+    }
 
-class Reservation {
-    DateTime reservationTime;
-    boolean isCancelled;
-    String seatNumber;
-    CreditCard creditCard;
-}
+    class Reservation {
+        CreditCard creditCard;
+        boolean isCancelled;
+        void makeReservation(Show show);
+        void cancelReservation();
+    }
 
-class Ticket {
-    String seatNumber;
-    boolean isAnonymous;
-}
+    class Ticket {
+        Show show;
+        int seatNumber;
+    }
 
-class Offer {
-    DateTime expirationTime;
-}
+    class CreditCard {
+        String cardNumber;
+        String expirationDate;
+        void charge();
+    }
 
-class CreditCard {
-    String cardNumber;
-}
+    class Movie {
+        // The LLM did not generate this class, adding it to avoid errors
+    }
 
-association [1] Cinema <-> Theatre [0..*];
-association [1] Theatre <-> Show [0..*];
-association [1] Movie <-> MovieCopy [0..*];
-association [1] MovieCopy <-> Show [0..*];
-association [1] Show <-> Reservation [0..*];
-association [1] Show <-> Offer [0..1];
-association [1] Show <-> Ticket [0..*];
-
+    association [*] Kinepolis -> (cinemas) Cinema [*];
+    association [*] Cinema -> (theatres) Theatre [*];
+    association [*] Theatre -> (shows) Show [*];
+    association [*] Show -> (reservations) Reservation [*];
+    association [1] MovieCopy -> Cinema [1];
 }

@@ -1,20 +1,41 @@
 
-// Celebrations Organization System class diagram
-classdiagram CelebrationsOrganizationSystem {
+// Celebrations Organization System Class Diagram
+classdiagram celO {
 
     class Organizer {
         String firstName;
         String lastName;
-        String email; // used as username
+        String email; // also serves as username
         String postalAddress;
         String phoneNumber;
         String password;
+        void inviteAttendee(Attendee attendee);
+        void viewInvitationStatus(Event event);
+        void addTask(Task task);
+        void indicateTaskStatus(Task task, TaskStatus status);
+        void createEvent(Event event);
+    }
+
+    class Attendee {
+        String firstName;
+        String lastName;
+        String email; // serves as username
+        String password;
+        void confirmAttendance(Event event);
+        void indicateTask(Task task);
     }
 
     class Event {
+        String occasion;
+        Location location;
         DateTime startDateTime;
         DateTime endDateTime;
-        String occasion;
+        List<Organizer> organizers;
+        List<Attendee> attendees;
+        List<Task> tasks;
+        void addOrganizer(Organizer organizer);
+        void addAttendee(Attendee attendee);
+        void createChecklist();
     }
 
     class Location {
@@ -22,28 +43,18 @@ classdiagram CelebrationsOrganizationSystem {
         String address;
     }
 
-    class Attendee {
-        String firstName;
-        String lastName;
-        String email; // used as username
-        // Password only if creating an account
-    }
-
-    class Invitation {
-        String status; // e.g., attending, maybe attending, cannot attend
-    }
-
     class Task {
         String description;
-        String status; // e.g., needs to be done, done, not applicable
+        TaskStatus status; // e.g., needs to be done, has been done, not applicable
     }
 
-    association [1] Organizer -> Event [*]; // One organizer can manage multiple events
-    association [1] Event -> Location [1]; // Each event has one location
-    association [*] Event -> Attendee [*]; // Many attendees can attend an event
-    association [1] Attendee -> Invitation [1]; // Each attendee has one invitation
-    association [*] Event -> Task [*]; // Each event can have multiple tasks
-    association [1] Organizer -> Task [*]; // Organizer can add tasks for events
-    association [*] Task -> Attendee [*]; // Attendees can be assigned tasks for events
+    enum TaskStatus {
+        NEEDS_TO_BE_DONE,
+        HAS_BEEN_DONE,
+        NOT_APPLICABLE;
+    }
 
+    association [1..*] Organizer -> Event [1];
+    association [*] Event <-> Attendee [0..*];
+    association [*] Event <-> Task [0..*];
 }

@@ -1,40 +1,51 @@
 
-// CD4A Model for HospitalHouseMD
-classdiagram HospitalHouseMD {
+// CD4A Model for HospitalHouseMD system
+
+classdiagram hospital {
+
+    class HospitalHouseMD {
+        void assignDoctor(Patient patient, Doctor doctor);
+        void approveDiagnosis(Doctor doctor, Diagnosis diagnosis);
+    }
 
     class Patient {
         String name;
-        boolean consentSigned; // indicates if the patient has signed consent for treatment upgrades
+        boolean consentGiven;
+        void signConsent();
+        void retractConsent();
     }
 
     class Doctor {
         String name;
-    }
-
-    class HeadDoctor extends Doctor {
-        // HeadDoctor can approve diagnoses
-    }
-
-    class Treatment {
-        int stage; // stage can be 1, 2, or 3
-        boolean priorityUpgrade; // indicates if treatment has been upgraded due to high priority of illness
+        void diagnose(Patient patient, Illness illness);
+        void downgradeTreatment(Treatment treatment);
     }
 
     class Illness {
-        String name;
-        String priorityScore; // can be "high" or "low"
+        String description;
+        PriorityScore priorityScore;
     }
 
-    class Nurse {
-        String name;
+    class Treatment {
+        Stage stage;
+        void apply();
+        void upgradeStage();
     }
 
-    association [1..*] Patient <-> (assignedTo) Doctor [1..*]; // Patients are assigned to one or more doctors
-    association [1] Illness <-> Treatment [1..*]; // Each illness can have multiple treatments
-    association [1] Doctor <-> (approves) Treatment [0..*]; // Doctors approve treatments
-    association [1] Treatment <-> (appliesTo) Patient [*]; // Treatments are applied to patients
-    association [1] Treatment <-> Illness [1]; // Each treatment is related to one illness
-    association [0..*] Treatment <-> Nurse [0..*]; // Nurses can monitor treatments
+    enum Stage {
+        STAGE1,
+        STAGE2,
+        STAGE3;
+    }
 
-    // Methods could be added here to handle consent and treatment stage upgrades/changes
+    enum PriorityScore {
+        HIGH,
+        LOW;
+    }
+
+    association [*] HospitalHouseMD -> (patients) Patient [*];
+    association [*] HospitalHouseMD -> (doctors) Doctor [*];
+    association [*] Patient -> (illnesses) Illness [*];
+    association [*] Illness -> (treatments) Treatment [*];
+    association [1] Treatment <-> Doctor [1]; // Each treatment is associated with one doctor
 }

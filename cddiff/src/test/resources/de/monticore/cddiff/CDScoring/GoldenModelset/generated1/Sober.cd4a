@@ -1,59 +1,75 @@
 
 // Class Diagram for Sober Taxi Company
-classdiagram SoberTaxi {
 
-class Customer {
-    String name;
-    String contactInfo;
-}
+classdiagram soberTaxi {
 
-class CarOwner {
-    String name;
-    String contactInfo;
-}
+    class Sober {
+        Fleet fleet;
+        void requestRideHail(Request request);
+        void requestRideShare(Request request);
+    }
 
-class SelfDrivingTaxi {
-    String licensePlate;
-    String model;
-}
+    class Fleet {
+        List<SelfDrivingCab> cabs;
+        void addCab(SelfDrivingCab cab);
+        void removeCab(SelfDrivingCab cab);
+    }
 
-class RideHailService {
-    DateTime pickUpTime;
-    DateTime dropOffTime;
-    String pickUpLocation;
-    String dropOffLocation;
-    double rideDuration;
-    double distance;
-    int passengerCount; // max 6
-    double fee;
-    String requestType; // either 'Sober App' or 'Hand-waving'
-    Customer leadCustomer;
-}
+    class SelfDrivingCab {
+        String licensePlate;
+        Owner owner;
+        List<Ride> rides;
+        List<Accident> accidents;
+    }
 
-class RideShareService {
-    DateTime pickUpTime;
-    DateTime dropOffTime;
-    String pickUpLocation;
-    String dropOffLocation;
-    double rideDuration;
-    double distance;
-    List<Customer> customers; // max 10
-    double negotiatedFee;
-    boolean ecoIncentive; // e.g., tree planting for every 20 rides
-}
+    class Owner {
+        String name;
+        String contactInformation;
+        List<SelfDrivingCab> ownedCabs;
+    }
 
-class Accident {
-    DateTime accidentDate;
-    String location;
-    double damageAmount;
-}
+    class Ride {
+        String pickUpLocation;
+        String dropOffLocation;
+        DateTime pickUpTime;
+        DateTime dropOffTime;
+        Duration rideDuration;
+        Distance distance;
+        List<Passenger> passengers;
+        Fee fee;
+        RequestType requestType;
+    }
 
+    class Passenger {
+        String name;
+    }
 
-association [1] SelfDrivingTaxi <-> RideHailService [0..*];
-association [1] SelfDrivingTaxi <-> RideShareService [0..*];
-association [0..*] CarOwner <-> SelfDrivingTaxi [0..*];
-association [0..*] Customer <-> RideHailService [0..*];
-association [0..*] Customer <-> RideShareService [0..*];
-association [1] SelfDrivingTaxi <-> Accident [0..*];
+    enum RequestType {
+        SoberApp,
+        HandWaving;
+    }
 
+    class RideHail extends Ride {
+        // ride-hail specific attributes, if any
+        int maxPassengers = 6; // maximum number of passengers
+    }
+
+    class RideShare extends Ride {
+        List<Passenger> allCustomers; // includes all passengers
+        Fee negotiatedFee;
+        int maxPassengers = 10; // maximum number of passengers
+    }
+
+    class Accident {
+        DateTime date;
+        String location;
+        Amount damageAmount;
+    }
+
+    association [1] Sober -> (fleet) Fleet [*];
+    association [*] Fleet -> (cabs) SelfDrivingCab [*];
+    association [1] Owner -> (ownedCabs) SelfDrivingCab [*];
+    association [*] SelfDrivingCab -> (rides) Ride [*];
+    association [*] SelfDrivingCab -> (accidents) Accident [*];
+    association [*] Ride -> (passengers) Passenger [*];
 }

@@ -1,58 +1,52 @@
 
-// CD4A class diagram for a web portal system with buildings and users
-classdiagram WebPortal {
+classdiagram webPortal {
 
-class WebPortal {
-    String versionNumber;
-    String url;
-}
+    class WebPortal {
+        String versionNumber;
+        String url;
+        List<Building> catalog;
+    }
 
-class Building {
-    int id;
-    String name;
-    EnergyClass energyClass;
-    String address;
-    int yearOfConstruction;
-}
+    class Building {
+        String uniqueID;
+        String name;
+        EnergyClass energyClass; // Enum type
+        String address;
+        int yearOfConstruction;
+        User owner;
+        List<Entry> additionalEntries;
+        List<Image> images;
+        Image profilePhoto;
+    }
 
-class User {
-    String username;
-    String email;
-    String password;
-}
+    // Enum representing energy classes
+    enum EnergyClass {
+        A, B, C, D;
+    }
 
-class Entry {
-    String name;
-    String textValue; // optional
-    double numericValue; // optional
-    String unit; // optional
-    boolean releasedPublicly;
-}
+    class User {
+        String userName; // unique
+        String email; // valid email
+        String password;
+        List<Building> buildings;
+        // Special user type
+        String idCardNumber; // for Administrators
+    }
 
-class Image {
-    String filename;
-}
+    class Entry {
+        String name;
+        Object value; // can be string or float
+        String unit; // optional, for floating point entries
+        boolean publicVisibility; // indicates if entry is released publicly
+    }
 
-class Visitor extends User {}
+    class Image {
+        String fileName;
+    }
 
-class Administrator extends User {
-    String idCardNumber;
-}
-
-// Energy Class can have values A, B, C, D
-enum EnergyClass {
-    A,
-    B,
-    C,
-    D;
-}
-
-association [1] WebPortal -> Building [*];
-association [1] Building -- Entry [*];
-association [1] Building <-> Image [0..*];
-association [1] User <-> Building [0..*];
-association [1] User <-> Comment [0..*];
-association [1] User <-> Visitor [0..1];
-association [1] Administrator <-> User [1];
-
+    association [1] WebPortal -> (catalog) Building [*];
+    association [1] Building -> (owner) User [1];
+    association [*] User -> (buildings) Building [*];
+    association [*] Building -> (additionalEntries) Entry [*];
+    association [*] Building -> (images) Image [*];
 }

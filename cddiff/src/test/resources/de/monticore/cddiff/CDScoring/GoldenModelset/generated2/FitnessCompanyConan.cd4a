@@ -1,54 +1,51 @@
 
-// Class Diagram for Fitness Company "Conan"
-classdiagram ConanFitness {
+// CD4A class diagram for Fitness company "Conan"
+classdiagram fitness {
 
-class Address {
-    String street;
-    String city;
-    String zipCode;
-}
+    class Address {
+        String street;
+        String city;
+        String postalCode;
+    }
 
-class Room {
-    int roomNumber;
-    int maxCapacity;
-}
+    class Center {
+        String name; // Unique name of the center
+        Address address; // Address of the center
+        List<Room> rooms; // Rooms in the center
+    }
 
-class FitnessCenter {
-    String uniqueName; // e.g., Fitplaza, my6pack
-    Address address;
-}
+    class Room {
+        int number; // Unique number for each room in a center
+        int maxCapacity; // Maximum capacity of the room
+    }
 
-abstract class Person {
-    String firstName;
-    String familyName;
-    Date birthDate;
-}
+    class Person {
+        String firstName; // First name of the person
+        String familyName; // Family name of the person
+        Date birthDate; // Birth date of the person
+    }
 
-class Trainer extends Person {
-    String diploma;
-}
+    class Trainer extends Person {
+        String diploma; // Diploma of the trainer
+    }
 
-class Participant extends Person {
-    // Inherits properties from Person
-}
+    class Session {
+        Date date; // Date of the session
+        Time startHour; // Starting hour of the session
+    }
 
-class Session {
-    Date date;
-    String startHour;
-}
+    class IndividualSession extends Session {
+        // Individual sessions do not require a trainer
+    }
 
-class IndividualSession extends Session {
-    // No additional attributes, inherits from Session
-}
+    class GroupSession extends Session {
+        String type; // Type of group session (e.g., aerobics, bodystyling)
+        Trainer trainer; // Trainer supervising the group session
+    }
 
-class GroupSession extends Session {
-    String type; // e.g., aerobics, bodystyling
-}
-
-// Associating Participants and Trainers with Sessions
-association [1] Trainer <-> GroupSession [*]; // Each group session requires exactly one trainer
-association [0..*] Participant <-> Session [*]; // Participants can be in individual or group sessions
-association [1] FitnessCenter <-> Room [*]; // A center has one or more rooms
-association [*] Room <-> Session [*]; // Sessions can be held in any room of a center
-
+    association [*] Center -> (rooms) Room [*]; // A center has multiple rooms
+    association [*] Person -> (attends) Session [*]; // People can attend multiple sessions
+    association [*] Trainer -> (supervises) GroupSession [*]; // Trainers can supervise multiple group sessions
+    association [*] GroupSession -> Center [1]; // Each group session is held in one center
+    association [*] IndividualSession -> Center [1]; // Each individual session is held in one center
 }
