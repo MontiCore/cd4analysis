@@ -12,6 +12,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 
 public class CDMergeTest extends BaseTest {
@@ -33,7 +35,7 @@ public class CDMergeTest extends BaseTest {
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new LinkedHashSet<>());
     
     assertNotNull(mergedCD);
-    System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
+    Log.print(CD4CodeMill.prettyPrint(mergedCD, true));
   }
   
   @Test
@@ -56,7 +58,30 @@ public class CDMergeTest extends BaseTest {
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "UniversitySystem", params);
     
     assertNotNull(mergedCD);
-    System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
+    Log.print(CD4CodeMill.prettyPrint(mergedCD, true));
+  }
+  
+  @Test
+  public void testMotivatingExampleWithPackages() {
+    final String srcDir = "src/test/resources/class_diagrams/CDMergeTest/";
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
+    try {
+      inputSet.add(loadModel(srcDir + "PackagedTeaching.cd"));
+      inputSet.add(loadModel(srcDir + "PackagedManagement.cd"));
+    }
+    catch (IOException e) {
+      fail("IO exception while accessing input models: " + e.getMessage());
+    }
+    
+    LinkedHashSet<MergeParameter> params = new LinkedHashSet<>();
+    
+    params.add(MergeParameter.LOG_VERBOSE);
+    params.add(MergeParameter.LOG_TO_CONSOLE);
+    
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "UniversitySystem", params);
+    
+    assertNotNull(mergedCD);
+    Log.print(CD4CodeMill.prettyPrint(mergedCD, true));
   }
   
   @Test
@@ -81,7 +106,7 @@ public class CDMergeTest extends BaseTest {
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "MergeDriveAndEmployment", params);
     
     assertNotNull(mergedCD);
-    System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
+    Log.print(CD4CodeMill.prettyPrint(mergedCD, true));
     assertTrue(mergedCD.deepEquals(expected, false));
   }
   
@@ -104,8 +129,8 @@ public class CDMergeTest extends BaseTest {
     for (List<ASTCDCompilationUnit> permutation : computeAllPermutations(inputSet)) {
       LinkedHashSet<MergeParameter> params = new LinkedHashSet<>();
       
-      System.out.println("Merging " + permutation.stream().map(cd -> cd.getCDDefinition().getName())
-          .collect(Collectors.toList()));
+      Log.print("Merging " + permutation.stream().map(cd -> cd.getCDDefinition().getName()).collect(
+          Collectors.toList()));
       
       params.add(MergeParameter.LOG_VERBOSE);
       params.add(MergeParameter.LOG_TO_CONSOLE);

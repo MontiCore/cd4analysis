@@ -3,6 +3,7 @@ package de.monticore.cdmerge;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -367,6 +368,8 @@ public class MergeTool {
     
     // Perfom the Merge of the CD Definitions
     cdMerger.mergeCDs(cd1.getCDDefinition(), cd2.getCDDefinition(), matchResult);
+    CD4CodeMill.globalScope().removeSubScope(cd1.getEnclosingScope());
+    CD4CodeMill.globalScope().removeSubScope(cd2.getEnclosingScope());
     
     mergeBlackBoard.addLog(ErrorLevel.INFO, "Merging completed.", MergePhase.CD_MERGING, cd1, cd2);
     
@@ -493,6 +496,7 @@ public class MergeTool {
     
     // check for errors and register them in our log
     try {
+      CDMergeUtils.refreshSymbolTable(cd);
       checker.checkAll(cd);
     }
     catch (Throwable e) {
