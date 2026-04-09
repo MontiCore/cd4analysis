@@ -5,6 +5,7 @@ import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisCoCoChecker;
 import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
+import de.monticore.cdbasis.cocos.ConstructorNameEqualsClassNameCoCo;
 import de.monticore.types.check.AbstractDerive;
 
 public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
@@ -30,6 +31,9 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
   @Override
   protected void addEbnfCoCos(CD4CodeBasisCoCoChecker checker) {
     super.addEbnfCoCos(checker);
+    
+    // CDClass
+    checker.addCoCo(new ConstructorNameEqualsClassNameCoCo());
     
     // CDMethodSignature
     checker.addCoCo(new CDMethodSignatureParameterNamesUnique());

@@ -8,10 +8,6 @@ import de.se_rwth.commons.logging.Log;
 
 /**
  * Validates that all constructors of a CD class have the same name as the class.
- * 
- * A constructor is identified as a method without a return type (CDConstructor).
- * This CoCo ensures that generated Java code is valid, since Java requires
- * constructors to have the same name as their class.
  */
 public class ConstructorNameEqualsClassNameCoCo implements CDBasisASTCDClassCoCo {
 
@@ -24,7 +20,6 @@ public class ConstructorNameEqualsClassNameCoCo implements CDBasisASTCDClassCoCo
   public void check(ASTCDClass node) {
     String className = node.getName();
 
-    // Check all constructors in the class
     for (ASTCDConstructor constructor : node.getCDConstructorList()) {
       if (!constructor.getName().equals(className)) {
         Log.error(
