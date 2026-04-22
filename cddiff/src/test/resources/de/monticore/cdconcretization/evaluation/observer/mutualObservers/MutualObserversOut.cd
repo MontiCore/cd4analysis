@@ -13,6 +13,6 @@ classdiagram MutualObserversConc {
     void unregister(Attacker o);
     void notifyAll();
   }
-  association watches [*] Attacker (observers) <-> (observers) Defender[*];
+  association watches [*] Attacker (attackers) <-> (defenders) Defender[*];
 
 }

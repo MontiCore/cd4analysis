@@ -78,4 +78,40 @@ class AssociationConcretizationTest extends AbstractCDConcretizationTest {
         "associations/TypeMIOneAssocExistsRef.cd", "associations/TypeMIOneAssocExistsOut.cd");
   }
   
+  /**
+   * Tests that a role name copied from the reference into an existing association is implicitly
+   * adapted: "assignedTask" becomes "assignedTicket" because Ticket incarnates Task.
+   */
+  @Test
+  void testAssocRoleImplicitNameAdaptation() {
+    testConcretizedConformsToRefAndExpectedOut("associations/AssocRoleImplicitNameAdaptConc.cd",
+        "associations/AssocRoleImplicitNameAdaptRef.cd",
+        "associations/AssocRoleImplicitNameAdaptOut.cd");
+  }
+  
+  /**
+   * Tests that when the reference has two associations whose target types are in a subtype
+   * relationship, both associations are added as separate incarnations to the concrete CD.
+   * Specifically: {@code Container -> Item [*]} must not suppress adding
+   * {@code Container -> SpecialItem [*]} just because {@code SpecialItem extends Item} — each
+   * explicitly modelled reference association must produce its own concrete incarnation,
+   * regardless of inheritance among the concrete target types.
+   */
+  @Test
+  void testAssocSubtypeAndSupertypeTarget() {
+    testConcretizedConformsToRefAndExpectedOut("associations/AssocSubtypeTargetConc.cd",
+        "associations/AssocSubtypeTargetRef.cd", "associations/AssocSubtypeTargetOut.cd");
+  }
+  
+  /**
+   * Tests that an association name copied from the reference into an existing association is
+   * implicitly adapted: "taskAssignment" becomes "ticketAssignment" because Ticket incarnates Task.
+   */
+  @Test
+  void testAssocNameImplicitNameAdaptation() {
+    testConcretizedConformsToRefAndExpectedOut("associations/AssocNameImplicitNameAdaptConc.cd",
+        "associations/AssocNameImplicitNameAdaptRef.cd",
+        "associations/AssocNameImplicitNameAdaptOut.cd");
+  }
+  
 }

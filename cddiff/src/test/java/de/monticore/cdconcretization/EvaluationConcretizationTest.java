@@ -18,7 +18,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testBuilderAndMillPattern() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
         "evaluation/builder/DataModelConc.cd", "evaluation/builder/BuilderAndMillRef.cd",
@@ -65,7 +65,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testSetter() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
         "evaluation/getter-setter/DataModelConc.cd", "evaluation/getter-setter/SetterRef.cd",
@@ -88,7 +88,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testVisitorPattern() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
         "evaluation/visitor/VisitorConc.cd", "evaluation/visitor/VisitorRef.cd",
@@ -120,7 +120,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   @Disabled("shows limitation of current concept")
   void testCrossReferences() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
         "evaluation/cross-references/MicroserviceConc.cd",
@@ -139,6 +139,8 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     
     @Test
     void banking2() {
+      // TODO Remove once we support method parameters in incarnation mapping
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut("evaluation/banking2/BankingConc.cd",
           "evaluation/banking2/BankingRef.cd", "evaluation/banking2/BankingOut.cd");
     }
@@ -195,7 +197,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testRepository() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut("evaluation/repository/DomainModel.cd",
         "evaluation/repository/RepositoryRef.cd", "evaluation/repository/RepositoryOut.cd");
@@ -206,7 +208,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     
     @Test
     void testCRUDBackend() {
-      // TODO Remove once we have explicit support for 'forEach' conformance check
+      // TODO Remove once we support method parameters in incarnation mapping
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut("evaluation/crud-backend/DomainModel.cd",
           "evaluation/crud-backend/CRUDBackendRef.cd", "evaluation/crud-backend/CRUDBackendOut.cd");
@@ -216,7 +218,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testMill() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut("evaluation/mill/LanguageInfrastructureConc.cd",
         "evaluation/mill/MillRef.cd", "evaluation/mill/MillOut.cd");
@@ -231,7 +233,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     @Test
     @Disabled
     void testStaticDelegator() {
-      // TODO Remove once we have explicit support for 'forEach' conformance check
+      // TODO Remove once we support method parameters in incarnation mapping
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
           "evaluation/staticDelegator/StaticDelegatorConc.cd",
@@ -241,7 +243,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     
     @Test
     void testStaticMethodExistsAttributeWorkaround() {
-      // TODO Remove once we have explicit support for 'forEach' conformance check
+      // TODO Remove once we support method parameters in incarnation mapping
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
           "evaluation/staticDelegator/attrWorkaround/StaticExistsConc.cd",
@@ -260,7 +262,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     @Test
     @Disabled
     void testInstanceMethodExistsAttributeWorkaround() {
-      // TODO Remove once we have explicit support for 'forEach' conformance check
+      // TODO Remove once we support method parameters in incarnation mapping
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
           "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsConc.cd",
@@ -275,7 +277,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     
     @Test
     void testTransitiveDependencyInSyntacticalOrder() {
-      // TODO Remove once we have explicit support for 'forEach' conformance check
+      // TODO Remove once we support method parameters in incarnation mapping
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
           "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
@@ -293,7 +295,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     @Test
     @Disabled
     void testTransitiveDependencySwappedOrder() {
-      // TODO Remove once we have explicit support for 'forEach' conformance check
+      // TODO Remove once we support method parameters in incarnation mapping
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
           "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
@@ -310,6 +312,28 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     void testConcreteEmpty() {
       testConcretizedConformsToRefAndExpectedOut("evaluation/macoco/EmptyConc.cd",
           "evaluation/macoco/MaCoCoRef.cd", "evaluation/macoco/EmptyConcOut.cd");
+    }
+    
+  }
+  
+  @Nested
+  class PaperExamples {
+    
+    @Test
+    void testTaskManagement() {
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/paper-examples/task-management/TicketSystemConc.cd",
+          "evaluation/paper-examples/task-management/TaskManagementRef.cd",
+          "evaluation/paper-examples/task-management/TicketSystemOut.cd");
+    }
+    
+    @Test
+    void testRepository() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/paper-examples/repository/EcommerceDomain.cd",
+          "evaluation/paper-examples/repository/RepositoryRef.cd",
+          "evaluation/paper-examples/repository/RepositoryOut.cd");
     }
     
   }

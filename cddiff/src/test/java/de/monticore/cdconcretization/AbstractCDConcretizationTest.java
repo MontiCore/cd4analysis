@@ -34,7 +34,7 @@ public abstract class AbstractCDConcretizationTest {
    */
   protected static final Set<CDConfParameter> DEFAULT_CONFORMANCE_PARAMS = Set.of(
       STEREOTYPE_MAPPING, NAME_MAPPING, SRC_TARGET_ASSOC_MAPPING, INHERITANCE,
-      ALLOW_CARD_RESTRICTION, METHOD_OVERLOADING);
+      ALLOW_CARD_RESTRICTION, METHOD_OVERLOADING, ADAPTED_NAME_MAPPING);
   
   protected ASTCDCompilationUnit refCD;
   
