@@ -9,6 +9,7 @@ import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
@@ -18,6 +19,7 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.CDPackageSymbol;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -337,9 +339,28 @@ public class CDGenTool extends CDGeneratorTool {
     // Complete the symbol-table (symbol table creation phase 2)
     this.completeSymbolTable(decorated);
     
-    // Store the decorated symbol table
-    this.storeSymbols(decoratedScope, Paths.get(symbolOutPath, Names.getPathFromPackage(
-        decoratedScope.getFullName()) + ".deccdsym").toString());
+    // The generated code does not have a larger "diagram" (symbol/scope)
+    // we thus output one symbol table per root-package
+    for (ICD4AnalysisScope subScope : decoratedScope.getSubScopes()) {
+      if (subScope.getSpanningSymbol() instanceof CDPackageSymbol) {
+        CDPackageSymbol symbol = (CDPackageSymbol) subScope.getSpanningSymbol();
+        // Extract the package diagram into its own artifact
+        ICD4CodeArtifactScope as2store = CD4CodeMill.artifactScope();
+        as2store.setName(subScope.getName());
+        // do not set a package name
+        as2store.add(symbol);
+        
+        // Store the decorated symbol table of this package
+        this.storeSymbols(as2store, Paths.get(symbolOutPath, Names.getPathFromPackage(as2store
+            .getFullName()) + ".deccdsym").toString());
+      }
+      else {
+        Log.warn("0xTODO: Skipping export of symbol type " + subScope.getSpanningSymbol()
+            .getClass());
+      }
+    }
+    
+    // Note: The packagename + full name might be really weird in the exported file
   }
   
   /**
