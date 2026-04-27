@@ -30,6 +30,8 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
       ((ASTCDDefinition) decoratedParent).addCDElement(newElem);
     else if (decoratedParent instanceof ASTCDPackage)
       ((ASTCDPackage) decoratedParent).addCDElement(newElem);
+    else if (decoratedParent instanceof ASTCDCompilationUnit)
+      ((ASTCDCompilationUnit) decoratedParent).getCDDefinition().addCDElement(newElem);
     else
       throw new IllegalStateException("Unhandled addElementToParent " + decoratedParent.getClass()
           .getName());

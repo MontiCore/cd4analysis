@@ -67,6 +67,14 @@ public class DecoratorConfig {
     return this.withDecorator(new ObserverDecorator());
   }
   
+  public ChainableGenSetup withVisitors() {
+    return this.withDecorator(new VisitorDecorator());
+  }
+  
+  public ChainableGenSetup withVisitorImplementations() {
+    return this.withDecorator(new VisitorImplementationDecorator());
+  }
+  
   @SuppressWarnings("unchecked")
   public ChainableGenSetup withDecorator(String className) {
     IDecorator<?> newObj = (IDecorator<?>) ObjectFactory.createObject(className);
