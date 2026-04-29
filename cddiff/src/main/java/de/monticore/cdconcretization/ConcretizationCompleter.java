@@ -71,6 +71,15 @@ public class ConcretizationCompleter {
   private boolean forEachNameAdaptationEnabled = true;
   
   /**
+   * If true, names of reference elements being copied to the concrete CD are adapted using the
+   * implicit type incarnation bindings available in the context. For every reference type with a
+   * concrete incarnation, occurrences of the reference type name in any element name are replaced
+   * with the corresponding incarnation type name. This applies to association role names,
+   * association names, attribute names, method names, and parameter names.
+   */
+  private boolean implicitNameAdaptationEnabled = true;
+  
+  /**
    * Name of the placeholder type that is used to mark underspecified types in the reference CD. See
    * {@link UnderspecifiedPlaceholderType}.
    */
@@ -117,7 +126,8 @@ public class ConcretizationCompleter {
      * to perform the actual concretization.
      */
     CDCompletionContext context = DefaultCompletionContext.create(concreteCD, referenceCD, mapping,
-        underspecifiedPlaceholderTypeName, forEachNameAdaptationEnabled, conformanceParams);
+        underspecifiedPlaceholderTypeName, forEachNameAdaptationEnabled,
+        implicitNameAdaptationEnabled, conformanceParams);
     
     // 1. introduce incarnation bindings for each incarnation
     CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
@@ -156,8 +166,8 @@ public class ConcretizationCompleter {
                 new DefaultEnumConstantsCompleter()).build();
     
     IAssocSideCompleter assocSideCompleter = new DefaultAssocSideCompleter();
-    IAssociationCompleter assocCompleter = new DefaultAssocCompleter(concreteCD,
-        assocSideCompleter);
+    IAssociationCompleter assocCompleter = new DefaultAssocCompleter(concreteCD, assocSideCompleter,
+        context);
     
     ChainBuilder<AbstractCDCompleter> completerChainBuilder =
         new ChainBuilder<AbstractCDCompleter>().add(new ImportsCompleter()).add(
@@ -204,6 +214,10 @@ public class ConcretizationCompleter {
     this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
   }
   
+  public void setImplicitNameAdaptationEnabled(boolean implicitNameAdaptationEnabled) {
+    this.implicitNameAdaptationEnabled = implicitNameAdaptationEnabled;
+  }
+  
   /***
    * Provides default configurations for the matching strategies used in the concretization process.
    */
@@ -211,6 +225,7 @@ public class ConcretizationCompleter {
       CDCompletionContext {
     
     private final boolean forEachNameAdaptationEnabled;
+    private final boolean implicitNameAdaptationEnabled;
     
     protected DefaultCompletionContext(ASTCDCompilationUnit concreteCD,
         ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
@@ -220,11 +235,12 @@ public class ConcretizationCompleter {
         ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocIncStrategy,
         CDAttributeMatchingStrategy attributeIncStrategy,
         CDMethodMatchingStrategy methodIncStrategy, MCTypeMatchingStrategy mcTypeIncStrategy,
-        boolean forEachNameAdaptationEnabled) {
+        boolean forEachNameAdaptationEnabled, boolean implicitNameAdaptationEnabled) {
       super(concreteCD, referenceCD, mapping, underspecifiedPlaceholderTypeName, conformanceParams,
           typeIncStrategy, typeIncStrategyMatchingSubTypes, assocIncStrategy, attributeIncStrategy,
           methodIncStrategy, mcTypeIncStrategy);
       this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
+      this.implicitNameAdaptationEnabled = implicitNameAdaptationEnabled;
     }
     
     /**
@@ -241,18 +257,23 @@ public class ConcretizationCompleter {
      */
     public static DefaultCompletionContext create(ASTCDCompilationUnit concreteCD,
         ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
-        boolean forEachNameAdaptationEnabled, Set<CDConfParameter> conformanceParams) {
+        boolean forEachNameAdaptationEnabled, boolean implicitNameAdaptationEnabled,
+        Set<CDConfParameter> conformanceParams) {
       CDConformanceContext context = DefaultCDConformanceContext.create(concreteCD, referenceCD,
           mapping, underspecifiedPlaceholderTypeName, conformanceParams);
       return new DefaultCompletionContext(concreteCD, referenceCD, mapping,
           underspecifiedPlaceholderTypeName, conformanceParams, context.getTypeIncStrategy(),
           context.getTypeIncStrategyMatchingSubTypes(), context.getAssociationIncStrategy(), context
               .getAttributeIncStrategy(), context.getMethodIncStrategy(), context
-                  .getMCTypeIncStrategy(), forEachNameAdaptationEnabled);
+                  .getMCTypeIncStrategy(), forEachNameAdaptationEnabled,
+          implicitNameAdaptationEnabled);
     }
     
     @Override
     public boolean isForEachNameAdaptationEnabled() { return forEachNameAdaptationEnabled; }
+    
+    @Override
+    public boolean isImplicitNameAdaptationEnabled() { return implicitNameAdaptationEnabled; }
     
     @Override
     public Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType) {

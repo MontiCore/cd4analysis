@@ -17,6 +17,8 @@ public interface CDCompletionContext extends CDConformanceContext {
   
   boolean isForEachNameAdaptationEnabled();
   
+  boolean isImplicitNameAdaptationEnabled();
+  
   /**
    * Returns all incarnations of the given reference type in the scope of <b>this context</b>.
    *
