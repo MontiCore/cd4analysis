@@ -18,8 +18,8 @@ classdiagram BothAssocSidesMIConc {
 
     }
 
-    association Teacher1(hasTeacher)--(teachesIn)Department1;
-    association Teacher2(hasTeacher)--(teachesIn)Department2;
+    association Teacher1(hasTeacher1)--(teachesIn)Department1;
+    association Teacher2(hasTeacher2)--(teachesIn)Department2;
     // no more associations are added here because each type incarnation already has one association
 }
 

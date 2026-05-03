@@ -24,8 +24,8 @@ classdiagram Banking {
 
   // sends money from sourceAccount to targetAccount
   class Transaction {
-    BankAccount sourceAccount;
-    BankAccount targetAccount;
+    BankAccount sourceBankAccount;
+    BankAccount targetBankAccount;
     double amount;
   }
 

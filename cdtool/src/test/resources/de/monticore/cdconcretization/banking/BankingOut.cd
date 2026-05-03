@@ -21,8 +21,8 @@ classdiagram BankingCon {
 
   // sends money from sourceAccount to targetAccount
   class Transaction {
-    BankAccount sourceAccount;
-    BankAccount targetAccount;
+    <<ref="BankingRef.Transaction.sourceAccount">>BankAccount sourceBankAccount;
+    <<ref="BankingRef.Transaction.targetAccount">>BankAccount targetBankAccount;
     double amount;
   }
 
