@@ -24,7 +24,8 @@ public class ConstructorNameEqualsClassNameCoCo implements CDBasisASTCDClassCoCo
       if (!constructor.getName().equals(className)) {
         Log.error(
             String.format(ERROR_MESSAGE, constructor.getName(), className),
-            constructor.get_SourcePositionStart()
+            constructor.get_SourcePositionStart(),
+            constructor.get_SourcePositionEnd()
         );
       }
     }
