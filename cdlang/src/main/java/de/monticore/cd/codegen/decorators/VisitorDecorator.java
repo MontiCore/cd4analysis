@@ -19,6 +19,7 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
@@ -40,28 +41,40 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
   }
   
   @Override
-  public void visit(ASTCDDefinition clazz) {
-    if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
-      // Get the parent (package or CDDef)
-      ASTNode origParent = this.decoratorData.getParent(clazz).get();
-      ASTNode decParent = this.decoratorData.getAsDecorated(origParent);
-      
-      // create a Visitor interface for the class
-      ASTCDInterface interfaceVisitorArtifact = CD4CodeMill.cDInterfaceBuilder().setName("I" + clazz
-          .getName() + SUFFIX).setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
-      
-      addElementToParent(decParent, interfaceVisitorArtifact);
-      
-      visitorInterfaceStack.push(interfaceVisitorArtifact);
-      
+  public void visit(ASTCDDefinition node) {
+    _definition = node;
+    if (decoratorData.shouldDecorate(this.getClass(), node)) {
+      // The definition is explicitly marked as should-add the visitor
+      getVisitorInterface();
     }
+  }
+  
+  @Nullable
+  ASTCDInterface _interfaceVisitorArtifact;
+  @Nullable
+  protected ASTCDDefinition _definition;
+  
+  protected ASTCDInterface getVisitorInterface() {
+    if (this._interfaceVisitorArtifact != null) {
+      return this._interfaceVisitorArtifact;
+    }
+    // Get the parent (package or CDDef)
+    ASTNode origParent = this.decoratorData.getParent(Objects.requireNonNull(_definition)).get();
+    ASTNode decParent = this.decoratorData.getAsDecorated(origParent);
+    
+    // create a Visitor interface for the class
+    _interfaceVisitorArtifact = CD4CodeMill.cDInterfaceBuilder().setName("I" + _definition.getName()
+        + SUFFIX).setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+    
+    addElementToParent(decParent, _interfaceVisitorArtifact);
+    
+    return this._interfaceVisitorArtifact;
   }
   
   @Override
   public void endVisit(ASTCDDefinition clazz) {
-    if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
-      visitorInterfaceStack.pop();
-    }
+    this._definition = null;
+    this._interfaceVisitorArtifact = null;
   }
   
   @Override
@@ -70,8 +83,10 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       ASTCDClass decClazz = decoratorData.getAsDecorated(clazz);
       String packageName = clazz.getSymbol().getPackageName();
       
-      String visitorInterfaceName = packageName.isEmpty() ? visitorInterfaceStack.peek().getName()
-          : packageName + "." + visitorInterfaceStack.peek().getName();
+      ASTCDInterface visitorInterface = getVisitorInterface();
+      
+      String visitorInterfaceName = packageName.isEmpty() ? visitorInterface.getName() : packageName
+          + "." + visitorInterface.getName();
       
       ASTMCQualifiedType visitorInterfaceQualifiedType = MCTypeFacade.getInstance()
           .createQualifiedType(visitorInterfaceName);
@@ -98,7 +113,7 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       // add visit method
       ASTCDMethod visitMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().ABSTRACT().build(), "visit", classParameter);
-      visitorInterfaceStack.peek().addCDMember(visitMethod);
+      visitorInterface.addCDMember(visitMethod);
     }
   }
   
@@ -109,7 +124,6 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
     }
   }
   
-  protected Stack<ASTCDInterface> visitorInterfaceStack = new Stack<>();
   protected Stack<ASTCDClass> decParent = new Stack<>();
   
   @Override

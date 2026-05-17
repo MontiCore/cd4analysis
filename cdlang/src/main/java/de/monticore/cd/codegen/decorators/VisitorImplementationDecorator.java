@@ -24,6 +24,7 @@ import de.se_rwth.commons.logging.Log;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Stack;
 
@@ -55,35 +56,48 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
   
   @Override
   public void visit(ASTCDDefinition clazz) {
+    _definition = clazz;
     if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
-      // Get the parent (package or CDDef)
-      ASTNode origParent = this.decoratorData.getParent(clazz).get();
-      ASTNode decParent = this.decoratorData.getAsDecorated(origParent);
-      
-      var visitorImplementationClass = CD4CodeMill.cDClassBuilder().setName(clazz.getName()
-          + "VisitorImplementation").setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build())
-          .setCDInterfaceUsage(CD4CodeMill.cDInterfaceUsageBuilder().addInterface(MCTypeFacade
-              .getInstance().createQualifiedType("I" + clazz.getName() + "Visitor")).build())
-          .build();
-      
-      addElementToParent(decParent, visitorImplementationClass);
-      
-      visitorImplementationStack.push(visitorImplementationClass);
-      
-      ASTCDAttribute traversedElements = CDAttributeFacade.getInstance().createAttribute(CD4CodeMill
-          .modifierBuilder().PROTECTED().build(), MCTypeFacade.getInstance().createCollectionTypeOf(
-              "Object"), "traversedElements");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate("cd2java.Value", traversedElements,
-          new StringHookPoint("= new java.util.LinkedHashSet<>()")));
-      addToClass(visitorImplementationClass, traversedElements);
+      // The definition is explicitly marked as should-add the visitor
+      getVisitorImplementationClass();
     }
+  }
+  
+  @Nullable
+  protected ASTCDDefinition _definition;
+  @Nullable
+  protected ASTCDClass _visitorImplementationClass;
+  
+  protected ASTCDClass getVisitorImplementationClass() {
+    if (this._visitorImplementationClass != null) {
+      return this._visitorImplementationClass;
+    }
+    // Get the parent (package or CDDef)
+    ASTNode origParent = this.decoratorData.getParent(Objects.requireNonNull(_definition)).get();
+    ASTNode decParent = this.decoratorData.getAsDecorated(origParent);
+    
+    this._visitorImplementationClass = CD4CodeMill.cDClassBuilder().setName(_definition.getName()
+        + "VisitorImplementation").setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build())
+        .setCDInterfaceUsage(CD4CodeMill.cDInterfaceUsageBuilder().addInterface(MCTypeFacade
+            .getInstance().createQualifiedType("I" + _definition.getName() + "Visitor")).build())
+        .build();
+    
+    addElementToParent(decParent, this._visitorImplementationClass);
+    
+    ASTCDAttribute traversedElements = CDAttributeFacade.getInstance().createAttribute(CD4CodeMill
+        .modifierBuilder().PROTECTED().build(), MCTypeFacade.getInstance().createCollectionTypeOf(
+            "Object"), "traversedElements");
+    glexOpt.ifPresent(glex -> glex.replaceTemplate("cd2java.Value", traversedElements,
+        new StringHookPoint("= new java.util.LinkedHashSet<>()")));
+    addToClass(this._visitorImplementationClass, traversedElements);
+    
+    return this._visitorImplementationClass;
   }
   
   @Override
   public void endVisit(ASTCDDefinition clazz) {
-    if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
-      visitorImplementationStack.pop();
-    }
+    this._visitorImplementationClass = null;
+    this._definition = null;
   }
   
   @Override
@@ -108,7 +122,7 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
       // add visit method
       ASTCDMethod visitMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().build(), "visit", classParameter);
-      visitorImplementationStack.peek().addCDMember(visitMethod);
+      getVisitorImplementationClass().addCDMember(visitMethod);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, visitMethod, new TemplateHookPoint(
           "methods.visitor.DefaultVisit", parentClass)));
       
@@ -118,8 +132,7 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
   
   @Override
   public void visit(ASTCDAttribute attribute) {
-    if (!decoratorData.shouldDecorate(this.getClass(), attribute) || visitorImplementationStack
-        .isEmpty()) {
+    if (!decoratorData.shouldDecorate(this.getClass(), attribute)) {
       return;
     }
     
@@ -127,6 +140,15 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
         .getType());
     
     if (attrInfo.getTypeKind() != AttrHelper.TypeKind.DOMAIN) {
+      return;
+    }
+    
+    if (attrInfo.getSymTypeExpression().getTypeInfo().isPresentAstNode() && !decoratorData
+        .shouldDecorate(VisitorDecorator.class, attrInfo.getSymTypeExpression().getTypeInfo()
+            .getAstNode())) {
+      warn(attribute, "0xTODO: Visitor implementation of association `" + attribute.getSymbol()
+          .getFullName() + "` is not possible due to missing visitor of the class `" + attrInfo
+              .getSymTypeExpression().getTypeInfo().getFullName() + "`");
       return;
     }
     
@@ -141,8 +163,7 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
       else {
         glexOpt.ifPresent(glex -> glex.addAfterTemplate("VisitorImplementation:Traverse",
             visitMethodStack.peek(), new TemplateHookPoint("methods.visitor.DefaultTraverseMan",
-                getter.get().getGetMethod().getName(), visitorImplementationStack.peek()
-                    .getName())));
+                getter.get().getGetMethod().getName(), getVisitorImplementationClass().getName())));
       }
     }
     else if (attrInfo.getMultiplicity() == AttrHelper.Multiplicity.OPTIONAL) {
@@ -157,7 +178,7 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
         glexOpt.ifPresent(glex -> glex.addAfterTemplate("VisitorImplementation:Traverse",
             visitMethodStack.peek(), new TemplateHookPoint("methods.visitor.DefaultTraverseOpt",
                 getter.get().getGetMethod().getName(), isPresent.get().getGetMethod().getName(),
-                visitorImplementationStack.peek().getName())));
+                getVisitorImplementationClass().getName())));
       }
     }
     else if (attrInfo.getMultiplicity() == AttrHelper.Multiplicity.SET) {
@@ -169,19 +190,21 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
       else {
         glexOpt.ifPresent(glex -> glex.addAfterTemplate("VisitorImplementation:Traverse",
             visitMethodStack.peek(), new TemplateHookPoint("methods.visitor.DefaultTraverseSet",
-                getter.get().getGetMethod().getName(), visitorImplementationStack.peek()
-                    .getName())));
+                getter.get().getGetMethod().getName(), getVisitorImplementationClass().getName())));
       }
     }
     
   }
   
   protected void warnMissingGetter(ASTCDAttribute attribute) {
-    String message = "Attribute `" + attribute.getSymbol().getFullName()
-        + "` has no getter information provided. Unable to include in " + visitorImplementationStack
-            .peek().getName();
-    Log.warn("0xTODO: " + message, attribute.get_SourcePositionStart(), attribute
-        .get_SourcePositionEnd());
+    String message = "0xTODO: Attribute `" + attribute.getSymbol().getFullName()
+        + "` has no getter information provided. Unable to include in "
+        + getVisitorImplementationClass().getName();
+    warn(attribute, message);
+  }
+  
+  protected void warn(ASTCDAttribute attribute, String message) {
+    Log.warn(message, attribute.get_SourcePositionStart(), attribute.get_SourcePositionEnd());
     glexOpt.ifPresent(glex -> glex.addAfterTemplate("VisitorImplementation:Traverse",
         visitMethodStack.peek(), new StringHookPoint("//" + message + "\n")));
   }
@@ -194,7 +217,6 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
     }
   }
   
-  protected Stack<ASTCDClass> visitorImplementationStack = new Stack<>();
   protected Stack<ASTCDMethod> visitMethodStack = new Stack<>();
   protected Stack<ASTCDClass> decParent = new Stack<>();
   
