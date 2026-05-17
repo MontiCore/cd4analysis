@@ -60,15 +60,39 @@ public class VisitorDecoratorResultTest {
     c.accept(cVisitor(tracerC));
     List<String> tracerC1 = new ArrayList<>();
     c.getManyC().iterator().next().accept(cVisitor(tracerC1));
+    List<String> tracerC2 = new ArrayList<>();
+    c.getOptC().accept(cVisitor(tracerC2));
+    List<String> tracerC3 = new ArrayList<>();
+    c.getManyManyC().iterator().next().accept(cVisitor(tracerC3));
+    List<String> tracerC4 = new ArrayList<>();
+    c.getManyC4().iterator().next().accept(cVisitor(tracerC4));
+    List<String> tracerC5 = new ArrayList<>();
+    c.getOneCAttr().accept(cVisitor(tracerC5));
     
-    Assertions.assertEquals(Arrays.stream(
-        "C, C1, C, C1, C, C2, C, C3, C, C3, C, C3, C, C4, C, C4, C, C4, C, C4, C5, C".split(","))
-        .map(String::trim).toList(), tracerC);
-    Assertions.assertEquals(Arrays.stream(
-        "C1, C, C1, C, C2, C, C3, C, C3, C, C3, C, C4, C, C4, C, C4, C, C4, C5, C, C1".split(","))
-        .map(String::trim).toList(), tracerC1);
+    System.err.println(tracerC);
+    System.err.println(tracerC1);
+    System.err.println(tracerC2);
+    System.err.println(tracerC3);
+    System.err.println(tracerC4);
+    System.err.println(tracerC5);
     
-    // TODO: Test C2...C5
+    Assertions.assertEquals(
+        "C, C1, C, C1, C, C2, C, C3, C, C3, C, C3, C, C4, C, C4, C, C4, C, C4, C, C5", String.join(
+            ", ", tracerC));
+    Assertions.assertEquals(
+        "C1, C, C1, C1, C, C2, C, C3, C, C3, C, C3, C, C4, C, C4, C, C4, C, C4, C, C5", String.join(
+            ", ", tracerC1));
+    Assertions.assertEquals(
+        "C2, C, C1, C, C1, C, C2, C3, C, C3, C, C3, C, C4, C, C4, C, C4, C, C4, C, C5", String.join(
+            ", ", tracerC2));
+    Assertions.assertEquals(
+        "C3, C, C1, C, C1, C, C2, C, C3, C3, C, C3, C, C4, C, C4, C, C4, C, C4, C, C5", String.join(
+            ", ", tracerC3));
+    Assertions.assertEquals(
+        "C4, C, C1, C, C1, C, C2, C, C3, C, C3, C, C3, C, C4, C4, C, C4, C, C4, C, C5", String.join(
+            ", ", tracerC4));
+    // C5 is unidirectional
+    Assertions.assertEquals("C5", String.join(", ", tracerC5));
   }
   
   protected C constructC() {
@@ -96,49 +120,50 @@ public class VisitorDecoratorResultTest {
     return c;
   }
   
+  // A visitor that writes each (start) visit call to the list
   protected ITestVisitorVisitor cVisitor(List<String> tracer) {
     return new TestVisitorVisitorImplementation() {
       
       @Override
       public void visit(A node) {
-        super.visit(node);
         count(node);
+        super.visit(node);
       }
       
       @Override
       public void visit(C node) {
-        super.visit(node);
         count(node);
+        super.visit(node);
       }
       
       @Override
       public void visit(C1 node) {
-        super.visit(node);
         count(node);
+        super.visit(node);
       }
       
       @Override
       public void visit(C2 node) {
-        super.visit(node);
         count(node);
+        super.visit(node);
       }
       
       @Override
       public void visit(C3 node) {
-        super.visit(node);
         count(node);
+        super.visit(node);
       }
       
       @Override
       public void visit(C4 node) {
-        super.visit(node);
         count(node);
+        super.visit(node);
       }
       
       @Override
       public void visit(C5 node) {
-        super.visit(node);
         count(node);
+        super.visit(node);
       }
       
       void count(Object o) {
