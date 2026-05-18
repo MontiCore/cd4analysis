@@ -56,7 +56,7 @@ It includes the following decorators:
 | NavigableSetterDecorator    | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`        | `<<noSetter>>`                            |
 | AbstractMethodDecorator     | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>` | `<<nonAbstractMethod>>`                   |
 | BuilderDecorator            | Add a builder class                                                | 🟨 `<<builder>>`         | `<<noBuilder>>`                           |
-| ObserverDecorator           | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<noVisitor>>`                           |
+| ObserverDecorator           | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<notObservable>>`                           |
 | VisitorDecorator            | Include a visitor                                                  | 🟨 `<<visitor>>`         | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
 
 In the default configuration,
