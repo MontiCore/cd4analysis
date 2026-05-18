@@ -37,7 +37,7 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
           .getName());
   }
   
-  protected void addToClass(ASTCDClass clazz, ASTCDMember member) {
+  protected void addToClass(ASTCDType clazz, ASTCDMember member) {
     // TODO: Only add iff not yet present (#4310)
     clazz.addCDMember(member);
   }
