@@ -34,15 +34,15 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterData> implements
     CDBasisVisitor2 {
-
+  
   protected GetterData getterData;
-
+  
   @Override
   public void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt) {
     super.init(util, glexOpt);
     this.getterData = this.decoratorData.createDataIfAbsent(this.getClass(), GetterData::new);
   }
-
+  
   @Override
   public void visit(ASTCDAttribute attribute) {
     // First, check if we should decorate the given object
@@ -72,9 +72,8 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
       }
     }
   }
-
-  protected MethodInformation decorateMandatory(ASTCDType decoratedType,
-      ASTCDAttribute attribute) {
+  
+  protected MethodInformation decorateMandatory(ASTCDType decoratedType, ASTCDAttribute attribute) {
     String name = (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType()) ? "is" : "get")
         + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = attribute.getMCType().deepClone();
@@ -83,20 +82,19 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
         "methods.Get", attribute)));
     method.getModifier().setAbstract(attribute.getModifier().isDerived());
-
+    
     addToClass(decoratedType, method);
-
+    
     this.updateModifier(attribute);
-
+    
     return new MethodInformation(GetterMethodKind.GET_MANDATORY_OR_OPT, method, "methods.Get",
         attribute.getName());
   }
-
-  protected MethodInformation decorateOptional(ASTCDType decoratedType,
-      ASTCDAttribute attribute) {
+  
+  protected MethodInformation decorateOptional(ASTCDType decoratedType, ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
-
+    
     String generatedErrorCode = getCDGenService().getGeneratedErrorCode(attribute.getName()
         + attribute.getMCType().printType());
     ASTCDMethod getMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
@@ -107,12 +105,12 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
         "methods.opt.Get4Opt", attribute, nativeAttributeName, generatedErrorCode)));
     getMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     CD4C.getInstance().addImport(decoratedType, Log.class.getName());
-
+    
     addToClass(decoratedType, getMethod);
     return new MethodInformation(GetterMethodKind.GET_MANDATORY_OR_OPT, getMethod,
         "methods.opt.Get4Opt", attribute.getName());
   }
-
+  
   protected MethodInformation decorateOptionalIsPresent(ASTCDType decoratedType,
       ASTCDAttribute attribute) {
     ASTCDMethod isPresentMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
@@ -121,51 +119,51 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isPresentMethod,
         new TemplateHookPoint("methods.opt.IsPresent4Opt", attribute)));
     addToClass(decoratedType, isPresentMethod);
-
+    
     this.updateModifier(attribute);
     return new MethodInformation(GetterMethodKind.IS_PRESENT, isPresentMethod,
         "methods.opt.IsPresent4Opt", attribute.getName());
   }
-
+  
   protected MethodInformation decorateSet(ASTCDType decoratedType, ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
-
+    
     ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), MCTypeFacade.getInstance().createSetTypeOf(type), name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedType, getListMethod);
-
+    
     this.updateModifier(attribute);
-
+    
     return new MethodInformation(GetterMethodKind.GET_COLLECTION, getListMethod, "methods.Get",
         attribute.getName());
   }
-
+  
   protected MethodInformation decorateList(ASTCDType decoratedType, ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
-
+    
     ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), MCTypeFacade.getInstance().createListTypeOf(type), name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedType, getListMethod);
-
+    
     this.updateModifier(attribute);
     return new MethodInformation(GetterMethodKind.GET_COLLECTION, getListMethod, "methods.Get",
         attribute.getName());
   }
-
+  
   protected void decorateWithAssocFunctions(ASTCDType decoratedType, ASTCDAttribute attribute,
       boolean isList) {
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
-
+    
     String attributeType = type.printType();
-
+    
     String capitalizedAttributeNameWithS = StringUtils.capitalize(getCDGenService()
         .getNativeAttributeName(attribute.getName()));
     String capitalizedAttributeNameWithOutS;
@@ -178,7 +176,7 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     else {
       capitalizedAttributeNameWithOutS = capitalizedAttributeNameWithS;
     }
-
+    
     if (!attribute.getModifier().isDerived()) {
       for (String signature : Arrays.asList(String.format(CONTAINS,
           capitalizedAttributeNameWithOutS), String.format(CONTAINS_ALL,
@@ -215,7 +213,7 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
       }
     }
   }
-
+  
   protected HookPoint createListImplementation(final ASTCDMethod method,
       String capitalizedAttributeNameWithOutS) {
     String attributeName = StringUtils.uncapitalize(capitalizedAttributeNameWithOutS);
@@ -225,11 +223,11 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
         .collect(Collectors.joining(", "));
     String returnType = (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint(method
         .getMCReturnType());
-
+    
     return new TemplateHookPoint("methods.AnyMethodDelegate", attributeName, methodName,
         parameterCall, returnType);
   }
-
+  
   protected static final String CONTAINS = "public boolean contains%s(Object element);";
   protected static final String CONTAINS_ALL =
       "public boolean containsAll%s(java.util.Collection<?> collection);";
@@ -253,24 +251,24 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
       "public java.util.ListIterator<%s> listIterator%s(int index);";
   protected static final String SUBLIST =
       "public java.util.List<%s> subList%s(int start, int end);";
-
+  
   protected void updateModifier(ASTCDAttribute attribute) {
     var decoratedModifier = decoratorData.getAsDecorated(attribute).getModifier();
     decoratedModifier.setProtected(true);
     decoratedModifier.setPublic(false);
     decoratedModifier.setPrivate(false);
   }
-
+  
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
   }
-
+  
   public static class GetterData {
-
+    
     protected final Map<ASTCDAttribute, List<MethodInformation>> attributesData =
         new LinkedHashMap<>();
-
+    
     public List<MethodInformation> getMethods(ASTCDAttribute node) {
       var ret = attributesData.get(node);
       if (ret == null) {
@@ -279,20 +277,20 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
       }
       return ret == null ? List.of() : ret;
     }
-
+    
     protected List<MethodInformation> getOrCreateMethods(ASTCDAttribute node) {
       return this.attributesData.computeIfAbsent(node, a -> new ArrayList<>());
     }
-
+    
   }
-
+  
   public static class MethodInformation {
-
+    
     private final GetterMethodKind kind;
     private final ASTCDMethod getMethod;
     private final String templateName;
     private final String paramName;
-
+    
     public MethodInformation(GetterMethodKind kind, ASTCDMethod setMethod, String templateName,
         String paramName) {
       this.kind = kind;
@@ -300,19 +298,19 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
       this.templateName = templateName;
       this.paramName = paramName;
     }
-
+    
     public GetterMethodKind getKind() { return kind; }
-
+    
     public ASTCDMethod getGetMethod() { return getMethod; }
-
+    
     public String getTemplateName() { return templateName; }
-
+    
     public String getParamName() { return paramName; }
-
+    
   }
-
+  
   public enum GetterMethodKind {
     GET_MANDATORY_OR_OPT, IS_PRESENT, GET_COLLECTION
   }
-
+  
 }
