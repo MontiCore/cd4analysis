@@ -20,26 +20,49 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
   
   /**
    * Test the {@link ObserverDecorator} by applying it to a CD. The
-   * cdlang/src/cdGenIntTest/java/observer/ObserverDecoratorTest then tests the generated result
+   * cdlang/src/cdGenIntTest/java/observer/ObserverDecoratorResultTest then tests the generated
+   * result
    */
   @Test
   void testObserver() throws Exception {
-    var opt = CD4CodeMill.parser().parse_String(" classdiagram TestObserver {\n"
-        + " <<setter,observable>> public class OtherC {\n" + "   public int myInt;\n"
-        + "   public boolean myBool;\n" + "   -> (manyB) B [*] public;\n"
-        + "   -> (optB) B [0..1] public;\n" + "   -> (oneB) B [1] public;\n" + "   public int ov;\n"
-        + " }\n" + "<<setter>>public class B {}\n" + "\n"
-        + "  // Test Setter&Observer interaction\n" + "  <<observable,setter>>   class CA {}\n"
-        + "  <<observable,setter>>   class CB {}\n" + "  <<observable,setter>>   class CC {}\n"
-        + "  <<observable,setter>>   class CD {}\n" + "  association CA <-> CB;\n"
-        + "  association CA <-> CC [*];\n" + "  association CA <-> CD [0..1];\n" + "\n"
-        + "  <<observable,setter>>   class DA {}\n" + "  <<setter>>              class DB {}\n"
-        + "  <<setter>>              class DC {}\n" + "  <<setter>>              class DD {}\n"
-        + "  association DA <-> DB;\n" + "  association DA <-> DC [*];\n"
-        + "  association DA <-> DD [0..1];\n" + "\n" + "  <<setter>>              class EA {}\n"
-        + "  <<observable,setter>>   class EB {}\n" + "  <<observable,setter>>   class EC {}\n"
-        + "  <<observable,setter>>   class ED {}\n" + "  association EA <-> EB;\n"
-        + "  association EA <-> EC [*];\n" + "  association EA <-> ED [0..1];\n" + "\n" + "}");
+    var opt = CD4CodeMill.parser().parse_String("""
+         classdiagram TestObserver {
+         <<setter,observable>> public class OtherC {
+           public int myInt;
+           public boolean myBool;
+           -> (manyB) B [*] public;
+           -> (optB) B [0..1] public;
+           -> (oneB) B [1] public;
+           public int ov;
+         }
+        <<setter>>public class B {}
+        
+          // Test Setter&Observer interaction
+          <<observable,setter>>   class CA {}
+          <<observable,setter>>   class CB {}
+          <<observable,setter>>   class CC {}
+          <<observable,setter>>   class CD {}
+          association CA <-> CB;
+          association CA <-> CC [*];
+          association CA <-> CD [0..1];
+        
+          <<observable,setter>>   class DA {}
+          <<setter>>              class DB {}
+          <<setter>>              class DC {}
+          <<setter>>              class DD {}
+          association DA <-> DB;
+          association DA <-> DC [*];
+          association DA <-> DD [0..1];
+        
+          <<setter>>              class EA {}
+          <<observable,setter>>   class EB {}
+          <<observable,setter>>   class EC {}
+          <<observable,setter>>   class ED {}
+          association EA <-> EB;
+          association EA <-> EC [*];
+          association EA <-> ED [0..1];
+        
+        }""");
     
     // The classes CA, CB, CC, and CD test observers with bidirectional assocs
     // The classes DA, ..., DD test observers with bidirectional assocs (if only the DA class is observable)

@@ -66,7 +66,12 @@ public class MatchCDAssocsBySrcTypeAndTgtRole implements
     return match;
   }
   
-  /** Match two associations, assuming both are written in opposite orientations. */
+  /**
+   * Match two associations, assuming both are written in opposite orientations.
+   * <p>
+   * Note: {@link #checkRole} is always called with the src side first and the tgt side second,
+   * consistent with {@link #check} and all {@code checkRole} overrides.
+   */
   protected boolean checkReverse(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     
     boolean match = false;
@@ -75,14 +80,14 @@ public class MatchCDAssocsBySrcTypeAndTgtRole implements
         .isDefinitiveNavigableLeft()) && (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
             || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
       match = checkReference(srcElem.getRightQualifiedName().getQName(), tgtElem
-          .getLeftQualifiedName().getQName()) && checkRole(tgtElem.getRight(), srcElem.getLeft());
+          .getLeftQualifiedName().getQName()) && checkRole(srcElem.getLeft(), tgtElem.getRight());
     }
     
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableLeft() || !tgtElem.getCDAssocDir()
         .isDefinitiveNavigableRight()) && (srcElem.getCDAssocDir().isDefinitiveNavigableRight()
             || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
       match = match || (checkReference(srcElem.getLeftQualifiedName().getQName(), tgtElem
-          .getRightQualifiedName().getQName()) && checkRole(tgtElem.getLeft(), srcElem.getRight()));
+          .getRightQualifiedName().getQName()) && checkRole(srcElem.getRight(), tgtElem.getLeft()));
     }
     
     return match;

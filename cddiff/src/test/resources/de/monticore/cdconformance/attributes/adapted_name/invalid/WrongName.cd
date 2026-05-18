@@ -1,0 +1,9 @@
+// Ticket incarnates Task, but the attribute name "item" is not the adapted form of
+// "assignedTask" — should fail even with ADAPTED_NAME_MAPPING.
+classdiagram WrongName {
+  <<ref="Task">> class Ticket;
+
+  class Board {
+    Ticket item;
+  }
+}

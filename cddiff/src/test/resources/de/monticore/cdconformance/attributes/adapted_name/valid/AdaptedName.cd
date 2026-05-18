@@ -1,0 +1,10 @@
+// Ticket incarnates Task. The attribute name "assignedTask" is adapted to "assignedTicket"
+// via adaptTemplatedName("assignedTask", "Task", "Ticket") = "assignedTicket".
+// ADAPTED_NAME_MAPPING is required for the conformance checker to accept this.
+classdiagram AdaptedName {
+  <<ref="Task">> class Ticket;
+
+  class Board {
+    Ticket assignedTicket;
+  }
+}

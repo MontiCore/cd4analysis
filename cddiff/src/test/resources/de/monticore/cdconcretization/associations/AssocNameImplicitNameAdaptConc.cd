@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AssocNameImplicitNameAdaptConc {
+  <<ref="Task">>    class Ticket;
+  <<ref="Project">> class Sprint;
+  // existing association without name — DefaultAssocCompleter copies and adapts it
+  association Sprint -> Ticket [*];
+}
