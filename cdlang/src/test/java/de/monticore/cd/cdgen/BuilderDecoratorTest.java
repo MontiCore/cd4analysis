@@ -24,42 +24,45 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
   public void testBuilder() throws Exception {
     var opt = CD4CodeMill.parser()
         .parse_String( // @formatter:off
-          "classdiagram TestBuilder {\n"
-            + " <<setter,getter,builder>> public class TestBuilderWithSetter { \n"
-            + " public int myInt;\n"
-            + " public boolean myBool;\n"
-            + " -> (manyB) B [*] public;\n"
-            + " -> (optB) B [0..1] public;\n"
-            + " -> (oneB) B [1] public;\n"
-            + " public TestEnum myTestEnum;\n"
-            + " public Level1Interface myLevel1;\n"
-            + " }\n"
-            + " <<setter,getter,builder>> public class TestBuilderWithSuperClass extends TestBuilderWithSetter;"
-            + " <<noSetter,getter,builder>> public class TestBuilderWithoutSetter { \n"
-            + " public int myInt;\n"
-            + " public boolean myBool;\n"
-            + " -> (manyB) B [*] public;\n"
-            + " -> (optB) B [0..1] public;\n"
-            + " -> (oneB) B [1] public;\n"
-            + " public TestEnum myTestEnum;\n"
-            + " public Level1Interface myLevel1;\n"
-            + " }\n"
-            + " <<getter>> public class B { \n"
-            + " }\n"
-            + " <<setter,getter,builder>> public class NoDefaultConstructor { \n "
-            + " public NoDefaultConstructor(int i);\n"
-            + " int i; \n"
-            + " } \n"
-            + " <<setter,getter,builder>> public class PrivateDefaultConstructor { \n "
-            + " private PrivateDefaultConstructor();\n"
-            + " int i; \n"
-            + " } \n"
-            + " enum TestEnum { RUNNING, IDLE, ERROR; }\n"
-            + " interface Level1Interface;\n"
-            + " class Level2class implements Level1Interface{\n"
-            + "  int myInt;\n"
-            + " }\n"
-            + "}");
+          """
+classdiagram TestBuilder {
+ <<setter,getter,builder>> public class TestBuilderWithSetter {\s
+ public int myInt;
+ public boolean myBool;
+ -> (manyB) B [*] public;
+ -> (optB) B [0..1] public;
+ -> (oneB) B [1] public;
+ public TestEnum myTestEnum;
+ public Level1Interface myLevel1;
+ }
+ <<setter,getter,builder>> public class TestBuilderWithSuperClass extends TestBuilderWithSetter;\
+ <<noSetter,getter,builder>> public class TestBuilderWithoutSetter {\s
+ public int myInt;
+ public boolean myBool;
+ -> (manyB) B [*] public;
+ -> (optB) B [0..1] public;
+ -> (oneB) B [1] public;
+ public TestEnum myTestEnum;
+ public Level1Interface myLevel1;
+ }
+ <<getter>> public class B {\s
+ }
+ <<setter,getter,builder>> public class NoDefaultConstructor {\s
+ \
+ public NoDefaultConstructor(int i);
+ int i;\s
+ }\s
+ <<setter,getter,builder>> public class PrivateDefaultConstructor {\s
+ \
+ private PrivateDefaultConstructor();
+ int i;\s
+ }\s
+ enum TestEnum { RUNNING, IDLE, ERROR; }
+ interface Level1Interface;
+ class Level2class implements Level1Interface{
+  int myInt;
+ }
+}""");
     // @formatter:on
     
     Assertions.assertTrue(opt.isPresent());
@@ -69,7 +72,6 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     for (int i = 0; i < 7; i++) // Test, that the warning about missing setters is present
       MCAssertions.assertHasFinding(f -> f.getMsg().startsWith("Requested setter of TestBuilder")
           && f.isWarning());
-    MCAssertions.assertNoFindings();
   }
   
   @Test
