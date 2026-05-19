@@ -22,48 +22,50 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
   
   @Test
   public void testBuilder() throws Exception {
-    var opt = CD4CodeMill.parser()
-        .parse_String( // @formatter:off
-          """
-classdiagram TestBuilder {
- <<setter,getter,builder>> public class TestBuilderWithSetter {\s
- public int myInt;
- public boolean myBool;
- -> (manyB) B [*] public;
- -> (optB) B [0..1] public;
- -> (oneB) B [1] public;
- public TestEnum myTestEnum;
- public Level1Interface myLevel1;
- }
- <<setter,getter,builder>> public class TestBuilderWithSuperClass extends TestBuilderWithSetter;\
- <<noSetter,getter,builder>> public class TestBuilderWithoutSetter {\s
- public int myInt;
- public boolean myBool;
- -> (manyB) B [*] public;
- -> (optB) B [0..1] public;
- -> (oneB) B [1] public;
- public TestEnum myTestEnum;
- public Level1Interface myLevel1;
- }
- <<getter>> public class B {\s
- }
- <<setter,getter,builder>> public class NoDefaultConstructor {\s
- \
- public NoDefaultConstructor(int i);
- int i;\s
- }\s
- <<setter,getter,builder>> public class PrivateDefaultConstructor {\s
- \
- private PrivateDefaultConstructor();
- int i;\s
- }\s
- enum TestEnum { RUNNING, IDLE, ERROR; }
- interface Level1Interface;
- class Level2class implements Level1Interface{
-  int myInt;
- }
-}""");
-    // @formatter:on
+    var opt = CD4CodeMill.parser().parse_String("""
+        classdiagram TestBuilder {
+          <<setter,getter,builder>>
+          public class TestBuilderWithSetter {
+            public int myInt;
+            public boolean myBool;
+            -> (manyB) B [*] public;
+            -> (optB) B [0..1] public;
+            -> (oneB) B [1] public;
+            public TestEnum myTestEnum;
+            public Level1Interface myLevel1;
+          }
+          <<setter,getter,builder>>
+          public class TestBuilderWithSuperClass extends TestBuilderWithSetter;
+          <<noSetter,getter,builder>>
+          public class TestBuilderWithoutSetter {
+           public int myInt;
+           public boolean myBool;
+           -> (manyB) B [*] public;
+           -> (optB) B [0..1] public;
+           -> (oneB) B [1] public;
+           public TestEnum myTestEnum;
+           public Level1Interface myLevel1;
+          }
+          <<getter>>
+          public class B { }
+          <<setter,getter,builder>>
+          public class NoDefaultConstructor {
+            public NoDefaultConstructor(int i);
+            int i;
+          }
+          <<setter,getter,builder>>
+          public class PrivateDefaultConstructor {
+            private PrivateDefaultConstructor();
+            int i;
+          }
+          enum TestEnum {
+            RUNNING, IDLE, ERROR;
+          }
+          interface Level1Interface;
+          class Level2class implements Level1Interface{
+            int myInt;
+          }
+        }""");
     
     Assertions.assertTrue(opt.isPresent());
     
