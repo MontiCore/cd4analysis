@@ -55,7 +55,7 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     }
     symbol.setType(typeResult.get());
     
-    setupModifiers(side.getModifier(), symbol);
+    setupModifiers(side.getModifier(), ast.getModifier(), symbol);
     
     symbol.setIsDefinitiveNavigable(isLeft ? ast.getCDAssocDir().isDefinitiveNavigableLeft() : ast
         .getCDAssocDir().isDefinitiveNavigableRight());
@@ -144,13 +144,13 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     }
   }
   
-  public void setupModifiers(ASTModifier modifier, CDRoleSymbol roleSymbol) {
-    roleSymbol.setIsPublic(modifier.isPublic());
-    roleSymbol.setIsPrivate(modifier.isPrivate());
-    roleSymbol.setIsProtected(modifier.isProtected());
-    roleSymbol.setIsStatic(modifier.isStatic());
-    roleSymbol.setIsFinal(modifier.isFinal());
-    roleSymbol.setIsDerived(modifier.isDerived());
+  public void setupModifiers(ASTModifier assocSideModifier, ASTModifier assocModifier, CDRoleSymbol roleSymbol) {
+    roleSymbol.setIsPublic(assocSideModifier.isPublic());
+    roleSymbol.setIsPrivate(assocSideModifier.isPrivate());
+    roleSymbol.setIsProtected(assocSideModifier.isProtected());
+    roleSymbol.setIsStatic(assocSideModifier.isStatic());
+    roleSymbol.setIsFinal(assocSideModifier.isFinal());
+    roleSymbol.setIsDerived(assocSideModifier.isDerived() || assocModifier.isDerived());
   }
   
   public static void addRoleToTheirType(CDRoleSymbol symbol, TypeSymbol otherType) {
