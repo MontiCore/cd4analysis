@@ -144,7 +144,8 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     }
   }
   
-  public void setupModifiers(ASTModifier assocSideModifier, ASTModifier assocModifier, CDRoleSymbol roleSymbol) {
+  public void setupModifiers(ASTModifier assocSideModifier, ASTModifier assocModifier,
+      CDRoleSymbol roleSymbol) {
     roleSymbol.setIsPublic(assocSideModifier.isPublic());
     roleSymbol.setIsPrivate(assocSideModifier.isPrivate());
     roleSymbol.setIsProtected(assocSideModifier.isProtected());
