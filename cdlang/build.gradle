@@ -5,7 +5,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-  id "base"
   id "maven-publish" // Only used to publish the trafos - everything else is published in the root project
   id "de.monticore.generator-withtr" version "$mc_version" // MontiCore Plugin with TR support
 }
