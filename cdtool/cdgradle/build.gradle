@@ -55,14 +55,17 @@ test.dependsOn(project(":cdlang").tasks.jar)
 test.inputs.files(project(":cdlang").tasks.jar)
 
 // Write the version to the jar
+def buildInfoVersion = project.version.toString()
+
 tasks.register('generateResources') {
   ext {
-    propFile = file("$buildDir/generated/buildInfo.properties")
+    propFile = layout.buildDirectory.file("generated/buildInfo.properties")
   }
   outputs.file propFile
   doLast {
-    mkdir propFile.parentFile
-    propFile.text = "version=$project.version"
+    File f = propFile.get().asFile
+    f.parentFile.mkdirs()
+    f.text = "version=$buildInfoVersion"
   }
 }
 processResources {
