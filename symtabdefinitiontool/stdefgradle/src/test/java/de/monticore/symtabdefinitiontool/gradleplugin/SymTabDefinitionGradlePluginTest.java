@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symtabdefinitiontool.gradleplugin;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,8 +11,11 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SymTabDefinitionGradlePluginTest {
   
@@ -35,21 +35,8 @@ public class SymTabDefinitionGradlePluginTest {
     modelDir.mkdirs();
   }
   
-  @Test
-  public void testSTDef_v7_4_2() throws IOException {
-    testSTDef("7.4.2");
-  }
-  
-  @Test
-  public void testSTDef_v8_0_1() throws IOException {
-    this.testSTDef("8.0.1");
-  }
-  
-  @Test
-  public void testSTDef_v8_7() throws IOException {
-    this.testSTDef("8.7");
-  }
-  
+  @ParameterizedTest
+  @ValueSource(strings = { "8.5", "8.7", "8.14" })
   void testSTDef(String version) throws IOException {
     writeFile(settingsFile, "rootProject.name = 'hello-world'");
     String projVersion = loadProperties().getProperty("version");
@@ -65,7 +52,7 @@ public class SymTabDefinitionGradlePluginTest {
     
     String buildFileContent = "plugins {\n" + "  id 'de.rwth.se.symtabdefinition'\n" + "}\n "
         + "repositories {\n"
-        + " maven{ url 'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
+        + " maven{ url = 'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
         + " mavenCentral()\n" + "}\n" +
         // We have to inject the cdlang jar for this project (as it is not yet published)
         "dependencies {\n" + "  stdefTool files('" + cd4aJarFile.getAbsolutePath().replace("\\",
@@ -78,7 +65,9 @@ public class SymTabDefinitionGradlePluginTest {
     BuildResult result = GradleRunner.create()
         // .withDebug(true) // add to debug
         .withPluginClasspath().withGradleVersion(version).withProjectDir(testProjectDir)
-        .withArguments("build", "--info", "--stacktrace").build();
+        .withArguments("generateSymbolTables", "--info", "--stacktrace").build();
+    assertNotNull(result.task(":generateSymbolTables"),
+        "'generateSymbolTables' task not found! The gradle plugin has most likely not been applied.");
     assertEquals(TaskOutcome.SUCCESS, result.task(":generateSymbolTables").getOutcome());
   }
   

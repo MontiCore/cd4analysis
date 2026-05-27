@@ -53,7 +53,7 @@ dependencies {
   }
 }
 
-task toolJar(type: Jar) {
+tasks.register('toolJar', Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
   archiveClassifier = "tool"
 }
@@ -78,8 +78,10 @@ sourceSets {
 }
 
 dependencies {
-  tooltestImplementation platform('org.junit:junit-bom:5.9.1')
-  tooltestImplementation 'org.junit.jupiter:junit-jupiter'
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  tooltestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  tooltestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 }
 
 tasks.register('toolTest', Test) {
