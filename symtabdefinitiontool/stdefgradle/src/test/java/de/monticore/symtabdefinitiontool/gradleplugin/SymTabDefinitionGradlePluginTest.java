@@ -65,7 +65,7 @@ public class SymTabDefinitionGradlePluginTest {
     BuildResult result = GradleRunner.create()
         // .withDebug(true) // add to debug
         .withPluginClasspath().withGradleVersion(version).withProjectDir(testProjectDir)
-        .withArguments("build", "--info", "--stacktrace").build();
+        .withArguments("generateSymbolTables", "--info", "--stacktrace").build();
     assertNotNull(result.task(":generateSymbolTables"),
         "'generateSymbolTables' task not found! The gradle plugin has most likely not been applied.");
     assertEquals(TaskOutcome.SUCCESS, result.task(":generateSymbolTables").getOutcome());
