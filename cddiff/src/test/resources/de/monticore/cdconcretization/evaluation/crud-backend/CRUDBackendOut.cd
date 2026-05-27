@@ -21,7 +21,7 @@ classdiagram DomainModel {
    <<ref="CRUDBackendRef.EntityRepository">> class DepartmentRepository {
      <<ref="CRUDBackendRef.EntityRepository.findById">> Optional<Department> findByDepId(int depId);
      List<Department> findAll();
-     Department save(Department entity);
+     Department save(Department department);
      <<ref="CRUDBackendRef.EntityRepository.removeById">> void removeByDepId(int depId);
 
    }
@@ -30,7 +30,7 @@ classdiagram DomainModel {
      <<ref="CRUDBackendRef.EntityRepository.findById">> Optional<Employee> findById(String id);
      <<ref="CRUDBackendRef.EntityRepository.findById">> Optional<Employee> findByTaxId(String taxId);
      List<Employee> findAll();
-     Employee save(Employee entity);
+     Employee save(Employee employee);
      <<ref="CRUDBackendRef.EntityRepository.removeById">> void removeById(String id);
      <<ref="CRUDBackendRef.EntityRepository.removeById">> void removeByTaxId(String taxId);
    }

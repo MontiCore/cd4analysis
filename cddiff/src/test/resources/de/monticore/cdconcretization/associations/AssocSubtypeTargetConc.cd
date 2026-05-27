@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AssocSubtypeTargetConc {
+  // concrete CD has the same types as the reference but no associations
+  class Container;
+  class Item;
+  class SpecialItem extends Item;
+}

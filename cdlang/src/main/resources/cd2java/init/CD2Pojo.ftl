@@ -37,6 +37,9 @@ ${decConfig.withAbstractMethodSignatures().applyOnName("abstractMethod").ignoreO
 ${decConfig.withBuilders().applyOnName("builder").ignoreOnName("noBuilder")}
 <#-- Similarly, the Observable decorator is NOT applied by default, unless an element or its parents are marked with observable -->
 ${decConfig.withObservers().applyOnName("observable").ignoreOnName("notObservable")}
+<#-- Similarly, the Visitor decorator is NOT applied by default, unless an element or its parents are marked with visitor -->
+${decConfig.withVisitors().applyOnName("visitor").ignoreOnName("noVisitor")}
+${decConfig.withVisitorImplementations().applyOnName("visitor").ignoreOnName("noVisitor").ignoreOnName("noDefaultVisitor")}
 
 
 <#--
