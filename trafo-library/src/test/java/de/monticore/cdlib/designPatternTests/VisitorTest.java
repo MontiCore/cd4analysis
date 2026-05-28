@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test class Visitor
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class VisitorTest {
   
   @BeforeAll

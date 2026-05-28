@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test class FileUtility
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class FileUtilityTest {
   
   @BeforeAll
