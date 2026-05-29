@@ -1,0 +1,369 @@
+/* (c) https://github.com/MontiCore/monticore */
+/* adapted and customized by (c) MaCoCo, ein RWTH Aachen projekt */
+
+// Partial concrete CD: contains roughly 30% of the elements of MaCoCoRef.cd
+// (classes, enums, associations and attributes). The remaining elements must be
+// completed by the concretization tool against MaCoCoRef.cd.
+
+import java.lang.String;
+import java.lang.Long;
+import java.lang.Integer;
+import java.lang.Boolean;
+
+import java.time.ZonedDateTime;
+
+classdiagram PartialConc {
+
+  //----------------------------------------------
+  //--------------- PERSONAL ---------------------
+  //----------------------------------------------
+
+  class Person {
+    String vorname;
+    String nachname;
+    String kuerzel;
+    Optional<String> personalnummer;
+    boolean istAktiv;
+  }
+
+  association [1] Person -> (anstellungsarten) Anstellungsart [*];
+  association [*] Person -> (vorgesetzte) Person [*];
+  association [1] Person -> (notiz) Freitext [0..1];
+  association [1] Person -> (jahresurlaubstage) Jahresurlaub [*];
+  association [1] Person -> (stundenzettel) Stundenzettel [*];
+  association [1] Person -> (abwesenheiten) Abwesenheit [*];
+  association [1] Person -> (user) MacocoUser [0..1];
+
+  class Anstellungsart {
+    BeschaeftigungsArt beschArt;
+  }
+
+  association [1] Anstellungsart -> (vertraege) Vertrag [*];
+  association [1] Anstellungsart -> (anstellungsformen) Anstellungsform [*];
+
+  enum BeschaeftigungsArt {
+    WiMi("Wissenschaftliche/r Mitarbeiter/in (WiMi)"),
+    HiWi("Hilfskraft (HiWi)"),
+    BTV("Beschäftigte/r in Technik und Verwaltung (BTV)"),
+    BEAMTE("Beamte/r"),
+    AZUBI("Azubi/ne"),
+    PLAN;
+  }
+
+  class Vertrag {
+    ZonedDateTime vertragsBeginn;
+    ZonedDateTime vertragsEnde;
+    boolean aenderungsvertrag;
+    ZahlenWert planUmfang;
+  }
+
+  association [1] Vertrag -> (kostenstellen) Kostenstelle [*];
+
+  class Anstellungsform {
+    boolean erstanstellung;
+    boolean unbefristet;
+    ZonedDateTime anstellungVon;
+    long gehaltCent;
+  }
+
+  class Kostenstelle {
+    ZonedDateTime verbuchungsBeginn;
+    ZonedDateTime verbuchungsEnde;
+    KostenstelleBezeichnung bezeichnung;
+    ZahlenWert beschaeftigungsUmfang;
+  }
+
+  enum KostenstelleBezeichnung {
+    NONE(""),
+    AN_INSTITUT("An-Institut"),
+    GMBH("GmbH"),
+    ANDERER_LEHRSTUHL,
+    ANDERES_INSTITUT,
+    VORUEBERGEHEND_ABWESEND("Vorübergehend Abwesend"),
+    ANDERE_FINANZIERUNG;
+  }
+
+  association [*] Kostenstelle -> (personalBudget) Budget [0..1];
+  association Kostenstelle -> (stellenzuweisung) Stellenzuweisung [0..1];
+  association Kostenstelle -> (planstelle) Planstelle [0..1];
+  association [0..1] Kostenstelle -> (personalBuchungen) Buchung [*];
+
+  class Planstelle {
+    String bezeichnung;
+    ZahlenWert planUmfang;
+    boolean aktiv;
+  }
+
+  association Planstelle -> (konto) Konto [0..1];
+
+  class ZahlenWert {
+    ZahlenTyp zahlenTyp;
+    long wert;
+  }
+
+  enum ZahlenTyp {EURO, STUNDE, PROZENT, NONE; }
+
+  //----------------------------------------------
+  // ============ Finanz-Datenstruktur ===========
+  //----------------------------------------------
+
+  abstract class Konto {
+    String name;
+    boolean istAktiv;
+  }
+
+  association [1] Konto (konto) -> (gesamtBudget) Budget [0..1];
+  association [1] Konto -> (kommentare) Freitext [*];
+  association [1] Konto <-> MailAlert [*];
+
+  abstract class ErweitertesKonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    Optional<String> aktenzeichen;
+  }
+
+  class Drittmittelprojekt extends ErweitertesKonto {
+  }
+
+  class Haushaltskonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+  }
+
+  class Industrieprojekt extends ErweitertesKonto {
+    Optional<String> auftraggeber;
+    boolean istSammelkonto;
+  }
+
+  class Budget {
+    String typ;
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+  }
+
+  association [*] Budget -> Konto [1];
+  association [1] Budget (budget) <-> (buchungseintrag) Buchungseintrag [*];
+  association [1] Budget (budget) <-> (stellenzuweisung) Stellenzuweisung [*];
+
+  abstract class Buchungseintrag {
+    ZonedDateTime datum;
+    long betragCent;
+    boolean istAktiv;
+  }
+
+  class Buchung extends Buchungseintrag {
+    ZonedDateTime belegdatum;
+    String zahlungsgrund;
+    BuchungsStatus status;
+  }
+
+  enum BuchungsStatus {
+    EINGEREICHT,
+    SAP("SAP"),
+    SAP_STORNIERT("SAP(Storniert)"),
+    PLANUNG,
+    FEHLERHAFT;
+  }
+
+  class Mittelabruf extends Buchungseintrag {
+    ZonedDateTime abrufdatum;
+    MittelabrufStatus status;
+    String zeitraum;
+  }
+
+  enum MittelabrufStatus {
+    ABGERUFEN,
+    SAP("SAP"),
+    SAP_STORNIERT("SAP(Storniert)"),
+    PLANUNG,
+    EINGEREICHT;
+  }
+
+  class Stellenzuweisung {
+    ZonedDateTime erstellDatum;
+    long wert;
+    StellenzuweisungStatus status;
+    ZahlenWert stellenumfang;
+  }
+
+  enum StellenzuweisungStatus {
+    BESETZT,
+    TEILBESETZT,
+    UNBESETZT,
+    PLANUNG;
+  }
+
+  class Freitext {
+    Optional<ZonedDateTime> erstellDatum;
+    Optional<String> text;
+  }
+
+  class MailAlert {
+    String name;
+    String alertCondition;
+    String mailBody;
+  }
+
+  //----------------------------------------------
+  // =============== Projekte ===============
+  //----------------------------------------------
+
+  abstract class Projekt {
+    String name;
+    String kuerzel;
+    ProjektStatus status;
+    boolean istAktiv;
+  }
+
+  association [*] Projekt -> Konto [0..1];
+  association [*] Projekt -> (hauptverantwortlich) Person [*];
+
+  class Auftragsprojekt extends Projekt {
+    Optional<String> nummer;
+    ProjektTyp typ;
+  }
+
+  enum ProjektStatus {
+    IN_DEFINITION,
+    BEANTRAGT,
+    GENEHMIGT,
+    ABGELEHNT,
+    LAUFEND,
+    FACHLICH_ABGESCHLOSSEN("Fachlich abgeschlossen"),
+    ENDBERICHT_EINGEREICHT("Endbericht eingereicht"),
+    INPRUEFUNG("In Prüfung"),
+    GEPRUEFT("Geprüft"),
+    ABGERECHNET,
+    ABGESCHLOSSEN,
+    ARCHIVIERT;
+  }
+
+  enum ProjektTyp {
+    HOHEITLICH,
+    INDUSTRIE,
+    UNIVERSITAET("Universität"),
+    SONSTIGE;
+  }
+
+  //----------------------------------------------
+  // =============== Stundenzettel ===============
+  //----------------------------------------------
+
+  class Stundenzettel {
+    StundenzettelStatus status;
+    ZonedDateTime zeit;
+  }
+
+  enum StundenzettelStatus {
+    IN_ERFASSUNG,
+    INTERN_INPRUEFUNG("Intern in Prüfung"),
+    INTERN_ABGESCHLOSSEN,
+    DRITTMITTELABTEILUNG_INPRUEFUNG("Drittmittelabteilung in Prüfung"),
+    DRITTMITTELABTEILUNG_ABGESCHLOSSEN,
+    ENDBERICHT_EINGEREICHT,
+    GEPRUEFT("Geprüft"),
+    FOERDERGEBER_ABGESCHLOSSEN("Fördergeber abgeschlossen"),
+    ABGESCHLOSSEN;
+  }
+
+  class Abwesenheit {
+    Abwesenheitsgrund grund;
+    ZonedDateTime  datumVon;
+    ZonedDateTime datumBis;
+  }
+
+  enum Abwesenheitsgrund {
+    U_URLAUB,
+    D_DIENSTREISE,
+    S_SONSTIGE;
+  }
+
+  class Jahresurlaub {
+    int jahr;
+    long tageAnzahl;
+  }
+
+  //----------------------------------------------
+  // =============== Fakultät 1 DS ===============
+  //----------------------------------------------
+
+  class Institut {
+    String institutsKennZiffer;
+    String institutsName;
+    String professorName;
+  }
+
+  class F1Konto extends Haushaltskonto {
+    long originalBudgetCent;
+    long aktuellerKontostandCent;
+    KommunikationsStatus kommunikationsStatus;
+  }
+
+  enum KommunikationsStatus {
+    KOM_STAT_NO_ACTION_NEEDED,
+    KOM_STAT_BEGR_FEHLT,
+    KOM_STAT_ANTW_FEHLT,
+    KOM_STAT_ANTW_CHANGED,
+    KOM_STAT_BEGR_CHANGED,
+    KOM_STAT_ANTW_BEGR_CHANGED,
+    KOM_STAT_ANTW_FEHLT_CHANGED;
+  }
+
+  association [*] F1Konto -> (institut) Institut [0..1];
+
+  //----------------------------------------------
+  // =============== MacocoUser ===============
+  //----------------------------------------------
+
+  class MacocoUser {
+    String username;
+    String passwordSaltBase64;
+    ZonedDateTime registrationDate;
+    MacocoUserActivationStatus activated;
+    boolean enabled;
+    String email;
+  }
+
+  association  [*] MacocoUser -> (institute) Institut [*];
+
+  enum MacocoUserActivationStatus {
+    AKTIVIERT,
+    MAIL_NICHT_GESENDET("Mail nicht gesendet"),
+    MAIL_FEHLERHAFT("Mail fehlerhaft"),
+    MAIL_GESENDET("Mail gesendet");
+  }
+
+  //----------------------------------------------
+  // =============== Fristen ===============
+  //----------------------------------------------
+
+  class Frist {
+    String beschreibung;
+    Friststatus status;
+    Fristobjekt fristobjekt;
+    ZonedDateTime faelligkeitsdatum;
+    boolean istAktiv;
+  }
+
+  association [1] Person -> Frist [*];
+  association [1] Konto -> Frist [*];
+  association [1] Projekt -> Frist [*];
+  association [1] Mittelabruf -> Frist [0..1];
+
+  enum Friststatus {
+    PLANUNG,
+    IN_BEARBEITUNG,
+    ERLEDIGT;
+  }
+
+  enum Fristobjekt {
+    PERSON,
+    KONTO,
+    VERTRAGSVERLAENGERUNG("Vertragsverlängerung"),
+    ZULAGE,
+    RECHNUNG,
+    MITTELABRUF,
+    PROJEKT;
+  }
+
+}

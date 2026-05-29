@@ -307,13 +307,36 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   
   @Nested
   class MaCoCo {
-    
+
     @Test
     void testConcreteEmpty() {
       testConcretizedConformsToRefAndExpectedOut("evaluation/macoco/EmptyConc.cd",
           "evaluation/macoco/MaCoCoRef.cd", "evaluation/macoco/EmptyConcOut.cd");
     }
-    
+
+    /**
+     * Starts from a concrete CD that already contains roughly 30% of the elements
+     * (classes, enums, associations and attributes) of {@code MaCoCoRef.cd}. The
+     * concretization tool is expected to complete the missing elements against the
+     * reference CD.
+     */
+    @Test
+    void testConcretePartial() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/macoco/PartialConc.cd",
+          "evaluation/macoco/MaCoCoRef.cd", "evaluation/macoco/PartialConcOut.cd");
+    }
+
+    /**
+     * Starts from a concrete CD that is already a 1:1 copy of {@code MaCoCoRef.cd}.
+     * The concretization step must be idempotent (no additions, no findings) and
+     * additionally serves as a performance/scalability check on the full model.
+     */
+    @Test
+    void testConcreteFull() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/macoco/FullConc.cd",
+          "evaluation/macoco/MaCoCoRef.cd", "evaluation/macoco/FullConcOut.cd");
+    }
+
   }
   
   @Nested
