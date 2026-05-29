@@ -11,16 +11,26 @@ import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.lambdas.SerializableLambdas;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
+import javax.inject.Inject;
+
 @SuppressWarnings("unused")
 public class SymTabDefinitionGradlePlugin implements Plugin<Project> {
   
   public static final String CONFIG_TOOL = "stdefTool";
+  
+  private final ObjectFactory objectFactory;
+  
+  @Inject
+  public SymTabDefinitionGradlePlugin(ObjectFactory objectFactory) {
+    this.objectFactory = objectFactory;
+  }
   
   @Override
   public void apply(Project project) {
@@ -81,11 +91,11 @@ public class SymTabDefinitionGradlePlugin implements Plugin<Project> {
         SymTabDefinitionSourceDirectorySet.SOURCEDIRSET_NAME, sourceSet.getName()
             + " class diagram source");
     
-    SymTabDefinitionSourceDirectorySet cdSrcDirSet = sourceSet.getExtensions().create(
-        SymTabDefinitionSourceDirectorySet.class,
-        SymTabDefinitionSourceDirectorySet.SOURCEDIRSET_NAME,
+    SymTabDefinitionSourceDirectorySet cdSrcDirSet = objectFactory.newInstance(
         SymTabDefinitionSourceDirectorySet.DefaultSymTabDefinitionSourceDirectorySet.class,
         vanillaSrcDirSet);
+    sourceSet.getExtensions().add(SymTabDefinitionSourceDirectorySet.class,
+        SymTabDefinitionSourceDirectorySet.SOURCEDIRSET_NAME, cdSrcDirSet);
     
     // select output directory
     String buildDir = "generated/" + sourceSet.getName() + "/symtabdefinition/symbols";
