@@ -1,5 +1,4 @@
-span
-
+<!-- (c) https://github.com/MontiCore/cd4anaylsis -->
 This page is under construction.
 
 # Getting Started with the CD4Code Generator
@@ -53,48 +52,42 @@ For installing the CD4Code generator for either the CLI or Gradle usage,
 select the suitable tab below and perform the following steps:
 
 === "CLI"
-
-A ready to use version of the tool can be downloaded in the form of an
-executable JAR file.
-You can use [**this download link**][ToolDownload] for downloading the tool.
-Alternatively, the `wget` command can be used to download the latest version
-into your working directory:
-```shell
-wget "https://monticore.de/download/MCCD.jar" -O MCCD.jar
-```
-
+    A ready to use version of the tool can be downloaded in the form of an
+    executable JAR file.
+    You can use [**this download link**][ToolDownload] for downloading the tool.
+    Alternatively, the `wget` command can be used to download the latest version
+    into your working directory:
+    ```shell
+    wget "https://monticore.de/download/MCCD.jar" -O MCCD.jar
+    ```
 === "Gradle"
-By adding the `de.rwth.se.cdgen` Gradle plugin to your project,
-all class diagrams in the _cds_ source-directory-set (e.g., _src/main/cds_, _src/test/cds_) are generated to Java code.
-
-```groovy
-//TODO imports dont work: import java.util.List; is not found and all lists are marked as missing types
-
-// build.gradle
-plugins {
-  id 'java-library'
-  id 'de.rwth.se.cdgen' version '7.9.0-SNAPSHOT'
-}
-
-repositories {
-  maven { url 'https://nexus.se.rwth-aachen.de/content/groups/public' }
-}
-
-// settings.gradle
-pluginManagement {
-  repositories {
-    maven {
-      url "https://nexus.se.rwth-aachen.de/content/groups/public"
+    By adding the `de.rwth.se.cdgen` Gradle plugin to your project,
+    all class diagrams in the _cds_ source-directory-set (e.g., _src/main/cds_, _src/test/cds_) are generated to Java code.
+    
+    ```groovy 
+    // build.gradle
+    plugins {
+        id 'java-library'
+        id 'de.rwth.se.cdgen' version '7.9.0-SNAPSHOT'
     }
-  }
-}
-```
+    
+    repositories {
+        maven { url 'https://nexus.se.rwth-aachen.de/content/groups/public' }
+        mavenCentral()
+    }
+    
+    // settings.gradle
+    pluginManagement {
+        repositories {
+            maven {
+                url "https://nexus.se.rwth-aachen.de/content/groups/public"
+            }
+        }
+    }
+    ```
+    For the main source set, all `.cd` files within the `src/main/cds` directory will be processed.
 
-For the main source set, all `.cd` files within the `src/main/cds` directory will be processed.
-
-=== "Library"
-
-### Inspect the class diagram
+## Inspect the class diagram
 
 The CD4Code generator helps to generate Java code from class diagrams. It supports easy 
 integration within gradle projects, but also as a one-shot generation tool. The CD4Code 
@@ -254,55 +247,45 @@ Depending on how you are running the CD4Code Generator, you can pass these confi
 your Gradle build script, or directly through the Java API. Select your environment below:
 
 === "CLI"
-
-When running the CD4Code generator from the command line, you can pass element-level tags using the `-cliconfig` 
-parameter. Multiple configurations can be applied by repeating the argument.
-
-For example, to disable getters and setters specifically for the `Address` class inside the `MyCompany` 
-diagram, use the following command:
-
-```shell
-java -jar MCCD.jar -i src/MyCompany.cd -cliconfig "MyCompany.Address:noGetter" -cliconfig "MyCompany.Address:noSetter"
-```
-
-To apply a global configuration template, use the `-ct` (config template) argument to specify the 
-template name, and `-fp` (file path) to specify the directory where the custom `.ftl` file is located:
-
-```shell
-java -jar MCCD.jar -i src/MyCompany.cd -ct CD2OwnDecorator -fp src/main/configTemplate
-```
+    When running the CD4Code generator from the command line, you can pass element-level tags using the `-cliconfig` 
+    parameter. Multiple configurations can be applied by repeating the argument.
+    
+    For example, to disable getters and setters specifically for the `Address` class inside the `MyCompany` 
+    diagram, use the following command:
+    
+    ```shell
+    java -jar MCCD.jar -i src/MyCompany.cd -cliconfig "MyCompany.Address:noGetter" -cliconfig "MyCompany.Address:noSetter"
+    ```
+    
+    To apply a global configuration template, use the `-ct` (config template) argument to specify the 
+    template name, and `-fp` (file path) to specify the directory where the custom `.ftl` file is located:
+    
+    ```shell
+    java -jar MCCD.jar -i src/MyCompany.cd -ct CD2OwnDecorator -fp src/main/configTemplate
+    ```
 
 === "Gradle"
-
-When using Gradle, element-level configurations can be added directly to the `options` list of the 
-`generateClassDiagrams` task.
-
-```groovy
-// build.gradle
-tasks.named("generateClassDiagrams") {
-  // Element-level configuration targeting the Address class
-  options.add("MyCompany.Address:noGetter")
-  options.add("MyCompany.Address:noSetter")
-  
-  // Global-level configuration: Change the config template used by the generator
-  // getConfigTemplate().set("CD2OwnDecorator")
-  
-  // Additional optional configurations:
-  // getClass2MC().set(true)
-  // getCoCos().set(false) // (Not encouraged!)
-  // getOriginalSymbolOutput().set(...)
-  // getDecoratedSymbolOutput().set(...)
-  // getOutputDir().set(...)
-}
-
-repositories {
-  maven { url '[https://nexus.se.rwth-aachen.de/content/groups/public](https://nexus.se.rwth-aachen.de/content/groups/public)' }
-  mavenCentral()
-}
-```
-
-=== "Library"
-//TODO
+    When using Gradle, element-level configurations can be added directly to the `options` list of the 
+    `generateClassDiagrams` task.
+    
+    ```groovy
+    // build.gradle
+    tasks.named("generateClassDiagrams") {
+      // Element-level configuration targeting the Address class
+      options.add("MyCompany.Address:noGetter")
+      options.add("MyCompany.Address:noSetter")
+      
+      // Global-level configuration: Change the config template used by the generator
+      // getConfigTemplate().set("CD2OwnDecorator")
+      
+      // Additional optional configurations:
+      // getClass2MC().set(true)
+      // getCoCos().set(false) // (Not encouraged!)
+      // getOriginalSymbolOutput().set(...)
+      // getDecoratedSymbolOutput().set(...)
+      // getOutputDir().set(...)
+    }
+    ```
 
 ## Running the CD4Code Generator
 The execution of the CD4Code Generator follows a structured pipeline.
@@ -315,36 +298,35 @@ contents, creates an internal symbol table to resolve types, and runs Context Co
 ensure the diagram adheres to all semantic rules of the language.
 
 === "CLI"
-
-To parse and validate a class diagram model without generating any code artifacts, pass the input file 
-using the `-i` flag to specify the input file path. By default, basic validation occurs, but you can 
-explicitly enforce full CoCo checks or enable Java type resolution.
-
-```shell
-# Basic parse, symbol table creation, and check
-java -jar MCCD.jar -i src/MyCompany.cd
-
-# Explicitly check all CD4C Context Conditions (CoCos)
-java -jar MCCD.jar -i src/MyCompany.cd --checkcocos
-
-# Enable resolution of standard Java classes (e.g., java.util.List) within the model
-java -jar MCCD.jar -i src/MyCompany.cd --class2mc
-```
+    To parse and validate a class diagram model without generating any code artifacts, pass the input file 
+    using the `-i` flag to specify the input file path. By default, basic validation occurs, but you can 
+    explicitly enforce full CoCo checks or enable Java type resolution.
+    
+    ```shell
+    # Basic parse, symbol table creation, and check
+    java -jar MCCD.jar -i src/MyCompany.cd
+    
+    # Explicitly check all CD4C Context Conditions (CoCos)
+    java -jar MCCD.jar -i src/MyCompany.cd --checkcocos
+    
+    # Enable resolution of standard Java classes (e.g., java.util.List) within the model
+    java -jar MCCD.jar -i src/MyCompany.cd --class2mc
+    ```
 
 === "Gradle"
-In a standard Gradle setup, the plugin automatically configures these phases as part of its default task 
-execution pipeline. However, you can control CoCo behavior and type resolution directly within the task 
-configuration block.
-```groovy
-// build.gradle
-tasks.named("generateClassDiagrams") {
-  // Enables resolving standard Java classes used inside the CD diagram
-  getClass2MC().set(true)
-
-  // Controls whether CoCo checks are executed (enabled by default)
-  getCoCos().set(true)
-}
-```
+    In a standard Gradle setup, the plugin automatically configures these phases as part of its default task 
+    execution pipeline. However, you can control CoCo behavior and type resolution directly within the task 
+    configuration block.
+    ```groovy
+    // build.gradle
+    tasks.named("generateClassDiagrams") {
+      // Enables resolving standard Java classes used inside the CD diagram
+      getClass2MC().set(true)
+    
+      // Controls whether CoCo checks are executed (enabled by default)
+      getCoCos().set(true)
+    }
+    ```
 
 ### 2. Storing and Exporting Symbols
 In a large-scale project, comprehensibility suffers when a single file contains all artifacts of our class 
@@ -352,91 +334,90 @@ diagram. To address this issue, the CD4Code Generator can serialize its symbol t
 symbol file, which can then be exported or loaded as a dependency by other models. 
 
 === "CLI"
-Use the `-s` or `--symboltable` flag to specify where the serialized symbol table file should be saved. 
-If your diagram depends on external symbols, use the -path flag to point to the directory containing 
-those symbol files.
-```shell
-# Export the symbol table to a specific file
-java -jar MCCD.jar -i src/MyCompany.cd -s out/symbols/MyCompany.cdsym
-
-# Load external dependencies/symbols while processing a diagram
-java -jar MCCD.jar -i src/MyCompany.cd -path dependencies/symbols/
-```
+    Use the `-s` or `--symboltable` flag to specify where the serialized symbol table file should be saved. 
+    If your diagram depends on external symbols, use the -path flag to point to the directory containing 
+    those symbol files.
+    ```shell
+    # Export the symbol table to a specific file
+    java -jar MCCD.jar -i src/MyCompany.cd -s out/symbols/MyCompany.cdsym
+    
+    # Load external dependencies/symbols while processing a diagram
+    java -jar MCCD.jar -i src/MyCompany.cd -path dependencies/symbols/
+    ```
 
 === "Gradle"
-The Gradle plugin manages symbol storage and tracking automatically, storing original and decorated 
-symbols in separate build directories. You can customize these locations if your build pipeline 
-requires a non-standard layout.
-
-```groovy
-// build.gradle
-tasks.named("generateClassDiagrams") {
-  // Customize the output directory for the original symbol table
-  getOriginalSymbolOutput().set(file("build/custom-symbols/original"))
-
-  // Customize the output directory for the decorated symbol table
-  getDecoratedSymbolOutput().set(file("build/custom-symbols/decorated"))
-}
-```
+    The Gradle plugin manages symbol storage and tracking automatically, storing original and decorated 
+    symbols in separate build directories. You can customize these locations if your build pipeline 
+    requires a non-standard layout.
+    
+    ```groovy
+    // build.gradle
+    tasks.named("generateClassDiagrams") {
+      // Customize the output directory for the original symbol table
+      getOriginalSymbolOutput().set(file("build/custom-symbols/original"))
+    
+      // Customize the output directory for the decorated symbol table
+      getDecoratedSymbolOutput().set(file("build/custom-symbols/decorated"))
+    }
+    ```
 
 ### 3. Generating Java Code
 Once the model is fully validated and its symbols are resolved, the generator can proceed to execute
 the decorators and generate the actual Java source files.
 
 === "CLI"
-To trigger code generation, you must explicitly include the `--gen` flag. You can combine this with the
-`-o` flag to specify the target directory for the generated code, and `--fieldfromrole` to control 
-how associations are translated into actual class fields.
-```
-# Generate Java files into a dedicated output directory
-java -jar MCCD.jar -i src/MyCompany.cd --gen -o out/generated-sources
-
-# Generate code while explicitly mapping navigable association roles to Java fields
-java -jar MCCD.jar -i src/MyCompany.cd --gen -o out/generated-sources --fieldfromrole navigable
-```
-
-If your class diagram contains associations (e.g., `association [1..*] Company (employer) <-> Employee [*]`),
-the basic `--gen` command will not automatically generate the corresponding Java fields to link these objects.
-Instead, you must explicitly tell the generator to map these association roles to fields using the
-`--fieldfromrole` flag.
-
-In our example, the `Company` class has a role named `employer` in its association with `Employee`.
-This means the generator will create an `employer` field inside the generated `Employee` Java class to represent 
-the relationship. To generate these fields, use the following command:
-
-```shell
-java -jar MCCD.jar -i src/MyCompany.cd -o out --gen --fieldfromrole navigable
-```
-
-
-=== "Gradle"
-Code generation is fully integrated into the standard Gradle lifecycle. Executing the `build` task or the 
-specific `generateClassDiagrams` task automatically processes all source sets and places the output in the 
-configured directory.
-
-```groovy
-// build.gradle
-tasks.named("generateClassDiagrams") {
-  // Set the target directory for the generated Java files
-  getOutputDir().set(file("build/generated/sources/cdgen/main/java"))
-}
-```
+    To trigger code generation, you must explicitly include the `--gen` flag. You can combine this with the
+    `-o` flag to specify the target directory for the generated code, and `--fieldfromrole` to control 
+    how associations are translated into actual class fields.
+    ```
+    # Generate Java files into a dedicated output directory
+    java -jar MCCD.jar -i src/MyCompany.cd --gen -o out/generated-sources
+    
+    # Generate code while explicitly mapping navigable association roles to Java fields
+    java -jar MCCD.jar -i src/MyCompany.cd --gen -o out/generated-sources --fieldfromrole navigable
+    ```
+    
+    If your class diagram contains associations (e.g., `association [1..*] Company (employer) <-> Employee [*]`),
+    the basic `--gen` command will not automatically generate the corresponding Java fields to link these objects.
+    Instead, you must explicitly tell the generator to map these association roles to fields using the
+    `--fieldfromrole` flag.
+    
+    In our example, the `Company` class has a role named `employer` in its association with `Employee`.
+    This means the generator will create an `employer` field inside the generated `Employee` Java class to represent 
+    the relationship. To generate these fields, use the following command:
+    
+    ```shell
+    java -jar MCCD.jar -i src/MyCompany.cd -o out --gen --fieldfromrole navigable
+    ```
 
 === "Gradle"
-Just like the CLI, the Gradle plugin does not generate fields for associations by default. You must explicitly configure the task to map these roles to Java fields.
+    Code generation is fully integrated into the standard Gradle lifecycle. Executing the `build` task or the 
+    specific `generateClassDiagrams` task automatically processes all source sets and places the output in the 
+    configured directory.
+    
+    ```groovy
+    // build.gradle
+    tasks.named("generateClassDiagrams") {
+      // Set the target directory for the generated Java files
+      getOutputDir().set(file("build/generated/sources/cdgen/main/java"))
+    }
+    ```
 
-You can do this by setting the `fieldFromRole` property inside your generation task:
-
-```groovy
-// build.gradle
-tasks.named("generateClassDiagrams") {
-  // Set the target directory for the generated Java files
-  getOutputDir().set(file("build/generated/sources/cdgen/main/java"))
-
-  // Explicitly map navigable association roles to generated Java fields
-  getFieldFromRole().set("navigable")
-}
-```        
+ #  === "Gradle"
+ #  Just like the CLI, the Gradle plugin does not generate fields for associations by default. You must explicitly configure the task to map these roles to Java fields.
+ #  
+ #  You can do this by setting the `fieldFromRole` property inside your generation task:
+ #  
+ #  ```groovy
+ #  // build.gradle
+ #  tasks.named("generateClassDiagrams") {
+ #    // Set the target directory for the generated Java files
+ #    getOutputDir().set(file("build/generated/sources/cdgen/main/java"))
+ #  
+ #    // Explicitly map navigable association roles to generated Java fields
+ #    getFieldFromRole().set("navigable")
+ #  }
+ #  ```        
 
 Running the CD4Code generator tooled into a Gradle build is as simple as executing the Gradle build task.
 
