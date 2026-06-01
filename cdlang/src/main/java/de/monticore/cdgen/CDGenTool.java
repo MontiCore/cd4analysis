@@ -150,7 +150,7 @@ public class CDGenTool extends CDGeneratorTool {
         }
       }
       
-      if (cmd.hasOption("o")) {
+      if (cmd.hasOption("o") || cmd.hasOption("pp")) {
         // Where to load additional templates from
         List<File> additionalTemplatePaths = cmd.hasOption("fp") ? Arrays.stream(cmd
             .getOptionValues("fp")).map(Paths::get).map(Path::toFile).collect(Collectors.toList())
@@ -182,7 +182,10 @@ public class CDGenTool extends CDGeneratorTool {
                 // If required, we also output the symbol table of the *decorated* AST
                 this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
               }
-            }, asts);
+              if(cmd.hasOption("pp")){
+                this.prettyPrint(decorated, Paths.get(cmd.getOptionValue("pp")).toString());
+              }
+            }, asts, cmd.hasOption("o"));
       }
     }
     catch (ParseException e) {
@@ -224,7 +227,7 @@ public class CDGenTool extends CDGeneratorTool {
   public void decorateAndGenerate(GlobalExtensionManagement glex,
       Consumer<DecoratorConfig> initializeDecConf, GeneratorSetup setup,
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
-      Collection<ASTCDCompilationUnit> asts) {
+      Collection<ASTCDCompilationUnit> asts, boolean doGenerate) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance()); // TODO: Remove from templates
     glex.setGlobalValue("cdGenService", new CDGenService());
@@ -272,7 +275,9 @@ public class CDGenTool extends CDGeneratorTool {
       topTransformer.addToTraverser(t);
       decorated.get().accept(t);
       
-      generator.generate(decorated.get());
+      if(doGenerate) {
+        generator.generate(decorated.get());
+      }
     }
   }
   
@@ -373,7 +378,11 @@ public class CDGenTool extends CDGeneratorTool {
     options.addOption(org.apache.commons.cli.Option.builder("sd").longOpt("symboltabledecorated")
         .argName("file").hasArg().desc(
             "Serializes the decorated symbol table of the given artifact.").build());
-    
+
+    options.addOption(org.apache.commons.cli.Option.builder("pp").longOpt("prettyprint")
+        .argName("file").hasArg().desc(
+            "Pretty prints the decorated AST to the given file.").build());
+
     return options;
   }
   

@@ -1,0 +1,183 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+import java.util.List;
+import java.util.Date;
+import java.util.*;
+public classdiagram MyLife { 
+  package MyLife { 
+    // ===== Enums =====
+    public enum Status { 
+      ACTIVE,INACTIVE,PAUSED;
+
+    } 
+    public enum Priority { 
+      LOW,MEDIUM,HIGH,CRITICAL;
+
+    } 
+    public enum Role { 
+      MANAGER,DEVELOPER,DESIGNER,ANALYST;
+
+    } 
+    // ===== Abstract Base Classes =====
+    public abstract class Person implements de.monticore.cd.ICDObservable<MyLife.IPersonObserver,Person>{ 
+      public String name;
+      public Date birthDate;
+      public String email;
+      protected List<MyLife.IPersonObserver>observerList;
+      public void addObserver(MyLife.IPersonObserver observer);
+      public void removeObserver(MyLife.IPersonObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetName(String ov);
+      protected void notifyObserversSetBirthDate(Date ov);
+      protected void notifyObserversSetEmail(String ov);
+
+    } 
+    public abstract class Asset implements de.monticore.cd.ICDObservable<MyLife.IAssetObserver,Asset>{ 
+      public String assetId;
+      public Date createdDate;
+      public Priority priority;
+      protected List<MyLife.IAssetObserver>observerList;
+      public void addObserver(MyLife.IAssetObserver observer);
+      public void removeObserver(MyLife.IAssetObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetAssetId(String ov);
+      protected void notifyObserversSetCreatedDate(Date ov);
+      protected void notifyObserversSetPriority(Priority ov);
+
+    } 
+    // ===== Concrete Classes (with inheritance) =====
+    public class Employee extends Person implements de.monticore.cd.ICDObservable<MyLife.IEmployeeObserver,Employee>{ 
+      public String employeeId;
+      public double salary;
+      public Status employmentStatus;
+      public List<Priority>responsibilities;
+      protected List<MyLife.IEmployeeObserver>observerList;
+      public void addObserver(MyLife.IEmployeeObserver observer);
+      public void removeObserver(MyLife.IEmployeeObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetEmployeeId(String ov);
+      protected void notifyObserversSetSalary(double ov);
+      protected void notifyObserversSetEmploymentStatus(Status ov);
+      protected void notifyObserversAddResponsibilities(int index,Priority newElem);
+      protected void notifyObserversRemoveResponsibilities(int index,Priority elem);
+
+    } 
+    public class Project extends Asset implements de.monticore.cd.ICDObservable<MyLife.IProjectObserver,Project>{ 
+      public String projectName;
+      public Date deadline;
+      public List<String>milestones;
+      protected List<MyLife.IProjectObserver>observerList;
+      public void addObserver(MyLife.IProjectObserver observer);
+      public void removeObserver(MyLife.IProjectObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetProjectName(String ov);
+      protected void notifyObserversSetDeadline(Date ov);
+      protected void notifyObserversAddMilestones(int index,String newElem);
+      protected void notifyObserversRemoveMilestones(int index,String elem);
+
+    } 
+    public class Task extends Asset implements de.monticore.cd.ICDObservable<MyLife.ITaskObserver,Task>{ 
+      public String taskName;
+      public String description;
+      public Status taskStatus;
+      protected List<MyLife.ITaskObserver>observerList;
+      public void addObserver(MyLife.ITaskObserver observer);
+      public void removeObserver(MyLife.ITaskObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetTaskName(String ov);
+      protected void notifyObserversSetDescription(String ov);
+      protected void notifyObserversSetTaskStatus(Status ov);
+
+    } 
+    public class Team implements de.monticore.cd.ICDObservable<MyLife.ITeamObserver,Team>{ 
+      public String teamName;
+      public int teamSize;
+      public List<String>teamMembers;
+      protected List<MyLife.ITeamObserver>observerList;
+      public void addObserver(MyLife.ITeamObserver observer);
+      public void removeObserver(MyLife.ITeamObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetTeamName(String ov);
+      protected void notifyObserversSetTeamSize(int ov);
+      protected void notifyObserversAddTeamMembers(int index,String newElem);
+      protected void notifyObserversRemoveTeamMembers(int index,String elem);
+
+    } 
+    public class Department implements de.monticore.cd.ICDObservable<MyLife.IDepartmentObserver,Department>{ 
+      public String deptName;
+      public String location;
+      protected List<MyLife.IDepartmentObserver>observerList;
+      public void addObserver(MyLife.IDepartmentObserver observer);
+      public void removeObserver(MyLife.IDepartmentObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetDeptName(String ov);
+      protected void notifyObserversSetLocation(String ov);
+
+    } 
+    // ===== Associations (Class-to-Class) =====
+    public association public [1..*]Employee(works_in)--(has_members)Department[0..*]public;
+    public association public [1..*]Department(manages)--(assigned_to)Project[0..*]public;
+    public association public[0..*]Employee(works_on)--(lead_by)Project [1]public;
+    public association public [1..*]Team(contains)--(belongs_to)Employee[0..*]public;
+    public association public [1..*]Project(includes)--(part_of)Task[0..*]public;
+    public association public [1..*]Department(organizes)--(team)Team[0..*]public;
+    public association public [1..*]Employee(reports_to)--(role)Role[0..*]public;
+    // ===== Compositions =====
+    public composition public [1]Project(project)--(task)Task [1..*]public;
+    public composition public [1]Department(department)--(team)Team [1..*]public;
+    public interface IPersonObserver extends de.monticore.cd.ICDObserver<Person>{ 
+      public void notifyUpdate(Person clazz);
+      public void notifyUpdateSetName(Person clazz,String ov);
+      public void notifyUpdateSetBirthDate(Person clazz,Date ov);
+      public void notifyUpdateSetEmail(Person clazz,String ov);
+
+    } 
+    public interface IAssetObserver extends de.monticore.cd.ICDObserver<Asset>{ 
+      public void notifyUpdate(Asset clazz);
+      public void notifyUpdateSetAssetId(Asset clazz,String ov);
+      public void notifyUpdateSetCreatedDate(Asset clazz,Date ov);
+      public void notifyUpdateSetPriority(Asset clazz,Priority ov);
+
+    } 
+    public interface IEmployeeObserver extends de.monticore.cd.ICDObserver<Employee>{ 
+      public void notifyUpdate(Employee clazz);
+      public void notifyUpdateSetEmployeeId(Employee clazz,String ov);
+      public void notifyUpdateSetSalary(Employee clazz,double ov);
+      public void notifyUpdateSetEmploymentStatus(Employee clazz,Status ov);
+      public void notifyUpdateAddResponsibilities(Employee clazz,int index,Priority newElem);
+      public void notifyUpdateRemoveResponsibilities(Employee clazz,int index,Priority elem);
+
+    } 
+    public interface IProjectObserver extends de.monticore.cd.ICDObserver<Project>{ 
+      public void notifyUpdate(Project clazz);
+      public void notifyUpdateSetProjectName(Project clazz,String ov);
+      public void notifyUpdateSetDeadline(Project clazz,Date ov);
+      public void notifyUpdateAddMilestones(Project clazz,int index,String newElem);
+      public void notifyUpdateRemoveMilestones(Project clazz,int index,String elem);
+
+    } 
+    public interface ITaskObserver extends de.monticore.cd.ICDObserver<Task>{ 
+      public void notifyUpdate(Task clazz);
+      public void notifyUpdateSetTaskName(Task clazz,String ov);
+      public void notifyUpdateSetDescription(Task clazz,String ov);
+      public void notifyUpdateSetTaskStatus(Task clazz,Status ov);
+
+    } 
+    public interface ITeamObserver extends de.monticore.cd.ICDObserver<Team>{ 
+      public void notifyUpdate(Team clazz);
+      public void notifyUpdateSetTeamName(Team clazz,String ov);
+      public void notifyUpdateSetTeamSize(Team clazz,int ov);
+      public void notifyUpdateAddTeamMembers(Team clazz,int index,String newElem);
+      public void notifyUpdateRemoveTeamMembers(Team clazz,int index,String elem);
+
+    } 
+    public interface IDepartmentObserver extends de.monticore.cd.ICDObserver<Department>{ 
+      public void notifyUpdate(Department clazz);
+      public void notifyUpdateSetDeptName(Department clazz,String ov);
+      public void notifyUpdateSetLocation(Department clazz,String ov);
+
+    } 
+
+  } 
+
+} 

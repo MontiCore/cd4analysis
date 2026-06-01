@@ -1,0 +1,103 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+import java.util.List;
+import java.util.Date;
+import java.util.*;
+public classdiagram MyLife { 
+  package MyLife { 
+    // ===== Enums =====
+    public enum Status { 
+      ACTIVE,INACTIVE,PAUSED;
+
+    } 
+    public enum Priority { 
+      LOW,MEDIUM,HIGH,CRITICAL;
+
+    } 
+    public enum Role { 
+      MANAGER,DEVELOPER,DESIGNER,ANALYST;
+
+    } 
+    // ===== Abstract Base Classes =====
+    public abstract class Person { 
+      protected String name;
+      protected Date birthDate;
+      protected String email;
+      public void setName(String name);
+      public void setBirthDate(Date birthDate);
+      public void setEmail(String email);
+
+    } 
+    public abstract class Asset { 
+      protected String assetId;
+      protected Date createdDate;
+      protected Priority priority;
+      public void setAssetId(String assetId);
+      public void setCreatedDate(Date createdDate);
+      public void setPriority(Priority priority);
+
+    } 
+    // ===== Concrete Classes (with inheritance) =====
+    public class Employee extends Person { 
+      protected String employeeId;
+      protected double salary;
+      protected Status employmentStatus;
+      protected List<Priority>responsibilities;
+      public void setEmployeeId(String employeeId);
+      public void setSalary(double salary);
+      public void setEmploymentStatus(Status employmentStatus);
+      public void addResponsibilities(int index,Priority responsibilities);
+      public Priority removeResponsibilities(int index);
+
+    } 
+    public class Project extends Asset { 
+      protected String projectName;
+      protected Date deadline;
+      protected List<String>milestones;
+      public void setProjectName(String projectName);
+      public void setDeadline(Date deadline);
+      public void addMilestones(int index,String milestones);
+      public String removeMilestones(int index);
+
+    } 
+    public class Task extends Asset { 
+      protected String taskName;
+      protected String description;
+      protected Status taskStatus;
+      public void setTaskName(String taskName);
+      public void setDescription(String description);
+      public void setTaskStatus(Status taskStatus);
+
+    } 
+    public class Team { 
+      protected String teamName;
+      protected int teamSize;
+      protected List<String>teamMembers;
+      public void setTeamName(String teamName);
+      public void setTeamSize(int teamSize);
+      public void addTeamMembers(int index,String teamMembers);
+      public String removeTeamMembers(int index);
+
+    } 
+    public class Department { 
+      protected String deptName;
+      protected String location;
+      public void setDeptName(String deptName);
+      public void setLocation(String location);
+
+    } 
+    // ===== Associations (Class-to-Class) =====
+    public association public [1..*]Employee(works_in)--(has_members)Department[0..*]public;
+    public association public [1..*]Department(manages)--(assigned_to)Project[0..*]public;
+    public association public[0..*]Employee(works_on)--(lead_by)Project [1]public;
+    public association public [1..*]Team(contains)--(belongs_to)Employee[0..*]public;
+    public association public [1..*]Project(includes)--(part_of)Task[0..*]public;
+    public association public [1..*]Department(organizes)--(team)Team[0..*]public;
+    public association public [1..*]Employee(reports_to)--(role)Role[0..*]public;
+    // ===== Compositions =====
+    public composition public [1]Project(project)--(task)Task [1..*]public;
+    public composition public [1]Department(department)--(team)Team [1..*]public;
+
+  } 
+
+} 
