@@ -2,8 +2,11 @@
 package de.monticore.cdgen.gradleplugin;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.file.DefaultSourceDirectorySet;
+import org.gradle.api.internal.tasks.TaskDependencyFactory;
 import org.gradle.api.tasks.SourceSet;
 
 /** A set of source files */
@@ -17,13 +20,13 @@ public interface CDSourceDirectorySet extends SourceDirectorySet {
   }
   
   // Default implementation class
-  class DefaultCDSourceDirectorySet extends DefaultSourceDirectorySet implements
+  abstract class DefaultCDSourceDirectorySet extends DefaultSourceDirectorySet implements
       CDSourceDirectorySet {
     
-    public DefaultCDSourceDirectorySet(SourceDirectorySet sourceSet) {
-      super(sourceSet);
+    @Inject
+    public DefaultCDSourceDirectorySet(SourceDirectorySet sourceSet, TaskDependencyFactory taskDependencyFactory) {
+      super(sourceSet, taskDependencyFactory);
     }
-    
   }
   
 }

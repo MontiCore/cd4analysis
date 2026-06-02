@@ -18,7 +18,7 @@ public interface SymTabDefinitionSourceDirectorySet extends SourceDirectorySet {
   }
   
   // default implementation
-  class DefaultSymTabDefinitionSourceDirectorySet extends DefaultSourceDirectorySet implements
+  abstract class DefaultSymTabDefinitionSourceDirectorySet extends DefaultSourceDirectorySet implements
       SymTabDefinitionSourceDirectorySet {
     
     @Inject
