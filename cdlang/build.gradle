@@ -208,6 +208,9 @@ java {
   registerFeature('grammars') {
     usingSourceSet(sourceSets.grammarsForVariant)
   }
+  registerFeature('trafo') {
+    usingSourceSet(sourceSets.trafo)
+  }
 }
 
 jar {
