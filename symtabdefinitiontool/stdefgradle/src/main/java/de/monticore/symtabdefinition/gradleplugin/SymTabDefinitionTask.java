@@ -35,8 +35,8 @@ public abstract class SymTabDefinitionTask extends MCAllFilesTask {
     List<String> result = new ArrayList<>();
     if (getInput().isEmpty()) {
       result.add("-" + getInputOptionString());
-      result.add(handlePath.apply(getProject().getProjectDir().toPath())
-          + "/src/main/symtabdefinition");
+      result.add(handlePath.apply(getProjectLayout().getProjectDirectory().dir(
+          "/src/main/symtabdefinition").getAsFile().getAbsoluteFile().toPath()));
     }
     else {
       getInputFilesAsStream().forEach(f -> {
