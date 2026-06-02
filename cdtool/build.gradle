@@ -46,8 +46,7 @@ dependencies {
   testImplementation "org.mockito:mockito-core:$mockito_version"
   testImplementation "com.google.code.findbugs:jsr305:$findbugs_version"
   testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
-  testImplementation(project(':cdlang').sourceSets.test.output)
-  testImplementation project(path: ':cdlang')
+  testImplementation testFixtures(project(':cdlang'))
   implementationWithoutExtras("de.monticore.lang:od:$mc_version") {
     exclude group: 'de.monticore.lang', module:'cd4analysis'
   }
