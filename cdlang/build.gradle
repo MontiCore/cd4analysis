@@ -236,7 +236,9 @@ configurations {
   }
 }
 artifacts {
-  trafoOutElements(trafoJar)
+  if(withDSTLGen) {
+    trafoOutElements(trafoJar)
+  }
 }
 
 jar {
