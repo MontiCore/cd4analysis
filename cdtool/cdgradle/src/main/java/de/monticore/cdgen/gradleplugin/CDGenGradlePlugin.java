@@ -10,15 +10,25 @@ import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.lambdas.SerializableLambdas;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 
+import javax.inject.Inject;
+
 @SuppressWarnings("unused")
 public class CDGenGradlePlugin implements Plugin<Project> {
   
   public static final String CONFIG_TOOL = "cdTool";
+  
+  private final ObjectFactory objectFactory;
+  
+  @Inject
+  public CDGenGradlePlugin(ObjectFactory objectFactory) {
+    this.objectFactory = objectFactory;
+  }
   
   @Override
   public void apply(Project project) {
@@ -90,9 +100,11 @@ public class CDGenGradlePlugin implements Plugin<Project> {
     SourceDirectorySet vanillaSrcDirSet = project.getObjects().sourceDirectorySet(
         CDSourceDirectorySet.SOURCEDIRSET_NAME, sourceSet.getName() + " class diagram source");
     
-    CDSourceDirectorySet cdSrcDirSet = sourceSet.getExtensions().create(CDSourceDirectorySet.class,
-        CDSourceDirectorySet.SOURCEDIRSET_NAME,
+    CDSourceDirectorySet cdSrcDirSet = objectFactory.newInstance(
         CDSourceDirectorySet.DefaultCDSourceDirectorySet.class, vanillaSrcDirSet);
+    
+    sourceSet.getExtensions().add(CDSourceDirectorySet.class,
+        CDSourceDirectorySet.SOURCEDIRSET_NAME, cdSrcDirSet);
     
     // By default, output into a generated/test-${NonMainName}sources/cdgen/sourcecode directory
     String buildDir = "generated-" + (SourceSet.isMain(sourceSet) ? "" : sourceSet.getName())

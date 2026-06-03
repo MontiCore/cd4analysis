@@ -10,6 +10,7 @@ import java.util.function.Function;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
@@ -18,6 +19,7 @@ import org.gradle.api.tasks.OutputDirectory;
  * Gradle Task of the {@link de.monticore.cdgen.CDGenTool} It is an all-files task, as -i A.cd -i
  * B.cd is allowed
  */
+@CacheableTask
 public abstract class CDGenTask extends MCAllFilesTask {
   
   public CDGenTask() {

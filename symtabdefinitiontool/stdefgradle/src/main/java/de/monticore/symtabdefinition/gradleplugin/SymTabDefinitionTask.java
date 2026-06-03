@@ -11,9 +11,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 
+@CacheableTask
 public abstract class SymTabDefinitionTask extends MCAllFilesTask {
   
   public SymTabDefinitionTask() {
