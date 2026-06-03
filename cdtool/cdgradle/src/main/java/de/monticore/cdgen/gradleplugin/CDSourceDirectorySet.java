@@ -24,9 +24,11 @@ public interface CDSourceDirectorySet extends SourceDirectorySet {
       CDSourceDirectorySet {
     
     @Inject
-    public DefaultCDSourceDirectorySet(SourceDirectorySet sourceSet, TaskDependencyFactory taskDependencyFactory) {
+    public DefaultCDSourceDirectorySet(SourceDirectorySet sourceSet,
+        TaskDependencyFactory taskDependencyFactory) {
       super(sourceSet, taskDependencyFactory);
     }
+    
   }
   
 }
