@@ -37,7 +37,7 @@ sourceSets {
 
 configurations {
   grammar
-  cdlangTrafoClasspath {
+  trafoInElements {
     canBeConsumed = false
     canBeResolved = true
     extendsFrom implementation
@@ -59,7 +59,7 @@ dependencies {
   // add the outgoing trafo grammar (symbols/models) of the subproject to the modelpath
   grammarSymbolDependencies project(path: ':cdlang', configuration: 'trafoGrammarSymbolOutElements')
   // add the compiled trafo java classes of the subproject to the classpath
-  implementation project(path: ":cdlang", configuration: "trafoRuntimeElements")
+  implementation project(path: ":cdlang", configuration: "trafoOutElements")
 
   implementation "de.se_rwth.commons:se-commons-groovy:$commons_version"
 
@@ -126,7 +126,7 @@ fileTree(dir: "$projectDir/src/main/transformations", include: '**/**.mtr').each
   def taskname = "buildCD4ATrafoLibTrafos${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
 
   tasks.register("$taskname", MontiTransExec.class) {
-    getClassPath().setFrom(project(":cdlang").configurations.trafoRuntimeClasspath, configurations.cdlangTrafoClasspath)
+    getClassPath().setFrom(configurations.trafoInElements)
     TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
     input = file(g)
     outputDir = grammarOutDir

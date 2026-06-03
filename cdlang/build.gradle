@@ -227,9 +227,16 @@ java {
   registerFeature('grammars') {
     usingSourceSet(sourceSets.grammarsForVariant)
   }
-  registerFeature('trafo') {
-    usingSourceSet(sourceSets.trafo)
+}
+
+configurations {
+  trafoOutElements {
+    canBeConsumed = true
+    canBeResolved = false
   }
+}
+artifacts {
+  trafoOutElements(trafoJar)
 }
 
 jar {
