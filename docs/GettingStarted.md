@@ -102,94 +102,71 @@ extended with the addition of decorators. These decorators dictate what artifact
 are generated from the class diagram, or which should not be generated at all.
 
 ```cd4code
-package corp;
 import java.util.Date;
 
-classdiagram MyCompany {
+classdiagram MyOrganizer {
 
-  enum CorpKind { SOLE_PROPRIETOR, S_CORP, C_CORP, B_CORP, CLOSE_CORP, NON_PROFIT; }
-  abstract class Entity;
-  
-  package people {
-    class Person extends Entity {
-      Date birthday;
-      List<String> nickNames;
-      -> Address [*] {ordered};
-    }
-    class Address {
-      String city;
-      String street;
-      int number;
-    }
-  }
-  
-  class Company extends Entity {
-    CorpKind kind;
-  }
-  class Employee extends people.Person {
-    int salary;
-  }
-  class Share {
-    int value;
-  }
-  
-  association [1..*] Company (employer) <-> Employee [*];
-  composition [1] Company <- Share [*];
-  association shareholding [1] Entity (shareholder) -- (owns) Share [*];
+  enum Status { PROCESSING, DONE, OPEN; }
 
+  abstract class Asset {
+    void process();
+  }
+
+  class Task extends Asset {
+    String taskName;
+    Status taskStatus;
+    void process();
+  }
+
+  class Project extends Asset {
+    public String projectName;
+    double budget;
+    void process();
+  }
+
+  class Day {
+    Date date;
+  }
+
+  association [1] Day (day) ->  (tasks) Task [1];
+  association [*] Task (tasks) <-> (project) Project [1];
 }
 ```
-<figcaption>Listing 2.1: The <code>MyCompany</code> class diagram</figcaption>
+<figcaption>Listing 2.1: The <code>MyOrganizer</code> class diagram</figcaption>
 
 As usual in model-based software engineering, the core of the file is the diagram definition itself.
 It begins with the `classdiagram` keyword, followed by the name of the diagram,
-which must match the filename. In our example, the diagram is named `MyCompany` and
+which must match the filename. In our example, the diagram is named `MyOrganizer` and
 its body is enclosed in curly braces `{ }`.
 
 Class diagrams can have a package declaration and import statements to integrate external types.
 If a class diagram defines a package, the package declaration must be the first statement in
 the file and takes the form `package` *QualifiedName*, where `package` is a keyword and
-*QualifiedName* is an arbitrary namespace (e.g., `corp`).
-The optional imports follow the package definition. Every import is of the
-form `import` *QualifiedName*. For instance, the `MyCompany` class diagram
+*QualifiedName* is an arbitrary namespace.
+Every import is of the form `import` *QualifiedName*. For instance, the `MyOrganizer` class diagram
 uses `import java.util.Date;` to make the standard Java `Date` class available within the model.
-The package `corp` also serves as the default namespace for all generated Java classes
-unless specified otherwise.
 
 Inside the class diagram, various object-oriented constructs can be defined, such as enumerations, 
-classes, and interfaces. The `MyCompany` diagram introduces the enumeration `CorpKind` using 
-the `enum` keyword, defining several constants like `SOLE_PROPRIETOR` and `NON_PROFIT`. 
-It also defines several classes, such as `Entity`, `Person`, and `Company`. The `abstract` 
-keyword can be applied to classes, as seen with `abstract class Entity;`, instructing the 
-generator that this class serves as a base concept and cannot be instantiated directly. 
-Furthermore, the `extends` keyword is used to establish inheritance; for example, 
-`Company` extends `Entity`, and `Employee` extends `people.Person`.
-
-To further structure the model, class diagrams can contain nested packages. The `MyCompany` 
-diagram uses `package people` to group the `Person` and `Address` classes logically. 
-When referencing classes from other nested packages, their names must be qualified, 
-which is why `Employee` extends `people.Person`.
+classes, interfaces, and their relationships. The `MyOrganizer` diagram introduces the enumeration `Status` using 
+the `enum` keyword, defining the constants `PROCESSING`, `DONE`, and `OPEN`. 
+It also defines several classes, such as `Asset`, `Task`, `Project`, and `Day`. The `abstract` 
+keyword can be applied to classes, as seen with `abstract class Asset;`. 
+Furthermore, the `extends` keyword is used to establish inheritance. In our example, 
+`Task` extends `Asset`, and `Project` extends `Asset`. Equaly, interfaces can be defined 
+as well, using the `interface` keyword, and classes can implement interfaces using the `implements` keyword.
 
 Classes typically contain attributes, which consist of a type and a name. The CD4Code 
-generator supports standard Java primitive types (like `int number` in `Address`), 
-imported external types (like `Date birthday`), and predefined generic types 
-(like `List<String> nickNames`).
+generator supports standard Java primitive types (like `double budget;`) , imported external types (like `Date date`), 
+and custom types like enums (`Status taskStatus`). Classes and interfaces can also define methods, such as `void process();`.
 
-Finally, the class diagram defines how these entities relate to one another using 
-associations and compositions. These relationships can be defined standalone at 
-the bottom of the file or inline within a class. For example, `Person` contains 
-an inline directed association `-> Address [*] {ordered};`. Standalone 
-relationships use keywords like `association` or `composition`, followed by 
+Finally, the class diagram defines how these entities relate to one another using associations and compositions.
+While associations define relationships between two entities that simply know about each other, 
+compositions define a strong ownership relationship between two entities. 
+Standalone relationships use keywords like `association` or `composition`, followed by 
 cardinalities (e.g., `[1]`, `[1..*]`, `[*]`), the participating classes, 
-and navigation arrows (`<->` for bidirectional, `<-` for directional, 
-or `--` for unspecified). Relationships can also be named (e.g., `shareholding`) 
-and can specify role names in parentheses to clarify the relationship's context, 
-such as `Company (employer) <-> Employee [*]`. Additional constraints or tags, 
-such as `{ordered}`, can be appended to instruct the generator to maintain a 
-specific sorting behavior in the resulting Java collections.
-
-It is possible to have multiple CD files. The CD4Code generator can process all 
-files in the specified directories and generate Java code for all class diagrams.
+and navigation arrows (`<->` for bidirectional, `->` for directional, 
+or `--` for unspecified). Relationships can also specify role names in parentheses to clarify the relationship's context, 
+such as `(project)` and `(tasks)`.
 
 ### Default Configuration: CD2Poj
 By default, the [CD2Pojo.ftl](../cdlang/src/main/resources/cd2java/init/CD2Pojo.ftl) template
@@ -218,9 +195,8 @@ In the default configuration,
 🟨 means the decorator is not applied unless enabled.
 
 This means by default that the CD4Code generator will generate getters and setters for all attributes. 
-Furthermore, it will initialize the cardinality of all optional attributes with an empty default value 
-and the class `People` is initated with an empty list. Finally, the bidirectional associations between 
-`Company` and `Employee` will be navigable in both directions, meaning that the generated setter methods 
+Furthermore, it will initialize the cardinality of all optional attributes with an empty default value. Finally, the bidirectional associations between 
+`Project` and `Task` will be navigable in both directions, meaning that the generated setter methods 
 will also set the opposite side of the association by default.
 
 ### Configuring the CD4Code Generator
@@ -235,8 +211,8 @@ Configuration can be applied at two different levels:
 1.  **Element-Level Configuration (Tagging):** You can target specific elements inside your class diagram 
     (such as a specific class, enum, or attribute) to explicitly enable or disable a decorator. 
     This uses a targeting syntax of `<DiagramName>.<ElementName>:<Tag>`. For example, targeting 
-    `MyCompany.Address:noSetter` will prevent the generator from creating setter methods specifically for 
-    the `Address` class.
+    `MyOrganizer.Day:noSetter` will prevent the generator from creating setter methods specifically for 
+    the `Day` class.
 2.  **Global-Level Configuration (Templates):** If you need to fundamentally change the default behavior or 
     apply your own custom decorators across the entire build, you can supply a custom configuration template 
     (e.g., a custom `.ftl` file) to replace the default `CD2Pojo` template.
@@ -250,18 +226,18 @@ your Gradle build script, or directly through the Java API. Select your environm
     When running the CD4Code generator from the command line, you can pass element-level tags using the `-cliconfig` 
     parameter. Multiple configurations can be applied by repeating the argument.
     
-    For example, to disable getters and setters specifically for the `Address` class inside the `MyCompany` 
+    For example, to disable getters and setters specifically for the `Day` class inside the `MyOrganizer` 
     diagram, use the following command:
     
     ```shell
-    java -jar MCCD.jar -i src/MyCompany.cd -cliconfig "MyCompany.Address:noGetter" -cliconfig "MyCompany.Address:noSetter"
+    java -jar MCCD.jar -i src/MyOrganizer.cd -cliconfig "MyOrganizer.Day:noGetter" -cliconfig "MyOrganizer.Day:noSetter"
     ```
     
     To apply a global configuration template, use the `-ct` (config template) argument to specify the 
     template name, and `-fp` (file path) to specify the directory where the custom `.ftl` file is located:
     
     ```shell
-    java -jar MCCD.jar -i src/MyCompany.cd -ct CD2OwnDecorator -fp src/main/configTemplate
+    java -jar MCCD.jar -i src/MyOrganizer.cd -ct CD2OwnDecorator -fp src/main/configTemplate
     ```
 
 === "Gradle"
@@ -271,9 +247,9 @@ your Gradle build script, or directly through the Java API. Select your environm
     ```groovy
     // build.gradle
     tasks.named("generateClassDiagrams") {
-      // Element-level configuration targeting the Address class
-      options.add("MyCompany.Address:noGetter")
-      options.add("MyCompany.Address:noSetter")
+      // Element-level configuration targeting the Day class
+      options.add("MyOrganizer.Day:noGetter")
+      options.add("MyOrganizer.Day:noSetter")
       
       // Global-level configuration: Change the config template used by the generator
       // getConfigTemplate().set("CD2OwnDecorator")
@@ -287,69 +263,180 @@ your Gradle build script, or directly through the Java API. Select your environm
     }
     ```
 
+## Decorators
+At the very start of the CD4Code generator, the generator parses the class diagram DSL into the  *CD4C Abstract Syntax Tree (AST)*
+which represents the class diagram as an object tree.
+In a first step, the CD4Code generator uses the mandatory CopyDecorator to unify the *CD4C AST*.
+It copies the parsed AST and unifies it by adding a package if no package exists. Furthermore, it adds the
+attributes defined in the association and compositions to the respective classes. This means for cardinality `[*]` the 
+attribute is added as a Set and for cardinality `[1]` it is added as a single field, and for cardinality `[1..*]` it 
+is added as an Optional.
+All unset visibilities of attributes, classes, interfaces, and enums are set to public.
+Based on this unified AST, the CD4Code generator applies the other decorators which can be selected individually by the user.
+In Figure 4.1 we can see the original class diagram and in Figure 4.2 the generated code.
+
+![Figure 4.1 The original class diagram](../myOrganizer/img/MyOrganizer.svg)
+<figcaption>Figure 4.1 The original class diagram</figcaption>
+
+![Figure 4.2 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+<figcaption>Figure 4.2 The original class diagram after applying the CopyDecorator</figcaption>
+
+=== "GetterDecorator"
+    The GetterDecorator adds getter methods to all attributes of the class diagram.
+    
+    ![Figure 4.3 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+    <figcaption>Figure 4.13 The original class diagram</figcaption>
+
+    ![Figure 4.4 The original class diagram after applying the GetterDecorator](../myOrganizer/img/MyOrganizerOnlyGetter.svg)
+    <figcaption>Figure 4.4 The original class diagram after applying the GetterDecorator</figcaption>
+
+=== "SetterDecorator"
+    The SetterDecorator adds setter methods to all attributes of the class diagram.
+
+    ![Figure 4.5 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+    <figcaption>Figure 4.5 The original class diagram</figcaption>
+
+    ![Figure 4.6 The original class diagram after applying the SetterDecorator](../myOrganizer/img/MyOrganizerOnlySetter.svg)
+    <figcaption>Figure 4.6 The original class diagram after applying the SetterDecorator</figcaption>
+
+=== "CardinalitiesDefaultDecorator"
+    The CardinalitiesDefaultDecorator initiates Lists, Sets, and Optional attributes of the class diagram with an empty List, empty Set, or an empty Optional respectively. As the CopyDecorator always runs as the first Decorator and adds the attributes defined in the associations and compositions to the respective classes, the CardinalitiesDefaultDecorator also adds default values to these attributes.
+    
+    As cardinality is not specified in the class diagram, the CardinalitiesDefaultDecorator instead injects the initialization via a template hook. This template contains the specific java code which is then in the generation step checked and applied. 
+
+=== "NavigableSetterDecorator"
+    The NavigableSetterDecorator adds setter methods to all navigable associations of the class diagram.
+
+    ![Figure 4.9 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+    <figcaption>Figure 4.9 The original class diagram</figcaption>
+
+    ![Figure 4.10 The original class diagram after applying the NavigableSetterDecorator](../myOrganizer/img/MyOrganizerOnlyNavigableSetter.svg)
+    <figcaption>Figure 4.10 The original class diagram after applying the NavigableSetterDecorator</figcaption>
+
+=== "AbstractMethodDecorator"
+    The AbstractMethodDecorator adds abstract methods to all methods of the class diagram.
+
+    ![Figure 4.11 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+    <figcaption>Figure 4.11 The original class diagram</figcaption>
+    
+    ![Figure 4.12 The original class diagram after applying the AbstractMethodDecorator](../myOrganizer/img/MyOrganizerOnlyWithAbstractMethodSignatures.svg)
+    <figcaption>Figure 4.12 The original class diagram after applying the AbstractMethodDecorator</figcaption>
+
+=== "BuilderDecorator"
+    The BuilderDecorator adds a builder class to all classes of the class diagram.
+
+    ![Figure 4.13 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+    <figcaption>Figure 4.13 The original class diagram</figcaption>
+    
+    ![Figure 4.14 The original class diagram after applying the BuilderDecorator](../myOrganizer/img/MyOrganizerOnlyBuilders.svg)
+    <figcaption>Figure 4.14 The original class diagram after applying the BuilderDecorator</figcaption>
+
+=== "ObserverDecorator"
+    The ObserverDecorator adds an observable interface to all classes of the class diagram.
+
+    ![Figure 4.15 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+    <figcaption>Figure 4.15 The original class diagram</figcaption>
+    
+    ![Figure 4.16 The original class diagram after applying the ObserverDecorator](../myOrganizer/img/MyOrganizerOnlyObservers.svg)
+    <figcaption>Figure 4.16 The original class diagram after applying the ObserverDecorator</figcaption>
+
+=== "VisitorDecorator"
+    The VisitorDecorator adds a visitor interface to all classes of the class diagram.
+
+    ![Figure 4.17 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
+    <figcaption>Figure 4.17 The original class diagram</figcaption>
+    
+    ![Figure 4.18 The original class diagram after applying the VisitorDecorator](../myOrganizer/img/MyOrganizerOnlyVisitors.svg)
+    <figcaption>Figure 4.18 The original class diagram after applying the VisitorDecorator</figcaption>
+
+
+Because some Decorators are dependent on other Decorators, running prior to them, Decorators all implement the 
+interface `IDecorator<D>` which has the method `getDependencies()` that returns a list of Decorators that must 
+be run before the respective Decorator. For example, the VisitorDecorator depends on the GetterDecorator,
+so the `getDependencies()` method returns `Collections.singletonList(GetterDecorator.class)`. Therefore, the 
+CD4Code generator checks the dependencies of the selected Decorators and runs them in the correct order. 
+If there is a circular dependency, the CD4Code generator throws an error and does not generate any code.
+
+```java
+/** Extend {@link AbstractDecorator} for shared */
+public interface IDecorator<D> extends IVisitor {
+  
+  /**
+   * Add your decorator-visitor to the given traverser
+   *
+   * @param traverser the traverser
+   */
+  void addToTraverser(CD4CodeTraverser traverser);
+  
+  void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt);
+  
+  /** @return the list of decorators which MUST traverse the AST before */
+  @SuppressWarnings("rawtypes")
+  default Iterable<Class<? extends IDecorator>> getMustRunAfter() {
+    return Collections.singletonList(ICreator.class);
+  }
+  
+}
+```
+
+
 ## Running the CD4Code Generator
 The execution of the CD4Code Generator follows a structured pipeline.
-First parsing and validating the model, then managing its symbols, and finally transforming the diagram 
+First parsing and validating the model, then managing its symbols, and finally transforming the diagram
 into executable Java source code.
 
 ### 1. Loading, CoCo-Checking, and Symbol Table Creation
-The first phase of execution focuses on frontend processing. The generator loads the .cd file, parses its 
-contents, creates an internal symbol table to resolve types, and runs Context Conditions (CoCos) to 
+The first phase of execution focuses on frontend processing. The generator loads the .cd file, parses its
+contents, creates an internal symbol table to resolve types, and runs Context Conditions (CoCos) to
 ensure the diagram adheres to all semantic rules of the language.
 
 === "CLI"
-    To parse and validate a class diagram model without generating any code artifacts, pass the input file 
-    using the `-i` flag to specify the input file path. By default, basic validation occurs, but you can 
-    explicitly enforce full CoCo checks or enable Java type resolution.
-    
+    To parse and validate a class diagram model without generating any code artifacts, pass the input file using the `-i` flag to specify the input file path. By default, basic validation occurs, but you can explicitly enforce full CoCo checks or enable Java type resolution.
+
     ```shell
     # Basic parse, symbol table creation, and check
-    java -jar MCCD.jar -i src/MyCompany.cd
+    java -jar MCCD.jar -i src/MyOrganizer.cd
     
     # Explicitly check all CD4C Context Conditions (CoCos)
-    java -jar MCCD.jar -i src/MyCompany.cd --checkcocos
+    java -jar MCCD.jar -i src/MyOrganizer.cd --checkcocos
     
     # Enable resolution of standard Java classes (e.g., java.util.List) within the model
-    java -jar MCCD.jar -i src/MyCompany.cd --class2mc
+    java -jar MCCD.jar -i src/MyOrganizer.cd --class2mc
     ```
 
 === "Gradle"
-    In a standard Gradle setup, the plugin automatically configures these phases as part of its default task 
-    execution pipeline. However, you can control CoCo behavior and type resolution directly within the task 
-    configuration block.
+    In a standard Gradle setup, the plugin automatically configures these phases as part of its default task execution pipeline. However, you can control CoCo behavior and type resolution directly within the task configuration block.
+    
     ```groovy
     // build.gradle
     tasks.named("generateClassDiagrams") {
       // Enables resolving standard Java classes used inside the CD diagram
       getClass2MC().set(true)
-    
+      
       // Controls whether CoCo checks are executed (enabled by default)
       getCoCos().set(true)
     }
     ```
 
 ### 2. Storing and Exporting Symbols
-In a large-scale project, comprehensibility suffers when a single file contains all artifacts of our class 
-diagram. To address this issue, the CD4Code Generator can serialize its symbol table into a standalone 
-symbol file, which can then be exported or loaded as a dependency by other models. 
+In a large-scale project, comprehensibility suffers when a single file contains all artifacts of our class
+diagram. To address this issue, the CD4Code Generator can serialize its symbol table into a standalone
+symbol file, which can then be exported or loaded as a dependency by other models.
 
 === "CLI"
-    Use the `-s` or `--symboltable` flag to specify where the serialized symbol table file should be saved. 
-    If your diagram depends on external symbols, use the -path flag to point to the directory containing 
-    those symbol files.
+    Use the `-s` or `--symboltable` flag to specify where the serialized symbol table file should be saved. If your diagram depends on external symbols, use the -path flag to point to the directory containing those symbol files.
+
     ```shell
     # Export the symbol table to a specific file
-    java -jar MCCD.jar -i src/MyCompany.cd -s out/symbols/MyCompany.cdsym
-    
+    java -jar MCCD.jar -i src/MyOrganizer.cd -s out/symbols/MyOrganizer.cdsym
+
     # Load external dependencies/symbols while processing a diagram
-    java -jar MCCD.jar -i src/MyCompany.cd -path dependencies/symbols/
+    java -jar MCCD.jar -i src/MyOrganizer.cd -path dependencies/symbols/
     ```
 
 === "Gradle"
-    The Gradle plugin manages symbol storage and tracking automatically, storing original and decorated 
-    symbols in separate build directories. You can customize these locations if your build pipeline 
-    requires a non-standard layout.
-    
+    The Gradle plugin manages symbol storage and tracking automatically, storing original and decorated symbols in separate build directories. You can customize these locations if your build pipeline requires a non-standard layout.
+
     ```groovy
     // build.gradle
     tasks.named("generateClassDiagrams") {
@@ -366,35 +453,32 @@ Once the model is fully validated and its symbols are resolved, the generator ca
 the decorators and generate the actual Java source files.
 
 === "CLI"
-    To trigger code generation, you must explicitly include the `--gen` flag. You can combine this with the
-    `-o` flag to specify the target directory for the generated code, and `--fieldfromrole` to control 
-    how associations are translated into actual class fields.
+    To trigger code generation, you must explicitly include the `--gen` flag. You can combine this with the `-o` flag to specify the target directory for the generated code, and `--fieldfromrole` to control how associations are translated into actual class fields.
+
     ```
     # Generate Java files into a dedicated output directory
-    java -jar MCCD.jar -i src/MyCompany.cd --gen -o out/generated-sources
-    
+    java -jar MCCD.jar -i src/MyOrganizer.cd --gen -o out/generated-sources
+
     # Generate code while explicitly mapping navigable association roles to Java fields
-    java -jar MCCD.jar -i src/MyCompany.cd --gen -o out/generated-sources --fieldfromrole navigable
+    java -jar MCCD.jar -i src/MyOrganizer.cd --gen -o out/generated-sources --fieldfromrole navigable
     ```
     
-    If your class diagram contains associations (e.g., `association [1..*] Company (employer) <-> Employee [*]`),
+    If your class diagram contains associations (e.g., `association [*] Task (tasks) <-> (project) Project [1];`),
     the basic `--gen` command will not automatically generate the corresponding Java fields to link these objects.
     Instead, you must explicitly tell the generator to map these association roles to fields using the
     `--fieldfromrole` flag.
     
-    In our example, the `Company` class has a role named `employer` in its association with `Employee`.
-    This means the generator will create an `employer` field inside the generated `Employee` Java class to represent 
+    In our example, the `Project` class has a role named `project` in its association with `Task`.
+    This means the generator will create an `project` field inside the generated `Task` Java class to represent 
     the relationship. To generate these fields, use the following command:
     
     ```shell
-    java -jar MCCD.jar -i src/MyCompany.cd -o out --gen --fieldfromrole navigable
+    java -jar MCCD.jar -i src/MyOrganizer.cd -o out --gen --fieldfromrole navigable
     ```
 
 === "Gradle"
-    Code generation is fully integrated into the standard Gradle lifecycle. Executing the `build` task or the 
-    specific `generateClassDiagrams` task automatically processes all source sets and places the output in the 
-    configured directory.
-    
+    Code generation is fully integrated into the standard Gradle lifecycle. Executing the `build` task or the specific `generateClassDiagrams` task automatically processes all source sets and places the output in the configured directory.
+
     ```groovy
     // build.gradle
     tasks.named("generateClassDiagrams") {
@@ -403,46 +487,55 @@ the decorators and generate the actual Java source files.
     }
     ```
 
- #  === "Gradle"
- #  Just like the CLI, the Gradle plugin does not generate fields for associations by default. You must explicitly configure the task to map these roles to Java fields.
- #  
- #  You can do this by setting the `fieldFromRole` property inside your generation task:
- #  
- #  ```groovy
- #  // build.gradle
- #  tasks.named("generateClassDiagrams") {
- #    // Set the target directory for the generated Java files
- #    getOutputDir().set(file("build/generated/sources/cdgen/main/java"))
- #  
- #    // Explicitly map navigable association roles to generated Java fields
- #    getFieldFromRole().set("navigable")
- #  }
- #  ```        
+#  === "Gradle"
+#  Just like the CLI, the Gradle plugin does not generate fields for associations by default. You must explicitly configure the task to map these roles to Java fields.
+#  
+#  You can do this by setting the `fieldFromRole` property inside your generation task:
+#  
+#  ```groovy
+#  // build.gradle
+#  tasks.named("generateClassDiagrams") {
+#    // Set the target directory for the generated Java files
+#    getOutputDir().set(file("build/generated/sources/cdgen/main/java"))
+#  
+#    // Explicitly map navigable association roles to generated Java fields
+#    getFieldFromRole().set("navigable")
+#  }
+#  ```
 
 Running the CD4Code generator tooled into a Gradle build is as simple as executing the Gradle build task.
 
-=== "Library"
-
 ### Inspecting the Generated Code
 The generated code should now be located in the specified directory. Let's take a look at the generated code.
+As by default, we use the `CD2Pojo` template, for configuring the Decorators, we are applying the `GetterDecorator`,
+`SetterDecorator`, `CardinalityDecorator`, `NavigableSetterDecorator`, and `AbstactMethodDecorator` Decorators. 
+Therefore, we also expect the respecitive code artifacts to be generated. In our example, we should find the following files:
 
 ```text
 my-project/
-├── src/
-│   └── main/
-│       ├── cds/
-│       │   └── MyCompany.cd
-│       └── java/
+├── build/
+│   ├── cdgensymbols/
+│   ├── classes/
+│   │   └── java/
+│   │       └── main/
+│   │           └── MyOrganizer/
+│   │               ├── Asset.java
+│   │               ├── Day.java
+│   │               ├── Project.java
+│   │               ├── Status.java
+│   │               └── Task.java
+│   ├── generated/
+│   └── generated-sources/
+│       └── cdgen/ 
+│           └── sourcecode/
+│               └── MyOrganizer/
+│                   ├── Asset.java
+│                   ├── Day.java
+│                   ├── Project.java
+│                   ├── Status.java
+│                   └── Task.java
 ├── configTemplate/
 │   └── CD2OwnDecorator.ftl
 └── build.gradle
  README.md
 ```
-
-
-
-
-
-
-
-

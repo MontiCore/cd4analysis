@@ -1,0 +1,77 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.util.Date;
+import java.util.*;
+public classdiagram MyOrganizer { 
+  package MyOrganizer { 
+    public enum Status { 
+      PROCESSING,DONE,OPEN;
+
+    } 
+    public abstract class Asset { 
+      public void process();
+      public void accept(MyOrganizer.IMyOrganizerVisitor visitor);
+
+    } 
+    public class Task extends Asset { 
+      protected String taskName;
+      protected Status taskStatus;
+      public void process();
+      protected MyOrganizer.Project project;
+      private String getTaskName();
+      protected Status getTaskStatus();
+      public MyOrganizer.Project getProject();
+      public void accept(MyOrganizer.IMyOrganizerVisitor visitor);
+
+    } 
+    public class Project extends Asset { 
+      protected String projectName;
+      protected double budget;
+      public void process();
+      protected Set<MyOrganizer.Task>tasks;
+      public String getProjectName();
+      public double getBudget();
+      public Set<MyOrganizer.Task>getTasks();
+      public boolean containsTasks(Object element);
+      public boolean containsAllTasks(java.util.Collection<?>collection);
+      public boolean isEmptyTasks();
+      public java.util.Iterator<MyOrganizer.Task>iteratorTasks();
+      public int sizeTasks();
+      public MyOrganizer.Task []toArrayTasks(MyOrganizer.Task []array);
+      public Object []toArrayTasks();
+      public java.util.Spliterator<MyOrganizer.Task>spliteratorTasks();
+      public java.util.stream.Stream<MyOrganizer.Task>streamTasks();
+      public java.util.stream.Stream<MyOrganizer.Task>parallelStreamTasks();
+      public boolean equalsTasks(Object o);
+      public int hashCodeTasks();
+      public void accept(MyOrganizer.IMyOrganizerVisitor visitor);
+
+    } 
+    public class Day { 
+      protected Date date;
+      protected MyOrganizer.Task tasks;
+      public Date getDate();
+      public MyOrganizer.Task getTasks();
+      public void accept(MyOrganizer.IMyOrganizerVisitor visitor);
+
+    } 
+    public association public [1]Day(day)->(tasks)Task [1]public;
+    public association public[*]Task(tasks)<->(project)Project [1]public;
+    public interface IMyOrganizerVisitor { 
+      public abstract void visit(Asset node);
+      public abstract void visit(Task node);
+      public abstract void visit(Project node);
+      public abstract void visit(Day node);
+
+    } 
+    public class MyOrganizerVisitorImplementation implements IMyOrganizerVisitor { 
+      protected Collection<Object>traversedElements;
+      public void visit(Asset node);
+      public void visit(Task node);
+      public void visit(Project node);
+      public void visit(Day node);
+
+    } 
+
+  } 
+
+} 

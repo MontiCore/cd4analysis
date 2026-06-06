@@ -1,0 +1,47 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.util.Date;
+import java.util.*;
+public classdiagram MyOrganizer { 
+  package MyOrganizer { 
+    public enum Status { 
+      PROCESSING,DONE,OPEN;
+
+    } 
+    public abstract class Asset { 
+      public void process();
+
+    } 
+    public class Task extends Asset { 
+      protected String taskName;
+      protected Status taskStatus;
+      public void process();
+      protected MyOrganizer.Project project;
+      private void setTaskName(String taskName);
+      protected void setTaskStatus(Status taskStatus);
+      public void setProject(MyOrganizer.Project project);
+
+    } 
+    public class Project extends Asset { 
+      protected String projectName;
+      protected double budget;
+      public void process();
+      protected Set<MyOrganizer.Task>tasks;
+      public void setProjectName(String projectName);
+      public void setBudget(double budget);
+      public boolean addTasks(MyOrganizer.Task tasks);
+      public boolean removeTasks(MyOrganizer.Task tasks);
+
+    } 
+    public class Day { 
+      protected Date date;
+      protected MyOrganizer.Task tasks;
+      public void setDate(Date date);
+      public void setTasks(MyOrganizer.Task tasks);
+
+    } 
+    public association public [1]Day(day)->(tasks)Task [1]public;
+    public association public[*]Task(tasks)<->(project)Project [1]public;
+
+  } 
+
+} 

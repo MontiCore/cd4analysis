@@ -1,0 +1,88 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.util.Date;
+import java.util.*;
+public classdiagram MyOrganizer { 
+  package MyOrganizer { 
+    public enum Status { 
+      PROCESSING,DONE,OPEN;
+
+    } 
+    public abstract class Asset implements de.monticore.cd.ICDObservable<MyOrganizer.IAssetObserver,Asset>{ 
+      public void process();
+      protected List<MyOrganizer.IAssetObserver>observerList;
+      public void addObserver(MyOrganizer.IAssetObserver observer);
+      public void removeObserver(MyOrganizer.IAssetObserver observer);
+      protected void notifyObservers();
+
+    } 
+    public class Task extends Asset implements de.monticore.cd.ICDObservable<MyOrganizer.ITaskObserver,Task>{ 
+      private String taskName;
+      protected Status taskStatus;
+      public void process();
+      public MyOrganizer.Project project;
+      protected List<MyOrganizer.ITaskObserver>observerList;
+      public void addObserver(MyOrganizer.ITaskObserver observer);
+      public void removeObserver(MyOrganizer.ITaskObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetTaskName(String ov);
+      protected void notifyObserversSetTaskStatus(Status ov);
+      protected void notifyObserversSetProject(MyOrganizer.Project ov);
+
+    } 
+    public class Project extends Asset implements de.monticore.cd.ICDObservable<MyOrganizer.IProjectObserver,Project>{ 
+      public String projectName;
+      public double budget;
+      public void process();
+      public Set<MyOrganizer.Task>tasks;
+      protected List<MyOrganizer.IProjectObserver>observerList;
+      public void addObserver(MyOrganizer.IProjectObserver observer);
+      public void removeObserver(MyOrganizer.IProjectObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetProjectName(String ov);
+      protected void notifyObserversSetBudget(double ov);
+      protected void notifyObserversAddTasks(MyOrganizer.Task newElem);
+      protected void notifyObserversRemoveTasks(MyOrganizer.Task elem);
+
+    } 
+    public class Day implements de.monticore.cd.ICDObservable<MyOrganizer.IDayObserver,Day>{ 
+      public Date date;
+      public MyOrganizer.Task tasks;
+      protected List<MyOrganizer.IDayObserver>observerList;
+      public void addObserver(MyOrganizer.IDayObserver observer);
+      public void removeObserver(MyOrganizer.IDayObserver observer);
+      protected void notifyObservers();
+      protected void notifyObserversSetDate(Date ov);
+      protected void notifyObserversSetTasks(MyOrganizer.Task ov);
+
+    } 
+    public association public [1]Day(day)->(tasks)Task [1]public;
+    public association public[*]Task(tasks)<->(project)Project [1]public;
+    public interface IAssetObserver extends de.monticore.cd.ICDObserver<Asset>{ 
+      public void notifyUpdate(Asset clazz);
+
+    } 
+    public interface ITaskObserver extends de.monticore.cd.ICDObserver<Task>{ 
+      public void notifyUpdate(Task clazz);
+      public void notifyUpdateSetTaskName(Task clazz,String ov);
+      public void notifyUpdateSetTaskStatus(Task clazz,Status ov);
+      public void notifyUpdateSetProject(Task clazz,MyOrganizer.Project ov);
+
+    } 
+    public interface IProjectObserver extends de.monticore.cd.ICDObserver<Project>{ 
+      public void notifyUpdate(Project clazz);
+      public void notifyUpdateSetProjectName(Project clazz,String ov);
+      public void notifyUpdateSetBudget(Project clazz,double ov);
+      public void notifyUpdateAddTasks(Project clazz,MyOrganizer.Task newElem);
+      public void notifyUpdateRemoveTasks(Project clazz,MyOrganizer.Task elem);
+
+    } 
+    public interface IDayObserver extends de.monticore.cd.ICDObserver<Day>{ 
+      public void notifyUpdate(Day clazz);
+      public void notifyUpdateSetDate(Day clazz,Date ov);
+      public void notifyUpdateSetTasks(Day clazz,MyOrganizer.Task ov);
+
+    } 
+
+  } 
+
+} 

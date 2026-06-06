@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1373.0 688.0">
+  <g>
+    <g>
+      <path class="edgeUnselected" d="M 800.00, 304.00 L 800.00, 204.00 "/>
+      <text class="edgeUnselected" fill="black" font-family="Arial" font-size="20.0px" text-anchor="middle" transform="rotate(-90.0 790.0 254.0)" x="790.0" y="254.0"/>
+    </g>
+    <path class="arrowInheritanceUnselected" d="M 800.00, 204.00 L 765.00, 186.50 L 765.00, 221.50 Z " transform="rotate(270 800.0 204.0)"/>
+    <g>
+      <g>
+        <path class="edgeUnselected" d="M 212.00, 404.00 L 212.00, 304.00 L 800.00, 304.00 "/>
+        <text class="edgeUnselected" fill="black" font-family="Arial" font-size="20.0px" text-anchor="middle" transform="rotate(-90.0 202.0 354.0)" x="202.0" y="354.0"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path class="edgeUnselected" d="M 800.00, 404.00 L 800.00, 304.00 "/>
+        <text class="edgeUnselected" fill="black" font-family="Arial" font-size="20.0px" text-anchor="middle" transform="rotate(-90.0 790.0 354.0)" x="790.0" y="354.0"/>
+      </g>
+    </g>
+  </g>
+  <g>
+    <g>
+      <path class="edgeUnselected" d="M 152.00, 195.00 L 152.00, 404.00 "/>
+      <text class="edgeUnselected" fill="black" font-family="Arial" font-size="20.0px" text-anchor="middle" transform="rotate(-90.0 142.0 299.5)" x="142.0" y="299.5"/>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 152.00, 195.00 L 137.00, 187.50 L 137.00, 202.50 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(270 152.0 195.0)"/>
+      </g>
+      <text class="edgeUnselected" dominant-baseline="baseline" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="rotated-text-association-source" text-anchor="end" transform="rotate(-90 142.0 210.0)" x="142.0" y="210.0">day</text>
+      <text class="edgeUnselected" dominant-baseline="hanging" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="non-rotated-text-association-source" text-anchor="start" x="162.0" y="210.0">1</text>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 152.00, 195.00 L 129.50, 180.00 L 107.00, 195.00 L 129.50, 210.00 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(270 152.0 195.0)"/>
+        <g>
+          <path class="arrowUnselected" d="M 152.00, 240.00 L 137.00, 232.50 L 137.00, 247.50 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(270 152.0 240.0)"/>
+        </g>
+        <text class="edgeUnselected" dominant-baseline="baseline" fill="black" fill-opacity="0" font-family="Arial" font-size="20.0px" id="rotated-text-composition-source" text-anchor="end" transform="rotate(-90 142.0 255.0)" x="142.0" y="255.0">day</text>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 152.00, 404.00 L 137.00, 396.50 L 137.00, 411.50 Z " fill-opacity="1" stroke-opacity="1" transform="rotate(90 152.0 404.0)"/>
+      </g>
+      <text class="edgeUnselected" dominant-baseline="baseline" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="rotated-text-association-target" text-anchor="start" transform="rotate(-90 142.0 374.0)" x="142.0" y="374.0">tasks</text>
+      <text class="edgeUnselected" dominant-baseline="baseline" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="non-rotated-text-association-target" text-anchor="start" x="162.0" y="374.0">1</text>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 152.00, 404.00 L 129.50, 389.00 L 107.00, 404.00 L 129.50, 419.00 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(90 152.0 404.0)"/>
+        <g>
+          <path class="arrowUnselected" d="M 152.00, 359.00 L 137.00, 351.50 L 137.00, 366.50 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(90 152.0 359.0)"/>
+        </g>
+        <text class="edgeUnselected" dominant-baseline="hanging" fill="black" fill-opacity="0" font-family="Arial" font-size="20.0px" id="rotated-text-composition-target" text-anchor="start" transform="rotate(-90 162.0 329.0)" x="162.0" y="329.0">tasks</text>
+      </g>
+    </g>
+  </g>
+  <g>
+    <g>
+      <path class="edgeUnselected" d="M 385.00, 546.00 L 628.00, 546.00 "/>
+      <text class="edgeUnselected" fill="black" font-family="Arial" font-size="20.0px" text-anchor="middle" transform="rotate(0.0 506.5 536.0)" x="506.5" y="536.0"/>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 385.00, 546.00 L 370.00, 538.50 L 370.00, 553.50 Z " fill-opacity="1" stroke-opacity="1" transform="rotate(180 385.0 546.0)"/>
+      </g>
+      <text class="edgeUnselected" dominant-baseline="baseline" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="rotated-text-association-source" text-anchor="start" transform="rotate(0 415.0 536.0)" x="415.0" y="536.0">tasks</text>
+      <text class="edgeUnselected" dominant-baseline="hanging" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="non-rotated-text-association-source" text-anchor="start" x="415.0" y="556.0">*</text>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 385.00, 546.00 L 362.50, 531.00 L 340.00, 546.00 L 362.50, 561.00 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(180 385.0 546.0)"/>
+        <g>
+          <path class="arrowUnselected" d="M 430.00, 546.00 L 415.00, 538.50 L 415.00, 553.50 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(180 430.0 546.0)"/>
+        </g>
+        <text class="edgeUnselected" dominant-baseline="hanging" fill="black" fill-opacity="0" font-family="Arial" font-size="20.0px" id="rotated-text-composition-source" text-anchor="start" transform="rotate(0 460.0 556.0)" x="460.0" y="556.0">tasks</text>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 628.00, 546.00 L 613.00, 538.50 L 613.00, 553.50 Z " fill-opacity="1" stroke-opacity="1" transform="rotate(0 628.0 546.0)"/>
+      </g>
+      <text class="edgeUnselected" dominant-baseline="baseline" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="rotated-text-association-target" text-anchor="end" transform="rotate(0 598.0 536.0)" x="598.0" y="536.0">project</text>
+      <text class="edgeUnselected" dominant-baseline="hanging" fill="black" fill-opacity="1" font-family="Arial" font-size="20.0px" id="non-rotated-text-association-target" text-anchor="end" x="598.0" y="556.0">1</text>
+    </g>
+    <g>
+      <g>
+        <path class="arrowUnselected" d="M 628.00, 546.00 L 605.50, 531.00 L 583.00, 546.00 L 605.50, 561.00 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(0 628.0 546.0)"/>
+        <g>
+          <path class="arrowUnselected" d="M 583.00, 546.00 L 568.00, 538.50 L 568.00, 553.50 Z " fill-opacity="0" stroke-opacity="0" transform="rotate(0 583.0 546.0)"/>
+        </g>
+        <text class="edgeUnselected" dominant-baseline="baseline" fill="black" fill-opacity="0" font-family="Arial" font-size="20.0px" id="rotated-text-composition-target" text-anchor="end" transform="rotate(0 553.0 536.0)" x="553.0" y="536.0">project</text>
+      </g>
+    </g>
+  </g>
+  <g>
+    <rect class="class-rect" fill="white" height="208.0" stroke="black" width="221.0" x="1072.0" y="0.0"/>
+    <text class="clickable-class-component" dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" opacity="1.0" x="1077.0" y="10.0">MyOrganizer</text>
+    <path class="inter-class-separator" d="M 1072.00, 35.00 L 1207.00, 35.00 L 1217.00, 0.00 " fill="none" opacity="1.0" stroke="black"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" text-anchor="middle" x="1182.5" y="40.0">«enum»</text>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" font-weight="bold" text-anchor="middle" x="1182.5" y="85.0">Status</text>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="1072.0" x2="1293.0" y1="130.0" y2="130.0"/>
+    <g>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" x="1077.0" y="135.0">PROCESSING</text>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" x="1077.0" y="160.0">DONE</text>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" x="1077.0" y="185.0">OPEN</text>
+    </g>
+    <line class="inner-class-separator" opacity="0.0" stroke="black" x1="1072.0" x2="1293.0" y1="210.0" y2="210.0"/>
+    <g/>
+    <line class="inner-class-separator" opacity="0.0" stroke="black" x1="1072.0" x2="1293.0" y1="210.0" y2="210.0"/>
+    <g/>
+  </g>
+  <g>
+    <rect class="class-rect" fill="white" height="204.0" stroke="black" width="306.0" x="647.0" y="0.0"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" opacity="1.0" x="652.0" y="10.0">MyOrganizer</text>
+    <path class="inter-class-separator" d="M 647.00, 35.00 L 782.00, 35.00 L 792.00, 0.00 " fill="none" opacity="1.0" stroke="black"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" opacity="1.0" text-anchor="middle" x="800.0" y="40.0">«abstract»</text>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" font-weight="bold" text-anchor="middle" x="800.0" y="85.0">Asset</text>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="647.0" x2="953.0" y1="130.0" y2="130.0"/>
+    <g/>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="647.0" x2="953.0" y1="155.0" y2="155.0"/>
+    <g>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="652.0" y="160.0">+  abstract void process();
+</text>
+    </g>
+  </g>
+  <g>
+    <rect class="class-rect" fill="white" height="284.0" stroke="black" width="346.0" x="39.0" y="404.0"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" opacity="1.0" x="44.0" y="414.0">MyOrganizer</text>
+    <path class="inter-class-separator" d="M 39.00, 439.00 L 174.00, 439.00 L 184.00, 404.00 " fill="none" opacity="1.0" stroke="black"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" opacity="1.0" text-anchor="middle" x="212.0" y="444.0">«abstract»</text>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" font-weight="bold" text-anchor="middle" x="212.0" y="489.0">Task</text>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="39.0" x2="385.0" y1="534.0" y2="534.0"/>
+    <g>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="44.0" y="539.0">-  String taskName;
+</text>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="44.0" y="564.0">#  Status taskStatus;
+</text>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="44.0" y="589.0">+  MyOrganizer.Project project;
+</text>
+    </g>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="39.0" x2="385.0" y1="614.0" y2="614.0"/>
+    <g>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="44.0" y="619.0">+  abstract void process();
+</text>
+    </g>
+  </g>
+  <g>
+    <rect class="class-rect" fill="white" height="284.0" stroke="black" width="344.0" x="628.0" y="404.0"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" opacity="1.0" x="633.0" y="414.0">MyOrganizer</text>
+    <path class="inter-class-separator" d="M 628.00, 439.00 L 763.00, 439.00 L 773.00, 404.00 " fill="none" opacity="1.0" stroke="black"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" opacity="1.0" text-anchor="middle" x="800.0" y="444.0">«abstract»</text>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" font-weight="bold" text-anchor="middle" x="800.0" y="489.0">Project</text>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="628.0" x2="972.0" y1="534.0" y2="534.0"/>
+    <g>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="633.0" y="539.0">+  String projectName;
+</text>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="633.0" y="564.0">+  double budget;
+</text>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="633.0" y="589.0">+  Set&lt;MyOrganizer.Task&gt;tasks;
+</text>
+    </g>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="628.0" x2="972.0" y1="614.0" y2="614.0"/>
+    <g>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="633.0" y="619.0">+  abstract void process();
+</text>
+    </g>
+  </g>
+  <g>
+    <rect class="class-rect" fill="white" height="186.0" stroke="black" width="304.0" x="0.0" y="9.0"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" opacity="1.0" x="5.0" y="19.0">MyOrganizer</text>
+    <path class="inter-class-separator" d="M 0.00, 44.00 L 135.00, 44.00 L 145.00, 9.00 " fill="none" opacity="1.0" stroke="black"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" opacity="0.0" text-anchor="middle" x="152.0" y="49.0"/>
+    <text dy="0.7em" fill="black" font-family="Arial" font-size="40.0px" font-weight="bold" text-anchor="middle" x="152.0" y="49.0">Day</text>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="0.0" x2="304.0" y1="94.0" y2="94.0"/>
+    <g>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="5.0" y="99.0">+  Date date;
+</text>
+      <text dy="0.7em" fill="black" font-family="Arial" font-size="20.0px" text-decoration="" x="5.0" y="124.0">+  MyOrganizer.Task tasks;
+</text>
+    </g>
+    <line class="inner-class-separator" opacity="1.0" stroke="black" x1="0.0" x2="304.0" y1="149.0" y2="149.0"/>
+    <g/>
+  </g>
+  <g>
+    <path d="M 1373.00, 10.00 L 1373.00, 40.00 L 1323.00, 40.00 L 1323.00, 0.00 L 1363.00, 0.00 L 1373.00, 10.00 L 1365.00, 8.00 L 1363.00, 0.00 " fill="none" stroke="black" stroke-linejoin="round"/>
+    <text class="cd-tag-text" dominant-baseline="hanging" fill="black" font-family="Arial" font-size="20px" text-anchor="middle" x="1348.0" y="13.0">CD</text>
+  </g>
+  <style>/* Edge lines / Rect lines */
+
+path.edgeUnselected {
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
+}
+
+path.arrowUnselected {
+    stroke: black;
+    stroke-width: 1px;
+    fill: black;
+}
+
+path.arrowInheritanceUnselected {
+    stroke: black;
+    stroke-width: 2px;
+    fill: white;
+}
+
+rect.class-rect, path.cd-tag {
+    stroke-width: 2px;
+}
+
+path.inter-class-separator, line.inner-class-separator {
+    stroke-width: 2px;
+}</style>
+</svg>
