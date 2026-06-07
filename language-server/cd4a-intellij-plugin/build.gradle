@@ -11,9 +11,10 @@ java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(21)
   }
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
 }
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+
 ecj {
   compilerVersion = "3.43.0"
 }
@@ -35,9 +36,9 @@ repositories {
     mavenLocal()
   }
   maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
+    url = repo
   }
   mavenCentral()
   intellijPlatform {
