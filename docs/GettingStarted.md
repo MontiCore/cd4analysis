@@ -102,7 +102,9 @@ extended with the addition of decorators. These decorators dictate what artifact
 are generated from the class diagram, or which should not be generated at all.
 
 ```cd4code
+/* (c) https://github.com/MontiCore/monticore */
 import java.util.Date;
+import java.util.Optional;
 
 classdiagram MyOrganizer {
 
@@ -113,14 +115,14 @@ classdiagram MyOrganizer {
   }
 
   class Task extends Asset {
-    String taskName;
     Status taskStatus;
     void process();
   }
 
   class Project extends Asset {
     public String projectName;
-    double budget;
+    private Optional<Date> deadline;
+    protected double budget;
     void process();
   }
 
@@ -128,7 +130,7 @@ classdiagram MyOrganizer {
     Date date;
   }
 
-  association [1] Day (day) ->  (tasks) Task [1];
+  association [1] Day (day) ->  (tasks) Task [*];
   association [*] Task (tasks) <-> (project) Project [1];
 }
 ```
@@ -139,12 +141,9 @@ It begins with the `classdiagram` keyword, followed by the name of the diagram,
 which must match the filename. In our example, the diagram is named `MyOrganizer` and
 its body is enclosed in curly braces `{ }`.
 
-Class diagrams can have a package declaration and import statements to integrate external types.
-If a class diagram defines a package, the package declaration must be the first statement in
-the file and takes the form `package` *QualifiedName*, where `package` is a keyword and
-*QualifiedName* is an arbitrary namespace.
+Class diagrams can have import statements to integrate external types.
 Every import is of the form `import` *QualifiedName*. For instance, the `MyOrganizer` class diagram
-uses `import java.util.Date;` to make the standard Java `Date` class available within the model.
+uses `import java.util.Date;` and `import java.util.Optional;` to make the standard Java `Date` and `Optional` classes available within the model.
 
 Inside the class diagram, various object-oriented constructs can be defined, such as enumerations, 
 classes, interfaces, and their relationships. The `MyOrganizer` diagram introduces the enumeration `Status` using 
@@ -156,8 +155,8 @@ Furthermore, the `extends` keyword is used to establish inheritance. In our exam
 as well, using the `interface` keyword, and classes can implement interfaces using the `implements` keyword.
 
 Classes typically contain attributes, which consist of a type and a name. The CD4Code 
-generator supports standard Java primitive types (like `double budget;`) , imported external types (like `Date date`), 
-and custom types like enums (`Status taskStatus`). Classes and interfaces can also define methods, such as `void process();`.
+generator supports standard Java primitive types (like `double budget;`) , imported external types (like `Date date` and `Optional<Date> deadline`), 
+and custom types like enums (`Status taskStatus`). Classes and interfaces can also define methods, such as `void process();`. You can also define access modifiers like `public`, `private` and `protected`.
 
 Finally, the class diagram defines how these entities relate to one another using associations and compositions.
 While associations define relationships between two entities that simply know about each other, 
@@ -168,191 +167,23 @@ and navigation arrows (`<->` for bidirectional, `->` for directional,
 or `--` for unspecified). Relationships can also specify role names in parentheses to clarify the relationship's context, 
 such as `(project)` and `(tasks)`.
 
-### Default Configuration: CD2Poj
-By default, the [CD2Pojo.ftl](../cdlang/src/main/resources/cd2java/init/CD2Pojo.ftl) template
-is used by the generator.
-It includes the following transformations:
-
-* CD4CodeAfterParseTrafo:
-* DefaultVisibilityPublicTrafo: absent visibility means *public*
-
-It includes the following decorators:
-
-| Decorator                   | Description                                                        | To Enable                | To Disable                                |
-|-----------------------------|--------------------------------------------------------------------|--------------------------|-------------------------------------------|
-| CopyCreator                 | Include all elements of the original CD in the output              | always                   | -                                         |
-| GetterDecorator             | Add Getter Methods                                                 | 🟩  `<<getter>>`         | `<<noGetter>>`                            |
-| SetterDecorator             | Add Setter Methods                                                 | 🟩 `<<setter>>`          | `<<noSetter>>`                            |
-| CardinalityDefaultDecorator | Optional and list attributes are initialized with an empty default | 🟩                       | `<<noDefaultCardinality>>`                |
-| NavigableSetterDecorator    | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`        | `<<noSetter>>`                            |
-| AbstractMethodDecorator     | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>` | `<<nonAbstractMethod>>`                   |
-| BuilderDecorator            | Add a builder class                                                | 🟨 `<<builder>>`         | `<<noBuilder>>`                           |
-| ObserverDecorator           | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<notObservable>>`                       |
-| VisitorDecorator            | Include a visitor                                                  | 🟨 `<<visitor>>`         | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
-
-In the default configuration,
-🟩 means the decorator is applied unless disabled.
-🟨 means the decorator is not applied unless enabled.
-
-This means by default that the CD4Code generator will generate getters and setters for all attributes. 
-Furthermore, it will initialize the cardinality of all optional attributes with an empty default value. Finally, the bidirectional associations between 
-`Project` and `Task` will be navigable in both directions, meaning that the generated setter methods 
-will also set the opposite side of the association by default.
-
-### Configuring the CD4Code Generator
-
-While the default `CD2Pojo` configuration is a great starting point, manually adding stereotypes 
-(like `<<builder>>` or `<<noSetter>>`) directly to every element in a `.cd` file can become 
-tedious and clutter the model. To solve this, the CD4Code Generator allows you to configure 
-decorators externally.
-
-Configuration can be applied at two different levels:
-
-1.  **Element-Level Configuration (Tagging):** You can target specific elements inside your class diagram 
-    (such as a specific class, enum, or attribute) to explicitly enable or disable a decorator. 
-    This uses a targeting syntax of `<DiagramName>.<ElementName>:<Tag>`. For example, targeting 
-    `MyOrganizer.Day:noSetter` will prevent the generator from creating setter methods specifically for 
-    the `Day` class.
-2.  **Global-Level Configuration (Templates):** If you need to fundamentally change the default behavior or 
-    apply your own custom decorators across the entire build, you can supply a custom configuration template 
-    (e.g., a custom `.ftl` file) to replace the default `CD2Pojo` template.
-
-### Applying Configurations
-
-Depending on how you are running the CD4Code Generator, you can pass these configurations via the command line, 
-your Gradle build script, or directly through the Java API. Select your environment below:
-
-=== "CLI"
-    When running the CD4Code generator from the command line, you can pass element-level tags using the `-cliconfig` 
-    parameter. Multiple configurations can be applied by repeating the argument.
-    
-    For example, to disable getters and setters specifically for the `Day` class inside the `MyOrganizer` 
-    diagram, use the following command:
-    
-    ```shell
-    java -jar MCCD.jar -i src/MyOrganizer.cd -cliconfig "MyOrganizer.Day:noGetter" -cliconfig "MyOrganizer.Day:noSetter"
-    ```
-    
-    To apply a global configuration template, use the `-ct` (config template) argument to specify the 
-    template name, and `-fp` (file path) to specify the directory where the custom `.ftl` file is located:
-    
-    ```shell
-    java -jar MCCD.jar -i src/MyOrganizer.cd -ct CD2OwnDecorator -fp src/main/configTemplate
-    ```
-
-=== "Gradle"
-    When using Gradle, element-level configurations can be added directly to the `options` list of the 
-    `generateClassDiagrams` task.
-    
-    ```groovy
-    // build.gradle
-    tasks.named("generateClassDiagrams") {
-      // Element-level configuration targeting the Day class
-      options.add("MyOrganizer.Day:noGetter")
-      options.add("MyOrganizer.Day:noSetter")
-      
-      // Global-level configuration: Change the config template used by the generator
-      // getConfigTemplate().set("CD2OwnDecorator")
-      
-      // Additional optional configurations:
-      // getClass2MC().set(true)
-      // getCoCos().set(false) // (Not encouraged!)
-      // getOriginalSymbolOutput().set(...)
-      // getDecoratedSymbolOutput().set(...)
-      // getOutputDir().set(...)
-    }
-    ```
-
 ## Decorators
 At the very start of the CD4Code generator, the generator parses the class diagram DSL into the  *CD4C Abstract Syntax Tree (AST)*
 which represents the class diagram as an object tree.
-In a first step, the CD4Code generator uses the mandatory CopyDecorator to unify the *CD4C AST*.
-It copies the parsed AST and unifies it by adding a package if no package exists. Furthermore, it adds the
-attributes defined in the association and compositions to the respective classes. This means for cardinality `[*]` the 
-attribute is added as a Set and for cardinality `[1]` it is added as a single field, and for cardinality `[1..*]` it 
-is added as an Optional.
-All unset visibilities of attributes, classes, interfaces, and enums are set to public.
-Based on this unified AST, the CD4Code generator applies the other decorators which can be selected individually by the user.
-In Figure 4.1 we can see the original class diagram and in Figure 4.2 the generated code.
+Then the CD4Code generator applies the decorators to the AST. 
 
-![Figure 4.1 The original class diagram](../myOrganizer/img/MyOrganizer.svg)
-<figcaption>Figure 4.1 The original class diagram</figcaption>
+Decorators are classes that can modify the AST by adding, removing, or changing elements and by adding template 
+hooks to objects of the AST. While the modifications on the AST can be visualized and seen directly, the template 
+hooks are only processed when the actual code generation takes place. 
 
-![Figure 4.2 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-<figcaption>Figure 4.2 The original class diagram after applying the CopyDecorator</figcaption>
+The CD4Code generator comes with a set of prewritten decorators which can be applied to the AST. In This chapter, we will 
+discuss the decorators in detail.
 
-=== "GetterDecorator"
-    The GetterDecorator adds getter methods to all attributes of the class diagram.
-    
-    ![Figure 4.3 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-    <figcaption>Figure 4.13 The original class diagram</figcaption>
-
-    ![Figure 4.4 The original class diagram after applying the GetterDecorator](../myOrganizer/img/MyOrganizerOnlyGetter.svg)
-    <figcaption>Figure 4.4 The original class diagram after applying the GetterDecorator</figcaption>
-
-=== "SetterDecorator"
-    The SetterDecorator adds setter methods to all attributes of the class diagram.
-
-    ![Figure 4.5 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-    <figcaption>Figure 4.5 The original class diagram</figcaption>
-
-    ![Figure 4.6 The original class diagram after applying the SetterDecorator](../myOrganizer/img/MyOrganizerOnlySetter.svg)
-    <figcaption>Figure 4.6 The original class diagram after applying the SetterDecorator</figcaption>
-
-=== "CardinalitiesDefaultDecorator"
-    The CardinalitiesDefaultDecorator initiates Lists, Sets, and Optional attributes of the class diagram with an empty List, empty Set, or an empty Optional respectively. As the CopyDecorator always runs as the first Decorator and adds the attributes defined in the associations and compositions to the respective classes, the CardinalitiesDefaultDecorator also adds default values to these attributes.
-    
-    As cardinality is not specified in the class diagram, the CardinalitiesDefaultDecorator instead injects the initialization via a template hook. This template contains the specific java code which is then in the generation step checked and applied. 
-
-=== "NavigableSetterDecorator"
-    The NavigableSetterDecorator adds setter methods to all navigable associations of the class diagram.
-
-    ![Figure 4.9 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-    <figcaption>Figure 4.9 The original class diagram</figcaption>
-
-    ![Figure 4.10 The original class diagram after applying the NavigableSetterDecorator](../myOrganizer/img/MyOrganizerOnlyNavigableSetter.svg)
-    <figcaption>Figure 4.10 The original class diagram after applying the NavigableSetterDecorator</figcaption>
-
-=== "AbstractMethodDecorator"
-    The AbstractMethodDecorator adds abstract methods to all methods of the class diagram.
-
-    ![Figure 4.11 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-    <figcaption>Figure 4.11 The original class diagram</figcaption>
-    
-    ![Figure 4.12 The original class diagram after applying the AbstractMethodDecorator](../myOrganizer/img/MyOrganizerOnlyWithAbstractMethodSignatures.svg)
-    <figcaption>Figure 4.12 The original class diagram after applying the AbstractMethodDecorator</figcaption>
-
-=== "BuilderDecorator"
-    The BuilderDecorator adds a builder class to all classes of the class diagram.
-
-    ![Figure 4.13 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-    <figcaption>Figure 4.13 The original class diagram</figcaption>
-    
-    ![Figure 4.14 The original class diagram after applying the BuilderDecorator](../myOrganizer/img/MyOrganizerOnlyBuilders.svg)
-    <figcaption>Figure 4.14 The original class diagram after applying the BuilderDecorator</figcaption>
-
-=== "ObserverDecorator"
-    The ObserverDecorator adds an observable interface to all classes of the class diagram.
-
-    ![Figure 4.15 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-    <figcaption>Figure 4.15 The original class diagram</figcaption>
-    
-    ![Figure 4.16 The original class diagram after applying the ObserverDecorator](../myOrganizer/img/MyOrganizerOnlyObservers.svg)
-    <figcaption>Figure 4.16 The original class diagram after applying the ObserverDecorator</figcaption>
-
-=== "VisitorDecorator"
-    The VisitorDecorator adds a visitor interface to all classes of the class diagram.
-
-    ![Figure 4.17 The original class diagramm after applying the CopyDecorator](../myOrganizer/img/MyOrganizerNoDecorators.svg)
-    <figcaption>Figure 4.17 The original class diagram</figcaption>
-    
-    ![Figure 4.18 The original class diagram after applying the VisitorDecorator](../myOrganizer/img/MyOrganizerOnlyVisitors.svg)
-    <figcaption>Figure 4.18 The original class diagram after applying the VisitorDecorator</figcaption>
-
-
-Because some Decorators are dependent on other Decorators, running prior to them, Decorators all implement the 
-interface `IDecorator<D>` which has the method `getDependencies()` that returns a list of Decorators that must 
-be run before the respective Decorator. For example, the VisitorDecorator depends on the GetterDecorator,
+The Basis of all Decorators is the `CopyDecorator` which is responsible for copying the original `AST` and doing 
+some basic transformations on it. After this the CD4Code generator will apply the remaining decorators to the AST.
+As some Decorators dependent on other Decorators, all Decorators implement the 
+interface `IDecorator<D>` which contains the method `getDependencies()` which returns a list of Decorators that must 
+be run before itself. For example, the VisitorDecorator depends on the GetterDecorator,
 so the `getDependencies()` method returns `Collections.singletonList(GetterDecorator.class)`. Therefore, the 
 CD4Code generator checks the dependencies of the selected Decorators and runs them in the correct order. 
 If there is a circular dependency, the CD4Code generator throws an error and does not generate any code.
@@ -378,7 +209,94 @@ public interface IDecorator<D> extends IVisitor {
   
 }
 ```
+By default, the [CD2Pojo.ftl](../cdlang/src/main/resources/cd2java/init/CD2Pojo.ftl) template is being used by the CD4Code generator.
+It includes the following decorators:
 
+| Decorator                   | Description                                                        | To Enable                | To Disable                                |
+|-----------------------------|--------------------------------------------------------------------|--------------------------|-------------------------------------------|
+| [CopyDecorator](decorators/CopyDecorator.md)                 | Include all elements of the original CD in the output              | always                   | -                                         |
+| [GetterDecorator](decorators/GetterDecorator.md)             | Add Getter Methods                                                 | 🟩  `<<getter>>`         | `<<noGetter>>`                            |
+| [SetterDecorator](decorators/SetterDecorator.md)             | Add Setter Methods                                                 | 🟩 `<<setter>>`          | `<<noSetter>>`                            |
+| [CardinalityDefaultDecorator](decorators/CardinalityDefaultDecorator.md) | Optional and list attributes are initialized with an empty default | 🟩                       | `<<noDefaultCardinality>>`                |
+| [NavigableSetterDecorator](decorators/NavigableSetterDecorator.md)    | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`        | `<<noSetter>>`                            |
+| [AbstractMethodDecorator](decorators/AbstractMethodDecorator.md)     | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>` | `<<nonAbstractMethod>>`                   |
+| [BuilderDecorator](decorators/BuilderDecorator.md)            | Add a builder class                                                | 🟨 `<<builder>>`         | `<<noBuilder>>`                           |
+| [ObserverDecorator](decorators/ObserverDecorator.md)           | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<notObservable>>`                       |
+| [VisitorDecorator](decorators/VisitorDecorator.md)            | Include a visitor                                                  | 🟨 `<<visitor>>`         | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
+
+In the default configuration,
+🟩 means the decorator is applied unless disabled.
+🟨 means the decorator is not applied unless enabled.
+You can find a more detailed description of the decorators by clicking on the corresponding name.
+
+This means by default that the CD4Code generator will generate getters and setters for all attributes.
+Furthermore, it will initialize the cardinality of all optional attributes with an empty default value. Finally, the bidirectional associations between
+`Project` and `Task` will be navigable in both directions, meaning that the generated setter methods
+will also set the opposite side of the association by default.
+
+### Configuring the CD4Code Generator
+
+While the default `CD2Pojo` configuration is a great starting point, manually adding stereotypes
+(like `<<builder>>` or `<<noSetter>>`) directly to every element in a `.cd` file can become
+tedious and clutter the model. To solve this, the CD4Code Generator allows you to configure
+decorators externally.
+
+Configuration can be applied at two different levels:
+
+1.  **Element-Level Configuration (Tagging):** You can target specific elements inside your class diagram
+    (such as a specific class, enum, or attribute) to explicitly enable or disable a decorator.
+    This uses a targeting syntax of `<DiagramName>.<ElementName>:<Tag>`. For example, targeting
+    `MyOrganizer.Day:noSetter` will prevent the generator from creating setter methods specifically for
+    the `Day` class.
+2.  **Global-Level Configuration (Templates):** If you need to fundamentally change the default behavior or
+    apply your own custom decorators across the entire build, you can supply a custom configuration template
+    (e.g., a custom `.ftl` file) to replace the default `CD2Pojo` template.
+
+### Applying Configurations
+
+Depending on how you are running the CD4Code Generator, you can pass these configurations via the command line,
+your Gradle build script, or directly through the Java API. Select your environment below:
+
+=== "CLI"
+When running the CD4Code generator from the command line, you can pass element-level tags using the `-cliconfig`
+parameter. Multiple configurations can be applied by repeating the argument.
+
+    For example, to disable getters and setters specifically for the `Day` class inside the `MyOrganizer` 
+    diagram, use the following command:
+    
+    ```shell
+    java -jar MCCD.jar -i src/MyOrganizer.cd -cliconfig "MyOrganizer.Day:noGetter" -cliconfig "MyOrganizer.Day:noSetter"
+    ```
+    
+    To apply a global configuration template, use the `-ct` (config template) argument to specify the 
+    template name, and `-fp` (file path) to specify the directory where the custom `.ftl` file is located:
+    
+    ```shell
+    java -jar MCCD.jar -i src/MyOrganizer.cd -ct CD2OwnDecorator -fp src/main/configTemplate
+    ```
+
+=== "Gradle"
+When using Gradle, element-level configurations can be added directly to the `options` list of the
+`generateClassDiagrams` task.
+
+    ```groovy
+    // build.gradle
+    tasks.named("generateClassDiagrams") {
+      // Element-level configuration targeting the Day class
+      options.add("MyOrganizer.Day:noGetter")
+      options.add("MyOrganizer.Day:noSetter")
+      
+      // Global-level configuration: Change the config template used by the generator
+      // getConfigTemplate().set("CD2OwnDecorator")
+      
+      // Additional optional configurations:
+      // getClass2MC().set(true)
+      // getCoCos().set(false) // (Not encouraged!)
+      // getOriginalSymbolOutput().set(...)
+      // getDecoratedSymbolOutput().set(...)
+      // getOutputDir().set(...)
+    }
+    ```
 
 ## Running the CD4Code Generator
 The execution of the CD4Code Generator follows a structured pipeline.

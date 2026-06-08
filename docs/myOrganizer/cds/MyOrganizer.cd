@@ -1,5 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 import java.util.Date;
+import java.util.Optional;
 
 classdiagram MyOrganizer {
 
@@ -10,14 +11,14 @@ classdiagram MyOrganizer {
   }
 
   class Task extends Asset {
-    private String taskName;
-    protected Status taskStatus;
+    Status taskStatus;
     void process();
   }
 
   class Project extends Asset {
     public String projectName;
-    double budget;
+    private Optional<Date> deadline;
+    protected double budget;
     void process();
   }
 
@@ -25,6 +26,6 @@ classdiagram MyOrganizer {
     Date date;
   }
 
-  association [1] Day (day) ->  (tasks) Task [1];
+  association [1] Day (day) ->  (tasks) Task [*];
   association [*] Task (tasks) <-> (project) Project [1];
 }
