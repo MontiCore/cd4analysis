@@ -36,7 +36,7 @@ public class SymTabDefinitionGradlePluginTest {
   }
   
   @ParameterizedTest
-  @ValueSource(strings = { "8.5", "8.7", "8.14" })
+  @ValueSource(strings = { "8.5", "8.7", "8.14.4", "9.5.1" })
   void testSTDef(String version) throws IOException {
     writeFile(settingsFile, "rootProject.name = 'hello-world'");
     String projVersion = loadProperties().getProperty("version");
