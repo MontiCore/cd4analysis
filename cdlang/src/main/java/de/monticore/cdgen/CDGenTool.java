@@ -267,12 +267,15 @@ public class CDGenTool extends CDGeneratorTool {
       // Post-Decorate: TOP Decorator
       // TODO: #4310 - make this TOP transformation configurable via the config
       // template
+      boolean qf = Log.isFailQuickEnabled();
+      Log.enableFailQuick(false); // Disable quick-fail during post decoration
       TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
       t = CD4CodeMill.inheritanceTraverser();
       topTransformer.addToTraverser(t);
       decorated.get().accept(t);
       
       generator.generate(decorated.get());
+      Log.enableFailQuick(qf); // reset quick-fail
     }
   }
   
