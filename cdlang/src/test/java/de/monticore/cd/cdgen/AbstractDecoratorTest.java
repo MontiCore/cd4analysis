@@ -95,7 +95,9 @@ public abstract class AbstractDecoratorTest extends AbstractMCTest {
           tool.completeSymbolTable(decorated);
           
           results.add(new TestResult(decorated, decoratedScope));
-        }, List.of(cd));
+        }, List.of(cd),
+
+        true);
     
     System.out.println("Wrote CDGenTest results to " + outputDir.getAbsolutePath());
     
