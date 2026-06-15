@@ -10,7 +10,8 @@ When the generator runs, this decorator processes every class (`ASTCDClass`) in 
 2.  **Builder Class Generation:** For a class named `X`, it creates a new class `XBuilder`.
 3.  **Attribute Duplication:** It duplicates all attributes from the target class into the builder class to hold the intermediate state.
 4.  **Fluent Setter Generation:** It generates "set" methods (e.g., `setProjectName(String)`) that return `this.realBuilder` for method chaining, ensuring compatibility with inheritance.
-5.  **Build Method:** It generates a `build()` method that validates the state, constructs, and returns an instance of the target class using the accumulated properties.
+5.  **Validation Method Generation:** It generates a `isValid()` method that checks if all required attributes have been set.
+6.  **Build Method:** It generates a `build()` method that validates the state, constructs, and returns an instance of the target class using the accumulated properties.
 
 ---
 
