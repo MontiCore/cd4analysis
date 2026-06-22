@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdgen;
 
 import de.monticore.cd.codegen.DecoratorConfig;
@@ -14,59 +15,60 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class AbstractMethodDecoratorTest extends AbstractDecoratorTest {
-
+  
   @Override
   protected Optional<MCPath> getHandWrittenPath() {
     // The path should point to the root of the handwritten source folder,
     // not to the package folder itself.
     return Optional.of(new MCPath("src/test/resources/de/monticore/cd/codegen/hwc"));
   }
-
+  
   @Test
   public void testNotTopped() throws IOException {
     var opt = CD4CodeMill.parser().parse_String("""
-       classdiagram TestAbstractMethodDecoratorNotTopped {
-         abstract class Asset {
-           void process();
-         }
-       
-         class Task extends Asset {
-           void process();
-         }
-       }
-       """);
+        classdiagram TestAbstractMethodDecoratorNotTopped {
+          abstract class Asset {
+            void process();
+          }
+        
+          class Task extends Asset {
+            void process();
+          }
+        }
+        """);
     Assertions.assertTrue(opt.isPresent());
-
+    
     super.doTest(opt.get());
-
+    
     MCAssertions.assertHasFinding(f -> f.getMsg().contains("0xC0FFEE00"));
     Log.clearFindings();
   }
-
+  
   @Test
   public void testTopped() throws Exception {
     var opt = CD4CodeMill.parser().parse_String("""
-       classdiagram TestAbstractMethodDecoratorTopped {
-         abstract class Asset {
-           void process();
-         }
-       
-         class Task extends Asset {
-           void process();
-         }
-       }
-       """);
+        classdiagram TestAbstractMethodDecoratorTopped {
+          abstract class Asset {
+            void process();
+          }
+        
+          class Task extends Asset {
+            void process();
+          }
+        }
+        """);
     Assertions.assertTrue(opt.isPresent());
-
+    
     super.doTest(opt.get());
-
+    
     MCAssertions.assertNoFindings();
   }
-
-
+  
   @Override
-  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
+  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
+      GeneratorSetup setup) {
     config.withCopyCreator().defaultApply();
     config.withAbstractMethodSignatures().defaultApply();
   }
+  
 }
