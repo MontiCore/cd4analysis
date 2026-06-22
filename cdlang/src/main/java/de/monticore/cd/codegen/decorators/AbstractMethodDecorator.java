@@ -50,17 +50,21 @@ public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator
       if (!method.getModifier().isStatic()) {
         // non-static methods are turned into abstract methods
         decoratorData.getAsDecorated(method).getModifier().setAbstract(true);
-
+        
         // And also mark the parent (class) as abstract
         decoratorData.getAsDecorated(classStack.peek()).getModifier().setAbstract(true);
-
+        
         // Add TOPTrafo.NEEDS_TOP_IDENTIFIER stereotype for improved error messages
-        if(!classStack.peek().getModifier().isAbstract()) {
-          ASTStereoValue abstractStereotype = CD4CodeMill.stereoValueBuilder().setName("needsTOP").build();
-          ASTStereotype astStereotype = CD4CodeMill.stereotypeBuilder().addValues(abstractStereotype).build();
-          decoratorData.getAsDecorated(classStack.peek()).getModifier().setStereotype(astStereotype);
+        if (!classStack.peek().getModifier().isAbstract()) {
+          ASTStereoValue abstractStereotype = CD4CodeMill.stereoValueBuilder().setName("needsTOP")
+              .build();
+          ASTStereotype astStereotype = CD4CodeMill.stereotypeBuilder().addValues(
+              abstractStereotype).build();
+          decoratorData.getAsDecorated(classStack.peek()).getModifier().setStereotype(
+              astStereotype);
         }
-      }else {
+      }
+      else {
         // static methods can not be turned abstract:
         // instead we throw an error
         glexOpt.ifPresent(g -> g.replaceTemplate(CD4C.getInstance().getEmptyBodyTemplate(),

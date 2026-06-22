@@ -182,7 +182,7 @@ public class CDGenTool extends CDGeneratorTool {
                 // If required, we also output the symbol table of the *decorated* AST
                 this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
               }
-              if(cmd.hasOption("pp")){
+              if (cmd.hasOption("pp")) {
                 this.prettyPrint(decorated, Paths.get(cmd.getOptionValue("pp")).toString());
               }
             }, asts, cmd.hasOption("o"));
@@ -275,7 +275,7 @@ public class CDGenTool extends CDGeneratorTool {
       topTransformer.addToTraverser(t);
       decorated.get().accept(t);
       
-      if(doGenerate) {
+      if (doGenerate) {
         generator.generate(decorated.get());
       }
     }
@@ -378,11 +378,10 @@ public class CDGenTool extends CDGeneratorTool {
     options.addOption(org.apache.commons.cli.Option.builder("sd").longOpt("symboltabledecorated")
         .argName("file").hasArg().desc(
             "Serializes the decorated symbol table of the given artifact.").build());
-
-    options.addOption(org.apache.commons.cli.Option.builder("pp").longOpt("prettyprint")
-        .argName("file").hasArg().desc(
-            "Pretty prints the decorated AST to the given file.").build());
-
+    
+    options.addOption(org.apache.commons.cli.Option.builder("pp").longOpt("prettyprint").argName(
+        "file").hasArg().desc("Pretty prints the decorated AST to the given file.").build());
+    
     return options;
   }
   

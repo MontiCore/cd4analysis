@@ -96,7 +96,7 @@ public abstract class AbstractDecoratorTest extends AbstractMCTest {
           
           results.add(new TestResult(decorated, decoratedScope));
         }, List.of(cd),
-
+        
         true);
     
     System.out.println("Wrote CDGenTest results to " + outputDir.getAbsolutePath());
