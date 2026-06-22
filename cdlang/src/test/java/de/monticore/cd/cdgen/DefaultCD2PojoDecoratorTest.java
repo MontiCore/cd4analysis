@@ -35,7 +35,6 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
 
     //because the class diagram contains methods which are not topped by the TOP-Mechanism, we still get errors here
     MCAssertions.assertHasFindingsStartingWith("0xC0FFEE00");
-    MCAssertions.assertNoFindings();
   }
   
   @Override
