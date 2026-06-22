@@ -5,6 +5,7 @@ gen/
 .settings/
 .classpath
 *.log
+*.pyc
 *.iml
 .idea/
 .gradle
