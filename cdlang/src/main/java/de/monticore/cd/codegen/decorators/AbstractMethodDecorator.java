@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
@@ -56,10 +57,9 @@ public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator
         
         // Add TOPTrafo.NEEDS_TOP_IDENTIFIER stereotype for improved error messages
         if (!classStack.peek().getModifier().isAbstract()) {
-          ASTStereoValue abstractStereotype = CD4CodeMill.stereoValueBuilder().setName("needsTOP")
-              .build();
+          ASTStereoValue astStereoValue = TopDecorator.NEEDS_TOP_STEREO_BUILDER.apply("In the class %s a method needs to be topped");
           ASTStereotype astStereotype = CD4CodeMill.stereotypeBuilder().addValues(
-              abstractStereotype).build();
+              astStereoValue).build();
           decoratorData.getAsDecorated(classStack.peek()).getModifier().setStereotype(
               astStereotype);
         }
