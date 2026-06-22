@@ -1,4 +1,4 @@
-<!-- (c) https://github.com/MontiCore/cd4anaylsis -->
+<!-- (c) https://github.com/MontiCore/cd4analysis -->
 This page is under construction.
 
 # Getting Started with the CD4Code Generator
@@ -8,17 +8,17 @@ language developers. This page inspects a simple example class diagram and the
 Java classes and other artifacts that are generated from the decorating CD generator. 
 After installing the CD4Code Generator, as described on this page, it can be used to 
 automatically generate Java code with additional functionality as described in the 
-subsequent chapters.
+later chapters.
 
 The decorating CD generator is available as a command line interface (CLI) tool, as a library, and 
 can easily be used with Gradle. The Gradle integration enables developers to easily employ
 the generator in commonly used integrated developer environments (IDEs), such as 
 Eclipse and IntelliJ IDEA. This page contains information about an example
-class digram and the generated files and depending on the selected decorators.
+class diagram and the generated files and depending on the selected decorators.
 (It also shortly explains some key features of the generator.)
 
 (Detailed information about all configuration options that can be used in the Cd4Code 
-Generator can be found in the [Configuration](Configuration.md) page.)
+Generator can be found in the [Configuration](CDGen.md) page.)
 
 ## Prerequisites: Installing the Java Development Kit (JDK)
 
@@ -30,9 +30,9 @@ Java Development Kit (JDK) and validate that the installation was successful:
   *not* to the JRE, e.g., the following would be good:
     - `/user/lib/jvm/java-21-openjdk` on UNIX or
     - `C:\Program Files\Java\jdk-21.*` on Windows.
-      You will need this in order to run the Java compiler for compiling
+      You will need this to run the Java compiler for compiling
       the generated Java source files.
-- Also make sure that the system variable is set such that the Java
+- Also, make sure that the system variable is set such that the Java
   compiler can be used from any directory. JDK installations on UNIX
   systems do this automatically. On Windows systems, the `bin`
   directory of the JDK installation needs to be appended to the `PATH`
@@ -90,7 +90,7 @@ select the suitable tab below and perform the following steps:
 ## Inspect the class diagram
 
 The CD4Code generator helps to generate Java code from class diagrams. It supports easy 
-integration within gradle projects, but also as a one-shot generation tool. The CD4Code 
+integration within Gradle projects, but also as a one-shot generation tool. The CD4Code 
 generator processes class diagrams that are stored in files. The CD4Code generator will 
 process all `.cd` files in these directories and generate Java code based on the 
 class diagrams defined in these files. Each CD contains packages, classes, attributes, 
@@ -151,7 +151,7 @@ the `enum` keyword, defining the constants `PROCESSING`, `DONE`, and `OPEN`.
 It also defines several classes, such as `Asset`, `Task`, `Project`, and `Day`. The `abstract` 
 keyword can be applied to classes, as seen with `abstract class Asset;`. 
 Furthermore, the `extends` keyword is used to establish inheritance. In our example, 
-`Task` extends `Asset`, and `Project` extends `Asset`. Equaly, interfaces can be defined 
+`Task` extends `Asset`, and `Project` extends `Asset`. Equally, interfaces can be defined 
 as well, using the `interface` keyword, and classes can implement interfaces using the `implements` keyword.
 
 Classes typically contain attributes, which consist of a type and a name. The CD4Code 
@@ -209,20 +209,32 @@ public interface IDecorator<D> extends IVisitor {
   
 }
 ```
-By default, the [CD2Pojo.ftl](../cdlang/src/main/resources/cd2java/init/CD2Pojo.ftl) template is being used by the CD4Code generator.
-It includes the following decorators:
+By default, the [CD2Pojo.ftl](../cdlang/src/main/resources/cd2java/init/CD2Pojo.ftl) template is being used by the CD4Code generator. It defines which decorators are applied to the AST.
+It uses the `decConfig` variable which is an instance of the `DecoratorConfig` class. To apply a decorator to the AST, 
+we simply need to add the decorator to the `decConfig` variable. For example, to apply the `GetterDecorator` to the AST, we can add the following line to the `CD2Pojo.ftl` template:
 
-| Decorator                   | Description                                                        | To Enable                | To Disable                                |
-|-----------------------------|--------------------------------------------------------------------|--------------------------|-------------------------------------------|
-| [CopyDecorator](decorators/CopyDecorator.md)                 | Include all elements of the original CD in the output              | always                   | -                                         |
-| [GetterDecorator](decorators/GetterDecorator.md)             | Add Getter Methods                                                 | 🟩  `<<getter>>`         | `<<noGetter>>`                            |
-| [SetterDecorator](decorators/SetterDecorator.md)             | Add Setter Methods                                                 | 🟩 `<<setter>>`          | `<<noSetter>>`                            |
+```ftl
+<#-- Apply the GetterDecorator to the AST -->
+${decConfig.withGetters().applyOnName("getter").ignoreOnName("noGetter").defaultApply()}
+```
+
+The `.applyOnName("getter")` defines that the `GetterDecorator` should only be applied to classes or attributes which have the stereotype `<<getter>>`.
+The `.ignoreOnName("noGetter")` defines that the `GetterDecorator` should not be applied to classes or attributes which have the stereotype `<<noGetter>>`.
+The `.defaultApply()` defines that the `GetterDecorator` should be applied to all classes or attributes which do not have the stereotype `<<getter>>` or `<<noGetter>>`.
+The [CD2Pojo.ftl](../cdlang/src/main/resources/cd2java/init/CD2Pojo.ftl) includes decorators with the following configurations:
+
+
+| Decorator                                                                | Description                                                        | To Enable                | To Disable                                |
+|--------------------------------------------------------------------------|--------------------------------------------------------------------|--------------------------|-------------------------------------------|
+| [CopyDecorator](decorators/CopyDecorator.md)                             | Include all elements of the original CD in the output              | always                   | -                                         |
+| [GetterDecorator](decorators/GetterDecorator.md)                         | Add Getter Methods                                                 | 🟩  `<<getter>>`         | `<<noGetter>>`                            |
+| [SetterDecorator](decorators/SetterDecorator.md)                         | Add Setter Methods                                                 | 🟩 `<<setter>>`          | `<<noSetter>>`                            |
 | [CardinalityDefaultDecorator](decorators/CardinalityDefaultDecorator.md) | Optional and list attributes are initialized with an empty default | 🟩                       | `<<noDefaultCardinality>>`                |
-| [NavigableSetterDecorator](decorators/NavigableSetterDecorator.md)    | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`        | `<<noSetter>>`                            |
-| [AbstractMethodDecorator](decorators/AbstractMethodDecorator.md)     | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>` | `<<nonAbstractMethod>>`                   |
-| [BuilderDecorator](decorators/BuilderDecorator.md)            | Add a builder class                                                | 🟨 `<<builder>>`         | `<<noBuilder>>`                           |
-| [ObserverDecorator](decorators/ObserverDecorator.md)           | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<notObservable>>`                       |
-| [VisitorDecorator](decorators/VisitorDecorator.md)            | Include a visitor                                                  | 🟨 `<<visitor>>`         | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
+| [NavigableSetterDecorator](decorators/NavigableSetterDecorator.md)       | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`        | `<<noSetter>>`                            |
+| [AbstractMethodDecorator](decorators/AbstractMethodDecorator.md)         | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>` | `<<nonAbstractMethod>>`                   |
+| [BuilderDecorator](decorators/BuilderDecorator.md)                       | Add a builder class                                                | 🟨 `<<builder>>`         | `<<noBuilder>>`                           |
+| [ObserverDecorator](decorators/ObserverDecorator.md)                     | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<notObservable>>`                       |
+| [VisitorDecorator](decorators/VisitorDecorator.md)                       | Include a visitor                                                  | 🟨 `<<visitor>>`         | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
 
 In the default configuration,
 🟩 means the decorator is applied unless disabled.
@@ -233,6 +245,201 @@ This means by default that the CD4Code generator will generate getters and sette
 Furthermore, it will initialize the cardinality of all optional attributes with an empty default value. Finally, the bidirectional associations between
 `Project` and `Task` will be navigable in both directions, meaning that the generated setter methods
 will also set the opposite side of the association by default.
+
+## Designing a custom Decorator
+
+To design a new decorator, we need to first implement the new Decorator itself, and then add it to the `DecoratorConfig` class. 
+
+### Implementing a new Decorator 
+The different Decorator classes are located in the `cdlang/src/main/java/de/monticore/cd/codegen/decorators/` folder. 
+
+As mentioned above, all Decorators extend the `AbstractDecorator` class. This class provides some basic functionality 
+for all Decorators, such as the `init()` method which is called by the CD4Code generator before the actual code generation takes place.
+Furthermore, it provides the `addToTraverser()` method which is used to include the decorator in the traverser.
+
+Let’s imagine we want to create a `ToStringDecorator` which will add a `toString()` method to all classes.
+As our new decorator does not specify any additional data for other decorators, we can set the generic 
+attribute of the `AbstractDecorator` class to `NoData`. Keep in mind that we still need to implement the `addToTraverser()` and `getMustRunAfter()` methods.
+
+To later add functionality to the `ToStringDecorator`, we need to implement the visitor methods for the AST elements 
+we want to modify. To add them, the class needs to implement the `CDBasisVisitor2` interface. This interface contains 
+visitor methods for all AST elements of the class diagram.
+
+```java
+public class ToStringDecorator extends AbstractDecorator<AbstractDecorator.NoData>  implements CDBasisVisitor2 {
+  
+  @Override
+  public void addToTraverser(CD4CodeTraverser traverser) {
+    traverser.add4CDBasis(this); // 4CDBasis means this decorator will be applied to all elements of the class diagram AST
+  }
+
+  @Override
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
+    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
+        GetterDecorator.class));
+    // GetterDecorator is a Decorator that must be run before this decorator
+  }
+  
+  //...
+  
+}
+```
+
+Now we can add functionality by using the generated visitor pattern. Let’s assume we want to add a `toString()` method to all classes.
+We can do this by implementing the `visit(ASTCDClass node)` method of the `CDBasisVisitor2` interface which we need to add as well.
+
+```java  
+  @Override
+  public void visit(ASTCDClass node) {
+    if (decoratorData.shouldDecorate(this.getClass(), node)) {
+      addToStringMethod(node);
+    }
+  }
+  
+  private void addToStringMethod(ASTCDClass node) {
+    if (node.getCDMethodList().stream().noneMatch(m -> m.getName().equals("toString"))) {
+      // add the toString method signature to the AST
+      ASTCDMethod toStringMethod = CD4CodeMill.cDMethodBuilder()
+          .setName("toString")
+          .setModifier(CDModifier.PUBLIC.build())
+          .setMCReturnType((CD4CodeMill.mCReturnTypeBuilder()
+              .setMCType(MCTypeFacade.getInstance().createStringType())
+              .build()))
+          .build();
+      node.addCDMember(toStringMethod);
+  
+      // create the toString method body
+      StringBuilder body = new StringBuilder();
+      body.append("return \"").append(node.getName()).append("{\" +\n");
+      for (ASTCDAttribute attribute : node.getCDAttributeList()) {
+        body.append("  \"").append(attribute.getMCType().printType()).append("=\" + ").append(attribute.getName()).append(" +\n");
+      }
+      body.append("  '}';");
+  
+      // as the class diagram language does not support method bodies, we need to add the body as a hook to the method signature
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, toStringMethod, new StringHookPoint(body.toString())));
+    }
+  }
+```
+
+### Adding the new Decorator to the DecoratorConfig
+To add the new decorator to the CD4Code generator, we need to add it to the `DecoratorConfig` class. 
+This class is responsible for configuring the decorators that are applied to the class diagram. 
+To do this, we simply need to add the method `withToString` to the `DecoratorConfig` class.
+
+```java
+public class DecoratorConfig {
+
+  //...
+
+  public ChainableGenSetup withToString() {
+    return this.withDecorator(new ToStringDecorator());
+  }
+
+  //...
+}
+``` 
+
+Then we can modify the template used for configuration our decorators. 
+As we want to generate the `toString()` method for all classes, we add the following line to the `CD2Pojo.ftl` template:
+```injectedfreemarker
+<#-- ... -->
+
+${decConfig.withToString().applyOnName("toString").ignoreOnName("noToString").defaultApply()}
+
+<#-- ... -->
+```
+to apply to all classes by default.
+
+### Add tests
+To test the new decorator, we can add a test class to the `cdlang/src/test/java/de/monticore/cd/cdgen/` folder. 
+This test class should extend the `AbstractDecoratorTest` class which provides some basic functionality for testing decorators.
+For more information about test infrastructure, please look into the already existing test classes.
+
+Finally, we just run the CD4Code generator and the `toString()` method will be generated for all classes in our class diagram.
+
+## The TOP Mechanism: Integrating Handwritten Code
+
+A fundamental principle of the CD4Code Generator—and model-driven software engineering in general—is that generated code 
+should never be modified manually. If we edit a generated file in the `build/` directory, your changes will be permanently 
+overwritten the next time the generator runs.
+
+Class diagrams are structural models. They do not define behavior logic or method bodies. To solve the conflict between 
+preserving generated code and implementing custom behavior, the CD4Code Generator uses the TOP Mechanism.
+
+We need to create the handwritten class files *before* running the generator for the first time. 
+This prevents the generator from creating a conflicting file and ensures a smooth integration.
+
+To use the TOP mechanism, we need to tell the generator where to look for handwritten code. This is done by specifying 
+the `-hcp` option when running the generator. If we want to change the behavior of a class `X` in the generated code, 
+we can create a file in the same directory as the generated file, named `X.java`. The generator checks for each class 
+if it already has a corresponding file in the handwritten code directory. If it finds one, it will rename the generated 
+class to `XTOP` and use the handwritten code instead. This way, the generated code can still be used by extending it, 
+while the handwritten code can modify specific behavior without complete class rewrites.
+
+### Use Cases for the TOP Mechanism
+The TOP mechanism allows developers to seamlessly inject handwritten code into the generated architecture. It is primarily used for:
+
+- **Implementing Method Bodies**: We can write the logic for methods defined in the class diagram without modifying generated files.
+- **Adding complex Business Logic**: Business logic not directly related to the class diagram can be added to the generated code.
+- **Connecting to non-generated code**: We can integrate with external libraries or frameworks that are not part of the generated architecture.
+- **Overriding Generated Code**: Intercepting and modifying the generated code.
+- **Adding Non-Modeled State**: Adding attributes or methods that are not part of the class diagram.
+
+### Fixing the Issues 
+If we look back at our class diagram, we see that the abstract class `Asset` has the method `process()`. 
+This method is inherited by both `Project` and `Task`. However, the implementation of this method is not 
+defined in the class diagram. This poses a problem for the CD4Code generator, as method bodies cannot be 
+generated from the class diagram. But if we do not add the method body before generating the code, the 
+generated code will not compile. Which is against the design principle of the CD4Code generator.
+
+To safely implement the `process()` methods, we use the TOP mechanism by telling the generator where our handwritten 
+code lives using the Handwritten Code Path (`-hcp`).
+To implement the behavior for `Project` and `Task`, we create the following files in the `src/` directory:
+
+```src/
+├── main/
+│   └── java/
+│       └── MyOrganization/
+│           ├── Project.java
+│           └── Task.java
+```
+
+In `Project.java`, we implement the `process()` method for the `Project` class:
+
+```java
+package MyOrganization;
+
+class Project extends ProjectTOP {
+  
+  @Override
+  public void process() {
+    // Custom logic for Project processing
+  }
+}
+```
+
+and in `Task.java`, we implement the `process()` method for the `Task` class:
+
+```java
+package MyOrganization;
+
+class Task extends TaskTOP {
+  
+  @Override
+  public void process() {
+    // Custom logic for Task processing
+  }
+}
+```
+By following this approach, we can safely implement the behavior for both `Project` and `Task` without modifying 
+any generated files. The CD4Code generator will generate the necessary structure and method signatures based on 
+the class diagram, while our handwritten code will provide the specific logic for the `process()` methods. This allows 
+us to maintain a clear separation between generated code and custom behavior, adhering to the principles of model-driven 
+software engineering.
+
+The CD4Code generator will also now generate the compiling code, where the classes `Project` and `Task` are not
+abstract anymore. Therefore, the generated Builder and Observer classes will produce compilable code.
 
 ### Configuring the CD4Code Generator
 
@@ -405,22 +612,6 @@ the decorators and generate the actual Java source files.
     }
     ```
 
-#  === "Gradle"
-#  Just like the CLI, the Gradle plugin does not generate fields for associations by default. You must explicitly configure the task to map these roles to Java fields.
-#  
-#  You can do this by setting the `fieldFromRole` property inside your generation task:
-#  
-#  ```groovy
-#  // build.gradle
-#  tasks.named("generateClassDiagrams") {
-#    // Set the target directory for the generated Java files
-#    getOutputDir().set(file("build/generated/sources/cdgen/main/java"))
-#  
-#    // Explicitly map navigable association roles to generated Java fields
-#    getFieldFromRole().set("navigable")
-#  }
-#  ```
-
 Running the CD4Code generator tooled into a Gradle build is as simple as executing the Gradle build task.
 
 ### Inspecting the Generated Code
@@ -434,14 +625,6 @@ my-project/
 ├── build/
 │   ├── cdgensymbols/
 │   ├── classes/
-│   │   └── java/
-│   │       └── main/
-│   │           └── MyOrganizer/
-│   │               ├── Asset.java
-│   │               ├── Day.java
-│   │               ├── Project.java
-│   │               ├── Status.java
-│   │               └── Task.java
 │   ├── generated/
 │   └── generated-sources/
 │       └── cdgen/ 
@@ -457,3 +640,6 @@ my-project/
 └── build.gradle
  README.md
 ```
+
+The generated Java files should contain the expected getters, setters, and other methods as defined by the applied decorators. 
+You can now integrate this generated code into your Java project, further customize it, or use it as a base for additional development using the TOP-Mechanism.
