@@ -280,6 +280,7 @@ public class CDGenTool extends CDGeneratorTool {
       if (doGenerate) {
         generator.generate(decorated.get());
       }
+      Log.enableFailQuick(qf); // reset quick-fail
     }
   }
   
