@@ -5,7 +5,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
@@ -18,9 +17,9 @@ import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -325,15 +324,11 @@ public class CDDiffUtil {
   /** A helper function to compute all associations in cd that reference astcdType. */
   public static Set<ASTCDAssociation> getReferencingAssociations(ASTCDType astcdType,
       ASTCDCompilationUnit cd) {
-    // TODO Use TypeCheck3
-    ISynthesize typeSynthesizer = new FullSynthesizeFromCD4Code();
-    
     String typeFullName = astcdType.getSymbol().getFullName();
     return cd.getCDDefinition().getCDAssociationsList().stream().filter(rAssoc -> {
-      SymTypeExpression leftType = typeSynthesizer.synthesizeType(rAssoc.getLeft()
-          .getMCQualifiedType()).getResult();
-      SymTypeExpression rightType = typeSynthesizer.synthesizeType(rAssoc.getRight()
-          .getMCQualifiedType()).getResult();
+      SymTypeExpression leftType = TypeCheck3.symTypeFromAST(rAssoc.getLeft().getMCQualifiedType());
+      SymTypeExpression rightType = TypeCheck3.symTypeFromAST(rAssoc.getRight()
+          .getMCQualifiedType());
       if (!leftType.hasTypeInfo() || !rightType.hasTypeInfo()) {
         Log.error("Could not get type for association sides" + CD4CodeMill.prettyPrint(rAssoc,
             false));
