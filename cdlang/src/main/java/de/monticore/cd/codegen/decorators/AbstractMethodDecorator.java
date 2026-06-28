@@ -57,9 +57,10 @@ public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator
         
         // Add TOPTrafo.NEEDS_TOP_IDENTIFIER stereotype for improved error messages
         if (!classStack.peek().getModifier().isAbstract()) {
-          ASTStereoValue astStereoValue = TopDecorator.NEEDS_TOP_STEREO_BUILDER.apply("In the class %s a method needs to be topped");
-          ASTStereotype astStereotype = CD4CodeMill.stereotypeBuilder().addValues(
-              astStereoValue).build();
+          ASTStereoValue astStereoValue = TopDecorator.NEEDS_TOP_STEREO_BUILDER.apply(
+              "In the class %s a method needs to be topped");
+          ASTStereotype astStereotype = CD4CodeMill.stereotypeBuilder().addValues(astStereoValue)
+              .build();
           decoratorData.getAsDecorated(classStack.peek()).getModifier().setStereotype(
               astStereotype);
         }
