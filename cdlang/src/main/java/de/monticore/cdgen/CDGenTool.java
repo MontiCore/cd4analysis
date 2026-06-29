@@ -150,7 +150,7 @@ public class CDGenTool extends CDGeneratorTool {
         }
       }
       
-      if (cmd.hasOption("o")) {
+      if (cmd.hasOption("o") || cmd.hasOption("pp")) {
         // Where to load additional templates from
         List<File> additionalTemplatePaths = cmd.hasOption("fp") ? Arrays.stream(cmd
             .getOptionValues("fp")).map(Paths::get).map(Path::toFile).collect(Collectors.toList())
@@ -227,7 +227,7 @@ public class CDGenTool extends CDGeneratorTool {
   public void decorateAndGenerate(GlobalExtensionManagement glex,
       Consumer<DecoratorConfig> initializeDecConf, GeneratorSetup setup,
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
-      Collection<ASTCDCompilationUnit> asts) {
+      Collection<ASTCDCompilationUnit> asts, boolean doGenerate) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance()); // TODO: Remove from templates
     glex.setGlobalValue("cdGenService", new CDGenService());
