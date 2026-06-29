@@ -14,7 +14,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types3.TypeCheck3;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
@@ -23,7 +23,7 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     CDAssociationHandler {
   
   protected CDAssociationTraverser traverser;
-  
+  //TODO remove ISynthsize from the constructor if possible
   protected ISynthesize typeSynthesizer;
   
   public CDAssociationSymbolTableCompleter(ISynthesize typeSynthesizer) {
@@ -55,7 +55,7 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     }
     symbol.setType(typeResult.get());
     
-    setupModifiers(side.getModifier(), symbol);
+    setupModifiers(side.getModifier(), ast.getModifier(), symbol);
     
     symbol.setIsDefinitiveNavigable(isLeft ? ast.getCDAssocDir().isDefinitiveNavigableLeft() : ast
         .getCDAssocDir().isDefinitiveNavigableRight());
@@ -71,9 +71,8 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
   
   protected Optional<SymTypeExpression> getSymTypeExpression(ASTCDAssociation ast,
       ASTCDAssocSide side) {
-    final TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(side
-        .getMCQualifiedType());
-    if (!typeResult.isPresentResult()) {
+    final SymTypeExpression typeResult = TypeCheck3.symTypeFromAST(side.getMCQualifiedType());
+    if (typeResult == null) {
       Log.error(String.format("0xCDA62: The type %s of the role (%s) could not be calculated",
           CDAssociationMill.prettyPrint(side.getMCQualifiedType(), false), side.getName(ast)), side
               .getMCQualifiedType().get_SourcePositionStart());
@@ -82,21 +81,21 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     
     // check if the type can be resolved
     
-    return Optional.of(typeResult.getResult());
+    return Optional.of(typeResult);
   }
   
   protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side) {
     if (side.isPresentCDQualifier()) {
       if (side.getCDQualifier().isPresentByType()) {
-        final TypeCheckResult result = getTypeSynthesizer().synthesizeType(side.getCDQualifier()
+        final SymTypeExpression result = TypeCheck3.symTypeFromAST(side.getCDQualifier()
             .getByType());
-        if (!result.isPresentResult()) {
+        if (result == null) {
           Log.error(String.format("0xCDA63: The type of the interface (%s) could not be calculated",
               side.getCDQualifier().getByType().getClass().getSimpleName()), side.getCDQualifier()
                   .get_SourcePositionStart());
         }
         else {
-          symbol.setTypeQualifier(result.getResult());
+          symbol.setTypeQualifier(result);
         }
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
@@ -115,16 +114,14 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     final ASTCDAssocLeftSide l = node.getLeft();
     final ASTCDAssocRightSide r = node.getRight();
     
-    final TypeCheckResult rType = getTypeSynthesizer().synthesizeType(r.getMCQualifiedType()
+    final SymTypeExpression rType = TypeCheck3.symTypeFromAST(r.getMCQualifiedType()
         .getMCQualifiedName());
-    final TypeCheckResult lType = getTypeSynthesizer().synthesizeType(l.getMCQualifiedType()
+    final SymTypeExpression lType = TypeCheck3.symTypeFromAST(l.getMCQualifiedType()
         .getMCQualifiedName());
     
     if (l.isPresentSymbol()) {
-      if (rType.isPresentResult() && !rType.getResult().isObscureType() && rType.getResult()
-          .hasTypeInfo()) {
-        CDAssociationSymbolTableCompleter.addRoleToTheirType(l.getSymbol(), rType.getResult()
-            .getTypeInfo());
+      if (rType != null && !rType.isObscureType() && rType.hasTypeInfo()) {
+        CDAssociationSymbolTableCompleter.addRoleToTheirType(l.getSymbol(), rType.getTypeInfo());
       }
       else {
         Log.error("0xCDCD1 Right type for role symbol " + l.getSymbol().getName()
@@ -132,10 +129,8 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
       }
     }
     if (r.isPresentSymbol()) {
-      if (lType.isPresentResult() && !lType.getResult().isObscureType() && lType.getResult()
-          .hasTypeInfo()) {
-        CDAssociationSymbolTableCompleter.addRoleToTheirType(r.getSymbol(), lType.getResult()
-            .getTypeInfo());
+      if (lType != null && !lType.isObscureType() && lType.hasTypeInfo()) {
+        CDAssociationSymbolTableCompleter.addRoleToTheirType(r.getSymbol(), lType.getTypeInfo());
       }
       else {
         Log.error("0xCDCD2 Left type for role symbol " + r.getSymbol().getName()
@@ -144,13 +139,14 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     }
   }
   
-  public void setupModifiers(ASTModifier modifier, CDRoleSymbol roleSymbol) {
-    roleSymbol.setIsPublic(modifier.isPublic());
-    roleSymbol.setIsPrivate(modifier.isPrivate());
-    roleSymbol.setIsProtected(modifier.isProtected());
-    roleSymbol.setIsStatic(modifier.isStatic());
-    roleSymbol.setIsFinal(modifier.isFinal());
-    roleSymbol.setIsDerived(modifier.isDerived());
+  public void setupModifiers(ASTModifier assocSideModifier, ASTModifier assocModifier,
+      CDRoleSymbol roleSymbol) {
+    roleSymbol.setIsPublic(assocSideModifier.isPublic() || assocModifier.isPublic());
+    roleSymbol.setIsPrivate(assocSideModifier.isPrivate() || assocModifier.isPrivate());
+    roleSymbol.setIsProtected(assocSideModifier.isProtected() || assocModifier.isProtected());
+    roleSymbol.setIsStatic(assocSideModifier.isStatic() || assocModifier.isStatic());
+    roleSymbol.setIsFinal(assocSideModifier.isFinal() || assocModifier.isFinal());
+    roleSymbol.setIsDerived(assocSideModifier.isDerived() || assocModifier.isDerived());
   }
   
   public static void addRoleToTheirType(CDRoleSymbol symbol, TypeSymbol otherType) {
@@ -164,12 +160,6 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
       // add the symbol to the type; add to all relevant lists
       spannedScope.add(symbol);
     }
-  }
-  
-  public ISynthesize getTypeSynthesizer() { return typeSynthesizer; }
-  
-  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
   }
   
   @Override

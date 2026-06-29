@@ -8,17 +8,15 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
-import de.monticore.types.check.ISynthesize;
-import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types.check.*;
+import de.monticore.types3.TypeCheck3;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
   
+  //TODO remove ISynthesize from the constructor if possible
   protected ISynthesize typeSynthesizer;
   
   public CDInterfaceAndEnumSymbolTableCompleter(ISynthesize typeSynthesizer) {
@@ -52,15 +50,14 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
-        final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
+        final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
+        if (result == null) {
           Log.error(String.format(
               "0xCDA30: The type of the extended interfaces (%s) could not be calculated",
               CDInterfaceAndEnumMill.prettyPrint(s, false)), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors
-          .toList()));
+      }).filter(res -> res != null && !res.isObscureType()).collect(Collectors.toList()));
     }
   }
   
@@ -72,14 +69,13 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
-        final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
+        final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
+        if (result == null) {
           Log.error(String.format("0xCDA31: The type of the interface (%s) could not be calculated",
               s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors
-          .toList()));
+      }).filter(res -> res != null && !res.isObscureType()).collect(Collectors.toList()));
     }
   }
   
@@ -109,12 +105,6 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     typeSymbol.setIsStatic(modifier.isStatic());
     typeSymbol.setIsAbstract(modifier.isAbstract());
     typeSymbol.setIsDerived(modifier.isDerived());
-  }
-  
-  public ISynthesize getTypeSynthesizer() { return typeSynthesizer; }
-  
-  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
   }
   
 }

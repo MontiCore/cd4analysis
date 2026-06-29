@@ -4,7 +4,6 @@ package de.monticore.symtabdefinition;
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import de.monticore.prettyprint.IndentPrinter;
@@ -71,8 +70,7 @@ public class SymTabDefinitionTestBasis extends TestBasis {
     
     // Second pass for symbol table
     SymTabDefinitionTraverser traverser = SymTabDefinitionMill.traverser();
-    traverser.add4SymTabDefinition(new SymTabDefinitionSymbolTableCompleter(
-        new FullSynthesizeFromCD4Code()));
+    traverser.add4SymTabDefinition(new SymTabDefinitionSymbolTableCompleter());
     node.accept(traverser);
     checkLogError();
   }

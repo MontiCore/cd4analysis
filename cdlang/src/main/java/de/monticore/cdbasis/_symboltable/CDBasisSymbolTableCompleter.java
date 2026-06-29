@@ -15,7 +15,8 @@ import de.monticore.symbols.oosymbols._visitor.OOSymbolsVisitor2;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
 import de.monticore.types.check.ISynthesize;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.TypeCheck3;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {
   
   protected CDBasisTraverser traverser;
-  
+  //TODO remove ISynthesize from the constructor if possible
   protected ISynthesize typeSynthesizer;
   protected CDBasisFullPrettyPrinter prettyPrinter;
   
@@ -53,27 +54,26 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     
     if (node.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(node.getCDExtendUsage().streamSuperclass().map(s -> {
-        final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
+        final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
+        if (result == null) {
           Log.error(String.format(
               "0xCDA00: The type of the extended classes (%s) could not be calculated", CDBasisMill
                   .prettyPrint(s, false)), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors
-          .toList()));
+      }).filter(res -> res != null && !res.isObscureType()).collect(Collectors.toList()));
     }
     
     if (node.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(node.getCDInterfaceUsage().streamInterface().map(s -> {
-        final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
+        final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
+        if (result == null) {
           Log.error(String.format("0xCDA01: The type of the interface (%s) could not be calculated",
               s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors
-          .toList()));
+      }).filter(res -> res != null && !res.isObscureType()) // Filtert ungültige Typen direkt aus
+          .collect(Collectors.toList()));
     }
   }
   
@@ -95,15 +95,15 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     final FieldSymbol symbol = node.getSymbol();
     
     // Compute the !final! SymTypeExpression for the type of the field
-    final TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(node.getMCType());
-    if (!typeResult.isPresentResult()) {
+    final SymTypeExpression typeResult = TypeCheck3.symTypeFromAST(node.getMCType());
+    if (typeResult == null) {
       Log.error(String.format(
           "0xCDA02: The type (%s) of the attribute (%s) could not be calculated", CDBasisMill
               .prettyPrint(node.getMCType(), false), node.getName()), node.getMCType()
                   .get_SourcePositionStart());
     }
     else {
-      symbol.setType(typeResult.getResult());
+      symbol.setType(typeResult);
     }
   }
   
@@ -135,12 +135,6 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     fieldSymbol.setIsStatic(modifier.isStatic());
     fieldSymbol.setIsFinal(modifier.isFinal());
     fieldSymbol.setIsDerived(modifier.isDerived());
-  }
-  
-  public ISynthesize getTypeSynthesizer() { return typeSynthesizer; }
-  
-  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
   }
   
   public CDBasisTraverser getTraverser() { return traverser; }
