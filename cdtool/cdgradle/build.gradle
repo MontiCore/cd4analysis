@@ -16,8 +16,10 @@ dependencies {
   cdTool "de.monticore.lang:cd4analysis:$mc_version"
   compileOnly(project(":cdlang")) // As the main/cdtool dependency does not have an api dependency to cdlang
 
-  testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
-  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
   testImplementation gradleTestKit()
   testImplementation(project(":cdlang")) // For symbol table tests, etc.
 }
@@ -40,8 +42,8 @@ gradlePlugin {
 
 publishing {
   repositories.maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
@@ -53,14 +55,17 @@ test.dependsOn(project(":cdlang").tasks.jar)
 test.inputs.files(project(":cdlang").tasks.jar)
 
 // Write the version to the jar
+def buildInfoVersion = project.version.toString()
+
 tasks.register('generateResources') {
   ext {
-    propFile = file("$buildDir/generated/buildInfo.properties")
+    propFile = layout.buildDirectory.file("generated/buildInfo.properties")
   }
   outputs.file propFile
   doLast {
-    mkdir propFile.parentFile
-    propFile.text = "version=$project.version"
+    File f = propFile.get().asFile
+    f.parentFile.mkdirs()
+    f.text = "version=$buildInfoVersion"
   }
 }
 processResources {
@@ -68,7 +73,7 @@ processResources {
   dependsOn generateResources
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
   dependsOn project.tasks.getByPath(":cdlang:jar")
   dependsOn project.tasks.getByPath(":cd-runtime:jar")

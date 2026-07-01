@@ -6,10 +6,13 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
   id "maven-publish" // Only used to publish the trafos - everything else is published in the root project
+  id "java-test-fixtures"
   id "de.monticore.generator-withtr" version "$mc_version" // MontiCore Plugin with TR support
 }
 
-archivesBaseName = "cd4analysis"
+base {
+  archivesName = "cd4analysis"
+}
 
 def var_path = "de.monticore"
 group = "de.monticore.lang"
@@ -19,10 +22,10 @@ def withDSTLGen = ("true").equals(getProperty('genTR'))
 ext {
   grammar_classifier = "grammars"
   grammarDir = "src/main/grammars"
-  grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
-  trGrammarOutDir = "$buildDir/generated-sources/monticore-tr/sourcecode"
+  grammarOutDir = layout.buildDirectory.dir("generated-sources/monticore/sourcecode")
+  trGrammarOutDir = layout.buildDirectory.dir("generated-sources/monticore-tr/sourcecode")
   testGrammarDir = "src/test/grammars"
-  testGrammarOutDir = "$buildDir/generated-test-sources/monticore/trafo-sourcecode"
+  testGrammarOutDir = layout.buildDirectory.dir("generated-test-sources/monticore/trafo-sourcecode")
 }
 
 
@@ -33,6 +36,10 @@ sourceSets {
     if (withDSTLGen) {
       java.srcDirs += ["src/test/javatrafo/", testGrammarOutDir]
     }
+  }
+  testFixtures {
+    java.srcDirs = ["src/testFixtures/java"]
+    resources.srcDirs = []
   }
   // The following is required as we still publish a Feature-variant (with usingSourceSet(grammarsForVariant))
   grammarsForVariant {
@@ -79,6 +86,8 @@ dependencies {
   testImplementation "com.google.code.findbugs:jsr305:$findbugs_version"
   testImplementation testFixtures("de.monticore:monticore-grammar:$mc_version")
 
+  testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+
   //dependencies for trafo
   if (withDSTLGen) {
     trafoGrammar "de.monticore:monticore-grammar-trafo:$mc_version"
@@ -88,10 +97,19 @@ dependencies {
   }
 }
 
+def emptyTemplatesDir = layout.buildDirectory.dir("empty_templates")
+
+tasks.register('prepareEmptyTemplatesDir') {
+  outputs.dir(emptyTemplatesDir)
+  doLast {
+    emptyTemplatesDir.get().asFile.mkdirs()
+  }
+}
+
 tasks.withType(MCGenTask).configureEach {
   // Use an empty templates directory (as we do not override any)
-  tmplDir = project.layout.buildDirectory.dir("empty_templates")
-  tmplDir.get().getAsFile().mkdirs()
+  tmplDir = emptyTemplatesDir
+  dependsOn tasks.named('prepareEmptyTemplatesDir')
 }
 
 tasks.register('generateTestTrafos') {}
@@ -116,43 +134,53 @@ compileTestJava {
   dependsOn generateTestTrafos
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
   options.encoding = "UTF-8"
-  options.deprecation false
+  options.deprecation = false
   options.warnings = false
   options.headerOutputDirectory.convention(null)
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   // this won't work with setting the mills, as they can interleave and break thigs
   // maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
   testLogging {
     // controls whether test output is shown
-    showExceptions true
-    showCauses true
-    showStackTraces true
-    exceptionFormat TestExceptionFormat.FULL
+    showExceptions = true
+    showCauses = true
+    showStackTraces = true
+    exceptionFormat = TestExceptionFormat.FULL
     info {
       events TestLogEvent.FAILED,
-        TestLogEvent.PASSED,
-        TestLogEvent.SKIPPED,
-        TestLogEvent.STANDARD_OUT
+          TestLogEvent.PASSED,
+          TestLogEvent.SKIPPED,
+          TestLogEvent.STANDARD_OUT
     }
   }
-  afterTest { desc, result ->
-    logger.lifecycle "${desc.className} > ${desc.name} ${result.resultType}"
-  }
-  afterSuite { desc, result ->
-    if (!desc.parent) { // will match the outermost suite
-      def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
-      def startItem = '|  ', endItem = '  |'
-      logger.lifecycle startItem + output + endItem
+  addTestListener(new TestListener() {
+    void afterTest(TestDescriptor testDescriptor, TestResult result) {
+      logger.lifecycle "${testDescriptor.getClassName()} > ${testDescriptor.parent && testDescriptor.parent.getName() != testDescriptor.getClassName() ? testDescriptor.parent.getName() + " " + testDescriptor.getDisplayName() : testDescriptor.getName()} ${result.resultType}"
     }
-  }
+
+    void afterSuite(TestDescriptor suite, TestResult result) {
+      if (!suite.parent) { // will match the outermost suite
+        def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+        def startItem = '|  ', endItem = '  |'
+        logger.lifecycle startItem + output + endItem
+      }
+    }
+
+    // Required for Gradle version < 9.x
+    void beforeSuite(TestDescriptor suite) {
+    }
+
+    void beforeTest(TestDescriptor testDescriptor) {
+    }
+  })
   reports {
     html.required = false
   }
@@ -170,25 +198,25 @@ tasks.check.dependsOn(tasks.compileCd4cIntegTestJava)
 
 
 // build javadoc jar in addition
-task javadocJar(type: Jar) {
+tasks.register('javadocJar', Jar) {
   from javadoc
   archiveClassifier = "javadoc"
 }
 // generated java doc contains errors, disable for now
-javadoc.failOnError(false)
+javadoc.failOnError = false
 
 // build test sources jar in addition
-task testSourcesJar(type: Jar) {
+tasks.register('testSourcesJar', Jar) {
   from sourceSets.test.output + sourceSets.test.allSource
   archiveClassifier = "testSources"
 }
 
-tasks.withType(Jar) {
+tasks.withType(Jar).configureEach {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-task testReport(type: TestReport) {
-  destinationDirectory = file("$buildDir/reports/allTests")
+tasks.register('testReport', TestReport) {
+  destinationDirectory = layout.buildDirectory.dir("reports/allTests")
   // Include the results from the 'test' task
   testResults.from(tasks.withType(Test))
 }
@@ -198,6 +226,18 @@ java {
   // Publish a feature-variant for compatibility - DEPRECATED
   registerFeature('grammars') {
     usingSourceSet(sourceSets.grammarsForVariant)
+  }
+}
+
+configurations {
+  trafoOutElements {
+    canBeConsumed = true
+    canBeResolved = false
+  }
+}
+artifacts {
+  if(withDSTLGen) {
+    trafoOutElements(trafoJar)
   }
 }
 

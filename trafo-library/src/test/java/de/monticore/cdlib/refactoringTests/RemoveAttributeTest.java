@@ -17,12 +17,14 @@ import de.monticore.generating.templateengine.reporting.reporter.TransformationR
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test remove Attribute
  *
  * @author Ahmed Diab
  */
+@Timeout(60)
 public class RemoveAttributeTest {
   
   @BeforeAll
