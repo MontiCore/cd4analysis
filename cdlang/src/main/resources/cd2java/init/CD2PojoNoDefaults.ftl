@@ -14,6 +14,11 @@ ${decConfig.withGetters().applyOnName("getter").ignoreOnName("noGetter")}
 ${decConfig.withDefaultsForCardinalityAttrs().applyOnName("defaultCardinality").ignoreOnName("noDefaultCardinality")}
 ${decConfig.withSetters().applyOnName("setter").ignoreOnName("noSetter")}
 ${decConfig.withNavigableSetters().applyOnName("setter").ignoreOnName("noSetter")}
+${decConfig.withAbstractMethodSignatures().applyOnName("abstractMethod").ignoreOnName("nonAbstractMethod").ignoreOnName("impl")}
 ${decConfig.withBuilders().applyOnName("builder").ignoreOnName("noBuilder")}
 ${decConfig.withObservers().applyOnName("observable").ignoreOnName("notObservable")}
+${decConfig.withMethodImplementations().applyOnName("impl").ignoreOnName("noImpl")}
+${decConfig.withVisitors().applyOnName("visitor").ignoreOnName("noVisitor")}
+${decConfig.withVisitorImplementations().applyOnName("visitor").ignoreOnName("noVisitor").ignoreOnName("noDefaultVisitor")}
+${decConfig.withMethodImplementations().applyOnName("impl").ignoreOnName("noImpl")}
 
