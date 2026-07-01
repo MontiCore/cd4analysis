@@ -18,11 +18,9 @@ public class MethodImplementationDecorator extends AbstractDecorator<AbstractDec
   
   @Override
   public void visit(ASTCDMethod method) {
-    // Only work on classes, not interfaces, etc.
-    var originalParent = decoratorData.getParent(method).orElseThrow();
     // First, check if we should decorate the given object
     if (decoratorData.shouldDecorate(this.getClass(), method)) {
-      
+      // Then ensure a stereotype is present (as we do not support other configuration values so far)
       if (!method.getModifier().isPresentStereotype()) {
         Log.error("0xTODO: The method " + method.getName()
             + " is decorated with a method implementation, but does not present a stereotype.",
@@ -33,6 +31,7 @@ public class MethodImplementationDecorator extends AbstractDecorator<AbstractDec
       // TODO: ALu: Create shared get-marked value source (not only for stereotypes)
       String template = method.getModifier().getStereotype().getValue("impl");
       
+      // And finally. replace the empty body template with the given template
       glexOpt.ifPresent(g -> g.replaceTemplate(CD4C.getInstance().getEmptyBodyTemplate(),
           decoratorData.getAsDecorated(method), new TemplateHookPoint(template)));
     }
