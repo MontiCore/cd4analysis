@@ -112,7 +112,6 @@ processing models, including:
 * pretty-printing, 
 * storing symbols in symbol files, 
 * loading symbols from symbol files, 
-* transforming a CD into a graphical svg format
 * computing the semantic difference of 2 CDs, and
 * merging 2 CDs (iff the result is semantically sound)
 
