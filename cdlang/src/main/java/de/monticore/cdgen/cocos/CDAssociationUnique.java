@@ -99,8 +99,8 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
     boolean undirected = !navigableLeft && !navigableRight;
     
     if (navigableRight || undirected) {
-      references.add(new AssociationReference(findTypeByFullName(assoc, assoc
-          .getLeftQualifiedName().getQName()), deriveRoleName(assoc, AssocSide.RIGHT)));
+      references.add(new AssociationReference(findTypeByFullName(assoc, assoc.getLeftQualifiedName()
+          .getQName()), deriveRoleName(assoc, AssocSide.RIGHT)));
     }
     if (navigableLeft || undirected) {
       references.add(new AssociationReference(findTypeByFullName(assoc, assoc

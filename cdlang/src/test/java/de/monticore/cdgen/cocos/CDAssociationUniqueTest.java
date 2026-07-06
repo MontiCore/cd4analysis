@@ -44,8 +44,8 @@ public class CDAssociationUniqueTest extends AbstractJavaGenCoCoTest {
   
   @Test
   public void testUniqueExplicitRole() throws IOException {
-    String model = "classdiagram UniqueAssocs {" + "  class A; class B;"
-        + "  association A -> B;" + "  association A -> (other) B;" + "}";
+    String model = "classdiagram UniqueAssocs {" + "  class A; class B;" + "  association A -> B;"
+        + "  association A -> (other) B;" + "}";
     runTest(model, false);
   }
   
