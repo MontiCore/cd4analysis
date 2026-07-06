@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test ExtractSuperclass for Testcases
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class TestCasesExtractSuperclass {
   
   @BeforeAll

@@ -29,14 +29,19 @@ ${decConfig.withSetters().applyOnName("setter").ignoreOnName("noSetter").default
 <#-- And the NavigableSetters (for bidirectional assocs). -->
 <#-- The implementation of the NavigableSetters decorator requires that the Setter decorator has run before.-->
 ${decConfig.withNavigableSetters().applyOnName("setter").ignoreOnName("noSetter").defaultApply()}
-<#--Method signatures will be turned into abstract methods-->
-${decConfig.withAbstractMethodSignatures().applyOnName("abstractMethod").ignoreOnName("nonAbstractMethod").defaultApply()}
+<#--Method signatures will be turned into abstract methods, unless the method implementations are provided via templates (impl)-->
+${decConfig.withAbstractMethodSignatures().applyOnName("abstractMethod").ignoreOnName("nonAbstractMethod").ignoreOnName("impl").defaultApply()}
 <#--The following decorators are not applied by default, instead they have to be explicitly configured using stereos/tags/etc-->
 <#-- By default, the Builders decorator is NOT applied, unless an element or its parents are marked with builder -->
 <#--  Builders are also not applied when the element is not marked and the parent is marked with noBuilder. -->
 ${decConfig.withBuilders().applyOnName("builder").ignoreOnName("noBuilder")}
 <#-- Similarly, the Observable decorator is NOT applied by default, unless an element or its parents are marked with observable -->
 ${decConfig.withObservers().applyOnName("observable").ignoreOnName("notObservable")}
+<#-- Similarly, the Visitor decorator is NOT applied by default, unless an element or its parents are marked with visitor -->
+${decConfig.withVisitors().applyOnName("visitor").ignoreOnName("noVisitor")}
+${decConfig.withVisitorImplementations().applyOnName("visitor").ignoreOnName("noVisitor").ignoreOnName("noDefaultVisitor")}
+<#-- Similarly, the method implementation from templates decorator is NOT applied by default, unless an element or its parents are marked with impl -->
+${decConfig.withMethodImplementations().applyOnName("impl").ignoreOnName("noImpl")}
 
 
 <#--

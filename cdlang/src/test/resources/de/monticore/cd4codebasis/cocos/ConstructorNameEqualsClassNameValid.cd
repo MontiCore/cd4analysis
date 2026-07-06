@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram ConstructorNameEqualsClassNameValid {
+
+  class Payment {
+    public Payment();
+    public Payment(int amount);
+    public void process();
+  }
+
+  class Handler {
+    public void execute();
+  }
+
+  class Delivery { }
+
+}

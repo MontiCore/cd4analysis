@@ -18,6 +18,7 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test class PushDown
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class PushDownTest {
   
   @BeforeAll

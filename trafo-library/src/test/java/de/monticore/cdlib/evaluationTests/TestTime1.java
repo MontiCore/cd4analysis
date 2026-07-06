@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Check Executiontime for Testcase 1
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class TestTime1 {
   
   @BeforeAll

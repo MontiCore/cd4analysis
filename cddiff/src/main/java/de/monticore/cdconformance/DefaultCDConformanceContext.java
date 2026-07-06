@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.inc.*;
 import de.monticore.cdconformance.inc.association.*;
+import de.monticore.cdconformance.inc.attribute.AdaptedNameAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
@@ -158,6 +159,19 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
         compAssocIncStrategy.addIncStrategy(new ImplicitRoleNameAssocIncStrategy(
             compTypeIncStrategy, concreteCD, referenceCD, mapping));
       }
+    }
+    if (conformanceParams.contains(CDConfParameter.ADAPTED_NAME_MAPPING)) {
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcherForAdapted = conformanceParams
+          .contains(CDConfParameter.INHERITANCE) ? compSubTypeIncStrategy : compTypeIncStrategy;
+      compAssocIncStrategy.addIncStrategy(new AdaptedRoleNameAssocIncStrategy(typeMatcherForAdapted,
+          concreteCD, referenceCD));
+      // Attributes and methods use exact incarnation matching (compTypeIncStrategy), not
+      // subtype matching: a supertype must not be treated as an adapted incarnation of a
+      // reference parameter type just because one of its subtypes incarnates that type.
+      compAttributeIncStrategy.addIncStrategy(new AdaptedNameAttributeIncStrategy(
+          compTypeIncStrategy, concreteCD, referenceCD));
+      compMethodIncStrategy.addIncStrategy(new AdaptedNameMethodIncStrategy(compTypeIncStrategy,
+          mcTypeMatcher, concreteCD, referenceCD));
     }
     
     return new DefaultCDConformanceContext(concreteCD, referenceCD, mapping,

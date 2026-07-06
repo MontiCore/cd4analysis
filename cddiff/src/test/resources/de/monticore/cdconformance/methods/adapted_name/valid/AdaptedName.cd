@@ -1,0 +1,12 @@
+// Ticket incarnates Task. Method names adapted via the return/parameter type incarnation pair:
+//   adaptTemplatedName("findTask",    "Task", "Ticket") = "findTicket"
+//   adaptTemplatedName("processTask", "Task", "Ticket") = "processTicket"
+// ADAPTED_NAME_MAPPING is required for the conformance checker to accept this.
+classdiagram AdaptedName {
+  <<ref="Task">> class Ticket;
+
+  <<ref="Processor">> class TicketProcessor {
+    Ticket findTicket();
+    void processTicket(Ticket ticket);
+  }
+}

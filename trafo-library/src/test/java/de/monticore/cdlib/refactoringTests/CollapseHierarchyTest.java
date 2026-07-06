@@ -19,12 +19,14 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Tests for Collapse Hierarchy
  *
  * @author Philipp Nolte
  */
+@Timeout(value = 60, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
 public class CollapseHierarchyTest {
   
   @BeforeAll

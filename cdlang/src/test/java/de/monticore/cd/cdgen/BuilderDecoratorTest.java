@@ -9,7 +9,6 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
 import de.monticore.runtime.junit.MCAssertions;
-add import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import java.nio.file.Paths;
@@ -20,62 +19,63 @@ import java.util.List;
 import java.util.Optional;
 
 class BuilderDecoratorTest extends AbstractDecoratorTest {
-
+  
   @Test
   public void testBuilder() throws Exception {
-    var opt = CD4CodeMill.parser()
-        .parse_String( // @formatter:off
-          "classdiagram TestBuilder {\n"
-            + " <<setter,getter,builder>> public class TestBuilderWithSetter { \n"
-            + " public int myInt;\n"
-            + " public boolean myBool;\n"
-            + " -> (manyB) B [*] public;\n"
-            + " -> (optB) B [0..1] public;\n"
-            + " -> (oneB) B [1] public;\n"
-            + " public TestEnum myTestEnum;\n"
-            + " public Level1Interface myLevel1;\n"
-            + " }\n"
-            + " <<setter,getter,builder>> public class TestBuilderWithSuperClass extends TestBuilderWithSetter;"
-            + " <<noSetter,getter,builder>> public class TestBuilderWithoutSetter { \n"
-            + " public int myInt;\n"
-            + " public boolean myBool;\n"
-            + " -> (manyB) B [*] public;\n"
-            + " -> (optB) B [0..1] public;\n"
-            + " -> (oneB) B [1] public;\n"
-            + " public TestEnum myTestEnum;\n"
-            + " public Level1Interface myLevel1;\n"
-            + " }\n"
-            + " <<getter>> public class B { \n"
-            + " }\n"
-            + " <<setter,getter,builder>> public class NoDefaultConstructor { \n "
-            + " public NoDefaultConstructor(int i);\n"
-            + " int i; \n"
-            + " } \n"
-            + " <<setter,getter,builder>> public class PrivateDefaultConstructor { \n "
-            + " private PrivateDefaultConstructor();\n"
-            + " int i; \n"
-            + " } \n"
-            + " enum TestEnum { RUNNING, IDLE, ERROR; }\n"
-            + " interface Level1Interface;\n"
-            + " class Level2class implements Level1Interface{\n"
-            + "  int myInt;\n"
-            + " }\n"
-            + "}");
-    // @formatter:on
-
+    var opt = CD4CodeMill.parser().parse_String("""
+        classdiagram TestBuilder {
+          <<setter,getter,builder>>
+          public class TestBuilderWithSetter {
+            public int myInt;
+            public boolean myBool;
+            -> (manyB) B [*] public;
+            -> (optB) B [0..1] public;
+            -> (oneB) B [1] public;
+            public TestEnum myTestEnum;
+            public Level1Interface myLevel1;
+          }
+          <<setter,getter,builder>>
+          public class TestBuilderWithSuperClass extends TestBuilderWithSetter;
+          <<noSetter,getter,builder>>
+          public class TestBuilderWithoutSetter {
+           public int myInt;
+           public boolean myBool;
+           -> (manyB) B [*] public;
+           -> (optB) B [0..1] public;
+           -> (oneB) B [1] public;
+           public TestEnum myTestEnum;
+           public Level1Interface myLevel1;
+          }
+          <<getter>>
+          public class B { }
+          <<setter,getter,builder>>
+          public class NoDefaultConstructor {
+            public NoDefaultConstructor(int i);
+            int i;
+          }
+          <<setter,getter,builder>>
+          public class PrivateDefaultConstructor {
+            private PrivateDefaultConstructor();
+            int i;
+          }
+          enum TestEnum {
+            RUNNING, IDLE, ERROR;
+          }
+          interface Level1Interface;
+          class Level2class implements Level1Interface{
+            int myInt;
+          }
+        }""");
+    
     Assertions.assertTrue(opt.isPresent());
-
+    
     super.doTest(opt.get());
-
-    // Test that the warnings about missing setters are present.
-    Assertions.assertEquals(7, Log.getFindings().stream().filter(f -> f.getMsg().startsWith(
-        "Requested setter of TestBuilder") && f.isWarning()).count());
-    Assertions.assertTrue(Log.getFindings().stream().allMatch(f -> f.getMsg().startsWith(
-        "Requested setter of TestBuilder") && f.isWarning()));
-    Log.clearFindings();
-    MCAssertions.assertNoFindings();
+    
+    for (int i = 0; i < 7; i++) // Test, that the warning about missing setters is present
+      MCAssertions.assertHasFinding(f -> f.getMsg().startsWith("Requested setter of TestBuilder")
+          && f.isWarning());
   }
-
+  
   @Test
   public void testTemplateExistence() {
     //test existence of the templates
@@ -89,12 +89,12 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
       Assertions.assertTrue(Files.exists(temPath));
     }
   }
-
+  
   @Override
   protected Optional<MCPath> getHandWrittenPath() {
     return Optional.of(new MCPath("src/cdGenIntTestHwc/java"));
   }
-
+  
   @Override
   public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
       GeneratorSetup setup) {
@@ -111,5 +111,5 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     config.withDecorator(new CardinalityDefaultDecorator());
     config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
   }
-
+  
 }

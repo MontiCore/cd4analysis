@@ -10,13 +10,13 @@ import de.monticore.cdgen.CDGenTool;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
+import de.monticore.runtime.junit.AbstractMCTest;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
  * #initializeDecConf(GlobalExtensionManagement, DecoratorConfig, GeneratorSetup)} method and call
  * the {@link #doTest(ASTCDCompilationUnit)} with your CD.
  */
-public abstract class AbstractDecoratorTest {
+public abstract class AbstractDecoratorTest extends AbstractMCTest {
   
   protected File outputDir;
   protected CDGenTool tool;
@@ -37,11 +37,6 @@ public abstract class AbstractDecoratorTest {
     CD4CodeMill.init();
     tool = new CDGenTool();
     this.outputDir = new File("target/cdGenOutTest/" + getClass().getSimpleName());
-  }
-  
-  @AfterEach
-  public void finish() {
-    Assertions.assertEquals(0, LogStub.getFindingsCount());
   }
   
   /**

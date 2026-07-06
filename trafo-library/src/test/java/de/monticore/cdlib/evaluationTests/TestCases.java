@@ -24,12 +24,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test Testcases Created by
  *
  * @author KE
  */
+@Timeout(60)
 public class TestCases {
   
   @BeforeAll

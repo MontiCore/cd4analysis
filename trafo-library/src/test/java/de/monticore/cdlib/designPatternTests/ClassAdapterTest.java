@@ -13,6 +13,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test class AdapterPattern Test ClassAdapter
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class ClassAdapterTest {
   
   @BeforeAll

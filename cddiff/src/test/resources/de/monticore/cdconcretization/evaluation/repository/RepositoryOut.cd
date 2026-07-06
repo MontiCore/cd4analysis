@@ -18,7 +18,7 @@ classdiagram DomainModel {
   <<ref="RepositoryRef.EntityRepository">>class DepartmentRepository {
     <<ref="RepositoryRef.EntityRepository.findById">> Optional<Department> findByDepId(int depId);
     List<Department> findAll();
-    Department save(Department entity);
+    Department save(Department department);
     <<ref="RepositoryRef.EntityRepository.removeById">> void removeByDepId(int depId);
 
   }
@@ -27,7 +27,7 @@ classdiagram DomainModel {
     <<ref="RepositoryRef.EntityRepository.findById">> Optional<Employee> findById(String id);
     <<ref="RepositoryRef.EntityRepository.findById">> Optional<Employee> findByTaxId(String taxId);
     List<Employee> findAll();
-    Employee save(Employee entity);
+    Employee save(Employee employee);
     <<ref="RepositoryRef.EntityRepository.removeById">> void removeById(String id);
     <<ref="RepositoryRef.EntityRepository.removeById">> void removeByTaxId(String taxId);
   }

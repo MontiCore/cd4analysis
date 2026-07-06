@@ -29,9 +29,26 @@ public class DecoratorConfig {
   
   protected final Collection<IDecorator<?>> decorators = new ArrayList<>();
   
-  @SuppressWarnings("unchecked")
   public ChainableGenSetup withDecorator(IDecorator<?> decorator) {
-    this.decorators.add(decorator);
+    return this.withDecorator(decorator, false);
+  }
+  
+  /**
+   * Adds a new decorator to the list of applied decorators
+   * and returns an easy to use, chainable configuration interface.
+   *
+   * @param decorator the decorator
+   * @param ignoreDuplicateDecoratorType whether the decorator should be added, if one of the same
+   * class is already added
+   * @return the easy-to-use configuration interface
+   */
+  @SuppressWarnings("unchecked")
+  public ChainableGenSetup withDecorator(IDecorator<?> decorator,
+      boolean ignoreDuplicateDecoratorType) {
+    if (ignoreDuplicateDecoratorType || this.decorators.stream().noneMatch(d -> d.getClass().equals(
+        decorator.getClass()))) {
+      this.decorators.add(decorator);
+    }
     return new ChainableGenSetup((Class<? extends IDecorator<?>>) decorator.getClass());
   }
   
@@ -65,6 +82,18 @@ public class DecoratorConfig {
   
   public ChainableGenSetup withObservers() {
     return this.withDecorator(new ObserverDecorator());
+  }
+  
+  public ChainableGenSetup withVisitors() {
+    return this.withDecorator(new VisitorDecorator());
+  }
+  
+  public ChainableGenSetup withVisitorImplementations() {
+    return this.withDecorator(new VisitorImplementationDecorator());
+  }
+  
+  public ChainableGenSetup withMethodImplementations() {
+    return this.withDecorator(new MethodImplementationDecorator());
   }
   
   @SuppressWarnings("unchecked")
