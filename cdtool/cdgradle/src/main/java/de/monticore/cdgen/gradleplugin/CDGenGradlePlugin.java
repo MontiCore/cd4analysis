@@ -36,7 +36,7 @@ public class CDGenGradlePlugin implements Plugin<Project> {
     // Populate the "cdToolTargetRuntime" configuration with the runtime
     project.getPluginManager().apply(CDGenGradleDependenciesPlugin.class);
     
-    // Set up source-Sets
+    // Set up source-(directory)-Sets
     project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
       var cdSrcDirSet = addSourceSetExtension(sourceSet, project);
       
@@ -89,8 +89,7 @@ public class CDGenGradlePlugin implements Plugin<Project> {
     cdSrcDirSet.getFilter().include("**/*.cd");
     
     // Casting the SrcDirSet to a FileCollection seems to be necessary due to compatibility reasons
-    // with the
-    // configuration cache.
+    // with the configuration cache.
     // See
     // https://github.com/gradle/gradle/blob/d36380f26658d5cf0bf1bfb3180b9eee6d1b65a5/subprojects/scala/src/main/java/org/gradle/api/plugins/scala/ScalaBasePlugin.java#L194
     FileCollection mcSrcSetCast = cdSrcDirSet;
