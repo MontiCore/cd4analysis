@@ -9,6 +9,7 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
 import de.monticore.runtime.junit.MCAssertions;
+add import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import java.nio.file.Paths;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 class BuilderDecoratorTest extends AbstractDecoratorTest {
-  
+
   @Test
   public void testBuilder() throws Exception {
     var opt = CD4CodeMill.parser()
@@ -61,17 +62,20 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
             + " }\n"
             + "}");
     // @formatter:on
-    
+
     Assertions.assertTrue(opt.isPresent());
-    
+
     super.doTest(opt.get());
-    
-    for (int i = 0; i < 7; i++) // Test, that the warning about missing setters is present
-      MCAssertions.assertHasFinding(f -> f.getMsg().startsWith("Requested setter of TestBuilder")
-          && f.isWarning());
+
+    // Test that the warnings about missing setters are present.
+    Assertions.assertEquals(7, Log.getFindings().stream().filter(f -> f.getMsg().startsWith(
+        "Requested setter of TestBuilder") && f.isWarning()).count());
+    Assertions.assertTrue(Log.getFindings().stream().allMatch(f -> f.getMsg().startsWith(
+        "Requested setter of TestBuilder") && f.isWarning()));
+    Log.clearFindings();
     MCAssertions.assertNoFindings();
   }
-  
+
   @Test
   public void testTemplateExistence() {
     //test existence of the templates
@@ -85,12 +89,12 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
       Assertions.assertTrue(Files.exists(temPath));
     }
   }
-  
+
   @Override
   protected Optional<MCPath> getHandWrittenPath() {
     return Optional.of(new MCPath("src/cdGenIntTestHwc/java"));
   }
-  
+
   @Override
   public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
       GeneratorSetup setup) {
@@ -107,5 +111,5 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     config.withDecorator(new CardinalityDefaultDecorator());
     config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
   }
-  
+
 }
