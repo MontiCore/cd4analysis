@@ -8,7 +8,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
-import de.se_rwth.commons.logging.Log;
+import de.monticore.runtime.junit.MCAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import java.nio.file.Paths;
@@ -71,12 +71,9 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     
     super.doTest(opt.get());
     
-    // Test that the warnings about missing setters are present.
-    Assertions.assertEquals(7, Log.getFindings().stream().filter(f -> f.getMsg().startsWith(
-        "Requested setter of TestBuilder") && f.isWarning()).count());
-    Assertions.assertTrue(Log.getFindings().stream().allMatch(f -> f.getMsg().startsWith(
-        "Requested setter of TestBuilder") && f.isWarning()));
-    Log.clearFindings();
+    for (int i = 0; i < 7; i++) // Test, that the warning about missing setters is present
+      MCAssertions.assertHasFinding(f -> f.getMsg().startsWith("Requested setter of TestBuilder")
+          && f.isWarning());
   }
   
   @Test
