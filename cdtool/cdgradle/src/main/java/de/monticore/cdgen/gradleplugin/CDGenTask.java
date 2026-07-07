@@ -1,14 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdgen.gradleplugin;
 
-import de.monticore.gradle.common.AToolAction;
 import de.monticore.gradle.common.MCAllFilesTask;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
+import de.monticore.gradle.queue.ICachedQueueTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
@@ -21,10 +20,11 @@ import org.gradle.api.tasks.*;
  * B.cd is allowed
  */
 @CacheableTask
-public abstract class CDGenTask extends MCAllFilesTask {
+public abstract class CDGenTask extends MCAllFilesTask implements ICachedQueueTask {
   
   public CDGenTask() {
     super("CDGenTask", null);
+    getMainClass().convention("de.monticore.cdgen.CDGenTool");
   }
   
   @Optional
@@ -113,9 +113,10 @@ public abstract class CDGenTask extends MCAllFilesTask {
   }
   
   @Override
-  protected Class<? extends AToolAction> getToolAction() { return CDGenAction.class; }
-  
-  @Override
-  protected Consumer<String[]> getRunMethod() { return CDGenToolInvoker::run; }
+  protected void prepareWorkQueue() {
+    // Use the improved shared-isolated-work-queue of se-commons
+    this.workQueue = doGetSharedQueueService().newWorkQueue(getWorkerExecutor(),
+        getExtraClasspathElements());
+  }
   
 }
