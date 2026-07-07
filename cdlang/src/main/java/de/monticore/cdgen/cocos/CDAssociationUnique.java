@@ -26,19 +26,45 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
     List<ASTCDAssociation> alreadyChecked = new ArrayList<>();
     
     // we check for each pair of associations
-    for (ASTCDAssociation assoc2 : node.getCDAssociationsList()) {
+    for (ASTCDAssociation assoc1 : node.getCDAssociationsList()) {
       
-      for (ASTCDAssociation assoc1 : alreadyChecked) {
-        for (AssociationReference ref1 : getAssociationReferences(assoc1)) {
-          for (AssociationReference ref2 : getAssociationReferences(assoc2)) {
-            if (ref1.name.equals(ref2.name)) {
-              checkRef(node, ref1.sourceType, ref2.sourceType, assoc2);
-            }
+      alreadyChecked.add(assoc1);
+      
+      for (ASTCDAssociation assoc2 : node.getCDAssociationsList()) {
+        
+        // only check each pair once
+        if (assoc2 != assoc1 && !alreadyChecked.contains(assoc2)) {
+          
+          // if they share a left role-name, the referenced types on the right should not be the
+          // same
+          if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2,
+              AssocSide.LEFT))) {
+            checkRef(node, findTypeByFullName(assoc1, assoc1.getRightQualifiedName().getQName()),
+                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()), assoc1);
+          }
+          
+          // if they share a right role-name, the referenced types on the left should not be the
+          // same
+          if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2,
+              AssocSide.RIGHT))) {
+            checkRef(node, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName().getQName()),
+                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()), assoc1);
+          }
+          
+          // We also consider a left-to-right role name match ...
+          if (deriveRoleName(assoc1, AssocSide.LEFT).equals(deriveRoleName(assoc2,
+              AssocSide.RIGHT))) {
+            checkRef(node, findTypeByFullName(assoc1, assoc1.getRightQualifiedName().getQName()),
+                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()), assoc1);
+          }
+          // ... as well as a right-to-left match
+          if (deriveRoleName(assoc1, AssocSide.RIGHT).equals(deriveRoleName(assoc2,
+              AssocSide.LEFT))) {
+            checkRef(node, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName().getQName()),
+                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()), assoc1);
           }
         }
       }
-      
-      alreadyChecked.add(assoc2);
     }
   }
   
@@ -59,9 +85,6 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
   /** Check if type2 is the same as type1. */
   protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2,
       ASTCDAssociation assoc1) {
-    if (type1 == null || type2 == null) {
-      return;
-    }
     if (type1.equals(type2)) {
       Log.error(String.format("0xCDCE1: %s has a duplicate association to %s", type1.getName(),
           type2.getName()), assoc1.isPresent_SourcePositionStart() ? assoc1
@@ -79,11 +102,11 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
     else {
       assocSide = assoc.getRight();
     }
-    if (assoc.isPresentName()) {
-      return StringUtils.uncapitalize(assoc.getName());
-    }
-    else if (assocSide.isPresentCDRole()) {
+    if (assocSide.isPresentCDRole()) {
       return assocSide.getCDRole().getName();
+    }
+    else if (assoc.isPresentName()) {
+      return StringUtils.uncapitalize(assoc.getName());
     }
     else {
       return StringUtils.uncapitalize(assocSide.getMCQualifiedType().getMCQualifiedName()
@@ -91,40 +114,8 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
     }
   }
   
-  protected List<AssociationReference> getAssociationReferences(ASTCDAssociation assoc) {
-    List<AssociationReference> references = new ArrayList<>();
-    
-    boolean navigableLeft = assoc.getCDAssocDir().isDefinitiveNavigableLeft();
-    boolean navigableRight = assoc.getCDAssocDir().isDefinitiveNavigableRight();
-    boolean undirected = !navigableLeft && !navigableRight;
-    
-    if (navigableRight || undirected) {
-      references.add(new AssociationReference(findTypeByFullName(assoc, assoc.getLeftQualifiedName()
-          .getQName()), deriveRoleName(assoc, AssocSide.RIGHT)));
-    }
-    if (navigableLeft || undirected) {
-      references.add(new AssociationReference(findTypeByFullName(assoc, assoc
-          .getRightQualifiedName().getQName()), deriveRoleName(assoc, AssocSide.LEFT)));
-    }
-    
-    return references;
-  }
-  
   private enum AssocSide {
     LEFT, RIGHT;
-  }
-  
-  protected static class AssociationReference {
-    
-    protected final ASTCDType sourceType;
-    
-    protected final String name;
-    
-    protected AssociationReference(ASTCDType sourceType, String name) {
-      this.sourceType = sourceType;
-      this.name = name;
-    }
-    
   }
   
 }
