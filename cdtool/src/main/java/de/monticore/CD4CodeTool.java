@@ -310,9 +310,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         
         if (cmd.hasOption("puml")) { // if option puml is given, then enable the plantuml options
           final CommandLine plantUMLCmd = cdToolOptions.parse(CDToolOptions.SubCommand.PLANTUML);
-          final String path = createPlantUML(plantUMLCmd, this.outputPath);
+          final Path path = createPlantUML(plantUMLCmd, this.outputPath);
           final String dir = System.getProperty("user.dir");
-          String relative = new File(dir).toURI().relativize(new File(path).toURI()).getPath();
+          String relative = new File(dir).toURI().relativize(path.toUri()).getPath();
           System.out.printf(PLANTUML_SUCCESSFUL, unifyPath(relative));
         }
         
@@ -585,9 +585,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
   
-  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {
-    final String output = Paths.get(outputPath, cmd.getOptionValue("puml", modelName)).toUri()
-        .getPath();
+  protected Path createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {
+    final Path output = Paths.get(outputPath, cmd.getOptionValue("puml", modelName));
     
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
     
@@ -624,13 +623,17 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       plantUMLConfig.setRanksep(Integer.parseInt(plantUMLCmd.getOptionValue("ranksep", "-1")));
     }
     
+    if (!output.getParent().toFile().isDirectory())
+      output.getParent().toFile().mkdirs();
+    
     if (plantUMLCmd.hasOption("svg")) {
-      return PlantUMLUtil.printCD2PlantUMLLocally(Optional.ofNullable(ast), output.endsWith(".svg")
-          ? output : output + ".svg", plantUMLConfig);
+      return PlantUMLUtil.writeCdToPlantUmlSvg(Optional.ofNullable(ast), output.toString().endsWith(
+          ".svg") ? output : output.resolveSibling(output.getFileName() + ".svg"), plantUMLConfig);
     }
     else {
-      return PlantUMLUtil.printCD2PlantUMLModelFileLocally(Optional.ofNullable(ast), output
-          .endsWith(".puml") ? output : output + ".puml", plantUMLConfig);
+      return PlantUMLUtil.writeCdToPlantUmlModelFile(Optional.ofNullable(ast), output.toString()
+          .endsWith(".puml") ? output : output.resolveSibling(output.getFileName() + ".puml"),
+          plantUMLConfig);
     }
   }
   
