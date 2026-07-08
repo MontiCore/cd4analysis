@@ -16,6 +16,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -180,10 +181,19 @@ public class CDDiffUtil {
       String superName;
       if (currentClass.isPresentCDExtendUsage()) {
         for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
-          assert objectType.getDefiningSymbol().isPresent();
-          superName = ((CDTypeSymbol) objectType.getDefiningSymbol().get())
-              .getInternalQualifiedName();
-          
+          SymTypeExpression symtype = TypeCheck3.symTypeFromAST(objectType);
+          if (!symtype.isObjectType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+            ISymbol symbol = symtype.getSourceInfo().getSourceSymbol().get();
+            if (symbol instanceof CDTypeSymbol) {
+              superName = ((CDTypeSymbol) symbol).getInternalQualifiedName();
+            }
+            else {
+              continue;
+            }
+          }
+          else {
+            continue;
+          }
           for (ASTCDClass astClass : classes) {
             if (superName.equals(astClass.getSymbol().getInternalQualifiedName())) {
               toProcess.add(astClass);
@@ -211,9 +221,19 @@ public class CDDiffUtil {
     
     String interfaceName;
     for (ASTMCObjectType objectType : superClass.getInterfaceList()) {
-      assert objectType.getDefiningSymbol().isPresent();
-      interfaceName = ((CDTypeSymbol) objectType.getDefiningSymbol().get())
-          .getInternalQualifiedName();
+      SymTypeExpression symtype = TypeCheck3.symTypeFromAST(objectType);
+      if (!symtype.isObjectType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+        ISymbol symbol = symtype.getSourceInfo().getSourceSymbol().get();
+        if (symbol instanceof CDTypeSymbol) {
+          interfaceName = ((CDTypeSymbol) symbol).getInternalQualifiedName();
+        }
+        else {
+          continue;
+        }
+      }
+      else {
+        continue;
+      }
       
       for (ASTCDInterface allowedInterface : allowedInterfaces) {
         if (interfaceName.equals(allowedInterface.getSymbol().getInternalQualifiedName())) {
@@ -233,9 +253,19 @@ public class CDDiffUtil {
       // Add all interfaces implemented by the current interface to the
       // processing list
       for (ASTMCObjectType objectType : currentInterface.getInterfaceList()) {
-        assert objectType.getDefiningSymbol().isPresent();
-        interfaceName = ((CDTypeSymbol) objectType.getDefiningSymbol().get())
-            .getInternalQualifiedName();
+        SymTypeExpression symtype = TypeCheck3.symTypeFromAST(objectType);
+        if (!symtype.isObjectType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+          ISymbol symbol = symtype.getSourceInfo().getSourceSymbol().get();
+          if (symbol instanceof CDTypeSymbol) {
+            interfaceName = ((CDTypeSymbol) symbol).getInternalQualifiedName();
+          }
+          else {
+            continue;
+          }
+        }
+        else {
+          continue;
+        }
         
         for (ASTCDInterface allowedInterface : allowedInterfaces) {
           if (interfaceName.equals(allowedInterface.getSymbol().getInternalQualifiedName())) {
