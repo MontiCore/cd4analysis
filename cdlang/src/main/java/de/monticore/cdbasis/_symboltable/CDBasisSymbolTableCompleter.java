@@ -92,6 +92,15 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
   
   @Override
   public void visit(ASTCDAttribute node) {
+    // ======= merge test =======
+    if (node.getName().equals("worker")) {
+      System.out.println(" CDBasisCompleter visits 'worker'");
+      var res = TypeCheck3.symTypeFromAST(node.getMCType());
+      System.out.println("calculated type: " + (res == null ? "null" : res.print())
+          + " (is obscure? " + (res != null && res.isObscureType()) + ")");
+    }
+    // =====================================
+    
     final FieldSymbol symbol = node.getSymbol();
     
     // Compute the !final! SymTypeExpression for the type of the field
