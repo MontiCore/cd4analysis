@@ -182,7 +182,7 @@ public class CDDiffUtil {
       if (currentClass.isPresentCDExtendUsage()) {
         for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
           SymTypeExpression symtype = TypeCheck3.symTypeFromAST(objectType);
-          if (!symtype.isObjectType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+          if (!symtype.isObscureType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
             ISymbol symbol = symtype.getSourceInfo().getSourceSymbol().get();
             if (symbol instanceof CDTypeSymbol) {
               superName = ((CDTypeSymbol) symbol).getInternalQualifiedName();
@@ -222,7 +222,7 @@ public class CDDiffUtil {
     String interfaceName;
     for (ASTMCObjectType objectType : superClass.getInterfaceList()) {
       SymTypeExpression symtype = TypeCheck3.symTypeFromAST(objectType);
-      if (!symtype.isObjectType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+      if (!symtype.isObscureType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
         ISymbol symbol = symtype.getSourceInfo().getSourceSymbol().get();
         if (symbol instanceof CDTypeSymbol) {
           interfaceName = ((CDTypeSymbol) symbol).getInternalQualifiedName();
@@ -254,7 +254,7 @@ public class CDDiffUtil {
       // processing list
       for (ASTMCObjectType objectType : currentInterface.getInterfaceList()) {
         SymTypeExpression symtype = TypeCheck3.symTypeFromAST(objectType);
-        if (!symtype.isObjectType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+        if (!symtype.isObscureType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
           ISymbol symbol = symtype.getSourceInfo().getSourceSymbol().get();
           if (symbol instanceof CDTypeSymbol) {
             interfaceName = ((CDTypeSymbol) symbol).getInternalQualifiedName();
