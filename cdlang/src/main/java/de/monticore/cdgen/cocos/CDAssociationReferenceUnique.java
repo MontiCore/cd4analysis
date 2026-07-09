@@ -10,14 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 /**
- * Checks that generated association references are unique for CD2Java/CD2Pojo.
+ * Checks that generated association references are unique.
  */
 public class CDAssociationReferenceUnique extends CDAssociationUniqueInHierarchy {
-  
+
   @Override
   public void check(ASTCDDefinition node) {
     List<ASTCDAssociation> alreadyChecked = new ArrayList<>();
-    
+
     // we check for each pair of associations
     for (ASTCDAssociation assoc2 : node.getCDAssociationsList()) {
       for (ASTCDAssociation assoc1 : alreadyChecked) {
@@ -29,11 +29,11 @@ public class CDAssociationReferenceUnique extends CDAssociationUniqueInHierarchy
           }
         }
       }
-      
+
       alreadyChecked.add(assoc2);
     }
   }
-  
+
   @Override
   protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2,
       ASTCDAssociation assoc1) {
@@ -42,14 +42,14 @@ public class CDAssociationReferenceUnique extends CDAssociationUniqueInHierarchy
     }
     super.checkRef(node, type1, type2, assoc1);
   }
-  
+
   protected List<AssociationReference> getAssociationReferences(ASTCDAssociation assoc) {
     List<AssociationReference> references = new ArrayList<>();
-    
+
     boolean navigableLeft = assoc.getCDAssocDir().isDefinitiveNavigableLeft();
     boolean navigableRight = assoc.getCDAssocDir().isDefinitiveNavigableRight();
     boolean undirected = !navigableLeft && !navigableRight;
-    
+
     if (navigableRight || undirected) {
       references.add(new AssociationReference(findTypeByFullName(assoc, assoc.getLeftQualifiedName()
           .getQName()), deriveReferenceName(assoc, AssocSide.RIGHT)));
@@ -58,10 +58,10 @@ public class CDAssociationReferenceUnique extends CDAssociationUniqueInHierarchy
       references.add(new AssociationReference(findTypeByFullName(assoc, assoc
           .getRightQualifiedName().getQName()), deriveReferenceName(assoc, AssocSide.LEFT)));
     }
-    
+
     return references;
   }
-  
+
   protected String deriveReferenceName(ASTCDAssociation assoc, AssocSide side) {
     ASTCDAssocSide assocSide;
     if (side.equals(AssocSide.LEFT)) {
@@ -81,22 +81,22 @@ public class CDAssociationReferenceUnique extends CDAssociationUniqueInHierarchy
           .getBaseName());
     }
   }
-  
+
   protected enum AssocSide {
     LEFT, RIGHT;
   }
-  
+
   protected static class AssociationReference {
-    
+
     protected final ASTCDType sourceType;
-    
+
     protected final String name;
-    
+
     protected AssociationReference(ASTCDType sourceType, String name) {
       this.sourceType = sourceType;
       this.name = name;
     }
-    
+
   }
-  
+
 }
