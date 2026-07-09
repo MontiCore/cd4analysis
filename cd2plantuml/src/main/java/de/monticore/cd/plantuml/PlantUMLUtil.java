@@ -123,48 +123,4 @@ public class PlantUMLUtil {
     return PLANTUML_EMPTY;
   }
   
-  /////////////////////////////////////////////////////////////////////////////
-  // Depricated below
-  /////////////////////////////////////////////////////////////////////////////
-  
-  /** this needs GraphViz/JDOT installed on your PC */
-  @Deprecated(forRemoval = true)
-  public static String printCD2PlantUMLLocally(
-      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
-      String outputPathSVG, PlantUMLConfig plantUMLConfig) throws IOException {
-    return writeCdToPlantUmlSvg(astCD, Path.of(outputPathSVG), plantUMLConfig).toString();
-  }
-  
-  /** this needs GraphViz/JDOT installed on your PC */
-  @Deprecated(forRemoval = true)
-  public static void printCD2PlantUMLLocally(String pathCD, String outputPathSVG,
-      PlantUMLConfig plantUMLConfig) throws IOException {
-    writeCdToPlantUmlSvg(pathCD, Path.of(outputPathSVG), plantUMLConfig);
-  }
-  
-  @Deprecated(forRemoval = true)
-  public static String printCD2PlantUMLModelFileLocally(
-      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
-      String outputPath, PlantUMLConfig plantUMLConfig) throws IOException {
-    return writeCdToPlantUmlModelFile(astCD, Path.of(outputPath), plantUMLConfig).toString();
-  }
-  
-  @Deprecated(forRemoval = true)
-  public static void printCD2PlantUMLModelFileLocally(String pathCD, String outputPath,
-      PlantUMLConfig plantUMLConfig) throws IOException {
-    writeCdToPlantUmlModelFile(pathCD, Path.of(outputPath), plantUMLConfig);
-  }
-  
-  @Deprecated(forRemoval = true)
-  protected static String printCD2PlantUML(
-      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
-      PlantUMLConfig config) {
-    return toPlantUmlModelString(astCD, config);
-  }
-  
-  @Deprecated(forRemoval = true)
-  protected static String printCD2PlantUML(String cdString, PlantUMLConfig config) {
-    return toPlantUmlModelString(cdString, config);
-  }
-  
 }
