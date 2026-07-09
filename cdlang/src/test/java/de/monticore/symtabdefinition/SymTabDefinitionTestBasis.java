@@ -17,19 +17,17 @@ import de.monticore.symtabdefinition._symboltable.SymTabDefinitionSymbols2Json;
 import de.monticore.symtabdefinition._visitor.SymTabDefinitionTraverser;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 public class SymTabDefinitionTestBasis extends TestBasis {
-  
+
   protected SymTabDefinitionParser parser;
   protected SymTabDefinitionFullPrettyPrinter printer;
   protected SymTabDefinitionSymbols2Json symbols2Json;
   protected SymTabDefinitionCoCoChecker coCoChecker;
-  
+
   @BeforeEach
   public void initObjects() {
     LogStub.init();
@@ -37,38 +35,33 @@ public class SymTabDefinitionTestBasis extends TestBasis {
     SymTabDefinitionMill.reset();
     SymTabDefinitionMill.init();
     parser = SymTabDefinitionMill.parser();
-    
+
     ISymTabDefinitionGlobalScope globalScope = SymTabDefinitionMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
-    
+
     printer = new SymTabDefinitionFullPrettyPrinter(new IndentPrinter(), true);
     symbols2Json = new SymTabDefinitionSymbols2Json();
     coCoChecker = new SymTabDefinitionCoCoChecker();
   }
-  
+
   protected ASTCDCompilationUnit parse(String filePath) {
-    Optional<ASTCDCompilationUnit> astcdCompilationUnit = Optional.empty();
-    try {
-      astcdCompilationUnit = parser.parse(getFilePath(filePath));
-    }
-    catch (IOException e) {
-      Assertions.fail("Exception during parsing: " + e);
-    }
+    Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        parser.parse(getFilePath(filePath));
     checkNullAndPresence(parser, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    
+
     // Trafos after parsing
     new CD4CodeAfterParseTrafo().transform(node);
     return node;
   }
-  
+
   protected void prepareST(ASTCDCompilationUnit node) {
     // First pass for symbol table
     SymTabDefinitionMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
-    
+
     // Second pass for symbol table
     SymTabDefinitionTraverser traverser = SymTabDefinitionMill.traverser();
     traverser.add4SymTabDefinition(new SymTabDefinitionSymbolTableCompleter(
@@ -76,5 +69,5 @@ public class SymTabDefinitionTestBasis extends TestBasis {
     node.accept(traverser);
     checkLogError();
   }
-  
+
 }

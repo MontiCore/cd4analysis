@@ -22,7 +22,6 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -114,7 +113,7 @@ public class CDDiffUtil {
    * Parse the model, add default role-names and replace all qualified names with (internal) full
    * names.
    */
-  public static ASTCDCompilationUnit loadCD(String modelPath) throws IOException {
+  public static ASTCDCompilationUnit loadCD(String modelPath) {
     Optional<ASTCDCompilationUnit> cd = CD4CodeMill.parser().parseCDCompilationUnit(modelPath);
     if (cd.isPresent()) {
       new CDFullNameTrafo().transform(cd.get());
@@ -127,33 +126,22 @@ public class CDDiffUtil {
   }
   
   public static ASTODArtifact loadODModel(String modelPath) {
-    try {
-      OD4ReportParser parser = new OD4ReportParser();
-      Optional<ASTODArtifact> optOD = parser.parse(modelPath);
-      if (parser.hasErrors()) {
-        Log.error("Model parsed with errors. Model path: " + modelPath);
-      }
-      else if (optOD.isPresent()) {
-        return optOD.get();
-      }
+    OD4ReportParser parser = new OD4ReportParser();
+    Optional<ASTODArtifact> optOD = parser.parse(modelPath);
+    if (parser.hasErrors()) {
+      Log.error("Model parsed with errors. Model path: " + modelPath);
     }
-    catch (IOException e) {
-      Log.error("Could not parse OD model.");
-      e.printStackTrace();
+    else if (optOD.isPresent()) {
+      return optOD.get();
     }
     return null;
   }
   
   public static ASTCDCompilationUnit reparseCD(ASTCDCompilationUnit cd) {
     String content = CD4CodeMill.prettyPrint(cd, true);
-    try {
-      Optional<ASTCDCompilationUnit> opt = CD4CodeMill.parser().parse_String(content);
-      if (opt.isPresent()) {
-        cd = opt.get();
-      }
-    }
-    catch (IOException e) {
-      Log.warn("Could not reparse CD: " + cd.getCDDefinition().getName());
+    Optional<ASTCDCompilationUnit> opt = CD4CodeMill.parser().parse_String(content);
+    if (opt.isPresent()) {
+      cd = opt.get();
     }
     return cd;
   }
