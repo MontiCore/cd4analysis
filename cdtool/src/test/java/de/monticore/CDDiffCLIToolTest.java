@@ -162,7 +162,7 @@ public class CDDiffCLIToolTest {
           }
         }
       }
-      catch (NullPointerException | IOException e) {
+      catch (NullPointerException e) {
         fail(e.getMessage());
       }
       
@@ -241,7 +241,7 @@ public class CDDiffCLIToolTest {
         }
       }
     }
-    catch (NullPointerException | IOException e) {
+    catch (NullPointerException e) {
       fail(e.getMessage());
     }
     
@@ -439,7 +439,7 @@ public class CDDiffCLIToolTest {
           }
         }
       }
-      catch (NullPointerException | IOException e) {
+      catch (NullPointerException e) {
         fail(e.getMessage());
       }
     }

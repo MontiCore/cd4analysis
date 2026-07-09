@@ -21,7 +21,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,13 +53,8 @@ public class CD4CodeTestBasis extends TestBasis {
   }
   
   protected ASTCDCompilationUnit parse(String filePath) {
-    Optional<ASTCDCompilationUnit> astcdCompilationUnit = Optional.empty();
-    try {
-      astcdCompilationUnit = p.parse(getFilePath(filePath));
-    }
-    catch (IOException e) {
-      fail("Exception during parsing");
-    }
+    Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath(filePath));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     
