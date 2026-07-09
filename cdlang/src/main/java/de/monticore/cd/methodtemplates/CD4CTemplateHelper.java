@@ -5,8 +5,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Optional;
 
@@ -34,14 +32,10 @@ public class CD4CTemplateHelper {
       methodSignature += ";";
     }
     
-    try {
-      this.astcdMethod = CD4CodeMill.parser().parseCDMethod(new StringReader(methodSignature)).map(
-          m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
-      // Optional<ASTCDMethod>
-    }
-    catch (IOException e) {
-      Log.error("0x12000: can't parse method signature '" + methodSignature + "': ", e);
-    }
+    this.astcdMethod = CD4CodeMill.parser()
+        .parseCDMethod(new StringReader(methodSignature)).map(
+            m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+    // Optional<ASTCDMethod>
   }
   
   /**
@@ -54,14 +48,9 @@ public class CD4CTemplateHelper {
     if (!constructorSignature.endsWith(";")) {
       constructorSignature += ";";
     }
-    try {
-      this.astcdMethod = CD4CodeMill.parser().parseCDConstructor(new StringReader(
-          constructorSignature)).map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
-      // Optional<ASTCDConstructor>
-    }
-    catch (IOException e) {
-      Log.error("0x12001: can't parse constructor signature '" + constructorSignature + "': ", e);
-    }
+    this.astcdMethod = CD4CodeMill.parser().parseCDConstructor(new StringReader(
+        constructorSignature)).map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+    // Optional<ASTCDConstructor>
   }
   
   /**
@@ -75,14 +64,9 @@ public class CD4CTemplateHelper {
       attributeSignature += ";";
     }
     
-    try {
-      this.astcdAttribute = CD4CodeMill.parser().parseCDAttribute(new StringReader(
-          attributeSignature)).map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
-      // Optional<ASTCDMethod>
-    }
-    catch (IOException e) {
-      Log.error("0x12002: can't parse attribute '" + attributeSignature + "': ", e);
-    }
+    this.astcdAttribute = CD4CodeMill.parser().parseCDAttribute(new StringReader(
+        attributeSignature)).map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+    // Optional<ASTCDMethod>
   }
   
   /**
@@ -100,14 +84,9 @@ public class CD4CTemplateHelper {
       importSignature += ";";
     }
     
-    try {
-      this.astcdImport = CD4CodeMill.parser().parseMCImportStatement(new StringReader(
-          importSignature)).map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
-      // Optional<ASTCDMethod>
-    }
-    catch (IOException e) {
-      Log.error("0x12002: can't parse '" + importSignature + "': ", e);
-    }
+    this.astcdImport = CD4CodeMill.parser().parseMCImportStatement(new StringReader(
+        importSignature)).map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+    // Optional<ASTCDMethod>
   }
   
 }

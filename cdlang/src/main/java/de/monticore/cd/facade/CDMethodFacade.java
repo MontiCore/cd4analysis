@@ -16,7 +16,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -165,13 +164,8 @@ public class CDMethodFacade {
    * of the other methods fit your context !
    */
   public ASTCDMethod createMethodByDefinition(final String signature) {
-    Optional<ASTCDMethod> method;
-    try {
-      method = CD4CodeMill.parser().parse_StringCDMethod(signature);
-    }
-    catch (IOException e) {
-      throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_METHOD, signature, e);
-    }
+    Optional<ASTCDMethod> method = CD4CodeMill.parser()
+        .parse_StringCDMethod(signature);
     
     if (!method.isPresent()) {
       throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_METHOD, signature);
