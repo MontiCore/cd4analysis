@@ -9,7 +9,6 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
@@ -39,25 +38,19 @@ public class MemberDiffTest extends CDDiffTestBasis {
   }
   
   public void parseModels(String concrete, String ref) {
-    try {
-      Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
-          + concrete);
-      Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
-      if (src.isPresent() && tgt.isPresent()) {
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());
-        src.get().accept(new CD4CodeSymbolTableCompleter(src.get()).getTraverser());
-        tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
-        this.tgt = tgt.get();
-        this.src = src.get();
-      }
-      else {
-        fail("Could not parse CDs.");
-      }
-      
+    Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
+        + concrete);
+    Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
+    if (src.isPresent() && tgt.isPresent()) {
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());
+      src.get().accept(new CD4CodeSymbolTableCompleter(src.get()).getTraverser());
+      tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
+      this.tgt = tgt.get();
+      this.src = src.get();
     }
-    catch (IOException e) {
-      fail(e.getMessage());
+    else {
+      fail("Could not parse CDs.");
     }
   }
   
