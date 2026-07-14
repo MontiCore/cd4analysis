@@ -34,12 +34,11 @@ public class AddAttributeTest {
     
     addAttribute.doReplacement();
     
-    assertEquals("boolean",
-        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().get(1)
-            .getMCType().printType());
-    String pp = MCCommonLiteralsMill.prettyPrint(
-        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().get(1)
-            .getInitial(), true);
+    assertEquals("boolean", ast.get().getCDDefinition().getCDClassesList().get(0)
+        .getCDAttributeList().get(1).getMCType().printType());
+    String pp = MCCommonLiteralsMill.prettyPrint(ast.get().getCDDefinition().getCDClassesList().get(
+        0).getCDAttributeList().get(1).getInitial(), true);
     assertEquals("true", pp.strip());
   }
+  
 }
