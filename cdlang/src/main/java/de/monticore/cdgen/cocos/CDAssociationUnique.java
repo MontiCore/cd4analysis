@@ -4,9 +4,11 @@ package de.monticore.cdgen.cocos;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
-import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,8 +42,8 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           if (assoc1.getCDAssocDir().isDefinitiveNavigableRight() && assoc2.getCDAssocDir()
               .isDefinitiveNavigableRight() && deriveRoleName(assoc1, AssocSide.RIGHT).equals(
                   deriveRoleName(assoc2, AssocSide.RIGHT))) {
-            checkRef(node, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()), assoc1);
+            checkRef(node, findTypeByFullName(assoc1.getLeftQualifiedName()),
+                findTypeByFullName(assoc2.getLeftQualifiedName()), assoc1);
           }
           
           // if they allow navigation from right to left and share a left role-name,
@@ -49,23 +51,23 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
           if (assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && assoc2.getCDAssocDir()
               .isDefinitiveNavigableLeft() && deriveRoleName(assoc1, AssocSide.LEFT).equals(
                   deriveRoleName(assoc2, AssocSide.LEFT))) {
-            checkRef(node, findTypeByFullName(assoc1, assoc1.getRightQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()), assoc1);
+            checkRef(node, findTypeByFullName(assoc1.getRightQualifiedName()),
+                findTypeByFullName(assoc2.getRightQualifiedName()), assoc1);
           }
           
           // We also consider a left-to-right role name and navigation match ...
           if (assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && assoc2.getCDAssocDir()
               .isDefinitiveNavigableRight() && deriveRoleName(assoc1, AssocSide.LEFT).equals(
                   deriveRoleName(assoc2, AssocSide.RIGHT))) {
-            checkRef(node, findTypeByFullName(assoc1, assoc1.getRightQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getLeftQualifiedName().getQName()), assoc1);
+            checkRef(node, findTypeByFullName(assoc1.getRightQualifiedName()),
+                findTypeByFullName(assoc2.getLeftQualifiedName()), assoc1);
           }
           // ... as well as a right-to-left match
           if (assoc1.getCDAssocDir().isDefinitiveNavigableRight() && assoc2.getCDAssocDir()
               .isDefinitiveNavigableLeft() && deriveRoleName(assoc1, AssocSide.RIGHT).equals(
                   deriveRoleName(assoc2, AssocSide.LEFT))) {
-            checkRef(node, findTypeByFullName(assoc1, assoc1.getLeftQualifiedName().getQName()),
-                findTypeByFullName(assoc2, assoc2.getRightQualifiedName().getQName()), assoc1);
+            checkRef(node, findTypeByFullName(assoc1.getLeftQualifiedName()),
+                findTypeByFullName(assoc2.getRightQualifiedName()), assoc1);
           }
         }
       }
@@ -75,24 +77,25 @@ public class CDAssociationUnique implements CDBasisASTCDDefinitionCoCo {
   /**
    * helper-method to find types by full-name
    */
-  protected ASTCDType findTypeByFullName(ASTCDAssociation node, String fullName) {
+  protected TypeSymbol findTypeByFullName(ASTMCQualifiedName qualifiedName) {
     
-    Optional<CDTypeSymbol> optSymbol = node.getEnclosingScope().resolveCDType(fullName);
-    if (optSymbol.isPresent()) {
-      return optSymbol.get().getAstNode();
+    final SymTypeExpression typeExpression = TypeCheck3.symTypeFromAST(qualifiedName);
+    if (typeExpression.hasTypeInfo()) {
+      return typeExpression.getTypeInfo();
     }
     
-    Log.error("0xCDCE2: Could not find: " + fullName + ".");
+    // This should never be reached, the symbol table completer should have logged an error before and exited
+    Log.debug("Cannot find symbol " + qualifiedName.getQName() + ".", CDAssociationUnique.class.getName());
     return null;
   }
   
   /** Check if type2 is the same as type1. */
-  protected void checkRef(ASTCDDefinition node, ASTCDType type1, ASTCDType type2,
-      ASTCDAssociation assoc1) {
+  protected void checkRef(ASTCDDefinition node, TypeSymbol type1, TypeSymbol type2,
+                          ASTCDAssociation assoc) {
     if (type1.equals(type2)) {
       Log.error(String.format("0xCDCE1: %s has a duplicate association to %s", type1.getName(),
-          type2.getName()), assoc1.isPresent_SourcePositionStart() ? assoc1
-              .get_SourcePositionStart() : null, assoc1.isPresent_SourcePositionEnd() ? assoc1
+          type2.getName()), assoc.isPresent_SourcePositionStart() ? assoc
+              .get_SourcePositionStart() : null, assoc.isPresent_SourcePositionEnd() ? assoc
                   .get_SourcePositionEnd() : null);
     }
   }

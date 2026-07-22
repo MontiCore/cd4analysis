@@ -84,4 +84,11 @@ public class CDAssociationUniqueTest extends AbstractJavaGenCoCoTest {
     runTestForErrorCode(model, ERROR_CODE);
   }
   
+  @Test
+  public void testDuplicatesWithC2MC() throws IOException {
+    String model = "classdiagram DuplicateAssocs {" + "  class A;"
+      + "  association A <-> java.lang.Integer;" + "  association A <-> java.lang.Integer;" + "}";
+    runTestForErrorCode(model, ERROR_CODE);
+  }
+
 }

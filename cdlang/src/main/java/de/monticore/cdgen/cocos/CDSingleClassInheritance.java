@@ -14,7 +14,8 @@ public class CDSingleClassInheritance implements CDBasisASTCDClassCoCo {
   @Override
   public void check(ASTCDClass node) {
     if (node.getSuperclassList().size() > 1) {
-      Log.error(String.format(ERROR_MESSAGE, node.getName()), node.get_SourcePositionStart());
+      Log.error(String.format(ERROR_MESSAGE, node.getName()),
+        node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
   

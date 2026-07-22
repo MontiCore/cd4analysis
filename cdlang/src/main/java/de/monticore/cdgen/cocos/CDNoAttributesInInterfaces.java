@@ -14,7 +14,8 @@ public class CDNoAttributesInInterfaces implements CD4CodeBasisASTCDInterfaceCoC
   @Override
   public void check(ASTCDInterface node) {
     if (node.getCDAttributeList() != null && !node.getCDAttributeList().isEmpty()) {
-      Log.error(String.format(ERROR_MESSAGE, node.getName()), node.get_SourcePositionStart());
+      Log.error(String.format(ERROR_MESSAGE, node.getName()),
+        node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
   
