@@ -56,4 +56,32 @@ public class CDAssociationUniqueTest extends AbstractJavaGenCoCoTest {
     runTest(model, false);
   }
   
+  @Test
+  public void testNavNotMatch() throws IOException {
+    String model = "classdiagram DuplicateAssocs {" + "  class A; class B;"
+        + "  association A -> (r) B;" + "  association A <- (r) B;" + "}";
+    runTest(model, false);
+  }
+  
+  @Test
+  public void testNavNotMatchReverse() throws IOException {
+    String model = "classdiagram DuplicateAssocs {" + "  class A; class B;"
+        + "  association A -> (r) B;" + "  association B (r) -> A;" + "}";
+    runTest(model, false);
+  }
+  
+  @Test
+  public void testNavNotMatchBiDir() throws IOException {
+    String model = "classdiagram DuplicateAssocs {" + "  class A; class B;"
+        + "  association A -- (r) B;" + "  association A <-> (r) B;" + "}";
+    runTest(model, false);
+  }
+  
+  @Test
+  public void testDuplicatesDifferentClassesWithExplicitRoles() throws IOException {
+    String model = "classdiagram DuplicateAssocs {" + "  class A; class B; class C;"
+        + "  association A -> (k) B;" + "  association A -> (k) C;" + "}";
+    runTestForErrorCode(model, ERROR_CODE);
+  }
+  
 }
