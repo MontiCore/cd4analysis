@@ -29,10 +29,10 @@ import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
 
 public class CD4CodeTypeCheck3 extends MapBasedTypeCheck3 {
-
+  
   public static void init() {
     Log.trace("init " + CD4CodeTypeCheck3.class.getSimpleName(), "TypeCheck setup");
-
+    
     SymTypeRelations.init();
     MCCollectionSymTypeRelations.init();
     OOWithinTypeBasicSymbolsResolver.init();
@@ -41,60 +41,60 @@ public class CD4CodeTypeCheck3 extends MapBasedTypeCheck3 {
     TypeVisitorOperatorCalculator.init();
     CommonExpressionsLValueRelations.init();
     TypeParameterRelations.init();
-
+    
     CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
     Type4Ast type4Ast = new Type4Ast();
     InferenceContext4Ast ctx4Ast = new InferenceContext4Ast();
-
+    
     // Literals
-
+    
     MCCommonLiteralsTypeVisitor visMCCommonLiterals = new MCCommonLiteralsTypeVisitor();
     visMCCommonLiterals.setType4Ast(type4Ast);
     traverser.add4MCCommonLiterals(visMCCommonLiterals);
-
+    
     // Expressions
-
+    
     BitExpressionsTypeVisitor visBitExpressions = new BitExpressionsTypeVisitor();
     visBitExpressions.setType4Ast(type4Ast);
     traverser.add4BitExpressions(visBitExpressions);
-
+    
     CommonExpressionsCTTIVisitor visCommonExpressions =
         new CommonExpressionsTypeIdAsConstructorCTTIVisitor();
     visCommonExpressions.setType4Ast(type4Ast);
     visCommonExpressions.setContext4Ast(ctx4Ast);
     traverser.add4CommonExpressions(visCommonExpressions);
     traverser.setCommonExpressionsHandler(visCommonExpressions);
-
+    
     ExpressionBasisCTTIVisitor visExpressionBasis =
         new ExpressionBasisTypeIdAsConstructorCTTIVisitor();
     visExpressionBasis.setType4Ast(type4Ast);
     visExpressionBasis.setContext4Ast(ctx4Ast);
     traverser.add4ExpressionsBasis(visExpressionBasis);
     traverser.setExpressionsBasisHandler(visExpressionBasis);
-
+    
     // MCTypes
-
+    
     MCArrayTypesTypeVisitor visMCArrayTypes = new MCArrayTypesTypeVisitor();
     visMCArrayTypes.setType4Ast(type4Ast);
     traverser.add4MCArrayTypes(visMCArrayTypes);
-
+    
     MCBasicTypesTypeVisitor visMCBasicTypes = new MCBasicTypesTypeVisitor();
     visMCBasicTypes.setType4Ast(type4Ast);
     traverser.add4MCBasicTypes(visMCBasicTypes);
-
+    
     MCCollectionTypesTypeVisitor visMCCollectionTypes = new MCCollectionTypesTypeVisitor();
     visMCCollectionTypes.setType4Ast(type4Ast);
     traverser.add4MCCollectionTypes(visMCCollectionTypes);
-
+    
     MCSimpleGenericTypesTypeVisitor visMCSimpleGenericTypes = new MCSimpleGenericTypesTypeVisitor();
     visMCSimpleGenericTypes.setType4Ast(type4Ast);
     traverser.add4MCSimpleGenericTypes(visMCSimpleGenericTypes);
-
+    
     // create delegate
     CD4CodeTypeCheck3 tc3 = new CD4CodeTypeCheck3(traverser, type4Ast, ctx4Ast);
     tc3.setThisAsDelegate();
   }
-
+  
   public static void reset() {
     TypeCheck3.resetDelegate();
     SymTypeRelations.reset();
@@ -106,10 +106,10 @@ public class CD4CodeTypeCheck3 extends MapBasedTypeCheck3 {
     CommonExpressionsLValueRelations.reset();
     TypeParameterRelations.reset();
   }
-
+  
   protected CD4CodeTypeCheck3(ITraverser typeTraverser, Type4Ast type4Ast,
       InferenceContext4Ast ctx4Ast) {
     super(typeTraverser, type4Ast, ctx4Ast);
   }
-
+  
 }
