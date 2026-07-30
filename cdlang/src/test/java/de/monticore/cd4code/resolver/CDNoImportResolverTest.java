@@ -34,7 +34,7 @@ public class CDNoImportResolverTest extends CD4CodeTestBasis {
       classdiagram CD1 {
            package p1 {
                class ClassB {
-                   private p2.ClassA myAttribute;
+                   private p2.p3.ClassA myAttribute;
                }
            }
       }
@@ -42,7 +42,7 @@ public class CDNoImportResolverTest extends CD4CodeTestBasis {
   //With Import
   String ModelBImport = """
       package p1;
-      import p2.ClassA;
+      import p2.p3.ClassA;
 
       classdiagram CD1 {
           class ClassB {
@@ -81,7 +81,7 @@ public class CDNoImportResolverTest extends CD4CodeTestBasis {
 
     var resolved = astB.getEnclosingScope().resolveCDType("p2.p3.ClassA");
 
-    assertTrue("ClassA could not found!", resolved.isPresent());
+    assertTrue("ClassA could not be found!", resolved.isPresent());
 
     var siblingSymbol = astA.getEnclosingScope().resolveCDType("p2.ClassC");
     assertTrue(siblingSymbol.isPresent());
@@ -111,9 +111,9 @@ public class CDNoImportResolverTest extends CD4CodeTestBasis {
     CD4CodeSymbolTableCompleter completerA = new CD4CodeSymbolTableCompleter(astB);
     astB.accept(completerA.getTraverser());
 
-    var resolved = astB.getEnclosingScope().resolveCDType("p2.ClassA");
+    var resolved = astB.getEnclosingScope().resolveCDType("p2.p3.ClassA");
 
-    assertTrue("ClassA could not found!", resolved.isPresent());
+    assertTrue("ClassA could not be found!", resolved.isPresent());
   }
 
 }
