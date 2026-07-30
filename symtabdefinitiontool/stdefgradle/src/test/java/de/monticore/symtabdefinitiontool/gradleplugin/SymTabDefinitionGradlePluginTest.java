@@ -59,11 +59,13 @@ public class SymTabDefinitionGradlePluginTest {
           id 'de.rwth.se.symtabdefinition'
         }
         repositories {
-         if ("true".equals(findProperty('useLocalRepo'))) {
+         if ("true".equals(getProperty('useLocalRepo'))) {
             mavenLocal()
          }
-         maven{ url = 'https://nexus.se.rwth-aachen.de/content/groups/public' }
-          mavenCentral()
+         maven{
+          url = 'https://nexus.se.rwth-aachen.de/content/groups/public'
+         }
+         mavenCentral()
         }
         dependencies {
           stdefTool files('%s')
@@ -113,6 +115,11 @@ public class SymTabDefinitionGradlePluginTest {
     String useLocalRepo = System.getProperty("useLocalRepo");
     if (useLocalRepo != null && !useLocalRepo.isEmpty()) {
       ret.add("-PuseLocalRepo=" + useLocalRepo);
+      if (mavenRepo == null || mavenRepo.isEmpty()) {
+        // Fallback for executing tests locally
+        ret.add("-Dmaven.repo.local=" + new File(System.getProperty("user.home"),
+            ".m2/repository"));
+      }
     }
     return ret;
   }
