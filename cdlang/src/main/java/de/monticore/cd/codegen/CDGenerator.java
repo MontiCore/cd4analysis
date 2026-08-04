@@ -11,6 +11,8 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
+import de.se_rwth.commons.logging.Log;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,6 +63,12 @@ public class CDGenerator {
       
       this.generateCDEnums(packageAsPath, astPackage, astPackage.getCDElementList().stream().filter(
           e -> e instanceof ASTCDEnum).map(e -> ((ASTCDEnum) e)).collect(Collectors.toList()));
+    }
+    
+    if (definition.getCDPackagesList().isEmpty() && !definition.getCDElementList().isEmpty()) {
+      Log.warn("0xCDCF0: The class diagram " + definition.getName()
+          + " has members, but no package which is required to generate classes from. Consider using the CDBasisDefaultPackageTrafo to add the package.",
+          definition.get_SourcePositionStart());
     }
   }
   
