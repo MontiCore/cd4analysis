@@ -1,5 +1,4 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 import de.monticore.symtabdefinition.SymTabDefinitionTool;
 import de.se_rwth.commons.Files;
 import de.se_rwth.commons.logging.Log;
