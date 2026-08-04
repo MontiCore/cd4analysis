@@ -18,7 +18,7 @@ repositories {
 // We have to inject the cdlang jar for this project (as it is not yet published)
 dependencies {
   cdTool files(project.cdgen_cd4aJarFile)
-  api files(project.cdgen_runtimeJarFile)
+  cdToolTargetRuntime files(project.cdgen_runtimeJarFile)
   implementation "de.monticore:monticore-runtime:$version"
   // Along with the transitive dependencies
   cdTool "de.monticore:monticore-grammar:$version"
