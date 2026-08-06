@@ -27,5 +27,5 @@ classdiagram EvaluationConc {
   association staffEmployment Staff(partOf)<->(member)Employee [1..*];
   association Staff--Project;
   <<ref="internshipProgram">>association traineeProgram Administration(hostAdm)<-(trainee)Trainee[0..*];
-  association departmentAssignment [1]Staff<->Administration [1];
+  association administrationAssignment [1]Staff<->Administration [1];
 } 

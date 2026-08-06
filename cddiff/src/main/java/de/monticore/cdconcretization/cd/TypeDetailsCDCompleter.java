@@ -99,6 +99,11 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
     
     @Override
+    public boolean isImplicitNameAdaptationEnabled() {
+      return parentContext.isImplicitNameAdaptationEnabled();
+    }
+    
+    @Override
     public Set<CDConfParameter> getConformanceParams() {
       return parentContext.getConformanceParams();
     }

@@ -11,7 +11,7 @@ classdiagram MyCD {
   <<builder, setter>>
   public class B extends MyCD2.MyCD2B {
     public int x;
-    <<noGetter, noSetter>> public String pub;
+    <<noGetter, noSetter>> public String pub; // Note: The builder decorator only works for methods with a setter!
   }
 
   <<observable, setter>>
@@ -37,6 +37,20 @@ classdiagram MyCD {
   association [*] A<-> (a5) A5 [0..1] ;
   association [*] A<-> (a6) A6 [*]    ;
 
+  enum Cardinality {
+    NORTH, WEST, SOUTH, EAST;
+  }
+
+  abstract class AbstractClass {
+    void doX();
+  }
+
+  class AbstractClassIml extends AbstractClass {
+    void doY();
+  }
+
+
+
   public class ConfiguredFromCLI {
     // The build.gradle options
     public int x;
@@ -49,8 +63,29 @@ classdiagram MyCD {
     public abstract boolean doStuffInPublic();
   }
 
+  abstract class MyInterfaceImpl implements MyInterface {
+    // This class should be implicitly abstract!
+  }
+
+  // interfaces should be considered too!
+
+  class XA1 {}
+  class XA2 {}
+  association XA1 -- XA2; // no association should be created
+  association XA1 -> (a1) XA2 [*];
+  association XA1 -> (a2) XA2 [*];
+  association [*] XA1 (b1) <- XA2;
+  association [*] XA1 (b2) <- XA2;
+
+
   <<needsTOP="TOP required: %s">>
   public class IncompleteA {
     public String name;
   }
+
+  package MyInnerPackage {
+    <<getter>>
+    class ClassWithinInnerPackage {}
+  }
+  association A1 <-> MyInnerPackage.ClassWithinInnerPackage;
 }

@@ -34,6 +34,8 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testParameterTypeMI() {
+    // TODO Remove once we support method parameters in incarnation mapping
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut("methods/multiIncarnation/ParameterTypeMIConc.cd",
         "methods/multiIncarnation/Reference.cd", "methods/multiIncarnation/ParameterTypeMIOut.cd");
   }
@@ -62,6 +64,8 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testParameterAndReturnTypeMI() {
+    // TODO Remove once we support method parameters in incarnation mapping
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "methods/multiIncarnation/ParameterAndReturnTypeMIConc.cd",
         "methods/multiIncarnation/Reference.cd",
@@ -114,7 +118,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testMethodForEachAttribute() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut("methods/forEach/ForEachAttributeConc.cd",
         "methods/forEach/ForEachAttributeRef.cd", "methods/forEach/ForEachAttributeOut.cd");
@@ -134,7 +138,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
    */
   @Test
   void testMethodForEachAttributeMultipleParameters() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachAttributeMultipleParametersConc.cd",
@@ -185,7 +189,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testMethodForEachTypeSameParameterType() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachTypeSameParameterTypeConc.cd",
@@ -195,7 +199,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testMethodForEachTypeSameParameterTypeNoNameMatch() {
-    // TODO Remove once we have explicit support for 'forEach' conformance check
+    // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachTypeSameParameterTypeConc.cd",

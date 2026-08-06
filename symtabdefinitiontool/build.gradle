@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
-  id "com.github.johnrengelman.shadow" version "$shadow_plugin_version"
+    id 'com.gradleup.shadow' version "$shadow_plugin_version"
 }
 
 description = "SymTabDefinition: Tool"
@@ -8,9 +8,9 @@ description = "SymTabDefinition: Tool"
 dependencies {
   implementation(project(':cdlang'))
 
-  implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
-  implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-  implementation "de.monticore:class2mc:${project.properties['mc_version']}"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore:class2mc:$mc_version"
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
@@ -18,11 +18,11 @@ dependencies {
   implementation "org.antlr:antlr4-runtime:$antlr_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
-  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 }
 
-task toolJar(type: Jar) {
+tasks.register('toolJar', Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
 }
 
@@ -44,8 +44,10 @@ sourceSets {
 }
 
 dependencies {
-  tooltestImplementation platform('org.junit:junit-bom:5.9.1')
-  tooltestImplementation 'org.junit.jupiter:junit-jupiter'
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  tooltestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  tooltestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 }
 
 tasks.register('toolTest', Test) {

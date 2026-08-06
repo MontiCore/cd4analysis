@@ -4,9 +4,9 @@ description = "CD4Analysis: CDDiff"
 dependencies {
   implementation(project(':cdlang'))
 
-  implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
-  implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-  implementation "de.monticore:class2mc:${project.properties['mc_version']}"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore:class2mc:$mc_version"
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
@@ -15,7 +15,8 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
+  testImplementation ("de.monticore:monticore-runtime:$mc_version") capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
   testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
 

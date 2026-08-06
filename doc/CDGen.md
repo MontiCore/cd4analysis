@@ -12,7 +12,6 @@ An example Gradle configuration can be found below:
 By adding the `de.rwth.se.cdgen` Gradle plugin to your project,
 all class diagrams in the _cds_ source-directory-set (e.g., _src/main/cds_, _src/test/cds_) are generated to Java code.
 
-
 ```groovy
 // build.gradle
 plugins {
@@ -45,14 +44,24 @@ It includes the following transformations:
 
 * CD4CodeAfterParseTrafo:
 * DefaultVisibilityPublicTrafo: absent visibility means *public*
-  It includes the following decorators:
-* CopyCreator: Include all elements of the original CD in the output
-* GetterDecorator: By default, getters are added to all elements
-* SetterDecorator: By default, setters are added to all elements
-* CardinalityDefaultDecorator: By default, optional and list attributes are initialized with an empty default
-* NavigableSetterDecorator: By default, the setters of bidirectional associations are also bidirectional
-* BuilderDecorator: If elements are marked with `<<builder>>`, a builder is added
-* ObserverDecorator: If elements are marked with `<<observer>>`, an observer is added
+
+It includes the following decorators:
+
+| Decorator                   | Description                                                        | To Enable                | To Disable                                |
+|-----------------------------|--------------------------------------------------------------------|--------------------------|-------------------------------------------|
+| CopyCreator                 | Include all elements of the original CD in the output              | always                   | -                                         |
+| GetterDecorator             | Add Getter Methods                                                 | 🟩  `<<getter>>`         | `<<noGetter>>`                            |
+| SetterDecorator             | Add Setter Methods                                                 | 🟩 `<<setter>>`          | `<<noSetter>>`                            |
+| CardinalityDefaultDecorator | Optional and list attributes are initialized with an empty default | 🟩                       | `<<noDefaultCardinality>>`                |
+| NavigableSetterDecorator    | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`        | `<<noSetter>>`                            |
+| AbstractMethodDecorator     | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>` | `<<nonAbstractMethod>>`                   |
+| BuilderDecorator            | Add a builder class                                                | 🟨 `<<builder>>`         | `<<noBuilder>>`                           |
+| ObserverDecorator           | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<notObservable>>`                           |
+| VisitorDecorator            | Include a visitor                                                  | 🟨 `<<visitor>>`         | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
+
+In the default configuration,
+🟩 means the decorator is applied unless disabled.
+🟨 means the decorator is not applied unless enabled.
 
 ### Element Configuration
 
@@ -71,6 +80,7 @@ Modelers should select a suitable config template and use stereotypes for class 
 Tool-developers should provide their own config template.
 
 ### Configuring via Gradle
+
 ```groovy
 // build.gradle
 // optionally: continue to configure the generate Task for the main sourceset (src/main/cds)
@@ -120,9 +130,8 @@ The following example of a decorator adds a class `XFancy` for every class `X`.
 Via a template replacement, a start method is added.
 
 ```java
-public class MyFancyDecorator
-  extends AbstractDecorator<AbstractDecorator.NoData>
-  implements CDBasisVisitor2 {
+public class MyFancyDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
+
   @Override
   public void visit(ASTCDClass node) {
     // Only act if we should decorate the class
@@ -141,16 +150,8 @@ public class MyFancyDecorator
       addElementToParent(decParent, additionalClass);
 
       // Add a public start() method to the builder class
-      ASTCDMethod myMethod =
-        CDMethodFacade.getInstance()
-          .createMethod(
-            CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "start");
-      glexOpt.ifPresent(
-        glex ->
-          glex.replaceTemplate(
-            EMPTY_BODY,
-            myMethod,
-            new TemplateHookPoint("methods.fancy.Start", node.getName())));
+      ASTCDMethod myMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "start");
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, myMethod, new TemplateHookPoint("methods.fancy.Start", node.getName())));
       addToClass(additionalClass, myMethod);
     }
   }
@@ -160,6 +161,7 @@ public class MyFancyDecorator
     // Our decorator is only interested in CDBasis elements and thus a CDBasisVisitor2
     traverser.add4CDBasis(this);
   }
+
 }
 ```
 
@@ -169,8 +171,7 @@ By providing an explicit ordering via the `getMustRunAfter`, the original class 
 ```java
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
   // We require data of the Setter Decorator, thus it has to run before this decorator
-  return Iterables.concat(
-    super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
+  return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
 }
 ```
 
@@ -225,6 +226,12 @@ tasks.named('generateClassDiagrams') {
 
 When using the CLI tool, the following arguments can be used: `-ct CD2OwnDecorator -fp src/main/configTemplate`.
 When using the API, the *DecoratorConfig* can be modified directly, as seen in the following tests.
+
+#### Using in Code
+
+* Tag-Adder (tag-like?)
+* Output CD
+* Also generate
 
 #### Testing
 

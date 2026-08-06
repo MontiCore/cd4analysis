@@ -45,6 +45,7 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     checker.addCoCo(new CDClassImplementsOnlyInterfaces());
     checker.addCoCo(new CDClassImplementsNotCyclic());
     checker.addCoCo(new CDClassNameUpperCase());
+    checker.addCoCo(new ConstructorNameEqualsClassNameCoCo());
     
     // CDType
     checker.addCoCo(new CDTypeNoInitializationOfDerivedAttribute());

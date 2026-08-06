@@ -10,22 +10,21 @@ import de.monticore.MontiTransExec
 
 group = "de.monticore.lang"
 description = "trafo-library"
-sourceCompatibility = JavaVersion.VERSION_11
-buildDir = file("$projectDir/target")
+layout.buildDirectory = layout.projectDirectory.dir("target")
 
 
 def grammarDir = "src/main/grammars"
-def grammarOutDir = "$buildDir/generated-sources"
-def testGrammarOutDir = "$buildDir/generated-test-sources/mc"
+def grammarOutDir = layout.buildDirectory.dir("generated-sources")
+def testGrammarOutDir = layout.buildDirectory.dir("generated-test-sources/mc")
 
 
 // configure non-standard source sets
 sourceSets {
   test {
-    java.srcDirs += [ "$testGrammarOutDir"]
+    java.srcDirs += [ testGrammarOutDir ]
   }
   main {
-    java.srcDirs += [ "$grammarOutDir"]
+    java.srcDirs += [ grammarOutDir ]
 
   }
   grammars {
@@ -36,34 +35,41 @@ sourceSets {
   }
 }
 
-configurations { grammar }
+configurations {
+  grammar
+  trafoInElements {
+    canBeConsumed = false
+    canBeResolved = true
+    extendsFrom implementation
+  }
+}
 
 
 dependencies {
-  grammar group: 'de.monticore', name: 'monticore-grammar-trafo', version: mc_version
-  grammar group: 'de.monticore', name: 'monticore-grammar', version: mc_version
+  grammar "de.monticore:monticore-grammar-trafo:$mc_version"
+  grammar "de.monticore:monticore-grammar:$mc_version"
 
   // Depend on cd4a-trafos - This is done both as a local project, and with proper dependency substitution
   // add the dependency to cd4analysis trafos to the grammar config,
   // adding it as a dependency to the trafo publication
   // Note: This dependency will be substituted by its subproject
-  grammar(group: project.getGroup(), name: "cd4analysis-trafo", version: project.getVersion())
+  grammar "${project.getGroup()}:cd4analysis-trafo:${project.getVersion()}"
   // use the grammar configuration (for trafos) to add transitive dependencies of :cdlang
-  grammar(project(path: ":cdlang", configuration: 'trafoGrammar'))
+  grammar project(path: ":cdlang", configuration: 'trafoGrammar')
   // add the outgoing trafo grammar (symbols/models) of the subproject to the modelpath
   grammarSymbolDependencies project(path: ':cdlang', configuration: 'trafoGrammarSymbolOutElements')
   // add the compiled trafo java classes of the subproject to the classpath
-  implementation files(project(":cdlang").sourceSets.trafo.output.classesDirs)
+  implementation project(path: ":cdlang", configuration: "trafoOutElements")
 
-
-  implementation group: 'de.se_rwth.commons', name: 'se-commons-groovy', version: commons_version
+  implementation "de.se_rwth.commons:se-commons-groovy:$commons_version"
 
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 
-  compileOnly 'org.freemarker:freemarker:2.3.28'
+  compileOnly "org.freemarker:freemarker:$freemarker_version"
 }
 
 configurations.configureEach {
@@ -89,16 +95,16 @@ repositories {
   }
   mavenCentral()
   maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
+    url = repo
   }
 }
 
 // Fixes issue with java plugin in projects without resources
 compileTestJava.doFirst { mkdir sourceSets.test.output.resourcesDir }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
 
@@ -108,24 +114,22 @@ java {
   registerFeature('grammars') {
     usingSourceSet(sourceSets.grammars)
   }
+  sourceCompatibility = JavaVersion.VERSION_21
 }
 
 jar.dependsOn grammarsJar
 
-task buildCD4ATrafoLibTrafos {}
+tasks.register('buildCD4ATrafoLibTrafos') {}
 
 fileTree(dir: "$projectDir/src/main/transformations", include: '**/**.mtr').each {
   def g = it
   def taskname = "buildCD4ATrafoLibTrafos${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
 
-  task "$taskname" (type: MontiTransExec.class){
-    getClassPath().setFrom(
-      project(":cdlang").configurations.trafoRuntimeClasspath,
-      project(":cdlang").sourceSets.trafo.output
-    )
+  tasks.register("$taskname", MontiTransExec.class) {
+    getClassPath().setFrom(configurations.trafoInElements)
     TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
     input = file(g)
-    outputDir = file("$buildDir/generated-sources")
+    outputDir = grammarOutDir
     tasks.sourcesJar.dependsOn it
   }
   buildCD4ATrafoLibTrafos.dependsOn("$taskname")
@@ -133,7 +137,7 @@ fileTree(dir: "$projectDir/src/main/transformations", include: '**/**.mtr').each
 
 compileJava.dependsOn += buildCD4ATrafoLibTrafos
 
-task buildAll(type: GradleBuild) {
+tasks.register('buildAll', GradleBuild) {
   tasks = ['build']
 }
 
@@ -152,8 +156,8 @@ publishing {
     }
   }
   repositories.maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl

@@ -6,17 +6,15 @@ plugins {
   id 'maven-publish'
 }
 
-group 'de.monticore.lang'
-version mc_version
-
-sourceCompatibility = JavaVersion.VERSION_11
+group = 'de.monticore.lang'
+version = mc_version
 
 repositories {
   mavenCentral()
   maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
+    url = repo
   }
 }
 
@@ -37,25 +35,26 @@ dependencies {
   implementation project(":cdlang")
 
   // Dependencies of cd4analysis, all marked as runtime in pom => we need to specify them here
-  implementation "com.google.code.findbugs:jsr305:3.0.2"
+  implementation "com.google.code.findbugs:jsr305:$findbugs_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
-  implementation "de.se_rwth.commons:se-commons-logging:1.7.9"
-  implementation "de.se_rwth.commons:se-commons-utilities:1.7.9"
-  implementation "com.google.guava:guava:25.1-jre"
+  implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
+  implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
+  implementation "com.google.guava:guava:$guava_version"
   implementation "net.sourceforge.plantuml:plantuml:1.2020.15"
-  implementation "ch.qos.logback:logback-classic:1.2.3"
-  implementation "commons-cli:commons-cli:1.4"
-  implementation "org.apache.commons:commons-lang3:3.11"
+  implementation "ch.qos.logback:logback-classic:$logback_version"
+  implementation "commons-cli:commons-cli:$commons_cli_version"
+  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
 
   // MCLSG
-  implementation("de.monticore.language-server:monticore-language-server-runtime:$mc_version")
+  implementation "de.monticore.language-server:monticore-language-server-runtime:$mc_version"
 
   // Testing
   // JUnit Jupiter (JUnit 5) dependencies
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
-  testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
+  testImplementation "ch.qos.logback:logback-classic:$logback_version"
 }
 
 test {
@@ -67,12 +66,41 @@ task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
     languageName = "de.monticore.CD4Analysis"
     fileExtension = "cd"
   }
-  if(("true").equals(getProperty('buildVscodePlugin'))){
+  if (("true").equals(getProperty('buildVscodePlugin'))) {
     including(TaskTypes.VSCODE_PLUGIN)
   }
 }
+
+task autoconfigureCD4Code(type: de.mclsg.task.AutoconfigureTask) {
+  mclsg {
+    languageName = "de.monticore.CD4Code"
+    fileExtension = "cd"
+  }
+  if (("true").equals(getProperty('buildVscodePlugin'))) {
+    including(TaskTypes.VSCODE_PLUGIN)
+  }
+}
+
 compileJava.dependsOn autoconfigure
+compileJava.dependsOn autoconfigureCD4Code
+
+packCD4AnalysisLanguageServer {
+  getArchiveBaseName().set("cd4a-language-server")
+}
+
+packCD4CodeLanguageServer {
+  getArchiveBaseName().set("cd4c-language-server")
+}
 
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsForVariantJar)
 tasks.packCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.jar)
+
+tasks.generateCD4CodeLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)
+tasks.generateCD4CodeLanguageServer.dependsOn(project(":cdlang").tasks.grammarsForVariantJar)
+tasks.packCD4CodeLanguageServer.dependsOn(project(":cdlang").tasks.jar)
+
+if(("true").equals(getProperty('buildVscodePlugin'))) {
+  tasks.buildCD4CodeVscodePlugin.dependsOn(tasks.packageCD4CodeVscodePlugin)
+  tasks.buildCD4AnalysisVscodePlugin.dependsOn(tasks.packageCD4AnalysisVscodePlugin)
+}

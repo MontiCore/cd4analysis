@@ -14,7 +14,7 @@ classdiagram BankingConc {
     AccountStatus status;
     void withdraw(double amount);
     void deposit(double amount);
-    void transfer(BankAccount targetAccount, double amount);
+    void transfer(BankAccount targetBankAccount, double amount);
   }
 
   interface Auditable {

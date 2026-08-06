@@ -3,7 +3,10 @@ package de.monticore.symtabdefinition.gradleplugin;
 
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.file.DefaultSourceDirectorySet;
+import org.gradle.api.internal.tasks.TaskDependencyFactory;
 import org.gradle.api.tasks.SourceSet;
+
+import javax.inject.Inject;
 
 public interface SymTabDefinitionSourceDirectorySet extends SourceDirectorySet {
   
@@ -15,11 +18,13 @@ public interface SymTabDefinitionSourceDirectorySet extends SourceDirectorySet {
   }
   
   // default implementation
-  class DefaultSymTabDefinitionSourceDirectorySet extends DefaultSourceDirectorySet implements
-      SymTabDefinitionSourceDirectorySet {
+  abstract class DefaultSymTabDefinitionSourceDirectorySet extends DefaultSourceDirectorySet
+      implements SymTabDefinitionSourceDirectorySet {
     
-    public DefaultSymTabDefinitionSourceDirectorySet(SourceDirectorySet sourceSet) {
-      super(sourceSet);
+    @Inject
+    public DefaultSymTabDefinitionSourceDirectorySet(SourceDirectorySet sourceSet,
+        TaskDependencyFactory taskDependencyFactory) {
+      super(sourceSet, taskDependencyFactory);
     }
     
   }

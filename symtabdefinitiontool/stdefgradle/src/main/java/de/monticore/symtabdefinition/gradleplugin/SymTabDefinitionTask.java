@@ -11,9 +11,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 
+@CacheableTask
 public abstract class SymTabDefinitionTask extends MCAllFilesTask {
   
   public SymTabDefinitionTask() {
@@ -35,8 +37,8 @@ public abstract class SymTabDefinitionTask extends MCAllFilesTask {
     List<String> result = new ArrayList<>();
     if (getInput().isEmpty()) {
       result.add("-" + getInputOptionString());
-      result.add(handlePath.apply(getProject().getProjectDir().toPath())
-          + "/src/main/symtabdefinition");
+      result.add(handlePath.apply(getProjectLayout().getProjectDirectory().dir(
+          "/src/main/symtabdefinition").getAsFile().getAbsoluteFile().toPath()));
     }
     else {
       getInputFilesAsStream().forEach(f -> {

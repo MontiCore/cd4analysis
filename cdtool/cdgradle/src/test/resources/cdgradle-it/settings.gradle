@@ -1,0 +1,14 @@
+pluginManagement {
+  repositories {
+    if (("true").equals(getProperty('useLocalRepo'))) {
+      mavenLocal()
+    }
+    mavenCentral()
+    gradlePluginPortal()
+
+    maven {
+      url "https://nexus.se.rwth-aachen.de/content/groups/public"
+    }
+  }
+}
+rootProject.name = 'cgradle-it'

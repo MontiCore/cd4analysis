@@ -1,16 +1,19 @@
 /* (c) https://github.com/MontiCore/monticore */
 package inheritanceAttributePullup1;
+
+import java.util.Date;
+
 classdiagram mergedCD {
 
 
 	class Person {
 		String nickname;
 		int age;
-		int id;	
+		int id;
 	}
-	
+
 	class Customer extends Person {
 		Date birthday;
-	}	
-	
+	}
+
 }

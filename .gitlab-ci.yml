@@ -1,6 +1,6 @@
 # (c) https://github.com/MontiCore/monticore
 
-image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.6.4-jdk11
+image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:8.5-jdk21
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -25,7 +25,7 @@ build:
   except:
     - develop
   script:
-  - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
+  - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
   artifacts:
     paths:
     - "."
@@ -36,8 +36,8 @@ buildAndDeploy:
   only:
     - develop
   script:
-    - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
-    - "gradle publish -PmavenPassword=$password -PmavenUser=$username --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
+    - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
+    - "gradle publish -PmavenPassword=$password -PmavenUser=$username --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
 
 # Checks if the links in this repository's Markdown files are valid.
 #

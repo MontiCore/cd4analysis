@@ -4,27 +4,28 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 /* (c) https://github.com/MontiCore/monticore */
 
 plugins {
+  id 'java'
   id "maven-publish"
   id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false) // Eclipse compiler as it's much faster than javac
   id "de.se_rwth.codestyle" version "$mc_version"
 }
 
 description = "CD4Analysis"
-buildDir = file("$projectDir/target")
+layout.buildDirectory = layout.projectDirectory.dir("target")
 
 ext {
   findbugs_version = "3.0.2"
-  guava_version = "31.1-jre"
+  guava_version = "33.5.0-jre"
   antlr_version = "4.12.0"
   plantuml_version = "1.2020.15"
-  jackson_version = "2.13.4"
-  junit_version = "5.9.0"
-  commons_cli_version = "1.5.0"
-  commons_lang_version = "3.11"
-  jupiter_version = "5.6.0"
+  jackson_version = "2.20.1"
+  junit_version = "6.0.3"
+  commons_cli_version = "1.11.0"
+  commons_lang_version = "3.20.0"
+  commons_text_version = "1.15.0"
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
-  mockito_version = "3.11.1"
+  mockito_version = "5.11.0"
   logback_version = "1.2.3"
   apache_commons_version = '4.4'
 }
@@ -42,23 +43,25 @@ subprojects {
   apply plugin: 'maven-publish'
   apply plugin: 'de.se_rwth.codestyle'
 
-  sourceCompatibility = JavaVersion.VERSION_11
+  ecj {
+      compilerVersion = "3.43.0"
+  }
 
   allprojects {
     group = "de.monticore.lang.cd4analysis"
   }
 
   ext.grammarDir = 'src/main/grammars'
-  buildDir = file("$projectDir/target")
+  layout.buildDirectory = layout.projectDirectory.dir("target")
 
   repositories {
     if (("true").equals(getProperty('useLocalRepo'))) {
       mavenLocal()
     }
     maven {
-      credentials.username mavenUser
-      credentials.password mavenPassword
-      url repo
+      credentials.username = mavenUser
+      credentials.password = mavenPassword
+      url = repo
     }
     mavenCentral()
   }
@@ -68,36 +71,46 @@ subprojects {
     archiveClassifier = project.name
   }
 
-  tasks.withType(Test) {
+  tasks.withType(Test).configureEach {
     useJUnitPlatform()
     testLogging {
       // controls whether test output is shown
-      showExceptions true
-      showCauses true
-      showStackTraces true
-      exceptionFormat TestExceptionFormat.FULL
+      showExceptions = true
+      showCauses = true
+      showStackTraces = true
+      exceptionFormat = TestExceptionFormat.FULL
       info {
         events TestLogEvent.FAILED,
-          TestLogEvent.PASSED,
-          TestLogEvent.SKIPPED,
-          TestLogEvent.STANDARD_OUT
+            TestLogEvent.PASSED,
+            TestLogEvent.SKIPPED,
+            TestLogEvent.STANDARD_OUT
       }
     }
-    afterTest { desc, result ->
-      logger.lifecycle "${desc.className} > ${desc.name} ${result.resultType}"
-    }
-    afterSuite { desc, result ->
-      if (!desc.parent) { // will match the outermost suite
-        def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
-        def startItem = '|  ', endItem = '  |'
-        logger.lifecycle startItem + output + endItem
+    addTestListener(new TestListener() {
+      void afterTest(TestDescriptor testDescriptor, TestResult result) {
+        logger.lifecycle "${testDescriptor.getClassName()} > ${testDescriptor.parent && testDescriptor.parent.getName() != testDescriptor.getClassName() ? testDescriptor.parent.getName() + " " + testDescriptor.getDisplayName() : testDescriptor.getName()} ${result.resultType}"
       }
-    }
+
+      void afterSuite(TestDescriptor suite, TestResult result) {
+        if (!suite.parent) { // will match the outermost suite
+          def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+          def startItem = '|  ', endItem = '  |'
+          logger.lifecycle startItem + output + endItem
+        }
+      }
+
+      // Required for Gradle version < 9.x
+      void beforeSuite(TestDescriptor suite) {
+      }
+
+      void beforeTest(TestDescriptor testDescriptor) {
+      }
+    })
   }
 
-  tasks.withType(JavaCompile) {
+  tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
-    options.deprecation false
+    options.deprecation = false
     options.warnings = false
     options.forkOptions.jvmArgs += ["-Xmx4G"]
     // TODO: reevaluate with new ecj plugin
@@ -105,7 +118,7 @@ subprojects {
   }
   java {
     toolchain {
-      languageVersion = JavaLanguageVersion.of(11)
+      languageVersion = JavaLanguageVersion.of(21)
     }
   }
 }
@@ -122,7 +135,6 @@ publishing {
     // the bootstrap property causes us to only build the main projects,
     // which are required by most downstream projects (cdlang & the symtabdef tool)
     if (!project.hasProperty('bootstrap')) {
-      println("bootstrapbootstrapbootstrapbootstrapbootstrap")
       // trafolib is different
       // cdtool as -tool
       def subprojectsToBePublished = [
@@ -137,13 +149,13 @@ publishing {
         .findAll { it != ':cdlang' }
         .each { subprojectName ->
           publ.artifact(project(subprojectName).tasks.jar) {
-            group "de.monticore.lang"
+            group = "de.monticore.lang"
           }
         }
 
       publ.artifact(project(":cdtool").tasks.jar) {
-        group "de.monticore.lang"
-        classifier "tool"
+        group = "de.monticore.lang"
+        classifier = "tool"
       }
 
       publ.artifact(project(":cdtool").tasks.shadowJar)
@@ -153,13 +165,13 @@ publishing {
 
     if (("false").equals(getProperty('publishMain'))) {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {
-        group "de.monticore.lang"
+        group = "de.monticore.lang"
       }
     }
   }
   repositories.maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl

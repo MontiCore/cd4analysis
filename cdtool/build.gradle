@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
-  id "com.github.johnrengelman.shadow" version "$shadow_plugin_version"
+    id 'com.gradleup.shadow' version "$shadow_plugin_version"
 }
 
 description = "CD4Analysis: Tool"
@@ -25,9 +25,9 @@ dependencies {
   implementation(project(":cd2plantuml"))
   implementation(project(":cd2smt"))
 
-  implementationWithoutExtras "de.monticore:monticore-grammar:${project.properties['mc_version']}"
-  implementationWithoutExtras "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-  implementationWithoutExtras "de.monticore:class2mc:${project.properties['mc_version']}"
+  implementationWithoutExtras "de.monticore:monticore-grammar:$mc_version"
+  implementationWithoutExtras "de.monticore:monticore-runtime:$mc_version"
+  implementationWithoutExtras "de.monticore:class2mc:$mc_version"
   implementationWithoutExtras "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementationWithoutExtras "de.se_rwth.commons:se-commons-utilities:$commons_version"
   implementationWithoutExtras "com.google.guava:guava:$guava_version"
@@ -40,19 +40,19 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
+  testImplementation ("de.monticore:monticore-runtime:$mc_version") capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
   testImplementation "org.mockito:mockito-core:$mockito_version"
-  testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
+  testImplementation "com.google.code.findbugs:jsr305:$findbugs_version"
   testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
-  testImplementation(project(':cdlang').sourceSets.test.output)
-  testImplementation project(path: ':cdlang')
+  testImplementation testFixtures(project(':cdlang'))
   implementationWithoutExtras("de.monticore.lang:od:$mc_version") {
     exclude group: 'de.monticore.lang', module:'cd4analysis'
   }
 }
 
-task toolJar(type: Jar) {
+tasks.register('toolJar', Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
   archiveClassifier = "tool"
 }
@@ -77,8 +77,10 @@ sourceSets {
 }
 
 dependencies {
-  tooltestImplementation platform('org.junit:junit-bom:5.9.1')
-  tooltestImplementation 'org.junit.jupiter:junit-jupiter'
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  tooltestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  tooltestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 }
 
 tasks.register('toolTest', Test) {

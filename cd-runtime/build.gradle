@@ -6,13 +6,14 @@ plugins {
 
 
 dependencies {
-  api 'de.se_rwth.commons:se-commons-logging:' + mc_version
+  api "de.se_rwth.commons:se-commons-logging:$mc_version"
 
-  implementation 'de.se_rwth.commons:se-commons-utilities:' + mc_version
-  implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
+  implementation "de.se_rwth.commons:se-commons-utilities:$mc_version"
+  implementation "org.apache.commons:commons-text:$commons_text_version"
   implementation "de.monticore:monticore-runtime:$mc_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 }
 
 description = 'CD: Runtime'
@@ -29,8 +30,8 @@ publishing {
     }
   }
   repositories.maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
