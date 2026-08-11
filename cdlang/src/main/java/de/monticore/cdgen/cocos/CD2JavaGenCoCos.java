@@ -12,6 +12,7 @@ public class CD2JavaGenCoCos extends CD4CodeCoCosDelegator {
     checker.addCoCo(new CDAssociationUniqueInHierarchy());
     checker.addCoCo(new CDNoAttributesInInterfaces());
     checker.addCoCo(new CDNoOutgoingAssocs4Interfaces());
+    checker.addCoCo(new CDNoOutgoingAssocs4LibraryTypes());
     checker.addCoCo(new CDSingleClassInheritance());
   }
   
