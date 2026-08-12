@@ -42,7 +42,7 @@ public class OD2CDMatcher {
   
   public boolean checkIfDiffWitness(CDSemantics semantics, ASTCDCompilationUnit baseCD,
       ASTCDCompilationUnit compareCD, ASTODArtifact od) {
-    if (Semantic.isSuperTypeAware(semantics)) {
+    if (SemanticsHelper.isSuperTypeAware(semantics)) {
       return new STAObjectMatcher(this).isDiffWitness(semantics, baseCD, compareCD, od);
     }
     else {

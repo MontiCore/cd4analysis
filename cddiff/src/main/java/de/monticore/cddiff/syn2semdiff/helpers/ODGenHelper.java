@@ -46,8 +46,7 @@ public class ODGenHelper {
    * @return List of types as Strings.
    */
   public List<String> getSuperTypes(ASTCDClass astcdClass) {
-    List<ASTCDType> typeList = new ArrayList<>(CDDiffUtil.getAllSuperTypes(astcdClass, srcCD
-        .getCDDefinition()));
+    List<ASTCDType> typeList = new ArrayList<>(CDDiffUtil.getAllSuperTypes(astcdClass));
     List<String> typesString = new ArrayList<>();
     for (int i = typeList.size() - 1; i >= 0; i--) {
       String type = typeList.get(i).getSymbol().getInternalQualifiedName();
@@ -105,7 +104,7 @@ public class ODGenHelper {
   public int getClassSize(ASTCDClass astcdClass) {
     int attributeCount = syn2SemDiffHelper.getAllAttr(astcdClass).b.size();
     int associationCount = syn2SemDiffHelper.getAssociationCount(astcdClass, true);
-    int otherAssocsCount = syn2SemDiffHelper.getOtherAssocs(astcdClass, true, false).size();
+    int otherAssocsCount = syn2SemDiffHelper.getOtherAssocs(astcdClass, true, false, false).size();
     return attributeCount + associationCount + otherAssocsCount;
   }
   
@@ -216,10 +215,9 @@ public class ODGenHelper {
   
   public List<AssocStruct> getTgtAssocs(ASTCDClass astcdClass) {
     List<AssocStruct> assocStructs = new ArrayList<>();
-    Set<ASTCDClass> superClassSet = CDDiffUtil.getAllSuperclasses(astcdClass, srcCD
-        .getCDDefinition().getCDClassesList());
-    for (ASTCDClass superClass : superClassSet) {
-      assocStructs.addAll(syn2SemDiffHelper.getOtherAssocs(superClass, true, false));
+    Set<ASTCDType> superClassSet = CDDiffUtil.getAllSuperTypes(astcdClass);
+    for (ASTCDType superClass : superClassSet) {
+      assocStructs.addAll(syn2SemDiffHelper.getOtherAssocs(superClass, true, false, false));
     }
     List<AssocStruct> copy = new ArrayList<>(assocStructs);
     for (AssocStruct assocStruct : copy) {

@@ -2,6 +2,7 @@
 package de.monticore.cddiff.syn2semdiff.odgen;
 
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
+import de.monticore.expressions.expressionsbasis.ExpressionsBasisMill;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis.ODBasisMill;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -13,6 +14,7 @@ import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODLinkBuilder;
 import de.monticore.odlink._ast.ASTODLinkLeftSideBuilder;
 import de.monticore.odlink._ast.ASTODLinkRightSideBuilder;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -79,10 +81,13 @@ public class ODBuilder implements IODBuilder {
     
     objectBuilder.setName(id);
     
-    objectBuilder.setModifier(OD4ReportMill.modifierBuilder().setStereotype(OD4ReportMill
+    ASTModifier modifier = OD4ReportMill.modifierBuilder().setStereotype(OD4ReportMill
         .stereotypeBuilder().addValues(OD4ReportMill.stereoValueBuilder().setName("instanceof")
-            .setContent(String.join(", ", types)).setText(OD4ReportMill.stringLiteralBuilder()
-                .setSource(String.join(", ", types)).build()).build()).build()).build());
+            .setExpression(ExpressionsBasisMill.literalExpressionBuilder().setLiteral(OD4ReportMill
+                .stringLiteralBuilder().setSource(String.join(", ", types)).build()).build())
+            .build()).build()).build();
+    
+    objectBuilder.setModifier(modifier);
     
     objectBuilder.setMCObjectType(ODBasisMill.mCQualifiedTypeBuilder().setMCQualifiedName(
         ODBasisMill.mCQualifiedNameBuilder().setPartsList(Collections.singletonList(type)).build())

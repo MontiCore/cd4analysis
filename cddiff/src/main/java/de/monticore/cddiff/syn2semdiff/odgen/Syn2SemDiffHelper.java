@@ -236,7 +236,7 @@ public class Syn2SemDiffHelper {
    * @return list of associations
    */
   public List<AssocStruct> getOtherAssocs(ASTCDType astcdClass, boolean isSource,
-      boolean makeConditionStrict) {
+      boolean makeConditionStrict, boolean allowBiDirectional) {
     List<AssocStruct> list = new ArrayList<>();
     ArrayListMultimap<ASTCDType, AssocStruct> map = isSource ? srcMap : tgtMap;
     
@@ -247,17 +247,18 @@ public class Syn2SemDiffHelper {
           connectedTypes = Syn2SemDiffHelper.getConnectedTypes(assocStruct.getAssociation(),
               isSource ? srcCD : tgtCD);
           
-          if (assocStruct.getSide().equals(ClassSide.Left) && !assocStruct.getDirection().equals(
-              AssocDirection.BiDirectional) && (makeConditionStrict || assocStruct.getAssociation()
-                  .getLeft().getCDCardinality().isOne() || assocStruct.getAssociation().getLeft()
-                      .getCDCardinality().isAtLeastOne()) && connectedTypes.b == astcdClass) {
+          if (assocStruct.getSide().equals(ClassSide.Left) && (allowBiDirectional || !assocStruct
+              .getDirection().equals(AssocDirection.BiDirectional)) && (makeConditionStrict
+                  || assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+                  || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())
+              && connectedTypes.b == astcdClass) {
             list.add(assocStruct.deepClone());
           }
-          else if (assocStruct.getSide().equals(ClassSide.Right) && !assocStruct.getDirection()
-              .equals(AssocDirection.BiDirectional) && (makeConditionStrict || assocStruct
-                  .getAssociation().getRight().getCDCardinality().isOne() || assocStruct
-                      .getAssociation().getRight().getCDCardinality().isAtLeastOne())
-              && connectedTypes.a == astcdClass) {
+          else if (assocStruct.getSide().equals(ClassSide.Right) && (allowBiDirectional
+              || !assocStruct.getDirection().equals(AssocDirection.BiDirectional))
+              && (makeConditionStrict || assocStruct.getAssociation().getRight().getCDCardinality()
+                  .isOne() || assocStruct.getAssociation().getRight().getCDCardinality()
+                      .isAtLeastOne()) && connectedTypes.a == astcdClass) {
             list.add(assocStruct.deepClone());
           }
         }
@@ -276,11 +277,21 @@ public class Syn2SemDiffHelper {
    */
   public List<AssocStruct> getAllOtherAssocs(ASTCDType astcdClass, boolean isSource) {
     List<AssocStruct> list = new ArrayList<>();
-    Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass, isSource ? srcCD
-        .getCDDefinition() : tgtCD.getCDDefinition());
+    Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass);
     
     for (ASTCDType astcdClass1 : superTypes) {
-      list.addAll(getOtherAssocs(astcdClass1, isSource, false));
+      list.addAll(getOtherAssocs(astcdClass1, isSource, false, false));
+    }
+    
+    return list;
+  }
+  
+  public List<AssocStruct> getAllOtherAssocsWithBiDir(ASTCDType astcdClass, boolean isSource) {
+    List<AssocStruct> list = new ArrayList<>();
+    Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass);
+    
+    for (ASTCDType astcdClass1 : superTypes) {
+      list.addAll(getOtherAssocs(astcdClass1, isSource, false, true));
     }
     
     return list;
@@ -288,11 +299,10 @@ public class Syn2SemDiffHelper {
   
   public List<AssocStruct> getAllOtherAssocsSpecCase(ASTCDType astcdClass, boolean isSource) {
     List<AssocStruct> list = new ArrayList<>();
-    Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass, isSource ? srcCD
-        .getCDDefinition() : tgtCD.getCDDefinition());
+    Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass);
     
     for (ASTCDType astcdClass1 : superTypes) {
-      list.addAll(getOtherAssocs(astcdClass1, isSource, true));
+      list.addAll(getOtherAssocs(astcdClass1, isSource, true, false));
     }
     
     return list;
@@ -652,7 +662,7 @@ public class Syn2SemDiffHelper {
     for (ASTCDType subClass : subClassesTgt) {
       boolean contained = false;
       for (AssocStruct assocStruct : getAllOtherAssocs(subClass, false)) {
-        if (sameAssociationTypeSrcTgt(matchedAssocStruc, assocStruct)) {
+        if (sameAssociationTypeSrcTgt(matchedAssocStruc, assocStruct, true)) {
           contained = true;
           break;
         }
@@ -684,13 +694,13 @@ public class Syn2SemDiffHelper {
       
       for (AssocStruct assocStruct : assocList) {
         if (isSource) {
-          if (sameAssociationTypeSrcTgt(assocStruct, association)) {
+          if (sameAssociationTypeSrcTgt(assocStruct, association, true)) {
             isContained = true;
             break;
           }
         }
         else {
-          if (sameAssociationTypeSrcTgt(association, assocStruct)) {
+          if (sameAssociationTypeSrcTgt(association, assocStruct, true)) {
             isContained = true;
             break;
           }
@@ -718,7 +728,7 @@ public class Syn2SemDiffHelper {
     for (ASTCDType subClass : subClassesSrc) {
       boolean contained = false;
       for (AssocStruct assocStruct : getAllOtherAssocs(subClass, true)) {
-        if (sameAssociationTypeSrcTgt(assocStruct, tgtAssoc)) {
+        if (sameAssociationTypeSrcTgt(assocStruct, tgtAssoc, true)) {
           contained = true;
           break;
         }
@@ -778,7 +788,7 @@ public class Syn2SemDiffHelper {
    */
   public boolean classHasAssociationTgtSrc(AssocStruct tgtStruct, ASTCDType srcType) {
     for (AssocStruct assocStruct1 : srcMap.get(srcType)) {
-      if (sameAssociationTypeSrcTgt(assocStruct1, tgtStruct)) {
+      if (sameAssociationTypeSrcTgt(assocStruct1, tgtStruct, true)) {
         return true;
       }
     }
@@ -803,7 +813,7 @@ public class Syn2SemDiffHelper {
    */
   public boolean classHasAssociationSrcTgt(AssocStruct assocStruct, ASTCDType tgtType) {
     for (AssocStruct assocStruct1 : tgtMap.get(tgtType)) {
-      if (sameAssociationTypeSrcTgt(assocStruct, assocStruct1)) {
+      if (sameAssociationTypeSrcTgt(assocStruct, assocStruct1, false)) {
         return true;
       }
     }
@@ -835,7 +845,7 @@ public class Syn2SemDiffHelper {
    */
   public boolean classIsTgtSrcTgt(AssocStruct association, ASTCDType tgtType) {
     for (AssocStruct assocStruct : getAllOtherAssocsSpecCase(tgtType, false)) {
-      if (sameAssociationTypeSrcTgt(association, assocStruct)) {
+      if (sameAssociationTypeSrcTgt(association, assocStruct, true)) {
         return true;
       }
     }
@@ -850,8 +860,8 @@ public class Syn2SemDiffHelper {
    * @return true, if an association has the same association type.
    */
   public boolean classIsTargetTgtSrc(AssocStruct association, ASTCDType srcType) {
-    for (AssocStruct assocStruct : getAllOtherAssocs(srcType, true)) {
-      if (sameAssociationTypeSrcTgt(assocStruct, association)) {
+    for (AssocStruct assocStruct : getAllOtherAssocsWithBiDir(srcType, true)) {
+      if (sameAssociationTypeSrcTgt(assocStruct, association, true)) {
         return true;
       }
     }
@@ -859,7 +869,7 @@ public class Syn2SemDiffHelper {
   }
   
   public boolean classIsTargetTgtSrcRev(AssocStruct association, ASTCDType srcType) {
-    for (AssocStruct assocStruct : getAllOtherAssocs(srcType, true)) {
+    for (AssocStruct assocStruct : getAllOtherAssocsWithBiDir(srcType, true)) {
       if (sameAssociationTypeSrcTgtRev(assocStruct, association)) {
         return true;
       }
@@ -1051,9 +1061,13 @@ public class Syn2SemDiffHelper {
    *
    * @param srcAssocSub association from srcCD.
    * @param tgtAssocSuper association from tgtCD.
+   * @param srcCardContainedInSuper should the cardinalities of the source association be contained
+   * in the ones of the
+   * subassociation or the other way around
    * @return true, if the condition is fulfilled.
    */
-  public boolean sameAssociationTypeSrcTgt(AssocStruct srcAssocSub, AssocStruct tgtAssocSuper) {
+  public boolean sameAssociationTypeSrcTgt(AssocStruct srcAssocSub, AssocStruct tgtAssocSuper,
+      boolean srcCardContainedInSuper) {
     boolean isLeftLeft = srcAssocSub.getSide().equals(ClassSide.Left) && tgtAssocSuper.getSide()
         .equals(ClassSide.Left);
     boolean isLeftRight = srcAssocSub.getSide().equals(ClassSide.Left) && tgtAssocSuper.getSide()
@@ -1062,6 +1076,10 @@ public class Syn2SemDiffHelper {
         .equals(ClassSide.Right);
     boolean isRightLeft = srcAssocSub.getSide().equals(ClassSide.Right) && tgtAssocSuper.getSide()
         .equals(ClassSide.Left);
+    
+    AssocStruct structWithSubCardinalities = srcCardContainedInSuper ? srcAssocSub : tgtAssocSuper;
+    AssocStruct structWithSuperCardinalities = srcCardContainedInSuper ? tgtAssocSuper
+        : srcAssocSub;
     
     if (isLeftLeft || isRightRight) {
       return matchRoleNames(srcAssocSub.getAssociation().getLeft(), tgtAssocSuper.getAssociation()
@@ -1072,13 +1090,16 @@ public class Syn2SemDiffHelper {
                           tgtCD).a, true) && compareTypes(getConnectedTypes(srcAssocSub
                               .getAssociation(), srcCD).b, getConnectedTypes(tgtAssocSuper
                                   .getAssociation(), tgtCD).b, true) && isContainedIn(cardToEnum(
-                                      srcAssocSub.getAssociation().getLeft().getCDCardinality()),
-                                      cardToEnum(tgtAssocSuper.getAssociation().getLeft()
-                                          .getCDCardinality())) && isContainedIn(cardToEnum(
-                                              srcAssocSub.getAssociation().getRight()
-                                                  .getCDCardinality()), cardToEnum(tgtAssocSuper
-                                                      .getAssociation().getRight()
-                                                      .getCDCardinality()));
+                                      structWithSubCardinalities.getAssociation().getLeft()
+                                          .getCDCardinality()), cardToEnum(
+                                              structWithSuperCardinalities.getAssociation()
+                                                  .getLeft().getCDCardinality())) && isContainedIn(
+                                                      cardToEnum(structWithSubCardinalities
+                                                          .getAssociation().getRight()
+                                                          .getCDCardinality()), cardToEnum(
+                                                              structWithSuperCardinalities
+                                                                  .getAssociation().getRight()
+                                                                  .getCDCardinality()));
     }
     else if (isLeftRight || isRightLeft) {
       return matchRoleNames(srcAssocSub.getAssociation().getLeft(), tgtAssocSuper.getAssociation()
@@ -1089,13 +1110,16 @@ public class Syn2SemDiffHelper {
                           tgtCD).b, true) && compareTypes(getConnectedTypes(srcAssocSub
                               .getAssociation(), srcCD).b, getConnectedTypes(tgtAssocSuper
                                   .getAssociation(), tgtCD).a, true) && isContainedIn(cardToEnum(
-                                      srcAssocSub.getAssociation().getLeft().getCDCardinality()),
-                                      cardToEnum(tgtAssocSuper.getAssociation().getRight()
-                                          .getCDCardinality())) && isContainedIn(cardToEnum(
-                                              srcAssocSub.getAssociation().getRight()
-                                                  .getCDCardinality()), cardToEnum(tgtAssocSuper
-                                                      .getAssociation().getLeft()
-                                                      .getCDCardinality()));
+                                      structWithSubCardinalities.getAssociation().getLeft()
+                                          .getCDCardinality()), cardToEnum(
+                                              structWithSuperCardinalities.getAssociation()
+                                                  .getRight().getCDCardinality())) && isContainedIn(
+                                                      cardToEnum(structWithSubCardinalities
+                                                          .getAssociation().getRight()
+                                                          .getCDCardinality()), cardToEnum(
+                                                              structWithSuperCardinalities
+                                                                  .getAssociation().getLeft()
+                                                                  .getCDCardinality()));
     }
     
     return false;
@@ -1120,11 +1144,11 @@ public class Syn2SemDiffHelper {
                           tgtCD).a, true) && compareTypes(getConnectedTypes(srcAssocSub
                               .getAssociation(), srcCD).b, getConnectedTypes(tgtAssocSuper
                                   .getAssociation(), tgtCD).b, true) && isContainedIn(cardToEnum(
-                                      srcAssocSub.getAssociation().getLeft().getCDCardinality()),
-                                      cardToEnum(tgtAssocSuper.getAssociation().getLeft()
+                                      tgtAssocSuper.getAssociation().getLeft().getCDCardinality()),
+                                      cardToEnum(srcAssocSub.getAssociation().getLeft()
                                           .getCDCardinality())) && isContainedIn(cardToEnum(
-                                              srcAssocSub.getAssociation().getRight()
-                                                  .getCDCardinality()), cardToEnum(tgtAssocSuper
+                                              tgtAssocSuper.getAssociation().getRight()
+                                                  .getCDCardinality()), cardToEnum(srcAssocSub
                                                       .getAssociation().getRight()
                                                       .getCDCardinality()));
     }
@@ -1137,11 +1161,11 @@ public class Syn2SemDiffHelper {
                           tgtCD).b, true) && compareTypes(getConnectedTypes(srcAssocSub
                               .getAssociation(), srcCD).b, getConnectedTypes(tgtAssocSuper
                                   .getAssociation(), tgtCD).a, true) && isContainedIn(cardToEnum(
-                                      srcAssocSub.getAssociation().getLeft().getCDCardinality()),
-                                      cardToEnum(tgtAssocSuper.getAssociation().getRight()
+                                      tgtAssocSuper.getAssociation().getLeft().getCDCardinality()),
+                                      cardToEnum(srcAssocSub.getAssociation().getRight()
                                           .getCDCardinality())) && isContainedIn(cardToEnum(
-                                              srcAssocSub.getAssociation().getRight()
-                                                  .getCDCardinality()), cardToEnum(tgtAssocSuper
+                                              tgtAssocSuper.getAssociation().getRight()
+                                                  .getCDCardinality()), cardToEnum(srcAssocSub
                                                       .getAssociation().getLeft()
                                                       .getCDCardinality()));
     }
@@ -1347,8 +1371,7 @@ public class Syn2SemDiffHelper {
   private void inheritAssociations(ASTCDCompilationUnit compilationUnit, boolean isSource) {
     List<ASTCDType> types = getTypes(compilationUnit);
     for (ASTCDType astcdClass : types) {
-      Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass, compilationUnit
-          .getCDDefinition());
+      Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass);
       superTypes.remove(astcdClass);
       
       for (ASTCDType superClass : superTypes) {
@@ -1969,8 +1992,8 @@ public class Syn2SemDiffHelper {
    */
   public boolean hasDiffSuper(ASTCDType astcdType) {
     Optional<ASTCDType> oldType = findMatchedTypeTgt(astcdType);
-    Set<ASTCDType> oldTypes = CDDiffUtil.getAllSuperTypes(oldType.get(), tgtCD.getCDDefinition());
-    Set<ASTCDType> newTypes = CDDiffUtil.getAllSuperTypes(astcdType, srcCD.getCDDefinition());
+    Set<ASTCDType> oldTypes = CDDiffUtil.getAllSuperTypes(oldType.get());
+    Set<ASTCDType> newTypes = CDDiffUtil.getAllSuperTypes(astcdType);
     for (ASTCDType class1 : oldTypes) {
       boolean foundMatch = false;
       for (ASTCDType type2 : newTypes) {
@@ -2148,7 +2171,7 @@ public class Syn2SemDiffHelper {
       }
       boolean foundMatch = false;
       for (AssocStruct assocStructTgt : tgtMap.get(tgtType)) {
-        if (sameAssociationTypeSrcTgt(assocStruct, assocStructTgt)) { // the given pair is a match
+        if (sameAssociationTypeSrcTgt(assocStruct, assocStructTgt, true)) { // the given pair is a match
           foundMatch = true;
           break;
         }
@@ -2211,7 +2234,7 @@ public class Syn2SemDiffHelper {
     for (AssocStruct assocStruct : assocStructs) {
       boolean foundMatch = false;
       for (AssocStruct assocStructSrc : srcMap.get(srcType)) { // 1:1 as srcAssocsExist
-        if (sameAssociationTypeSrcTgt(assocStructSrc, assocStruct)) {
+        if (sameAssociationTypeSrcTgt(assocStructSrc, assocStruct, true)) {
           foundMatch = true;
           break;
         }
