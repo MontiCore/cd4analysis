@@ -39,7 +39,7 @@ Similarly, the IntelliJ plugin is provided as a `.zip` file and can be installed
 
 ## An Example Model
 
-The following example CD [`MyCompany`](doc/MyCompany.cd) illustrates the textual 
+The following example CD [`MyCompany`](docs/MyCompany.cd) illustrates the textual 
 syntax of CDs:
 ```
 package corp;
@@ -143,7 +143,7 @@ java -jar MCCD.jar -i src/MyLife.cd --path symbols -pp
 ```
 
 To try them out for yourself download and put the files
-[MyCompany.cd](doc/MyCompany.cd), [MyAddress.cd](doc/MyAddress.cd), and [MyLife.cd](doc/MyLife.cd) into your `src` directory. 
+[MyCompany.cd](docs/MyCompany.cd), [MyAddress.cd](docs/MyAddress.cd), and [MyLife.cd](docs/MyLife.cd) into your `src` directory. 
 The second command needs to be executed before the third.
 
 The possible options are:
@@ -177,12 +177,12 @@ The possible options are:
 | `--reference <file>`             | Parses the file as a reference CD and checks if the the input CD specified by `-i` is conform to it.                                                                                                                                                                                                                                                                                                                                                   |
 | `--map <string>`                 | Specifies the names of stereotypes that are used as incarnation mappings in the concrete model. Default: 'incarnates'                                                                                                                                                                                                                                                                                                                                  |
 | `--complete`                     | Completes a possible incomplete CD specified by `-i` such that it conforms to the reference CD specified by `--reference`.                                                                                                                                                                                                                                                                                                                             |
-| `--ref-param`                    | Specifies the conformance parameters to use for reference CD conformance checking and completion. Default: 'INHERITANCE, METHOD_OVERLOADING, SRC_TARGET_ASSOC_MAPPING, NAME_MAPPING, ALLOW_CARD_RESTRICTION, STEREOTYPE_MAPPING'                                                                                                                                                                                                                       |
+| `--ref-param`                    | Specifies the conformance parameters to use for reference CD conformance checking and completion. Default: 'INHERITANCE, METHOD_OVERLOADING, SRC_TARGET_ASSOC_MAPPING, NAME_MAPPING, ALLOW_CARD_RESTRICTION, STYPE_MAPPING'                                                                                                                                                                                                                       |
 | `--anytype`                      | Specifies the placeholder type name used for underspecified types in the reference CD specified by `--reference`. Default: 'anytype'.                                                                                                                                                                                                                                                                                                                  |
 
 ### Building the Tool from the Sources (if desired)
  
-As alternative to a download, 
+As an alternative to a download, 
 it is possible to build an executable JAR of the tool from the source files
 located in GitHub.
 Make sure you have installed the following dependencies:
@@ -239,7 +239,7 @@ all context conditions.
 
 If you want to try this out yourself, copy the `MCCD.jar` into a directory of 
 your choice. Then create a text file `src/MyExample.cd` 
-([also available here](doc/MyExample.cd)) in a `src` subdirectory of the
+([also available here](docs/MyExample.cd)) in a `src` subdirectory of the
 directory where `MCCD.jar` is located containing e.g. the following simple CD 
 (please note that, like in Java, filename and model name in the file have to be
 the same):
@@ -384,7 +384,7 @@ The CD languages are participating in the symbol exchange infrastructure.
 We import a symbol file defining type symbols that are used by a CD.
 
 Let us now consider the example `MyLife` from above.
-Please, copy the file [`MyLife.cd`](doc/MyLife.cd) and save it 
+Please, copy the file [`MyLife.cd`](docs/MyLife.cd) and save it 
 in a file `src/monticore/MyLife.cd`.
 
 Execute the following command for processing the file `MyLife.cd`:
@@ -402,7 +402,7 @@ the model:
 
 The missing class `Address` is currently not imported.
 `MyLife` already has an `import` statement to another class diagram 
-included ([available here](doc/MyAddress.cd)):
+included ([available here](docs/MyAddress.cd)):
 
 (content of src/MyAddress.cd)
 ```
@@ -474,7 +474,7 @@ java -jar MCCD.jar -i src/MyExample.cd --gen -o out
 Note that the option `--fieldfromrole` must be used with the appropriate
 argument in order to generate attributes for associations contained in the input CD. 
 Use the following commands in order to generate .java-files for the CD 
-`MyCompany`([available here](doc/MyCompany.cd)):
+`MyCompany`([available here](docs/MyCompany.cd)):
 
 ```shell
 java -jar MCCD.jar -i src/MyCompany.cd -o out --gen --fieldfromrole navigable
@@ -493,12 +493,12 @@ The option `--semdiff <file>` computes the semantic difference of the current
 CD in memory and the CD specified by the argument.
 
 For the following examples, download the files 
-[MyEmployees1.cd](doc/MyEmployees1.cd) and [MyEmployees2.cd](doc/MyEmployees2.cd) 
+[MyEmployees1.cd](docs/MyEmployees1.cd) and [MyEmployees2.cd](docs/MyEmployees2.cd) 
 and save them in
 `src`:
 
 ```shell
-java -jar MCCD.jar -i src/MyEmployees1.cd --semdiff scr/MyEmployees2.cd
+java -jar MCCD.jar -i src/MyEmployees1.cd --semdiff src/MyEmployees2.cd
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
@@ -524,7 +524,7 @@ argument iff the two are semantically compatible
 The result is stored in memory as the current CD.
 
 For the following examples, download the files 
-[Teaching.cd](doc/Teaching.cd) and [Management.cd](doc/Management.cd) and 
+[Teaching.cd](docs/Teaching.cd) and [Management.cd](docs/Management.cd) and 
 save them in `src`:
 
 ```shell

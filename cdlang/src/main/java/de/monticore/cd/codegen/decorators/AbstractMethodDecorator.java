@@ -1,13 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.methodtemplates.CD4C;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDClass;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.umlstereotype._ast.ASTStereoValue;
+import de.monticore.umlstereotype._ast.ASTStereotype;
+
 import java.util.Stack;
 
 /**
@@ -49,6 +54,16 @@ public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator
         
         // And also mark the parent (class) as abstract
         decoratorData.getAsDecorated(classStack.peek()).getModifier().setAbstract(true);
+        
+        // Add TOPTrafo.NEEDS_TOP_IDENTIFIER stereotype for improved error messages
+        if (!classStack.peek().getModifier().isAbstract()) {
+          ASTStereoValue astStereoValue = TopDecorator.NEEDS_TOP_STEREO_BUILDER.apply(
+              "In the class %s a method needs to be topped");
+          ASTStereotype astStereotype = CD4CodeMill.stereotypeBuilder().addValues(astStereoValue)
+              .build();
+          decoratorData.getAsDecorated(classStack.peek()).getModifier().setStereotype(
+              astStereotype);
+        }
       }
       else {
         // static methods can not be turned abstract:
@@ -57,8 +72,6 @@ public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator
             decoratorData.getAsDecorated(method), new TemplateHookPoint(
                 "methods.EmptyBodyThrowError")));
       }
-      // We could add the TOPTrafo.NEEDS_TOP_IDENTIFIER stereotype for improved error messages,
-      // but we have to ensure quickFail is disabled during the TOPTrafo
     }
   }
   

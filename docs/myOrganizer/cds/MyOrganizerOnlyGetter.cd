@@ -1,0 +1,72 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.util.Date;
+import java.util.Optional;
+import java.util.*;
+public classdiagram MyOrganizer { 
+  package MyOrganizer { 
+    public enum Status { 
+      PROCESSING,DONE,OPEN;
+
+    } 
+    public abstract class Asset { 
+      public void process();
+
+    } 
+    public class Task extends Asset { 
+      protected Status taskStatus;
+      public void process();
+      protected MyOrganizer.Project project;
+      public Status getTaskStatus();
+      public MyOrganizer.Project getProject();
+
+    } 
+    public class Project extends Asset { 
+      protected String projectName;
+      protected Optional<Date>deadline;
+      protected double budget;
+      public void process();
+      protected Set<MyOrganizer.Task>tasks;
+      public String getProjectName();
+      private Date getDeadline();
+      private boolean isPresentDeadline();
+      protected double getBudget();
+      public Set<MyOrganizer.Task>getTasks();
+      public boolean containsTasks(Object element);
+      public boolean containsAllTasks(java.util.Collection<?>collection);
+      public boolean isEmptyTasks();
+      public java.util.Iterator<MyOrganizer.Task>iteratorTasks();
+      public int sizeTasks();
+      public MyOrganizer.Task []toArrayTasks(MyOrganizer.Task []array);
+      public Object []toArrayTasks();
+      public java.util.Spliterator<MyOrganizer.Task>spliteratorTasks();
+      public java.util.stream.Stream<MyOrganizer.Task>streamTasks();
+      public java.util.stream.Stream<MyOrganizer.Task>parallelStreamTasks();
+      public boolean equalsTasks(Object o);
+      public int hashCodeTasks();
+
+    } 
+    public class Day { 
+      protected Date date;
+      protected Set<MyOrganizer.Task>tasks;
+      public Date getDate();
+      public Set<MyOrganizer.Task>getTasks();
+      public boolean containsTasks(Object element);
+      public boolean containsAllTasks(java.util.Collection<?>collection);
+      public boolean isEmptyTasks();
+      public java.util.Iterator<MyOrganizer.Task>iteratorTasks();
+      public int sizeTasks();
+      public MyOrganizer.Task []toArrayTasks(MyOrganizer.Task []array);
+      public Object []toArrayTasks();
+      public java.util.Spliterator<MyOrganizer.Task>spliteratorTasks();
+      public java.util.stream.Stream<MyOrganizer.Task>streamTasks();
+      public java.util.stream.Stream<MyOrganizer.Task>parallelStreamTasks();
+      public boolean equalsTasks(Object o);
+      public int hashCodeTasks();
+
+    } 
+    public association public [1]Day(day)->(tasks)Task[*]public;
+    public association public[*]Task(tasks)<->(project)Project [1]public;
+
+  } 
+
+} 

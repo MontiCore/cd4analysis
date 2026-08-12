@@ -1,0 +1,78 @@
+site_name: CD4Analysis
+theme:
+  name: 'material'
+  favicon: 'img/favicon.ico'
+  custom_dir: docs/overrides
+  hide:
+    - navigation
+  features:
+    - navigation.tabs
+    - toc.integrate
+    - toc.follow
+    - content.tabs.link
+    - content.code.copy
+    - navigation.instant # search index survives navigation
+  icon:
+    logo: 'fontawesome/solid/desktop'
+
+site_url: https://monticore.github.io/cd4analysis/
+repo_url: https://github.com/MontiCore/cd4analysis/
+edit_uri: ""
+
+extra_css:
+  - 'stylesheets/extra.css'
+
+copyright: '(c) https://github.com/MontiCore/monticore'
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - pymdownx.superfences
+  #  pymdownx.snippets is added by the docsnippet hook!
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+hooks:
+  - docs/overrides/extensions/docsnippet.py
+
+plugins:
+  - search
+
+nav:
+  - Home: 'README.md'
+  - 'Getting Started': 'docs/GettingStarted.md'
+#  - Core Grammars:
+#      - 'Overview': 'monticore-grammar/src/main/grammars/de/monticore/Grammars.md'
+#      - 'Expressions': 'monticore-grammar/src/main/grammars/de/monticore/expressions/Expressions.md'
+#      - 'Literals': 'monticore-grammar/src/main/grammars/de/monticore/literals/Literals.md'
+#      - 'Types': 'monticore-grammar/src/main/grammars/de/monticore/types/Types.md'
+#  - Languages:
+#      - 'Languages and Language Components': 'docs/DevelopedLanguages.md'
+#      - 'List of Languages': 'docs/Languages.md'
+#  - 'Best Practices': 'docs/BestPractices.md'
+#  - Changelog: '00.org/Explanations/CHANGELOG.md'
+#  - Downloads: 'docs/Download.md'
+#  - Publications: 'docs/Publications.md'
+#  - License: '00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md'
+
+# run `docs/scripts/preprocessing.sh symlink` to create this directory locally
+docs_dir: docs_wd
+
+watch:
+  - docs
+  - cd2plantuml/src
+  - cd2smt/src
+  - cd-runtime/src
+  - cddiff/src
+  - cdlang/src
+  - cdmerge/src
+  - cdtool/src
+  - language-server/src
+  - symtabdefinitiontool/src
+  - README.md

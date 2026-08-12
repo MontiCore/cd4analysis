@@ -5,6 +5,7 @@ gen/
 .settings/
 .classpath
 *.log
+*.pyc
 *.iml
 .idea/
 .gradle
@@ -14,6 +15,7 @@ gradlew
 gradlew.bat
 ~$*
 .intellijPlatform/
+docs_wd
 
 # AI
 .claude/**
