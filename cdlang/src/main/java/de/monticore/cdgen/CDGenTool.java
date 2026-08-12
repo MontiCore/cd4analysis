@@ -117,7 +117,7 @@ public class CDGenTool extends CDGeneratorTool {
       asts = this.trafoBeforeSymtab(asts);
 
       if (cmd.hasOption("path")) {
-        String[] paths = splitPathEntries(cmd.getOptionValue("path"));
+        String[] paths = splitPathEntries(cmd.getOptionValues("path"));
         CD4CodeMill.globalScope().setSymbolPath(new MCPath(paths));
       }
 
