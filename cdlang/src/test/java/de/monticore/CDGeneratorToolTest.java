@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdgen.CDGenTool;
+import de.monticore.runtime.junit.MCAssertions;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
@@ -16,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CDGeneratorToolTest {
@@ -30,14 +33,13 @@ public class CDGeneratorToolTest {
   
   @Test
   public void testGeneratorToolWithCoCos() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-c" });
-    assertTrue(true);
   }
   
   @Test
   public void testGeneratorToolWithSymbolTable() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-s",
         "target/generated/example/symboltable" });
     assertTrue(new File("target/generated/example/symboltable/model/Example.cdsym").isFile());
@@ -45,7 +47,7 @@ public class CDGeneratorToolTest {
   
   @Test
   public void testGeneratorToolWithJavaGeneration() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
         "target/generated/example/standard", });
     assertTrue(new File("target/generated/example/standard/model/Example/A.java").isFile());
@@ -53,7 +55,7 @@ public class CDGeneratorToolTest {
   
   @Test
   public void testGeneratorToolWithEmptyCDWithPackage() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/EmptyWithPackage.cd", "-c2mc", "-o",
         "target/generated/example/standard", });
     
@@ -63,23 +65,25 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithEmptyCDWithoutPackage() {
     
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/EmptyWithoutPackage.cd", "-c2mc", "-o",
         "target/generated/example/standard", });
     assertTrue(new File("target/generated/example/standard/EmptyWithoutPackage").isDirectory());
   }
   
   @Test
+  @Disabled // The new generator has a different configTemplate opinion
   public void testGeneratorToolWithCustomGeneratorTemplate() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
         "target/generated/example/ct", "-ct", "de.monticore.cdgentool.NewCustomTemplate" });
     assertTrue(new File("target/generated/example/ct/model/Example/A.java").isFile());
   }
   
   @Test
+  @Disabled // New generator has a different CLI options
   public void testGeneratorToolWithAdditionalTemplates() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
         "target/generated/example/tp", "-tp",
         "src/test/resources/de/monticore/cdgentool/templates" });
@@ -88,7 +92,7 @@ public class CDGeneratorToolTest {
   
   @Test
   public void testGeneratorToolWithHWC() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
         "target/generated/example/hwc", "-hwc", "src/test/resources/de/monticore/cdgentool/hwc" });
     assertTrue(new File("target/generated/example/hwc/model/Example/ATOP.java").isFile());
@@ -96,20 +100,18 @@ public class CDGeneratorToolTest {
   
   @Test
   public void testToolPrintHelpOptions() {
-    CDGeneratorTool.main(new String[] { "-h" });
-    assertTrue(true);
+    new CDGenTool().run(new String[] { "-h" });
   }
   
   @Test
   public void testToolPrintVersion() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-v" });
-    assertTrue(true);
   }
   
   @Test
   public void testGeneratorToolWithPkgSymTab() throws IOException {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/pkg/ExampleWithPkg.cd", "-c2mc", "-o",
         "target/generated/example/examplewithpkg", "-s",
         "target/generated/example/examplewithpkg" });
@@ -120,8 +122,9 @@ public class CDGeneratorToolTest {
   }
   
   @Test
+  @Disabled // The new generated uses a different set of decorators
   public void testDefaultConstructorDecorator() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
         "target/generated/example/defaultctor", "-ct",
         "de.monticore.cdgentool.DefaultCtorTemplate", });
@@ -131,21 +134,20 @@ public class CDGeneratorToolTest {
   
   @Test
   public void testImportStatements() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-o",
         "target/generated/example/imports", "-c2mc", "-s", "target/generated/example/imports/" });
     
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/ImportTest.cd", "-o",
         "target/generated/example/imports", "-c2mc", "-path",
         "target/generated/example/imports/" });
-    
-    assertTrue(true);
   }
   
   @Test
+  @Disabled // The new generator does not have a "fieldfromrole" option
   public void testAttributesForAssociations() {
-    CDGeneratorTool.main(new String[] { "-i",
+    new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-s",
         "target/generated/example/rolefield/", "-fieldfromrole", "navigable" });
     File symtab = new File("target/generated/example/rolefield/model/Example.cdsym");
@@ -159,8 +161,8 @@ public class CDGeneratorToolTest {
   
   @AfterEach
   public void after() {
+    MCAssertions.assertNoFindings();
     CD4CodeMill.globalScope().clear();
-    assertTrue(LogStub.getFindings().isEmpty());
   }
   
 }
