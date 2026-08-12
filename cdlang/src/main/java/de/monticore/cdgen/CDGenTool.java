@@ -58,7 +58,7 @@ import org.apache.commons.cli.*;
  * cdtool/cdgradle/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
  */
 public class CDGenTool extends CD4CodeTool {
-
+  
   /**
    * Gradle main method of the CDGenTool
    *
@@ -68,7 +68,7 @@ public class CDGenTool extends CD4CodeTool {
     CDGenTool tool = new CDGenTool();
     tool.run(args);
   }
-
+  
   /**
    * main method of the CDGenTool
    *
@@ -89,7 +89,7 @@ public class CDGenTool extends CD4CodeTool {
     // properly exit with a code
     System.exit(Log.getErrorCount() == 0 ? 0 : 1);
   }
-
+  
   /**
    * executes the arguments stated in the command line like parsing a given model to an ast,
    * creating and printing out a corresponding symbol table, checking cocos or generating java files
@@ -100,13 +100,13 @@ public class CDGenTool extends CD4CodeTool {
   public void run(String[] args) {
     CD4CodeMill.reset();
     CD4CodeMill.init();
-
+    
     Options options = initOptions();
-
+    
     try {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
-
+      
       if (cmd.hasOption("v")) {
         printVersion();
         // do not continue when version is printed
@@ -116,31 +116,31 @@ public class CDGenTool extends CD4CodeTool {
         printHelp(options);
         return;
       }
-
+      
       final boolean c2mc = cmd.hasOption("c2mc");
-
+      
       initializeSymbolTable(c2mc);
-
+      
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts = this.parse(".cd", this.createModelPath(cmd)
           .getEntries());
       Log.enableFailQuick(true);
-
+      
       // Run CoCos
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         asts.forEach(this::runBeforeSTCoCos);
         Log.enableFailQuick(true);
       }
-
+      
       // apply trafos needed for symbol table creation
       asts = this.trafoBeforeSymtab(asts);
-
+      
       if (cmd.hasOption("path")) {
         String[] paths = splitPathEntries(cmd.getOptionValues("path"));
         CD4CodeMill.globalScope().setSymbolPath(new MCPath(paths));
       }
-
+      
       // Create the symbol-table (symbol table creation phase 1)
       List<ICD4CodeArtifactScope> scopes = new ArrayList<>(asts.size());
       for (ASTCDCompilationUnit ast : asts) {
@@ -148,28 +148,28 @@ public class CDGenTool extends CD4CodeTool {
         scopes.add(this.createSymbolTable(ast, c2mc));
         Log.enableFailQuick(true);
       }
-
+      
       // Complete the symbol-table (symbol table creation phase 2)
       for (ASTCDCompilationUnit ast : asts) {
         Log.enableFailQuick(false); // ST completition might report multiple errors
         this.completeSymbolTable(ast);
         Log.enableFailQuick(true);
       }
-
+      
       // Run CoCos
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         asts.forEach(this::runCoCos);
         Log.enableFailQuick(true);
       }
-
+      
       // Export original symbol table
       if (cmd.hasOption("s")) {
         for (ICD4CodeArtifactScope scope : scopes) {
           this.storeSymTab(scope, cmd.getOptionValue("s"));
         }
       }
-
+      
       if (cmd.hasOption("o")) {
         // Where to load additional templates from
         List<File> additionalTemplatePaths = cmd.hasOption("fp") ? Arrays.stream(cmd
@@ -181,11 +181,11 @@ public class CDGenTool extends CD4CodeTool {
         // output directory
         String outputPath = (cmd.hasOption("o")) ? Paths.get(cmd.getOptionValue("o")).toString()
             : "";
-
+        
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         GeneratorSetup generatorSetup = newConfiguredGeneratorSetup(additionalTemplatePaths,
             handcodedPath, outputPath, glex);
-
+        
         // Finally, invoke the decorating generator
         decorateAndGenerate(glex,
             // Initialize the decorator config
@@ -211,11 +211,11 @@ public class CDGenTool extends CD4CodeTool {
     }
     CD4CodeMill.globalScope().clear();
   }
-
+  
   public void initializeSymbolTable(boolean c2mc) {
     BasicSymbolsMill.initializePrimitives();
     MCCollectionSymTypeRelations.init();
-
+    
     if (c2mc) {
       initializeClass2MC();
     }
@@ -224,12 +224,12 @@ public class CDGenTool extends CD4CodeTool {
       BasicSymbolsMill.initializeObject();
     }
   }
-
+  
   public void initializeClass2MC() {
     CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
     CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
   }
-
+  
   public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig decConfig,
       CommandLine cmd, GeneratorSetup setup) {
     // Setup CLI config overrides
@@ -245,7 +245,7 @@ public class CDGenTool extends CD4CodeTool {
     TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
     hpp.processValue(tc, new ArrayList<>());
   }
-
+  
   public void decorateAndGenerate(GlobalExtensionManagement glex,
       Consumer<DecoratorConfig> initializeDecConf, GeneratorSetup setup,
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
@@ -254,41 +254,41 @@ public class CDGenTool extends CD4CodeTool {
     glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance()); // TODO: Remove from templates
     glex.setGlobalValue("cdGenService", new CDGenService());
     glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher()); // TODO: Remove from templates
-
+    
     CDGenerator generator = new CDGenerator(setup);
     DecoratorConfig decSetup = new DecoratorConfig();
-
+    
     CDAssociationCreateFieldsFromAllRoles roleTrafo = performFieldsFromRolesTrafo(asts);
-
+    
     // Load the initial decorator config
     initializeDecConf.accept(decSetup);
-
+    
     // e.g., prepare the global scope for decorated symbol table
     initDecoratedGlobalScope.run();
-
+    
     for (ASTCDCompilationUnit ast : asts) {
       var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
-
+      
       if (decorated.isEmpty()) {
         Log.error("0xCDD12: Failed generation for " + ast.getCDDefinition().getName());
         continue;
       }
-
+      
       // Post-Decorate: apply trafos needed for code generation
       CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
       t.add4CDBasis(new CDBasisDefaultPackageTrafo());
       decorated.get().accept(t);
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
-
+      
       // The following imports (cf. Imports.ftl) have to be added
       decorated.get().addMCImportStatement(CDBasisMill.mCImportStatementBuilder()
           .setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util")).setStar(
               true).build());
-
+      
       // If required, we can also output the symbol table of the *decorated* AST
       postDecorate.accept(decorated.get());
-
+      
       // Post-Decorate: TOP Decorator
       // TODO: #4310 - make this TOP transformation configurable via the config
       // template
@@ -298,23 +298,23 @@ public class CDGenTool extends CD4CodeTool {
       t = CD4CodeMill.inheritanceTraverser();
       topTransformer.addToTraverser(t);
       decorated.get().accept(t);
-
+      
       generator.generate(decorated.get());
       Log.enableFailQuick(qf); // reset quick-fail
     }
   }
-
+  
   public GeneratorSetup newConfiguredGeneratorSetup(List<File> additionalTemplatePaths,
       Optional<MCPath> handcodedPath, String outputPath, GlobalExtensionManagement glex) {
     GeneratorSetup setup = new GeneratorSetup();
-
+    
     setup.setAdditionalTemplatePaths(additionalTemplatePaths);
     handcodedPath.ifPresent(setup::setHandcodedPath);
     setup.setGlex(glex);
     setup.setOutputDirectory(new File(outputPath));
     return setup;
   }
-
+  
   public CDAssociationCreateFieldsFromAllRoles performFieldsFromRolesTrafo(
       Collection<ASTCDCompilationUnit> asts) {
     CDAssociationCreateFieldsFromAllRoles roleTrafo =
@@ -325,7 +325,7 @@ public class CDGenTool extends CD4CodeTool {
     asts.forEach(roleTrafo::transform);
     return roleTrafo;
   }
-
+  
   /**
    * Without Class2MC, we have to load symbols used in the generated CD
    *
@@ -344,13 +344,13 @@ public class CDGenTool extends CD4CodeTool {
       registerFakeType("ICDObserver", "de.monticore.cd.ICDObserver");
     }
   }
-
+  
   protected void registerFakeType(String simplename, String fullName) {
     CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(simplename).setFullName(
         fullName).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(CDBasisMill.globalScope())
         .build());
   }
-
+  
   /**
    * Create, complete, and export the symbol table of a decorated CD
    *
@@ -361,50 +361,50 @@ public class CDGenTool extends CD4CodeTool {
       String symbolOutPath) {
     // Create the symbol-table (symbol table creation phase 1)
     var decoratedScope = this.createSymbolTable(decorated, true);
-
+    
     // Complete the symbol-table (symbol table creation phase 2)
     this.completeSymbolTable(decorated);
-
+    
     // Store the decorated symbol table
     this.storeSymbols(decoratedScope, Paths.get(symbolOutPath, Names.getPathFromPackage(
         decoratedScope.getFullName()) + ".deccdsym").toString());
   }
-
+  
   /**
    * adds additional options to the cli tool
    *
    * @param options collection of all the possible options
    */
   public Options addAdditionalOptions(Options options) {
-
+    
     options.addOption(Option.builder("c").longOpt("checkcococs").desc(
         "Checks all CoCos on the given mode.").build());
-
+    
     options.addOption(Option.builder("o").longOpt("output").argName("dir").hasArg().desc(
         "Sets the output path.").build());
-
+    
     options.addOption(Option.builder("ct").longOpt("configtemplate").hasArg().argName("template")
         .desc("Sets a template for configuration.").build());
-
+    
     options.addOption(Option.builder("fp").longOpt("template").hasArg().argName("path").desc(
         "Sets the path for additional templates.").build());
-
+    
     options.addOption(Option.builder("hwc").longOpt("handwrittencode").hasArg().argName("hwcpath")
         .desc("Sets the path for additional, handwritten classes.").build());
-
+    
     options.addOption(Option.builder("c2mc").longOpt("class2mc").desc(
         "Enables to resolve java classes in the model path").build());
-
+    
     options.addOption(Option.builder("cliconfig").desc("Configures additional").hasArgs().argName(
         "fqn:key[=value]").build());
-
+    
     options.addOption(org.apache.commons.cli.Option.builder("sd").longOpt("symboltabledecorated")
         .argName("file").hasArg().desc(
             "Serializes the decorated symbol table of the given artifact.").build());
-
+    
     return options;
   }
-
+  
   /**
    * checks all cocos on the original ast before the symbol table is created
    *
@@ -413,7 +413,7 @@ public class CDGenTool extends CD4CodeTool {
   public void runBeforeSTCoCos(ASTCDCompilationUnit ast) {
     // Nothing yet, decide how we expose them
   }
-
+  
   /**
    * checks all cocos on the original ast
    *
@@ -423,7 +423,7 @@ public class CDGenTool extends CD4CodeTool {
     CD4CodeCoCoChecker checker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
     checker.checkAll(ast);
   }
-
+  
   public Collection<ASTCDCompilationUnit> trafoBeforeSymtab(Collection<ASTCDCompilationUnit> asts) {
     CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
     asts.forEach(ast -> ast.accept(trafo.getTraverser()));
@@ -433,7 +433,7 @@ public class CDGenTool extends CD4CodeTool {
     asts.forEach(ast -> ast.accept(t));
     return asts;
   }
-
+  
   /**
    * Updates the map of cd types to import statement in the given cd4c object, adding the imports
    * for each cd type (classes, enums, and interfaces) defined in the given ast.
@@ -443,7 +443,7 @@ public class CDGenTool extends CD4CodeTool {
   public void mapCD4CImports(ASTCDCompilationUnit ast) {
     CD4C cd4c = CD4C.getInstance();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
-
+    
     for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTMCImportStatement i : imports) {
         String qName = i.getQName();
@@ -463,7 +463,7 @@ public class CDGenTool extends CD4CodeTool {
       }
     }
   }
-
+  
   public MCPath createModelPath(CommandLine cl) {
     if (cl.hasOption("i")) {
       return new MCPath(splitPathEntries(cl.getOptionValues("i")));
@@ -472,24 +472,24 @@ public class CDGenTool extends CD4CodeTool {
       return new MCPath();
     }
   }
-
+  
   public String[] splitPathEntries(String composedPath) {
     Objects.requireNonNull(composedPath);
-
+    
     return composedPath.split(Pattern.quote(File.pathSeparator));
   }
-
+  
   public final String[] splitPathEntries(String[] composedPaths) {
     Objects.requireNonNull(composedPaths);
     return Arrays.stream(composedPaths).map(this::splitPathEntries).flatMap(Arrays::stream).toArray(
         String[]::new);
   }
-
+  
   public Collection<ASTCDCompilationUnit> parse(String fileExt, Collection<Path> filesAndDirs) {
     return filesAndDirs.stream().flatMap(dirOrFile -> this.parse(fileExt, dirOrFile).stream())
         .collect(Collectors.toList());
   }
-
+  
   /**
    * Parses all class diagrams in the given path.
    * In case the path is a file, the file is parsed regardless of its extension
@@ -516,7 +516,7 @@ public class CDGenTool extends CD4CodeTool {
     }
     return Collections.emptySet();
   }
-
+  
   /**
    * creates the symboltable for the given ast
    *
@@ -530,12 +530,12 @@ public class CDGenTool extends CD4CodeTool {
     this.addDefaultImports(scope, java);
     return scope;
   }
-
+  
   public void addDefaultImports(ICD4CodeArtifactScope scope, boolean java) {
     if (java)
       scope.addImports(new ImportStatement("java.lang", true));
   }
-
+  
   /**
    * prints the symboltable of the given scope out to a file
    *
@@ -551,7 +551,7 @@ public class CDGenTool extends CD4CodeTool {
           + ".cdsym").toString());
     }
   }
-
+  
   /**
    * completes the symboltable for the given ast
    *
@@ -560,5 +560,5 @@ public class CDGenTool extends CD4CodeTool {
   public void completeSymbolTable(ASTCDCompilationUnit ast) {
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
-
+  
 }
