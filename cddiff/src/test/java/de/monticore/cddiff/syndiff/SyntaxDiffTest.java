@@ -13,7 +13,6 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -286,23 +285,17 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   }
   
   public void parseModels(String concrete, String ref) {
-    try {
-      Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
-          + concrete);
-      Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
-      if (src.isPresent() && tgt.isPresent()) {
-        CDDiffUtil.refreshSymbolTable(src.get());
-        CDDiffUtil.refreshSymbolTable(tgt.get());
-        this.tgt = tgt.get();
-        this.src = src.get();
-      }
-      else {
-        fail("Could not parse CDs.");
-      }
-      
+    Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
+        + concrete);
+    Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
+    if (src.isPresent() && tgt.isPresent()) {
+      CDDiffUtil.refreshSymbolTable(src.get());
+      CDDiffUtil.refreshSymbolTable(tgt.get());
+      this.tgt = tgt.get();
+      this.src = src.get();
     }
-    catch (IOException e) {
-      fail(e.getMessage());
+    else {
+      fail("Could not parse CDs.");
     }
   }
   

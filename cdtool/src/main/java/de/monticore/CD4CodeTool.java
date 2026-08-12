@@ -458,7 +458,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       }
       Log.error("0xCD0E0 Model could not be parsed.");
     }
-    catch (NullPointerException | java.io.IOException e) {
+    catch (NullPointerException e) {
       Log.error("0xCD0E1 Failed to parse from stdin", e);
     }
     // should never be reached (unless failquick is off)

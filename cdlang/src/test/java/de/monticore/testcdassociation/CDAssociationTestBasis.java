@@ -16,7 +16,6 @@ import de.monticore.testcdassociation._parser.TestCDAssociationParser;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactScope;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationGlobalScope;
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,14 +40,8 @@ public class CDAssociationTestBasis extends TestBasis {
   }
   
   protected ASTCDCompilationUnit parseModel(String modelName) {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit;
-    try {
-      astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath(modelName));
-    }
-    catch (IOException e) {
-      fail("Failed while parsing the model `" + getFilePath(modelName) + "': " + e.getMessage());
-      return null;
-    }
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parseCDCompilationUnit(getFilePath(modelName));
     
     checkNullAndPresence(p, astcdCompilationUnit);
     return astcdCompilationUnit.get();

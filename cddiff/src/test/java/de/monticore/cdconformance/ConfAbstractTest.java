@@ -8,7 +8,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,24 +32,19 @@ public abstract class ConfAbstractTest {
   }
   
   public void parseModels(String concrete, String ref) {
-    try {
-      Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parseCDCompilationUnit(dir
-          + concrete);
-      Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
-      if (conCD.isPresent() && refCD.isPresent()) {
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(refCD.get());
-        conCD.get().accept(new CD4CodeSymbolTableCompleter(conCD.get()).getTraverser());
-        refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
-        this.refCD = refCD.get();
-        this.conCD = conCD.get();
-      }
-      else {
-        fail("Could not parse CDs.");
-      }
+    Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parseCDCompilationUnit(dir
+        + concrete);
+    Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
+    if (conCD.isPresent() && refCD.isPresent()) {
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(refCD.get());
+      conCD.get().accept(new CD4CodeSymbolTableCompleter(conCD.get()).getTraverser());
+      refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
+      this.refCD = refCD.get();
+      this.conCD = conCD.get();
     }
-    catch (IOException e) {
-      fail(e);
+    else {
+      fail("Could not parse CDs.");
     }
   }
   
