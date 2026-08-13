@@ -90,6 +90,11 @@ public abstract class CDGenTask extends MCAllFilesTask {
     if (getClass2MC().isPresent() && getClass2MC().get()) {
       list.add("--class2mc");
     }
+    else if (!getUseStandardSymbolLibrary().isPresent()) {
+      getLogger().warn(
+          "Neither the --class2mc or --use-standard-symbols option are present. In the future, this behaviour will change");
+      list.add("--use-standard-symbols");
+    }
     if (getClass2MCNoJavaRuntime().isPresent() && getClass2MCNoJavaRuntime().get()) {
       list.add("--class2mc-no-java-runtime");
     }
