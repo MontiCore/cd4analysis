@@ -64,7 +64,7 @@ public abstract class AbstractDecoratorTest extends AbstractMCTest {
     tool.trafoBeforeSymtab(Collections.singletonList(cd));
     
     final boolean class2mc = this.withClass2MC();
-    tool.initializeSymbolTable(class2mc);
+    tool.initializeSymbolTable(class2mc, false, !class2mc);
     
     // Create ST
     tool.createSymbolTable(cd);
