@@ -119,7 +119,7 @@ public class CDGenTool extends CD4CodeTool {
       
       final boolean c2mc = cmd.hasOption("c2mc");
       
-      initializeSymbolTable(c2mc, cmd.hasOption("class2mc-no-java-runtime"));
+      initializeSymbolTable(c2mc, cmd.hasOption("class2mc-no-jdk"));
       
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts = this.parse(".cd", this.createModelPath(cmd)
@@ -212,15 +212,13 @@ public class CDGenTool extends CD4CodeTool {
     CD4CodeMill.globalScope().clear();
   }
   
-  public void initializeSymbolTable(boolean c2mc, boolean c2mcNoRuntime) {
+  public void initializeSymbolTable(boolean c2mc, boolean c2mcNoJdk) {
     BasicSymbolsMill.initializePrimitives();
     MCCollectionSymTypeRelations.init();
     
     if (c2mc) {
-      CD4CodeMill.globalScope()
-        .addAdaptedTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoRuntime));
-      CD4CodeMill.globalScope()
-        .addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoRuntime));
+      CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoJdk));
+      CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoJdk));
     }
     else {
       BasicSymbolsMill.initializeString();
@@ -393,8 +391,8 @@ public class CDGenTool extends CD4CodeTool {
     options.addOption(Option.builder("c2mc").longOpt("class2mc").desc(
         "Enables to resolve java classes in the model path").build());
     
-    options.addOption(Option.builder().longOpt("class2mc-no-java-runtime").desc(
-        "Does not load the java runtime enviroment into class2mc. Only the symbolpath is used.")
+    options.addOption(Option.builder().longOpt("class2mc-no-jdk").desc(
+        "Does not resolve types from the installed JDK's standard library. Only the symbolpath is used.")
         .build());
     
     options.addOption(Option.builder("cliconfig").desc("Configures additional").hasArgs().argName(
