@@ -40,7 +40,6 @@ import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -120,8 +119,7 @@ public class CDGenTool extends CD4CodeTool {
       
       final boolean c2mc = cmd.hasOption("c2mc");
       
-      initializeSymbolTable(c2mc, cmd.hasOption("class2mc-no-java-runtime"), cmd.hasOption(
-          "use-standard-symbols"));
+      initializeSymbolTable(c2mc, cmd.hasOption("class2mc-no-java-runtime"));
       
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts = this.parse(".cd", this.createModelPath(cmd)
@@ -214,47 +212,19 @@ public class CDGenTool extends CD4CodeTool {
     CD4CodeMill.globalScope().clear();
   }
   
-  public void initializeSymbolTable(boolean c2mc, boolean c2mcNoRuntime,
-      boolean loadStandardSymbolLibrary) {
+  public void initializeSymbolTable(boolean c2mc, boolean c2mcNoRuntime) {
     BasicSymbolsMill.initializePrimitives();
     MCCollectionSymTypeRelations.init();
     
     if (c2mc) {
-      if (c2mcNoRuntime) {
-        // TODO: Migrate to " Add toggle for load from jdk " once merged
-        CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver() {
-          
-          @Override
-          protected Optional<URL> loadFromJDK(String name) {
-            return Optional.empty();
-          }
-          
-        });
-        CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver() {
-          
-          @Override
-          protected Optional<URL> loadFromJDK(String name) {
-            return Optional.empty();
-          }
-          
-        });
-      }
-      else {
-        CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
-        CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
-      }
-      if (loadStandardSymbolLibrary) {
-        Log.warn(
-            "Both class2mc and loadStandardSymbolLibrary are enabled. This might lead to duplicate symbols.");
-      }
+      CD4CodeMill.globalScope()
+        .addAdaptedTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoRuntime));
+      CD4CodeMill.globalScope()
+        .addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoRuntime));
     }
     else {
-      if (loadStandardSymbolLibrary) {
-        // TODO: Remove me and load the symtab instead
-        BasicSymbolsMill.initializeString();
-        BasicSymbolsMill.initializeObject();
-      }
-      
+      BasicSymbolsMill.initializeString();
+      BasicSymbolsMill.initializeObject();
     }
   }
   
@@ -426,9 +396,6 @@ public class CDGenTool extends CD4CodeTool {
     options.addOption(Option.builder().longOpt("class2mc-no-java-runtime").desc(
         "Does not load the java runtime enviroment into class2mc. Only the symbolpath is used.")
         .build());
-    
-    options.addOption(Option.builder().longOpt("use-standard-symbols").desc(
-        "Loads the standard symbol library into the symbolpath.").build());
     
     options.addOption(Option.builder("cliconfig").desc("Configures additional").hasArgs().argName(
         "fqn:key[=value]").build());
