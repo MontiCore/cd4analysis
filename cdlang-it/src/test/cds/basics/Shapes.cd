@@ -1,0 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
+package basics;
+
+/*
+ * Plain CD4Analysis: classes, inheritance, an abstract class, an enum, and
+ * attributes using primitives, String and user-defined types.
+ */
+classdiagram Shapes {
+
+  enum Color { RED, GREEN, BLUE; }
+
+  abstract class Shape {
+    Color color;
+    double x;
+    double y;
+  }
+
+  class Circle extends Shape {
+    double radius;
+  }
+
+  class Rectangle extends Shape {
+    double width;
+    double height;
+  }
+
+  class Drawing {
+    String title;
+    boolean readOnly;
+  }
+
+  composition [1] Drawing <- (elements) Shape [*] {ordered};
+}

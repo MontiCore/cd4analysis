@@ -1,0 +1,38 @@
+/* (c) https://github.com/MontiCore/monticore */
+package associations;
+
+/*
+ * Associations and compositions: named associations, role names, navigation
+ * directions (-> and <->), multiplicities and the {ordered} stereotype.
+ */
+classdiagram Library {
+
+  class Library {
+    String name;
+  }
+
+  class Book {
+    String title;
+    String isbn;
+  }
+
+  class Copy {
+    int inventoryNumber;
+  }
+
+  class Member {
+    String name;
+    int memberId;
+  }
+
+  class Loan {
+    String dueDate;
+    boolean returned;
+  }
+
+  composition [1] Library <- (catalog) Book [*] {ordered};
+  composition [1] Book <- Copy [1..*];
+  association [1] Library (library) <-> Member [*];
+  association borrows [0..1] Member (borrower) <-> Loan [*];
+  association [1] Loan -> (lentCopy) Copy [1];
+}

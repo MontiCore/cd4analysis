@@ -1,0 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+/*
+ * Nested packages inside a class diagram plus qualified cross-package
+ * references from associations. (No top-level `package` declaration: the
+ * generator adds a default package named after the diagram.)
+ */
+classdiagram Warehouse {
+
+  package catalog {
+    class Product {
+      String id;
+      String name;
+      double price;
+    }
+
+    enum Category { ELECTRONICS, BOOKS, FOOD; }
+  }
+
+  package stock {
+    class StorageSite {
+      String location;
+    }
+
+    class StockItem {
+      int quantity;
+    }
+  }
+
+  association [1] stock.StorageSite (site) <-> stock.StockItem [*];
+  association [*] stock.StockItem -> (product) catalog.Product [1];
+  association [*] catalog.Product -> (category) catalog.Category [1];
+}

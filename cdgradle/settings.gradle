@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+pluginManagement {
+  repositories {
+    if (providers.gradleProperty('useLocalRepo').getOrElse('false') == 'true') {
+      mavenLocal()
+    }
+    maven {
+      url = providers.gradleProperty('repo')
+          .getOrElse('https://nexus.se.rwth-aachen.de/content/groups/public')
+      if (providers.gradleProperty('mavenUser').present
+          && providers.gradleProperty('mavenPassword').present) {
+        credentials {
+          username = providers.gradleProperty('mavenUser').get()
+          password = providers.gradleProperty('mavenPassword').get()
+        }
+      }
+    }
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+
+rootProject.name = 'cdgradle'

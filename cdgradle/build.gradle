@@ -1,0 +1,72 @@
+/* (c) https://github.com/MontiCore/monticore */
+plugins {
+  id 'java-library'
+  id 'java-gradle-plugin'
+  id 'maven-publish'
+  id 'de.se_rwth.codestyle' version "$mc_version"
+}
+
+group = 'de.monticore.lang.cd4analysis'
+
+layout.buildDirectory = layout.projectDirectory.dir('target')
+
+repositories {
+  if (providers.gradleProperty('useLocalRepo').getOrElse('false') == 'true') {
+    mavenLocal()
+  }
+  maven {
+    url = providers.gradleProperty('repo')
+        .getOrElse('https://nexus.se.rwth-aachen.de/content/groups/public')
+    def u = providers.gradleProperty('mavenUser')
+    def p = providers.gradleProperty('mavenPassword')
+    if (u.present && p.present) {
+      credentials {
+        username = u.get()
+        password = p.get()
+      }
+    }
+  }
+  mavenCentral()
+}
+
+dependencies {
+  implementation "de.se_rwth.commons:se-commons-gradle:$mc_version"
+  implementation "de.se_rwth.commons:se-commons-logging:$mc_version"
+}
+
+gradlePlugin {
+  plugins {
+    cdplugin {
+      id = "de.rwth.se.cdgen"
+      implementationClass = "de.monticore.cdgen.gradleplugin.CDGenGradlePlugin"
+    }
+  }
+}
+
+publishing {
+  repositories.maven {
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
+    def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
+    def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
+    url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+  }
+}
+
+def buildInfoVersion = project.version.toString()
+
+tasks.register('generateResources') {
+  ext {
+    propFile = layout.buildDirectory.file("generated/buildInfo.properties")
+  }
+  outputs.file propFile
+  doLast {
+    File f = propFile.get().asFile
+    f.parentFile.mkdirs()
+    f.text = "version=$buildInfoVersion"
+  }
+}
+processResources {
+  from files(generateResources)
+  dependsOn generateResources
+}

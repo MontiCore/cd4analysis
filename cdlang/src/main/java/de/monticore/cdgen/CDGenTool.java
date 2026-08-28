@@ -55,7 +55,7 @@ import org.apache.commons.cli.*;
  * This tool provides configurable decorator functionality in addition to generation. This tool is
  * tested via
  * the CDGenGradlePluginTest:
- * cdtool/cdgradle/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
+ * cdgradle-it/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
  */
 public class CDGenTool extends CD4CodeTool {
   
