@@ -1,0 +1,52 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+def cdgradleBuild = gradle.includedBuilds.find { it.name == 'cdgradle' }
+
+configurations {
+  cdgenPluginRuntime
+}
+
+dependencies {
+  cdgenPluginRuntime "de.se_rwth.commons:se-commons-gradle:$mc_version"
+  cdgenPluginRuntime "de.se_rwth.commons:se-commons-logging:$mc_version"
+
+  testImplementation project(':cdlang')
+
+  testImplementation gradleTestKit()
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
+  testImplementation "commons-io:commons-io:2.21.0"
+}
+
+tasks.named('test', Test) {
+  useJUnitPlatform()
+
+  def cd4aJar = project(':cdlang').tasks.named('jar').flatMap { it.archiveFile }
+  def cdRuntimeJar = project(':cd-runtime').tasks.named('jar').flatMap { it.archiveFile }
+  def pluginRuntime = configurations.cdgenPluginRuntime
+
+  dependsOn cd4aJar, cdRuntimeJar
+  inputs.files(cd4aJar, cdRuntimeJar, pluginRuntime)
+
+  File pluginJar = null
+  if (cdgradleBuild != null) {
+    pluginJar = new File(cdgradleBuild.projectDir, "target/libs/cdgradle-${version}.jar")
+    dependsOn cdgradleBuild.task(':jar')
+    inputs.file(pluginJar).withPropertyName('cdgradlePluginJar')
+  }
+  def resolvedPluginJar = pluginJar
+
+  doFirst {
+    def cp = ([resolvedPluginJar] + pluginRuntime.files.toList()).findAll { it != null }
+    systemProperty 'cdgen.pluginClasspath', cp*.absolutePath.join(File.pathSeparator)
+    systemProperty 'cdgen.cd4aJar', cd4aJar.get().asFile.absolutePath
+    systemProperty 'cdgen.runtimeJar', cdRuntimeJar.get().asFile.absolutePath
+    systemProperty 'cdgen.version', version.toString()
+
+    // MontiVerse passthrough
+    systemProperty 'maven.repo.local', System.getProperty('maven.repo.local') ?: ''
+    systemProperty 'useLocalRepo', findProperty('useLocalRepo') ?: ''
+  }
+}

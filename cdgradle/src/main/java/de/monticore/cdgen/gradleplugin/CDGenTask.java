@@ -17,7 +17,7 @@ import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.*;
 
 /**
- * Gradle Task of the {@link de.monticore.cdgen.CDGenTool} It is an all-files task, as -i A.cd -i
+ * Gradle Task of the {@code de.monticore.cdgen.CDGenTool} It is an all-files task, as -i A.cd -i
  * B.cd is allowed
  */
 @CacheableTask

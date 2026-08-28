@@ -55,7 +55,7 @@ import org.apache.commons.cli.*;
  * This tool provides configurable decorator functionality in addition to generation. This tool is
  * tested via
  * the CDGenGradlePluginTest:
- * cdtool/cdgradle/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
+ * cdgradle-it/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
  */
 public class CDGenTool extends CD4CodeTool {
   
@@ -374,33 +374,32 @@ public class CDGenTool extends CD4CodeTool {
   public Options addAdditionalOptions(Options options) {
     
     options.addOption(Option.builder("c").longOpt("checkcococs").desc(
-        "Checks all CoCos on the given mode.").build());
+        "Checks all CoCos on the given mode.").get());
     
     options.addOption(Option.builder("o").longOpt("output").argName("dir").hasArg().desc(
-        "Sets the output path.").build());
+        "Sets the output path.").get());
     
     options.addOption(Option.builder("ct").longOpt("configtemplate").hasArg().argName("template")
-        .desc("Sets a template for configuration.").build());
+        .desc("Sets a template for configuration.").get());
     
     options.addOption(Option.builder("fp").longOpt("template").hasArg().argName("path").desc(
-        "Sets the path for additional templates.").build());
+        "Sets the path for additional templates.").get());
     
     options.addOption(Option.builder("hwc").longOpt("handwrittencode").hasArg().argName("hwcpath")
-        .desc("Sets the path for additional, handwritten classes.").build());
+        .desc("Sets the path for additional, handwritten classes.").get());
     
     options.addOption(Option.builder("c2mc").longOpt("class2mc").desc(
-        "Enables to resolve java classes in the model path").build());
+        "Enables to resolve java classes in the model path").get());
     
     options.addOption(Option.builder().longOpt("class2mc-no-jdk").desc(
         "Does not resolve types from the installed JDK's standard library. Only the symbolpath is used.")
         .build());
     
     options.addOption(Option.builder("cliconfig").desc("Configures additional").hasArgs().argName(
-        "fqn:key[=value]").build());
+        "fqn:key[=value]").get());
     
-    options.addOption(org.apache.commons.cli.Option.builder("sd").longOpt("symboltabledecorated")
-        .argName("file").hasArg().desc(
-            "Serializes the decorated symbol table of the given artifact.").build());
+    options.addOption(Option.builder("sd").longOpt("symboltabledecorated").argName("file").hasArg()
+        .desc("Serializes the decorated symbol table of the given artifact.").get());
     
     return options;
   }

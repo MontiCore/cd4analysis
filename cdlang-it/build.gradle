@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+plugins {
+  id 'de.rwth.se.cdgen'
+}
+
+dependencies {
+  cdTool project(':cdlang')
+  cdToolTargetRuntime project(':cd-runtime')
+
+  testImplementation "de.se_rwth.commons:se-commons-logging:$mc_version"
+  testImplementation "de.se_rwth.commons:se-commons-utilities:$mc_version"
+
+  testImplementation platform('org.junit:junit-bom:5.10.0')
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('generateTestClassDiagrams') {
+  coCos = true
+}

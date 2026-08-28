@@ -179,6 +179,13 @@ publishing {
 }
 
 
+// The de.rwth.se.cdgen plugin lives in the standalone ./cdgradle build. To also check and publish it, we have to add it here.
+def cdgradleBuild = gradle.includedBuilds.find { it.name == 'cdgradle' }
+if (cdgradleBuild != null) {
+  tasks.named('check') { dependsOn cdgradleBuild.task(':check') }
+  tasks.named('publish') { dependsOn cdgradleBuild.task(':publish') }
+}
+
 /*
  TODO (ALu): Once all dependant projects are published,
   we can properly use transitive dependencies:

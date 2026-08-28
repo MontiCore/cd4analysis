@@ -1,5 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 pluginManagement {
+  includeBuild('cdgradle')
   repositories {
     if(("true").equals(getProperty('useLocalRepo'))){
       mavenLocal()
@@ -30,7 +31,8 @@ if(!hasProperty('bootstrap')) {
   if("true".equals(getProperty('genTR'))){
     include(":trafo-library")
   }
-  include(':cdtool:cdgradle')
+  include(':cdlang-it')
+  include(':cdgradle-it')
 }
 include(':cd-runtime')
 include(':symtabdefinitiontool')
