@@ -21,19 +21,19 @@ import java.util.Optional;
 
 public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     CDAssociationHandler {
-  
+
   protected CDAssociationTraverser traverser;
-  
+
   protected ISynthesize typeSynthesizer;
-  
+
   public CDAssociationSymbolTableCompleter(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
   }
-  
+
   public CDAssociationSymbolTableCompleter() {
     this(new FullSynthesizeFromMCBasicTypes());
   }
-  
+
   @Override
   public void handle(ASTCDAssociation node) {
     if (node.getLeft().isPresentSymbol()) {
@@ -44,31 +44,31 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     }
     endVisit(node);
   }
-  
+
   public void initialize_CDRole(CDRoleSymbol symbol, ASTCDAssociation ast, boolean isLeft) {
     final ASTCDAssocSide side = isLeft ? ast.getLeft() : ast.getRight();
-    
+
     symbol.setAssocSide(side);
     final Optional<SymTypeExpression> typeResult = getSymTypeExpression(ast, side);
     if (!typeResult.isPresent()) {
       return;
     }
     symbol.setType(typeResult.get());
-    
+
     setupModifiers(side.getModifier(), ast.getModifier(), symbol);
-    
+
     symbol.setIsDefinitiveNavigable(isLeft ? ast.getCDAssocDir().isDefinitiveNavigableLeft() : ast
         .getCDAssocDir().isDefinitiveNavigableRight());
-    
+
     if (side.isPresentCDCardinality()) {
       symbol.setCardinality(side.getCDCardinality());
     }
-    
+
     handleQualifier(symbol, side);
     symbol.setIsOrdered(side.isPresentCDOrdered());
     symbol.setIsLeft(isLeft);
   }
-  
+
   protected Optional<SymTypeExpression> getSymTypeExpression(ASTCDAssociation ast,
       ASTCDAssocSide side) {
     final TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(side
@@ -79,12 +79,12 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
               .getMCQualifiedType().get_SourcePositionStart());
       return Optional.empty();
     }
-    
+
     // check if the type can be resolved
-    
+
     return Optional.of(typeResult.getResult());
   }
-  
+
   protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side) {
     if (side.isPresentCDQualifier()) {
       if (side.getCDQualifier().isPresentByType()) {
@@ -109,17 +109,17 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
       }
     }
   }
-  
+
   @Override
   public void endVisit(ASTCDAssociation node) {
     final ASTCDAssocLeftSide l = node.getLeft();
     final ASTCDAssocRightSide r = node.getRight();
-    
+
     final TypeCheckResult rType = getTypeSynthesizer().synthesizeType(r.getMCQualifiedType()
         .getMCQualifiedName());
     final TypeCheckResult lType = getTypeSynthesizer().synthesizeType(l.getMCQualifiedType()
         .getMCQualifiedName());
-    
+
     if (l.isPresentSymbol()) {
       if (rType.isPresentResult() && !rType.getResult().isObscureType() && rType.getResult()
           .hasTypeInfo()) {
@@ -143,7 +143,7 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
       }
     }
   }
-  
+
   public void setupModifiers(ASTModifier assocSideModifier, ASTModifier assocModifier,
       CDRoleSymbol roleSymbol) {
     roleSymbol.setIsPublic(assocSideModifier.isPublic() || assocModifier.isPublic());
@@ -152,31 +152,34 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     roleSymbol.setIsStatic(assocSideModifier.isStatic() || assocModifier.isStatic());
     roleSymbol.setIsFinal(assocSideModifier.isFinal() || assocModifier.isFinal());
     roleSymbol.setIsDerived(assocSideModifier.isDerived() || assocModifier.isDerived());
+    //TODO: add isOrdered()-getter
+    //roleSymbol.setIsOrdered(assocSideModifier.isOrdered() ||assocModifier.isOrdered());
+    roleSymbol.setIsReadOnly(assocSideModifier.isReadonly()||assocModifier.isReadonly());
   }
-  
+
   public static void addRoleToTheirType(CDRoleSymbol symbol, TypeSymbol otherType) {
     // move the RoleSymbol to their Type
     final ICDAssociationScope spannedScope = (ICDAssociationScope) otherType.getSpannedScope();
-    
+
     // remove the role from its current scope(s)
     symbol.getEnclosingScope().remove(symbol);
-    
+
     if (!spannedScope.getCDRoleSymbols().containsKey(symbol.getName())) {
       // add the symbol to the type; add to all relevant lists
       spannedScope.add(symbol);
     }
   }
-  
+
   public ISynthesize getTypeSynthesizer() { return typeSynthesizer; }
-  
+
   public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
   }
-  
+
   @Override
   public CDAssociationTraverser getTraverser() { return traverser; }
-  
+
   @Override
   public void setTraverser(CDAssociationTraverser traverser) { this.traverser = traverser; }
-  
+
 }
