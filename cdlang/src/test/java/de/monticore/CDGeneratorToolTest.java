@@ -122,17 +122,6 @@ public class CDGeneratorToolTest {
   }
   
   @Test
-  @Disabled // The new generated uses a different set of decorators
-  public void testDefaultConstructorDecorator() {
-    new CDGenTool().run(new String[] { "-i",
-        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
-        "target/generated/example/defaultctor", "-ct",
-        "de.monticore.cdgentool.DefaultCtorTemplate", });
-    
-    assertTrue(new File("target/generated/example/defaultctor/model/Example/A.java").isFile());
-  }
-  
-  @Test
   public void testImportStatements() {
     new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-o",
