@@ -5,13 +5,14 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.se_rwth.commons.logging.Log;
 
-/** Checks that attribute names start lower-case. */
+/** Checks that attribute names start lower-case or underscore. */
 public class CDAttributeNameLowerCaseIfNotStatic implements CDBasisASTCDAttributeCoCo {
   
   /** @see de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo#check(ASTCDAttribute) */
   @Override
   public void check(ASTCDAttribute a) {
-    if (!a.getModifier().isStatic() && !Character.isLowerCase(a.getName().charAt(0))) {
+    if (!a.getModifier().isStatic() && !Character.isLowerCase(a.getName().charAt(0)) && a.getName()
+        .charAt(0) != '_') {
       Log.error(String.format("0xCDC03: Attribute %s must start in lower-case.", a.getName()), a
           .get_SourcePositionStart());
     }
