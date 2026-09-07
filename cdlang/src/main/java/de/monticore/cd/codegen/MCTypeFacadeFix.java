@@ -9,7 +9,7 @@ import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
 import de.monticore.types.mcfullgenerictypes.MCFullGenericTypesMill;
 
-// TODO: Move this fix upstream if MCFullGenericTypes (?) is initialized 
+// TODO: Move this fix upstream if MCFullGenericTypes (?) is initialized
 public class MCTypeFacadeFix {
   
   public static ASTMCListType createListTypeOf(final ASTMCType type) {

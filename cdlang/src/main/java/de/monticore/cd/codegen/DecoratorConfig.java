@@ -95,7 +95,7 @@ public class DecoratorConfig {
   public ChainableGenSetup withMethodImplementations() {
     return this.withDecorator(new MethodImplementationDecorator());
   }
-
+  
   public ChainableGenSetup withRequiredArgsConstructors() {
     return this.withDecorator(new RequiredArgsConstructorDecorator());
   }
