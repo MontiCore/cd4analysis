@@ -117,6 +117,9 @@ public class CDGenTool extends CD4CodeTool {
         return;
       }
       
+      // set up the log
+      setupLog(cmd);
+      
       final boolean c2mc = cmd.hasOption("c2mc");
       
       initializeSymbolTable(c2mc, cmd.hasOption("class2mc-no-jdk"));
