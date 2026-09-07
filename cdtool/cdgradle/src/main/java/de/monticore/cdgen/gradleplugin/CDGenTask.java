@@ -37,11 +37,7 @@ public abstract class CDGenTask extends MCAllFilesTask {
   
   @Optional
   @Input
-  abstract Property<Boolean> getClass2MCNoJavaRuntime();
-  
-  @Optional
-  @Input
-  abstract Property<Boolean> getUseStandardSymbolLibrary();
+  abstract Property<Boolean> getClass2MCNoJdk();
   
   /**
    * Whether CoCos should be checked, default is true
@@ -90,11 +86,8 @@ public abstract class CDGenTask extends MCAllFilesTask {
     if (getClass2MC().isPresent() && getClass2MC().get()) {
       list.add("--class2mc");
     }
-    if (getClass2MCNoJavaRuntime().isPresent() && getClass2MCNoJavaRuntime().get()) {
-      list.add("--class2mc-no-java-runtime");
-    }
-    if (getUseStandardSymbolLibrary().isPresent() && getUseStandardSymbolLibrary().get()) {
-      list.add("--use-standard-symbols");
+    if (getClass2MCNoJdk().isPresent() && getClass2MCNoJdk().get()) {
+      list.add("--class2mc-no-jdk");
     }
     if (!getTargetSymbolPath().isEmpty()) { // model paths
       List<Path> modelPath = new ArrayList<>();
