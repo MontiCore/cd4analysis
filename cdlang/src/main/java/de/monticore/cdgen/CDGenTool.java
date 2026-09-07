@@ -117,6 +117,9 @@ public class CDGenTool extends CD4CodeTool {
         return;
       }
       
+      // set up the log
+      setupLog(cmd);
+      
       final boolean c2mc = cmd.hasOption("c2mc");
       
       initializeSymbolTable(c2mc, cmd.hasOption("class2mc-no-jdk"));
@@ -389,7 +392,7 @@ public class CDGenTool extends CD4CodeTool {
         .desc("Sets the path for additional, handwritten classes.").build());
     
     options.addOption(Option.builder("c2mc").longOpt("class2mc").desc(
-        "Enables to resolve java classes in the model path").build());
+        "Enables to resolve java classes in the model pat>h").build());
     
     options.addOption(Option.builder().longOpt("class2mc-no-jdk").desc(
         "Does not resolve types from the installed JDK's standard library. Only the symbolpath is used.")

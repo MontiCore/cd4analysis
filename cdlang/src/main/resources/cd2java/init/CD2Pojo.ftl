@@ -42,7 +42,8 @@ ${decConfig.withVisitors().applyOnName("visitor").ignoreOnName("noVisitor")}
 ${decConfig.withVisitorImplementations().applyOnName("visitor").ignoreOnName("noVisitor").ignoreOnName("noDefaultVisitor")}
 <#-- Similarly, the method implementation from templates decorator is NOT applied by default, unless an element or its parents are marked with impl -->
 ${decConfig.withMethodImplementations().applyOnName("impl").ignoreOnName("noImpl")}
-
+<#-- Similarly, the RequiredArgsConstructor decorator is NOT applied by default, unless a class or its parents are marked with requiredArgsConstructor -->
+${decConfig.withRequiredArgsConstructors().applyOnName("requiredArgsConstructor").ignoreOnName("noRequiredArgsConstructor")}
 
 <#--
  You can include & override the defaults by including this template
