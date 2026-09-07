@@ -9,8 +9,10 @@ import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDInterface;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -34,7 +36,7 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  * Applies the Visitor-Pattern to the CD
  */
 public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDecorator.NoData>
-    implements CDBasisVisitor2 {
+    implements CDBasisVisitor2, CD4CodeBasisVisitor2 {
   
   protected GetterDecorator.GetterData getterData;
   
@@ -217,12 +219,30 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
     }
   }
   
+  @Override
+  public void visit(ASTCDInterface cdInterface) {
+    if (decoratorData.shouldDecorate(this.getClass(), cdInterface)) {
+      ASTMCType classType = MCTypeFacade.getInstance().createQualifiedType(cdInterface.getName());
+      ASTCDParameter classParameter = CD4CodeMill.cDParameterBuilder().setName("node").setMCType(
+          classType).build();
+      
+      // add visit method
+      ASTCDMethod visitMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+          .modifierBuilder().PUBLIC().build(), "visit", classParameter);
+      getVisitorImplementationClass().addCDMember(visitMethod);
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, visitMethod, new TemplateHookPoint(
+          "methods.visitor.DefaultVisit", (Object) null)));
+      
+    }
+  }
+  
   protected Stack<ASTCDMethod> visitMethodStack = new Stack<>();
   protected Stack<ASTCDClass> decParent = new Stack<>();
   
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
+    traverser.add4CD4CodeBasis(this);
   }
   
 }
