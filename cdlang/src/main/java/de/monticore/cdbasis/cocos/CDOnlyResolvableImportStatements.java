@@ -13,19 +13,23 @@ public class CDOnlyResolvableImportStatements implements CDBasisASTCDTargetImpor
   
   @Override
   public void check(ASTCDTargetImportStatement node) {
+    if (node.isStar())
+      return; // TODO: Star imports can not be checked at the moment
     String qName = node.getMCQualifiedName().getQName();
     if (CDBasisMill.globalScope().resolveTypeMany(qName).isEmpty()) {
-      Log.error("0xCDC40: Unresolved target import statement: " + qName, node
-          .get_SourcePositionStart(), node.get_SourcePositionEnd());
+      Log.warn("0xCDC40: Could not resolve target import ` " + qName + "` within the symbol path.",
+          node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
   
   @Override
   public void check(ASTMCImportStatement node) {
+    if (node.isStar())
+      return; // TODO: Star imports can not be checked at the moment
     String qName = node.getMCQualifiedName().getQName();
     if (CDBasisMill.globalScope().resolveTypeMany(qName).isEmpty()) {
-      Log.error("0xCDC41: Unresolved mc import statement: " + qName, node.get_SourcePositionStart(),
-          node.get_SourcePositionEnd());
+      Log.error("0xCDC41: Could not resolve import `" + qName + "` within the symbol path.", node
+          .get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
   
