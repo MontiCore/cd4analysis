@@ -17,8 +17,9 @@ public class CDOnlyResolvableImportStatements implements CDBasisASTCDTargetImpor
       return; // TODO: Star imports can not be checked at the moment
     String qName = node.getMCQualifiedName().getQName();
     if (CDBasisMill.globalScope().resolveTypeMany(qName).isEmpty()) {
-      Log.warn("0xCDC40: Could not resolve target import ` " + qName + "` within the symbol path.",
-          node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      Log.warn("0xCDC40: Could not resolve target import ` " + qName
+          + "` within the input models or symbol path.", node.get_SourcePositionStart(), node
+              .get_SourcePositionEnd());
     }
   }
   
@@ -28,8 +29,9 @@ public class CDOnlyResolvableImportStatements implements CDBasisASTCDTargetImpor
       return; // TODO: Star imports can not be checked at the moment
     String qName = node.getMCQualifiedName().getQName();
     if (CDBasisMill.globalScope().resolveTypeMany(qName).isEmpty()) {
-      Log.error("0xCDC41: Could not resolve import `" + qName + "` within the symbol path.", node
-          .get_SourcePositionStart(), node.get_SourcePositionEnd());
+      Log.error("0xCDC41: Could not resolve import `" + qName
+          + "` within the input models or symbol path.", node.get_SourcePositionStart(), node
+              .get_SourcePositionEnd());
     }
   }
   
