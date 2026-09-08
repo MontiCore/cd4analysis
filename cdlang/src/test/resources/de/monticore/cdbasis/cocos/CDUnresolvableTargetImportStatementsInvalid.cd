@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+targetimport this.path.doesnt.Exist;
+
+classdiagram CDUnresolvableTargetImportStatementsInvalid {
+
+  class A {
+    int number = 1;
+  }
+
+  class B extends A{
+    derived int number = 5;
+  }
+
+}
+

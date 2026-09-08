@@ -175,8 +175,12 @@ public class ExampleCommandTest extends OutTestBasis {
     tool.run(new String[] { "-i", fileName });
     
     // Then
-    assertEquals(3, Log.getFindingsCount(), "Actual findings: " + Log.getFindings().toString());
+    assertEquals(4, Log.getFindingsCount(), "Actual findings: " + Log.getFindings().toString());
     assertEquals("0xA0324 Cannot find symbol Address", Log.getFindings().get(0).getMsg());
+    assertEquals(
+        "0xCDC41: Could not resolve import `MyAddress.Address` within the input models or symbol path.",
+        Log.getFindings().get(3).getMsg());
+    
     Log.clearFindings();
   }
   
