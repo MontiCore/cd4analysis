@@ -1,8 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
 import de.monticore.cdbasis._cocos.CDBasisASTCDTargetImportStatementCoCo;
 import de.monticore.cdbasis.cocos.CDOnlyResolvableImportStatements;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.runtime.junit.MCAssertions;
 import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.monticore.types.mcbasictypes._cocos.MCBasicTypesASTMCImportStatementCoCo;
 import de.se_rwth.commons.logging.Log;
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CDOnlyResolvableImportStatementsTest extends CDBasisTestBasis {
-
+  
   @Test
   public void testInvalidTargetImportStatement() throws IOException {
     CDOnlyResolvableImportStatements coCo = new CDOnlyResolvableImportStatements();
@@ -25,10 +27,10 @@ public class CDOnlyResolvableImportStatementsTest extends CDBasisTestBasis {
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     coCoChecker.checkAll(ast);
+    MCAssertions.assertHasFindingsStartingWith("0xCDC40");
     assertEquals(1, Log.getFindings().size());
-    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC40"));
   }
-
+  
   @Test
   public void testInvalidMCImportStatement() throws IOException {
     CDOnlyResolvableImportStatements coCo = new CDOnlyResolvableImportStatements();
@@ -40,10 +42,12 @@ public class CDOnlyResolvableImportStatementsTest extends CDBasisTestBasis {
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     coCoChecker.checkAll(ast);
+    MCAssertions.assertHasFindingsStartingWith("0xCDC41");
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC41"));
   }
-
+  
   @Override
   public void after() {}
+  
 }

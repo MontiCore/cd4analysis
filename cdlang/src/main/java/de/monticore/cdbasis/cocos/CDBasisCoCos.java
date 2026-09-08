@@ -2,7 +2,6 @@
 package de.monticore.cdbasis.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
-import de.monticore.cdbasis._cocos.CDBasisASTCDTargetImportStatementCoCo;
 import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.ebnf.*;
 import de.monticore.cdbasis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
@@ -11,7 +10,6 @@ import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassExtendsOnlyClasses;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsNotCyclic;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsOnlyInterfaces;
 import de.monticore.types.check.AbstractDerive;
-import de.monticore.types.mcbasictypes._cocos.MCBasicTypesASTMCImportStatementCoCo;
 
 public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
   
@@ -61,11 +59,6 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     // CDPackage
     checker.addCoCo(new CDPackageNameUnique());
     checker.addCoCo(new CDPackageUniqueCDTypeNames());
-
-    // CDImport Statements
-    CDOnlyResolvableImportStatements coCo = new CDOnlyResolvableImportStatements();
-    checker.addCoCo((CDBasisASTCDTargetImportStatementCoCo) coCo);
-    checker.addCoCo((MCBasicTypesASTMCImportStatementCoCo) coCo);
   }
   
   @Override
