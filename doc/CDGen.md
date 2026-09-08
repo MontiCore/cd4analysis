@@ -16,7 +16,7 @@ all class diagrams in the _cds_ source-directory-set (e.g., _src/main/cds_, _src
 // build.gradle
 plugins {
   id 'java-library'
-  id 'de.rwth.se.cdgen' version '$mc_version'
+  id 'de.rwth.se.cdgen' version "$mc_version"
 }
 
 repositories {

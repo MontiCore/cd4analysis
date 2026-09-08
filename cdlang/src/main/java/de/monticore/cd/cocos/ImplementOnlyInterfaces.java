@@ -7,6 +7,8 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Optional;
@@ -26,12 +28,32 @@ public abstract class ImplementOnlyInterfaces {
       return;
     }
     final List<ASTMCObjectType> interfaceList = node.getCDInterfaceUsage().getInterfaceList();
-    interfaceList.stream().map(s -> symbol.getEnclosingScope().resolveOOType(s.printType())).filter(
-        Optional::isPresent).map(Optional::get).filter(e -> !e.isIsInterface()).forEach(e -> Log
-            .error(String.format(
+    interfaceList.stream().map(s -> symbol.getEnclosingScope().resolveOOType(getObjectName(s)))
+        .filter(Optional::isPresent).map(Optional::get).filter(e -> !e.isIsInterface()).forEach(
+            e -> Log.error(String.format(
                 "0xCDCF4: Class %s cannot implement %s %s. A class may only implement interfaces.",
                 node.getName(), CDMill.cDTypeKindPrinter().print(e), e.getName()), node
                     .get_SourcePositionStart()));
+  }
+  
+  protected String getObjectName(ASTMCObjectType type) {
+    // TODO: This is a fix for the following types:
+    // class State_Pat implements IState, IElem<IState>
+    // class Opt<T> implements IElem<T>
+    //   interface IElem<T> {  }
+    // -> this tries to resolve "IElem<T>.class", which fails HARD due to illegal chars!
+    // TODO: Discuss where to place such a thing
+    
+    if (type instanceof ASTMCQualifiedType qualifiedType) {
+      return qualifiedType.getMCQualifiedName().getQName();
+    }
+    else if (type instanceof ASTMCGenericType genericType) {
+      return genericType.printWithoutTypeArguments();
+    }
+    else {
+      throw new IllegalStateException("Unhandled MCObjectType " + type.getClass() + " of `" + type
+          .printType() + "` when trying to resolve source");
+    }
   }
   
   /**
