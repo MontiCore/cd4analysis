@@ -6,6 +6,7 @@ import de.monticore.cd4analysis.types3.CD4AnalysisTypeCheck3;
 public class CD4AnalysisMill extends CD4AnalysisMillTOP {
   
   /**
+   * {@inheritDoc}
    * Additionally inits the TypeCheck
    */
   public static void init() {
@@ -13,6 +14,9 @@ public class CD4AnalysisMill extends CD4AnalysisMillTOP {
     CD4AnalysisTypeCheck3.init();
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public static void reset() {
     CD4AnalysisTypeCheck3.reset();
     CD4AnalysisMillTOP.reset();

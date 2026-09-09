@@ -119,7 +119,7 @@ public class CDGenGradlePluginTest {
       if (mavenRepo == null || mavenRepo.isEmpty()) {
         // Fallback for executing tests locally
         ret.add("-Dmaven.repo.local=" + new File(System.getProperty("user.home"),
-          ".m2/repository"));
+            ".m2/repository"));
       }
     }
     

@@ -6,6 +6,7 @@ import de.monticore.cd4code.types3.CD4CodeTypeCheck3;
 public class CD4CodeMill extends CD4CodeMillTOP {
   
   /**
+   * {@inheritDoc}
    * Additionally inits the TypeCheck
    */
   public static void init() {
@@ -13,6 +14,9 @@ public class CD4CodeMill extends CD4CodeMillTOP {
     CD4CodeTypeCheck3.init();
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public static void reset() {
     CD4CodeTypeCheck3.reset();
     CD4CodeMillTOP.reset();
