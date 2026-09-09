@@ -207,7 +207,7 @@ public class CDGenTool extends CD4CodeTool {
                 
                 // Unload the original symbol table to avoid duplicate symbols
                 // TODO: this will most likely fail with inter-CD links?
-                // - maybe perform them all exportCD, then all doTransform()? 
+                // - maybe perform them all exportCD, then all doTransform()?
                 CD4CodeMill.globalScope().removeSubScope(originalScopesIt.next());
                 
                 // If required, we also output the symbol table of the *decorated* AST
