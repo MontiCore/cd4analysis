@@ -34,7 +34,18 @@ public class CDAssociationModifierCoCo implements CDAssociationASTCDAssociationC
     }
 
     if(hasMainVisibility && (hasLeftVisibility || hasRightVisibility)) {
-      Log.error("Association cannot combine a main visibility modifier with individual role visibility modifiers.", a.get_SourcePositionStart());
+      Log.warn("Association cannot combine a main visibility modifier with individual role visibility modifiers.", a.get_SourcePositionStart());
+    }
+
+    //check whether the association or symbolRole use the static modifier
+    boolean mainStatic = a.getModifier() != null && a.getModifier().isStatic();
+    boolean leftStatic = a.getLeft().getModifier() != null && a.getLeft().getModifier().isStatic();
+    boolean rightStatic = a.getRight().getModifier() != null && a.getRight().getModifier().isStatic();
+
+    if(mainStatic || leftStatic || rightStatic) {
+      String assocName = a.isPresentName() ? a.getName() : "unnamed";
+      Log.error(String.format("0xCDA61: The association '%s' must not use static modifiers.", assocName),
+        a.get_SourcePositionStart());
     }
   }
 }
