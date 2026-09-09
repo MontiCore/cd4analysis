@@ -189,6 +189,8 @@ public class CDGenTool extends CD4CodeTool {
         GeneratorSetup generatorSetup = newConfiguredGeneratorSetup(additionalTemplatePaths,
             handcodedPath, outputPath, glex);
         
+        Iterator<ICD4CodeArtifactScope> originalScopesIt = scopes.iterator();
+        
         // Finally, invoke the decorating generator
         decorateAndGenerate(glex,
             // Initialize the decorator config
@@ -202,6 +204,12 @@ public class CDGenTool extends CD4CodeTool {
             }, decorated -> {
               // After each decoration, but before generation
               if (cmd.hasOption("sd")) {
+                
+                // Unload the original symbol table to avoid duplicate symbols
+                // TODO: this will most likely fail with inter-CD links?
+                // - maybe perform them all exportCD, then all doTransform()? 
+                CD4CodeMill.globalScope().removeSubScope(originalScopesIt.next());
+                
                 // If required, we also output the symbol table of the *decorated* AST
                 this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
               }
@@ -337,11 +345,21 @@ public class CDGenTool extends CD4CodeTool {
       // Load these symbols from an exported symbol table
       for (Class<?> c : Arrays.asList(List.class, Set.class, Collection.class, Iterator.class,
           ListIterator.class, Spliterator.class, Stream.class, Optional.class)) {
-        registerFakeType(c.getSimpleName(), c.getName());
+        registerFakeTypeWithTypeArg(c.getSimpleName(), c.getName());
       }
-      registerFakeType("ICDObservable", "de.monticore.cd.ICDObservable");
-      registerFakeType("ICDObserver", "de.monticore.cd.ICDObserver");
+      registerFakeTypeWithTypeArg("ICDObservable", "de.monticore.cd.ICDObservable");
+      registerFakeTypeWithTypeArg("ICDObserver", "de.monticore.cd.ICDObserver");
     }
+  }
+  
+  protected void registerFakeTypeWithTypeArg(String simplename, String fullName) {
+    var spannedScope = CDBasisMill.scope();
+    spannedScope.setEnclosingScope(CDBasisMill.globalScope());
+    spannedScope.add(CD4CodeMill.typeVarSymbolBuilder().setName("T").setEnclosingScope(spannedScope)
+        .build());
+    CDBasisMill.globalScope().add(CDBasisMill.oOTypeSymbolBuilder().setName(simplename).setFullName(
+        fullName).setSpannedScope(spannedScope).setEnclosingScope(CDBasisMill.globalScope())
+        .build());
   }
   
   protected void registerFakeType(String simplename, String fullName) {
