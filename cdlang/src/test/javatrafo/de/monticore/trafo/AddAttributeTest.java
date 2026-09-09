@@ -1,17 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.literals.mccommonliterals.MCCommonLiteralsMill;
 import de.monticore.tf.AddAttribute;
-import java.io.IOException;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AddAttributeTest {
   
@@ -37,7 +38,7 @@ public class AddAttributeTest {
         .getCDAttributeList().get(1).getMCType().printType());
     String pp = MCCommonLiteralsMill.prettyPrint(ast.get().getCDDefinition().getCDClassesList().get(
         0).getCDAttributeList().get(1).getInitial(), true);
-    assertEquals("true", pp);
+    assertEquals("true", pp.strip());
   }
   
 }
