@@ -116,6 +116,11 @@ public class CDGenGradlePluginTest {
     String useLocalRepo = System.getProperty("useLocalRepo");
     if (useLocalRepo != null && !useLocalRepo.isEmpty()) {
       ret.add("-PuseLocalRepo=" + useLocalRepo);
+      if (mavenRepo == null || mavenRepo.isEmpty()) {
+        // Fallback for executing tests locally
+        ret.add("-Dmaven.repo.local=" + new File(System.getProperty("user.home"),
+          ".m2/repository"));
+      }
     }
     
     File langLibs = new File("../../cdlang/target/libs");
