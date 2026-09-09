@@ -342,29 +342,25 @@ public class CDGenTool extends CD4CodeTool {
     if (!c2mc) {
       // Without Class2MC we must add fake-symbols for field, arg and return types used during
       // decoration
-      // Load these symbols from an exported symbol table
+      // TODO: Load these symbols from an exported symbol table (SymTabDef?) instead of ...this...
       for (Class<?> c : Arrays.asList(List.class, Set.class, Collection.class, Iterator.class,
           ListIterator.class, Spliterator.class, Stream.class, Optional.class)) {
-        registerFakeTypeWithTypeArg(c.getSimpleName(), c.getName());
+        registerFakeTypeWithTypeArg(c.getSimpleName(), c.getName(), "T");
       }
-      registerFakeTypeWithTypeArg("ICDObservable", "de.monticore.cd.ICDObservable");
-      registerFakeTypeWithTypeArg("ICDObserver", "de.monticore.cd.ICDObserver");
+      registerFakeTypeWithTypeArg("ICDObservable", "de.monticore.cd.ICDObservable", "O", "T");
+      registerFakeTypeWithTypeArg("ICDObserver", "de.monticore.cd.ICDObserver", "T");
     }
   }
   
-  protected void registerFakeTypeWithTypeArg(String simplename, String fullName) {
+  protected void registerFakeTypeWithTypeArg(String simplename, String fullName,
+      String... typeArgs) {
     var spannedScope = CDBasisMill.scope();
     spannedScope.setEnclosingScope(CDBasisMill.globalScope());
-    spannedScope.add(CD4CodeMill.typeVarSymbolBuilder().setName("T").setEnclosingScope(spannedScope)
-        .build());
+    for (String typeArg : typeArgs)
+      spannedScope.add(CD4CodeMill.typeVarSymbolBuilder().setName(typeArg).setEnclosingScope(
+          spannedScope).build());
     CDBasisMill.globalScope().add(CDBasisMill.oOTypeSymbolBuilder().setName(simplename).setFullName(
         fullName).setSpannedScope(spannedScope).setEnclosingScope(CDBasisMill.globalScope())
-        .build());
-  }
-  
-  protected void registerFakeType(String simplename, String fullName) {
-    CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(simplename).setFullName(
-        fullName).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(CDBasisMill.globalScope())
         .build());
   }
   
