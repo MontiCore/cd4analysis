@@ -116,6 +116,11 @@ public class CDGenGradlePluginTest {
     String useLocalRepo = System.getProperty("useLocalRepo");
     if (useLocalRepo != null && !useLocalRepo.isEmpty()) {
       ret.add("-PuseLocalRepo=" + useLocalRepo);
+      if (mavenRepo == null || mavenRepo.isEmpty()) {
+        // Fallback for executing tests locally
+        ret.add("-Dmaven.repo.local=" + new File(System.getProperty("user.home"),
+            ".m2/repository"));
+      }
     }
     
     File langLibs = new File("../../cdlang/target/libs");
@@ -125,8 +130,9 @@ public class CDGenGradlePluginTest {
     File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar").getAbsoluteFile();
     File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar")
         .getAbsoluteFile();
-    assertTrue(cd4aJarFile.exists());
-    assertTrue(runtimeJarFile.exists());
+    assertTrue(cd4aJarFile.exists(), "CD4A Jar missing: " + cd4aJarFile.getAbsolutePath());
+    assertTrue(runtimeJarFile.exists(), "cdruntime Jar missing: " + runtimeJarFile
+        .getAbsolutePath());
     
     ret.add("-Pversion=" + projVersion);
     ret.add("-Pcdgen_cd4aJarFile=" + cd4aJarFile);
