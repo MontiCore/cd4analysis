@@ -282,8 +282,9 @@ public class CDGenTool extends CD4CodeTool {
       }
       
       // Post-Decorate: apply trafos needed for code generation
+      CDBasisDefaultPackageTrafo defaultPackageTrafo = new CDBasisDefaultPackageTrafo(true);
       CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
-      t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+      t.add4CDBasis(defaultPackageTrafo);
       decorated.get().accept(t);
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
@@ -295,6 +296,8 @@ public class CDGenTool extends CD4CodeTool {
       
       // If required, we can also output the symbol table of the *decorated* AST
       postDecorate.accept(decorated.get());
+      
+      defaultPackageTrafo.undoRename();
       
       // Post-Decorate: TOP Decorator
       // TODO: #4310 - make this TOP transformation configurable via the config

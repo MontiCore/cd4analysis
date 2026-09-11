@@ -87,6 +87,5 @@ classdiagram MyCD {
     <<getter>>
     class ClassWithinInnerPackage {}
   }
-  // TODO: DefaultPackage Trafo does weird stuff
-  association A1 <-> MyCD.MyInnerPackage.ClassWithinInnerPackage;
+  association A1 <-> MyInnerPackage.ClassWithinInnerPackage;
 }
