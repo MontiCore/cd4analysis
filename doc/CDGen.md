@@ -47,17 +47,19 @@ It includes the following transformations:
 
 It includes the following decorators:
 
-| Decorator                   | Description                                                        | To Enable                | To Disable                                |
-|-----------------------------|--------------------------------------------------------------------|--------------------------|-------------------------------------------|
-| CopyCreator                 | Include all elements of the original CD in the output              | always                   | -                                         |
-| GetterDecorator             | Add Getter Methods                                                 | 🟩  `<<getter>>`         | `<<noGetter>>`                            |
-| SetterDecorator             | Add Setter Methods                                                 | 🟩 `<<setter>>`          | `<<noSetter>>`                            |
-| CardinalityDefaultDecorator | Optional and list attributes are initialized with an empty default | 🟩                       | `<<noDefaultCardinality>>`                |
-| NavigableSetterDecorator    | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`        | `<<noSetter>>`                            |
-| AbstractMethodDecorator     | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>` | `<<nonAbstractMethod>>`                   |
-| BuilderDecorator            | Add a builder class                                                | 🟨 `<<builder>>`         | `<<noBuilder>>`                           |
-| ObserverDecorator           | Turn the class observable                                          | 🟨 `<<observable>>`      | `<<notObservable>>`                           |
-| VisitorDecorator            | Include a visitor                                                  | 🟨 `<<visitor>>`         | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
+| Decorator                         | Description                                                        | To Enable                        | To Disable                                |
+|-----------------------------------|--------------------------------------------------------------------|----------------------------------|-------------------------------------------|
+| CopyCreator                       | Include all elements of the original CD in the output              | always                           | -                                         |
+| GetterDecorator                   | Add Getter Methods                                                 | 🟩  `<<getter>>`                 | `<<noGetter>>`                            |
+| SetterDecorator                   | Add Setter Methods                                                 | 🟩 `<<setter>>`                  | `<<noSetter>>`                            |
+| CardinalityDefaultDecorator       | Optional and list attributes are initialized with an empty default | 🟩                               | `<<noDefaultCardinality>>`                |
+| NavigableSetterDecorator          | Setters of bidirectional associations are also bidirectional       | 🟩   `<<setter>>`                | `<<noSetter>>`                            |
+| AbstractMethodDecorator           | Defined methods are made abstract                                  | 🟩  `<<abstractMethod>>`         | `<<nonAbstractMethod>>`                   |
+| BuilderDecorator                  | Add a builder class                                                | 🟨 `<<builder>>`                 | `<<noBuilder>>`                           |
+| ObserverDecorator                 | Turn the class observable                                          | 🟨 `<<observable>>`              | `<<notObservable>>`                       |
+| VisitorDecorator                  | Include a visitor                                                  | 🟨 `<<visitor>>`                 | `<<noVisitor>>` or `<<noDefaultVisitor>>` |
+| MethodImplementationsDecorator    | Generate method body from template                                 | 🟨 `<<impl="my.Template">>`      | `<<noImpl>>`                              |
+| RequiredArgsConstructorsDecorator | Add a constructor for all required arguments                       | 🟨 `<<requiredArgsConstructor>>` | `<<noRequiredArgsConstructor>>`           |
 
 In the default configuration,
 🟩 means the decorator is applied unless disabled.
