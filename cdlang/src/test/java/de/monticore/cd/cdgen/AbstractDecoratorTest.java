@@ -13,10 +13,9 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.runtime.junit.AbstractMCTest;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -67,7 +66,7 @@ public abstract class AbstractDecoratorTest extends AbstractMCTest {
     tool.initializeSymbolTable(class2mc, !class2mc);
     
     // Create ST
-    tool.createSymbolTable(cd);
+    ICD4CodeArtifactScope originalSymbolTable = tool.createSymbolTable(cd);
     
     // Complete ST
     tool.completeSymbolTable(cd);
@@ -89,6 +88,18 @@ public abstract class AbstractDecoratorTest extends AbstractMCTest {
         }, decorated -> {
           // After each decoration, but before generation
           // If required, we also output the symbol table of the *decorated* AST
+          
+          // For better error reports (in our tests only!) update the source positions
+          try {
+            decorated = CD4CodeMill.parser().parse_String(CD4CodeMill.prettyPrint(decorated, true))
+                .get();
+          }
+          catch (IOException e) {
+            throw new IllegalStateException(e);
+          }
+          // Unload the original symbol table to avoid duplicate symbols
+          CD4CodeMill.globalScope().removeSubScope(originalSymbolTable);
+          
           var decoratedScope = tool.createSymbolTable(decorated, true);
           
           // Complete the symbol-table (symbol table creation phase 2)

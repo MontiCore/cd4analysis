@@ -13,8 +13,10 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symboltable.ISymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor2;
+import de.monticore.types3.TypeCheck3;
 
 import java.util.Optional;
 import java.util.Set;
@@ -75,8 +77,9 @@ public class BindingHintsVisitor implements CDBasisVisitor2, CD4CodeBasisVisitor
   
   @Override
   public void visit(ASTMCType conType) {
-    if (conType.getDefiningSymbol().isPresent()) {
-      ISymbol conTypeSymbol = conType.getDefiningSymbol().get();
+    SymTypeExpression symType = TypeCheck3.symTypeFromAST(conType);
+    if (!symType.isObscureType() && symType.getSourceInfo().getSourceSymbol().isPresent()) {
+      ISymbol conTypeSymbol = symType.getSourceInfo().getSourceSymbol().get();
       if (conTypeSymbol instanceof CDTypeSymbol && conTypeSymbol.isPresentAstNode()) {
         ASTCDType concreteType = (ASTCDType) conTypeSymbol.getAstNode();
         incMapping.getReferenceElements(concreteType).forEach(refType -> typeIncs.put(refType,

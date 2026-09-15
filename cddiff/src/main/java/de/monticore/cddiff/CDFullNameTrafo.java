@@ -20,7 +20,9 @@ import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types3.TypeCheck3;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -64,8 +66,16 @@ public class CDFullNameTrafo {
     if (cdClass.isPresentCDExtendUsage()) {
       Set<String> extendsList = new LinkedHashSet<>();
       for (ASTMCObjectType type : cdClass.getCDExtendUsage().getSuperclassList()) {
-        assert type.getDefiningSymbol().isPresent();
-        type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(retrieveFullName(symbol)));
+        SymTypeExpression symtype = TypeCheck3.symTypeFromAST(type);
+        if (!symtype.isObscureType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+          if (symtype.getSourceInfo().getSourceSymbol().get() instanceof CDTypeSymbol) {
+            extendsList.add(((CDTypeSymbol) symtype.getSourceInfo().getSourceSymbol().get())
+                .getInternalQualifiedName());
+          }
+          else {
+            extendsList.add(symtype.getSourceInfo().getSourceSymbol().get().getFullName());
+          }
+        }
       }
       cdClass.setCDExtendUsage(CDExtendUsageFacade.getInstance().createCDExtendUsage(extendsList
           .toArray(new String[0])));
@@ -73,8 +83,16 @@ public class CDFullNameTrafo {
     if (cdClass.isPresentCDInterfaceUsage()) {
       Set<String> implementsList = new LinkedHashSet<>();
       for (ASTMCObjectType type : cdClass.getCDInterfaceUsage().getInterfaceList()) {
-        assert type.getDefiningSymbol().isPresent();
-        type.getDefiningSymbol().ifPresent(symbol -> implementsList.add(retrieveFullName(symbol)));
+        SymTypeExpression symtype = TypeCheck3.symTypeFromAST(type);
+        if (!symtype.isObscureType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+          if (symtype.getSourceInfo().getSourceSymbol().get() instanceof CDTypeSymbol) {
+            implementsList.add(((CDTypeSymbol) symtype.getSourceInfo().getSourceSymbol().get())
+                .getInternalQualifiedName());
+          }
+          else {
+            implementsList.add(symtype.getSourceInfo().getSourceSymbol().get().getFullName());
+          }
+        }
       }
       cdClass.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance().createCDInterfaceUsage(
           implementsList.toArray(new String[0])));
@@ -85,8 +103,16 @@ public class CDFullNameTrafo {
     if (cdInterface.isPresentCDExtendUsage()) {
       Set<String> extendsList = new LinkedHashSet<>();
       for (ASTMCObjectType type : cdInterface.getCDExtendUsage().getSuperclassList()) {
-        assert type.getDefiningSymbol().isPresent();
-        type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(retrieveFullName(symbol)));
+        SymTypeExpression symtype = TypeCheck3.symTypeFromAST(type);
+        if (!symtype.isObscureType() && symtype.getSourceInfo().getSourceSymbol().isPresent()) {
+          if (symtype.getSourceInfo().getSourceSymbol().get() instanceof CDTypeSymbol) {
+            extendsList.add(((CDTypeSymbol) symtype.getSourceInfo().getSourceSymbol().get())
+                .getInternalQualifiedName());
+          }
+          else {
+            extendsList.add(symtype.getSourceInfo().getSourceSymbol().get().getFullName());
+          }
+        }
       }
       cdInterface.setCDExtendUsage(CDExtendUsageFacade.getInstance().createCDExtendUsage(extendsList
           .toArray(new String[0])));
@@ -103,9 +129,12 @@ public class CDFullNameTrafo {
   protected void qualifyAssocSideRefType(ASTCDAssocSide side, ICDBasisScope currentScope,
       ICD4CodeArtifactScope artifactScope) {
     
-    side.getMCQualifiedType().getDefiningSymbol().ifPresent(symbol -> side.setMCQualifiedType(
-        CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade
-            .createQualifiedName(retrieveFullName(symbol))).build()));
+    SymTypeExpression symType = TypeCheck3.symTypeFromAST(side.getMCQualifiedType());
+    if (!symType.isObscureType() && symType.getSourceInfo().getSourceSymbol().isPresent()) {
+      ISymbol symbol = symType.getSourceInfo().getSourceSymbol().get();
+      side.setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+          MCQualifiedNameFacade.createQualifiedName(retrieveFullName(symbol))).build());
+    }
     /*
     Optional<CDTypeSymbol> optSymbol;
     while (currentScope != artifactScope){
@@ -128,9 +157,12 @@ public class CDFullNameTrafo {
   protected void qualifyAttributeType(ASTCDAttribute attribute,
       ICD4CodeArtifactScope artifactScope) {
     
-    attribute.getMCType().getDefiningSymbol().ifPresent(symbol -> attribute.setMCType(CD4CodeMill
-        .mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
-            retrieveFullName(symbol))).build()));
+    SymTypeExpression symType = TypeCheck3.symTypeFromAST(attribute.getMCType());
+    if (!symType.isObscureType() && symType.getSourceInfo().getSourceSymbol().isPresent()) {
+      ISymbol symbol = symType.getSourceInfo().getSourceSymbol().get();
+      attribute.setMCType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+          MCQualifiedNameFacade.createQualifiedName(retrieveFullName(symbol))).build());
+    }
     
     /*
     ICDBasisScope currentScope = attribute.getEnclosingScope();

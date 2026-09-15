@@ -189,6 +189,8 @@ public class CDGenTool extends CD4CodeTool {
         GeneratorSetup generatorSetup = newConfiguredGeneratorSetup(additionalTemplatePaths,
             handcodedPath, outputPath, glex);
         
+        Iterator<ICD4CodeArtifactScope> originalScopesIt = scopes.iterator();
+        
         // Finally, invoke the decorating generator
         decorateAndGenerate(glex,
             // Initialize the decorator config
@@ -202,6 +204,12 @@ public class CDGenTool extends CD4CodeTool {
             }, decorated -> {
               // After each decoration, but before generation
               if (cmd.hasOption("sd")) {
+                
+                // Unload the original symbol table to avoid duplicate symbols
+                // TODO: this will most likely fail with inter-CD links?
+                // - maybe perform them all exportCD, then all doTransform()?
+                CD4CodeMill.globalScope().removeSubScope(originalScopesIt.next());
+                
                 // If required, we also output the symbol table of the *decorated* AST
                 this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
               }
@@ -274,8 +282,9 @@ public class CDGenTool extends CD4CodeTool {
       }
       
       // Post-Decorate: apply trafos needed for code generation
+      CDBasisDefaultPackageTrafo defaultPackageTrafo = new CDBasisDefaultPackageTrafo(true);
       CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
-      t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+      t.add4CDBasis(defaultPackageTrafo);
       decorated.get().accept(t);
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
@@ -287,6 +296,8 @@ public class CDGenTool extends CD4CodeTool {
       
       // If required, we can also output the symbol table of the *decorated* AST
       postDecorate.accept(decorated.get());
+      
+      defaultPackageTrafo.undoRename();
       
       // Post-Decorate: TOP Decorator
       // TODO: #4310 - make this TOP transformation configurable via the config
@@ -334,19 +345,25 @@ public class CDGenTool extends CD4CodeTool {
     if (!c2mc) {
       // Without Class2MC we must add fake-symbols for field, arg and return types used during
       // decoration
-      // Load these symbols from an exported symbol table
+      // TODO: Load these symbols from an exported symbol table (SymTabDef?) instead of ...this...
       for (Class<?> c : Arrays.asList(List.class, Set.class, Collection.class, Iterator.class,
           ListIterator.class, Spliterator.class, Stream.class, Optional.class)) {
-        registerFakeType(c.getSimpleName(), c.getName());
+        registerFakeTypeWithTypeArg(c.getSimpleName(), c.getName(), "T");
       }
-      registerFakeType("ICDObservable", "de.monticore.cd.ICDObservable");
-      registerFakeType("ICDObserver", "de.monticore.cd.ICDObserver");
+      registerFakeTypeWithTypeArg("ICDObservable", "de.monticore.cd.ICDObservable", "O", "T");
+      registerFakeTypeWithTypeArg("ICDObserver", "de.monticore.cd.ICDObserver", "T");
     }
   }
   
-  protected void registerFakeType(String simplename, String fullName) {
-    CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(simplename).setFullName(
-        fullName).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(CDBasisMill.globalScope())
+  protected void registerFakeTypeWithTypeArg(String simplename, String fullName,
+      String... typeArgs) {
+    var spannedScope = CDBasisMill.scope();
+    spannedScope.setEnclosingScope(CDBasisMill.globalScope());
+    for (String typeArg : typeArgs)
+      spannedScope.add(CD4CodeMill.typeVarSymbolBuilder().setName(typeArg).setEnclosingScope(
+          spannedScope).build());
+    CDBasisMill.globalScope().add(CDBasisMill.oOTypeSymbolBuilder().setName(simplename).setFullName(
+        fullName).setSpannedScope(spannedScope).setEnclosingScope(CDBasisMill.globalScope())
         .build());
   }
   

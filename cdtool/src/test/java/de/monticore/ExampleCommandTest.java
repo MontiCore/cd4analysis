@@ -45,10 +45,11 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testExampleCommands1and3() {
     String fileName = "src/test/resources/doc/MyAddress.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-s", outputPath
+        + "symbols/MyAddress.cdsym" });
     CD4CodeMill.globalScope().clear();
     fileName = "src/test/resources/doc/MyLife.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "--path", outputPath + "symbols", "-o",
+    new CD4CodeTool().run(new String[] { "-i", fileName, "--path", outputPath + "symbols", "-o",
         outputPath + "out", "--gen" });
   }
   
@@ -59,10 +60,11 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testExampleCommands1and2() {
     String fileName = "src/test/resources/doc/MyAddress.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-s", outputPath
+        + "symbols/MyAddress.cdsym" });
     CD4CodeMill.globalScope().clear();
     fileName = "src/test/resources/doc/MyLife.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "--path", outputPath + "symbols", "-pp" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "--path", outputPath + "symbols", "-pp" });
     assertTrue(getErr().isEmpty(), getErr());
   }
   
@@ -70,7 +72,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testGettingStartedExample() {
     String fileName = "src/test/resources/doc/MyExample.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName });
+    new CD4CodeTool().run(new String[] { "-i", fileName });
     assertTrue(getErr().isEmpty(), getErr());
   }
   
@@ -78,7 +80,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testPrettyPrintingExample1() {
     String fileName = "src/test/resources/doc/MyExample.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-pp" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-pp" });
     assertTrue(getErr().isEmpty(), getErr());
   }
   
@@ -89,7 +91,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testPrettyPrintingExample2() {
     String fileName = "src/test/resources/doc/MyExample.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-pp", outputPath + "MyExample.cd" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-pp", outputPath + "MyExample.cd" });
     assertTrue(Files.exists(Paths.get(outputPath + "MyExample.cd")));
     assertTrue(loadAndCheckCD("src/test/resources/doc/MyExample.cd").deepEquals(loadAndCheckCD(
         outputPath + "MyExample.cd"), false));
@@ -102,11 +104,11 @@ public class ExampleCommandTest extends OutTestBasis {
     String fileName = "src/test/resources/doc/MyExample.cd";
     
     // copy the CD into test-directory
-    CD4CodeTool.main(new String[] { "-i", fileName, "-pp", outputPath + "MyExample.cd" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-pp", outputPath + "MyExample.cd" });
     fileName = outputPath + "MyExample.cd";
     
     // execute the command at test
-    CD4CodeTool.main(new String[] { "-i", fileName, "-s" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-s" });
     
     // test if the result exists and no errors occur
     assertTrue(Files.exists(Paths.get(outputPath + "MyExample.cdsym")));
@@ -122,7 +124,8 @@ public class ExampleCommandTest extends OutTestBasis {
     String fileName = "src/test/resources/doc/MyExample.cd";
     
     // execute the command at test
-    CD4CodeTool.main(new String[] { "-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-s", outputPath
+        + "symbols/MyExample.cdsym" });
     
     // test if the result exists and no errors occur
     assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
@@ -136,8 +139,8 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testAddingFieldSymbolsExample1() {
     String fileName = "src/test/resources/doc/MyExample.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym",
-        "--fieldfromrole", "all" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-s", outputPath
+        + "symbols/MyExample.cdsym", "--fieldfromrole", "all" });
     assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
     assertTrue(getErr().isEmpty(), getErr());
   }
@@ -149,8 +152,8 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testAddingFieldSymbolsExample2() {
     String fileName = "src/test/resources/doc/MyExample.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym",
-        "--fieldfromrole", "navigable" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-s", outputPath
+        + "symbols/MyExample.cdsym", "--fieldfromrole", "navigable" });
     assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
     assertTrue(getErr().isEmpty(), getErr());
   }
@@ -192,11 +195,12 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testStoringSymbolsPerPathsExample2() {
     String fileName = "src/test/resources/doc/MyAddress.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-s", outputPath
+        + "symbols/MyAddress.cdsym" });
     assertTrue(getErr().isEmpty(), getErr());
     CD4CodeMill.globalScope().clear();
     fileName = "src/test/resources/doc/MyLife.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "--defaultpackage", "--path", outputPath
+    new CD4CodeTool().run(new String[] { "-i", fileName, "--defaultpackage", "--path", outputPath
         + "symbols" });
     assertTrue(getErr().isEmpty(), getErr());
   }
@@ -207,7 +211,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testGenerateJavaExample2() {
     String fileName = "src/test/resources/doc/MyExample.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "--gen", "-o", outputPath + "out" });
+    new CD4CodeTool().run(new String[] { "-i", fileName, "--gen", "-o", outputPath + "out" });
     ASTCDCompilationUnit cd = loadAndCheckCD(fileName);
     cd.getCDDefinition().getCDClassesList().forEach(c -> assertTrue(Files.exists(Paths.get(
         outputPath + "out/" + retrieveRelativeGenPath(c, cd) + ".java"))));
@@ -221,7 +225,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testGenerateJavaExample3() {
     String fileName = "src/test/resources/doc/MyCompany.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "-o", outputPath + "out", "--gen",
+    new CD4CodeTool().run(new String[] { "-i", fileName, "-o", outputPath + "out", "--gen",
         "--fieldfromrole", "navigable" });
     resetGlobalScope(); // --fieldfromrole makes this necessary
     ASTCDCompilationUnit cd = loadAndCheckCD(fileName);
@@ -237,7 +241,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testTwoCDsComparisonExample1() {
     final String fileName = "src/test/resources/doc/MyEmployees1.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "--semdiff",
+    new CD4CodeTool().run(new String[] { "-i", fileName, "--semdiff",
         "src/test/resources/doc/MyEmployees2.cd" });
     assertEquals(0, Log.getErrorCount());
   }
@@ -250,7 +254,7 @@ public class ExampleCommandTest extends OutTestBasis {
   public void testTwoCDsComparisonExample2() {
     final String cd1 = "src/test/resources/doc/MyEmployees1.cd";
     final String cd2 = "src/test/resources/doc/MyEmployees2.cd";
-    CD4CodeTool.main(new String[] { "-i", cd1, "--semdiff", cd2, "--difflimit", "20", "-o",
+    new CD4CodeTool().run(new String[] { "-i", cd1, "--semdiff", cd2, "--difflimit", "20", "-o",
         outputPath + "out" });
     
     try {
@@ -283,7 +287,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testTwoCDsMergeExample1() {
     final String fileName = "src/test/resources/doc/Teaching.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "--merge",
+    new CD4CodeTool().run(new String[] { "-i", fileName, "--merge",
         "src/test/resources/doc/Management.cd", "-pp" });
     assertTrue(getErr().isEmpty(), getErr());
   }
@@ -295,7 +299,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testTwoCDsMergeExample2() {
     final String fileName = "src/test/resources/doc/Teaching.cd";
-    CD4CodeTool.main(new String[] { "-i", fileName, "--merge",
+    new CD4CodeTool().run(new String[] { "-i", fileName, "--merge",
         "src/test/resources/doc/Management.cd", "-o", outputPath + "out", "-pp",
         "UniversitySystem.cd" });
     assertTrue(Files.exists(Paths.get(outputPath + "out/UniversitySystem.cd")));

@@ -17,14 +17,14 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
   public void testLanguageTeaser() throws RecognitionException {
     String[] input = { "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
         "--gen", "-o", "target/generated/auction" };
-    CD4CodeTool.main(input);
+    new CD4CodeTool().run(input);
   }
   
   @Test
   public void testLanguageTeaserTemplatePath() throws RecognitionException, IOException {
     String[] input = { "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd", "-fp",
         "src/test/resources/templatePath", "--gen", "-o", "target/generated/auctionTP" };
-    de.monticore.CD4CodeTool.main(input);
+    new de.monticore.CD4CodeTool().run(input);
     
     assertTrue(Files.readLines(new File("target/generated/auctionTP/Auction/auction/Auction.java"),
         Charset.defaultCharset()).contains("// empty body provided by the templatePath arg"),
@@ -35,7 +35,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
   public void testLanguageTeaserConfigTemplate() throws RecognitionException {
     String[] input = { "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd", "-ct",
         "cd2java.CD2Java", "--gen", "-o", "target/generated/auctionCT" };
-    de.monticore.CD4CodeTool.main(input);
+    new de.monticore.CD4CodeTool().run(input);
   }
   
   @Test
@@ -43,7 +43,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     String[] input = { "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd", "-ct",
         "cd2java.CD2Java", "--gen", "-hwc", "src/test/resources", "-o",
         "target/generated/auctionTOP" };
-    de.monticore.CD4CodeTool.main(input);
+    new de.monticore.CD4CodeTool().run(input);
   }
   
   @Test
@@ -52,7 +52,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     String[] input = { "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd", "-fp",
         "src/test/resources/templatePath", "src/test/resources/templatePath2", "-ct",
         "cd2java.CD2JavaTestCT", "--gen", "-o", "target/generated/auctionTPDCT" };
-    CD4CodeTool.main(input);
+    new CD4CodeTool().run(input);
     
     // Test if the config template was loaded from the additional template path
     assertTrue(Files.readLines(new File(
@@ -67,7 +67,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     String[] input = { "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd", "-fp",
         "src/test/resources/templatePath", "src/test/resources/templatePath2", "-ct",
         "cd2java.CD2Java", "--gen", "-o", "target/generated/auctionTPCT" };
-    CD4CodeTool.main(input);
+    new CD4CodeTool().run(input);
     
     // Test if the config template was loaded from the additional template path
     assertTrue(Files.readLines(new File(
@@ -82,7 +82,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     String[] input = { "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd", "-fp",
         "src/test/resources/templatePath", "-fp", "src/test/resources/templatePath2", "-ct",
         "cd2java.CD2Java", "--gen", "-o", "target/generated/auctionTPCTSep" };
-    CD4CodeTool.main(input);
+    new CD4CodeTool().run(input);
     
     // Test if the config template was loaded from the additional template path
     assertTrue(Files.readLines(new File(
