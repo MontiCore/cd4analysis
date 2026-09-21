@@ -43,20 +43,25 @@ public class JavaAssociationRoleNameTrafo implements CDAssociationVisitor2, CDBa
   
   @Override
   public void visit(ASTCDRole node) {
-    roles.add(node);
+    if (SourceVersion.isKeyword(node.getName())) {
+      roles.add(node);
+    }
   }
   
   public void transform(Collection<ASTCDCompilationUnit> asts) {
     roles.clear();
     hierarchies.clear();
     var traverser = CD4CodeMill.inheritanceTraverser();
-    traverser.add4CDBasis(this);
     traverser.add4CDAssociation(this);
     asts.forEach(ast -> ast.accept(traverser));
+    if (roles.isEmpty()) {
+      return;
+    }
+    // Only inspect inheritance when a role actually needs a Java identifier.
+    var hierarchyTraverser = CD4CodeMill.inheritanceTraverser();
+    hierarchyTraverser.add4CDBasis(this);
+    asts.forEach(ast -> ast.accept(hierarchyTraverser));
     for (ASTCDRole role : roles) {
-      if (!SourceVersion.isKeyword(role.getName())) {
-        continue;
-      }
       var symbol = role.getSymbol();
       var scope = symbol.getEnclosingScope();
       Set<String> occupied = new LinkedHashSet<>();
@@ -66,7 +71,6 @@ public class JavaAssociationRoleNameTrafo implements CDAssociationVisitor2, CDBa
       hierarchies.forEach((type, ancestors) -> {
         if (ancestors.stream().anyMatch(ancestor -> ancestor.getSpannedScope() == scope)) {
           ancestors.forEach(ancestor -> collectNames(ancestor, occupied));
-          collectNames(type, occupied);
         }
       });
       String name = role.getName() + "_";

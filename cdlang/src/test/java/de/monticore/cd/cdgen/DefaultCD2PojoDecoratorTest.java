@@ -21,12 +21,48 @@ import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests the decorators configured by CD2Java. The
  * cdlang/src/cdGenIntTest/java/getter/GetterDecoratorResultTest then tests the generated result
  */
 public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
+  
+  @ParameterizedTest
+  @ValueSource(booleans = { false, true })
+  public void testReservedRolesAcrossCDs(boolean reverseOrder) throws Exception {
+    var base = CD4CodeMill.parser().parse_String(
+        "classdiagram BaseModel { public class Base { protected int class_; } }").orElseThrow();
+    var target = CD4CodeMill.parser().parse_String("""
+        classdiagram TargetModel {
+          public class A extends BaseModel.Base {}
+          public class Class {}
+          public association A -> Class;
+        }
+        """).orElseThrow();
+    var child = CD4CodeMill.parser().parse_String(
+        "classdiagram ChildModel { public class Child extends TargetModel.A { protected int class__; } }")
+        .orElseThrow();
+    var asts = reverseOrder ? List.of(child, target, base) : List.of(base, target, child);
+    tool.trafoBeforeSymtab(asts);
+    tool.initializeSymbolTable(false);
+    asts.forEach(ast -> tool.createSymbolTable(ast));
+    asts.forEach(tool::completeSymbolTable);
+    outputDir = new File(outputDir, "crossCDRoles" + reverseOrder);
+    var glex = new GlobalExtensionManagement();
+    var setup = tool.newConfiguredGeneratorSetup(getAdditionalTemplatesPath(), getHandWrittenPath(),
+        outputDir.getAbsolutePath(), glex);
+    tool.decorateAndGenerate(glex, config -> initializeDecConf(glex, config, setup), setup,
+        () -> tool.initDecoratedGlobalScope(false), decorated -> {}, asts);
+    var owner = target.getCDDefinition().getCDClassesList().get(0).getSymbol();
+    Assertions.assertEquals(1, owner.getFieldList("class___").size());
+    Assertions.assertEquals(1, owner.getCDRoleList("class___").size());
+    Assertions.assertTrue(owner.getCDRoleList("class").isEmpty());
+    MCAssertions.assertNoFindings();
+    compileGeneratedSources();
+  }
   
   @Test
   public void testRoleNormalizationUpdatesCachedNamesAndIsIdempotent() throws Exception {
