@@ -6,19 +6,19 @@ import de.monticore.cdassociation._cocos.CDAssociationCoCoChecker;
 import de.monticore.cdassociation.cocos.ebnf.*;
 
 public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
-
+  
   @Override
   public CDAssociationCoCoChecker createNewChecker() {
     return new CDAssociationCoCoChecker();
   }
-
+  
   @Override
   protected void addCheckerForAllCoCos(CDAssociationCoCoChecker checker) {
     addCheckerForEbnfCoCos(checker);
     addCheckerForMcgCoCos(checker);
     addCheckerForMcg2EbnfCoCos(checker);
   }
-
+  
   @Override
   protected void addEbnfCoCos(CDAssociationCoCoChecker checker) {
     // CDAssociation
@@ -29,6 +29,7 @@ public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
     checker.addCoCo(new CDAssociationRoleNameLowerCase());
     checker.addCoCo(new CDAssociationRoleNameNoConflictWithLocalAttribute());
     checker.addCoCo(new CDAssociationModifierCoCo());
+    checker.addCoCo(new CDAssociationJavaClassTypeCoCo());
   }
-
+  
 }
