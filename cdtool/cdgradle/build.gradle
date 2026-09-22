@@ -13,7 +13,7 @@ configurations {
 
 dependencies {
   implementation "de.se_rwth.commons:se-commons-gradle:$mc_version"
-  cdTool "de.monticore.lang:cd4analysis:$mc_version"
+  cdTool(project(":cdlang"))
   compileOnly(project(":cdlang")) // As the main/cdtool dependency does not have an api dependency to cdlang
 
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
@@ -62,6 +62,7 @@ tasks.register('generateResources') {
     propFile = layout.buildDirectory.file("generated/buildInfo.properties")
   }
   outputs.file propFile
+  inputs.property("version", project.findProperty("version"))
   doLast {
     File f = propFile.get().asFile
     f.parentFile.mkdirs()

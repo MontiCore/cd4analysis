@@ -4,7 +4,6 @@ package de.monticore.cdconcretization.type.method;
 import com.google.common.collect.Lists;
 import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -18,13 +17,13 @@ import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolTOP;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.*;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
@@ -32,8 +31,6 @@ import java.util.stream.Collectors;
 
 /** Completes a concrete type by adding the given reference method if it is not already present. */
 public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
-  
-  private final ISynthesize typeCalculator = new FullSynthesizeFromCD4Code();
   
   @Override
   public void completeMethodInType(ASTCDType concreteType, ASTCDMethod referenceMethod,
@@ -90,7 +87,7 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
    * @return a list of all incarnations of the given reference type
    */
   private List<ASTMCType> findTypeIncarnations(ASTMCType refMCType, TypeCompletionContext context) {
-    SymTypeExpression symTypeExpr = typeCalculator.synthesizeType(refMCType).getResult();
+    SymTypeExpression symTypeExpr = TypeCheck3.symTypeFromAST(refMCType);
     
     // make sure we do not add the 'any' type to the concrete CD
     if (symTypeExpr.getTypeInfo().getFullName().equals(context

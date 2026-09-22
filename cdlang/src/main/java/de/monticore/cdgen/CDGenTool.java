@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdgen;
 
-import de.monticore.CDGeneratorTool;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
@@ -14,41 +13,52 @@ import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.CD4CodeTool;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegatorTOP;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.generating.GeneratorSetup;
-import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.monticore.generating.templateengine.TemplateController;
-import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.generating.templateengine.*;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.apache.commons.cli.*;
 
 /**
- * This class is a further development of the {@link CDGeneratorTool} and meant as a replacement. It
- * provides configurable decorator functionality in addition to generation. This tool is tested via
+ * This tool provides configurable decorator functionality in addition to generation. This tool is
+ * tested via
  * the CDGenGradlePluginTest:
  * cdtool/cdgradle/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
  */
-public class CDGenTool extends CDGeneratorTool {
+public class CDGenTool extends CD4CodeTool {
   
   /**
    * Gradle main method of the CDGenTool
@@ -67,8 +77,18 @@ public class CDGenTool extends CDGeneratorTool {
    */
   public static void main(String[] args) {
     Log.init();
-    CDGenTool tool = new CDGenTool();
-    tool.run(args);
+    try {
+      CD4CodeTool tool = new CDGenTool();
+      tool.run(args);
+    }
+    catch (Exception exception) {
+      // ensure a sane exit
+      Log.error("0xEEEEE an internal error occurred" + " during the execution of the CD4CodeTool."
+          + System.lineSeparator() + "This error is unexpected"
+          + " and does not indicate an issue with any provided models.", exception);
+    }
+    // properly exit with a code
+    System.exit(Log.getErrorCount() == 0 ? 0 : 1);
   }
   
   /**
@@ -98,9 +118,12 @@ public class CDGenTool extends CDGeneratorTool {
         return;
       }
       
+      // set up the log
+      setupLog(cmd);
+      
       final boolean c2mc = cmd.hasOption("c2mc");
       
-      initializeSymbolTable(c2mc);
+      initializeSymbolTable(c2mc, cmd.hasOption("class2mc-no-jdk"));
       
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts = this.parse(".cd", this.createModelPath(cmd)
@@ -118,7 +141,7 @@ public class CDGenTool extends CDGeneratorTool {
       asts = this.trafoBeforeSymtab(asts);
       
       if (cmd.hasOption("path")) {
-        String[] paths = splitPathEntries(cmd.getOptionValue("path"));
+        String[] paths = splitPathEntries(cmd.getOptionValues("path"));
         CD4CodeMill.globalScope().setSymbolPath(new MCPath(paths));
       }
       
@@ -167,6 +190,8 @@ public class CDGenTool extends CDGeneratorTool {
         GeneratorSetup generatorSetup = newConfiguredGeneratorSetup(additionalTemplatePaths,
             handcodedPath, outputPath, glex);
         
+        Iterator<ICD4CodeArtifactScope> originalScopesIt = scopes.iterator();
+        
         // Finally, invoke the decorating generator
         decorateAndGenerate(glex,
             // Initialize the decorator config
@@ -180,6 +205,12 @@ public class CDGenTool extends CDGeneratorTool {
             }, decorated -> {
               // After each decoration, but before generation
               if (cmd.hasOption("sd")) {
+                
+                // Unload the original symbol table to avoid duplicate symbols
+                // TODO: this will most likely fail with inter-CD links?
+                // - maybe perform them all exportCD, then all doTransform()?
+                CD4CodeMill.globalScope().removeSubScope(originalScopesIt.next());
+                
                 // If required, we also output the symbol table of the *decorated* AST
                 this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
               }
@@ -193,12 +224,13 @@ public class CDGenTool extends CDGeneratorTool {
     CD4CodeMill.globalScope().clear();
   }
   
-  public void initializeSymbolTable(boolean c2mc) {
+  public void initializeSymbolTable(boolean c2mc, boolean c2mcNoJdk) {
     BasicSymbolsMill.initializePrimitives();
     MCCollectionSymTypeRelations.init();
     
     if (c2mc) {
-      initializeClass2MC();
+      CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoJdk));
+      CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver(!c2mcNoJdk));
     }
     else {
       BasicSymbolsMill.initializeString();
@@ -251,8 +283,9 @@ public class CDGenTool extends CDGeneratorTool {
       }
       
       // Post-Decorate: apply trafos needed for code generation
+      CDBasisDefaultPackageTrafo defaultPackageTrafo = new CDBasisDefaultPackageTrafo(true);
       CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
-      t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+      t.add4CDBasis(defaultPackageTrafo);
       decorated.get().accept(t);
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
@@ -264,6 +297,8 @@ public class CDGenTool extends CDGeneratorTool {
       
       // If required, we can also output the symbol table of the *decorated* AST
       postDecorate.accept(decorated.get());
+      
+      defaultPackageTrafo.undoRename();
       
       // Post-Decorate: TOP Decorator
       // TODO: #4310 - make this TOP transformation configurable via the config
@@ -312,19 +347,25 @@ public class CDGenTool extends CDGeneratorTool {
     if (!c2mc) {
       // Without Class2MC we must add fake-symbols for field, arg and return types used during
       // decoration
-      // Load these symbols from an exported symbol table
+      // TODO: Load these symbols from an exported symbol table (SymTabDef?) instead of ...this...
       for (Class<?> c : Arrays.asList(List.class, Set.class, Collection.class, Iterator.class,
           ListIterator.class, Spliterator.class, Stream.class, Optional.class)) {
-        registerFakeType(c.getSimpleName(), c.getName());
+        registerFakeTypeWithTypeArg(c.getSimpleName(), c.getName(), "T");
       }
-      registerFakeType("ICDObservable", "de.monticore.cd.ICDObservable");
-      registerFakeType("ICDObserver", "de.monticore.cd.ICDObserver");
+      registerFakeTypeWithTypeArg("ICDObservable", "de.monticore.cd.ICDObservable", "O", "T");
+      registerFakeTypeWithTypeArg("ICDObserver", "de.monticore.cd.ICDObserver", "T");
     }
   }
   
-  protected void registerFakeType(String simplename, String fullName) {
-    CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(simplename).setFullName(
-        fullName).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(CDBasisMill.globalScope())
+  protected void registerFakeTypeWithTypeArg(String simplename, String fullName,
+      String... typeArgs) {
+    var spannedScope = CDBasisMill.scope();
+    spannedScope.setEnclosingScope(CDBasisMill.globalScope());
+    for (String typeArg : typeArgs)
+      spannedScope.add(CD4CodeMill.typeVarSymbolBuilder().setName(typeArg).setEnclosingScope(
+          spannedScope).build());
+    CDBasisMill.globalScope().add(CDBasisMill.oOTypeSymbolBuilder().setName(simplename).setFullName(
+        fullName).setSpannedScope(spannedScope).setEnclosingScope(CDBasisMill.globalScope())
         .build());
   }
   
@@ -370,7 +411,11 @@ public class CDGenTool extends CDGeneratorTool {
         .desc("Sets the path for additional, handwritten classes.").build());
     
     options.addOption(Option.builder("c2mc").longOpt("class2mc").desc(
-        "Enables to resolve java classes in the model path").build());
+        "Enables to resolve java classes in the model pat>h").build());
+    
+    options.addOption(Option.builder().longOpt("class2mc-no-jdk").desc(
+        "Does not resolve types from the installed JDK's standard library. Only the symbolpath is used.")
+        .build());
     
     options.addOption(Option.builder("cliconfig").desc("Configures additional").hasArgs().argName(
         "fqn:key[=value]").build());
@@ -397,12 +442,13 @@ public class CDGenTool extends CDGeneratorTool {
    * @param ast the original ast
    */
   public void runCoCos(ASTCDCompilationUnit ast) {
-    super.runCoCos(ast);
+    CD4CodeCoCoChecker checker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
+    checker.checkAll(ast);
   }
   
-  @Override
   public Collection<ASTCDCompilationUnit> trafoBeforeSymtab(Collection<ASTCDCompilationUnit> asts) {
-    super.trafoBeforeSymtab(asts);
+    CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
+    asts.forEach(ast -> ast.accept(trafo.getTraverser()));
     // TODO: Have this be done via the config-options (#4310)
     var t = CD4CodeMill.inheritanceTraverser();
     t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
@@ -438,6 +484,103 @@ public class CDGenTool extends CDGeneratorTool {
         cd4c.addImport(cdEnum, i.isStar() ? qName + ".*" : qName);
       }
     }
+  }
+  
+  public MCPath createModelPath(CommandLine cl) {
+    if (cl.hasOption("i")) {
+      return new MCPath(splitPathEntries(cl.getOptionValues("i")));
+    }
+    else {
+      return new MCPath();
+    }
+  }
+  
+  public String[] splitPathEntries(String composedPath) {
+    Objects.requireNonNull(composedPath);
+    
+    return composedPath.split(Pattern.quote(File.pathSeparator));
+  }
+  
+  public final String[] splitPathEntries(String[] composedPaths) {
+    Objects.requireNonNull(composedPaths);
+    return Arrays.stream(composedPaths).map(this::splitPathEntries).flatMap(Arrays::stream).toArray(
+        String[]::new);
+  }
+  
+  public Collection<ASTCDCompilationUnit> parse(String fileExt, Collection<Path> filesAndDirs) {
+    return filesAndDirs.stream().flatMap(dirOrFile -> this.parse(fileExt, dirOrFile).stream())
+        .collect(Collectors.toList());
+  }
+  
+  /**
+   * Parses all class diagrams in the given path.
+   * In case the path is a file, the file is parsed regardless of its extension
+   * Otherwise, all files within the path-directory are parsed if their extension matches
+   *
+   * @param fileExt recursively parses all files with this extension in a directory
+   * @param fileOrDir directory or file
+   * @return a collection of nested files
+   */
+  public Collection<ASTCDCompilationUnit> parse(String fileExt, Path fileOrDir) {
+    if (Files.isRegularFile(fileOrDir)) {
+      // In case a file is within the ModelPath: parse the file
+      return Collections.singleton(this.parse(fileOrDir.toString()));
+    }
+    // Otherwise: Traverse the directory & parse all matching files
+    try (
+        Stream<Path> paths = Files.walk(fileOrDir)
+    ) {
+      return paths.filter(Files::isRegularFile).filter(file -> file.getFileName().toString()
+          .endsWith(fileExt)).map(Path::toString).map(this::parse).collect(Collectors.toSet());
+    }
+    catch (IOException e) {
+      Log.error("0xA1063 Error while traversing the file structure `" + fileOrDir + "`.", e);
+    }
+    return Collections.emptySet();
+  }
+  
+  /**
+   * creates the symboltable for the given ast
+   *
+   * @param ast the input ast
+   * @param java whether to add java default imports
+   * @return the symbol-table of the ast
+   */
+  public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast, boolean java) {
+    CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
+    ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
+    this.addDefaultImports(scope, java);
+    return scope;
+  }
+  
+  public void addDefaultImports(ICD4CodeArtifactScope scope, boolean java) {
+    if (java)
+      scope.addImports(new ImportStatement("java.lang", true));
+  }
+  
+  /**
+   * prints the symboltable of the given scope out to a file
+   *
+   * @param scope symboltable to store
+   * @param path location of the file or directory containing the printed table
+   */
+  public void storeSymTab(ICD4CodeArtifactScope scope, String path) {
+    if (Path.of(path).toFile().isFile()) {
+      this.storeSymbols(scope, path);
+    }
+    else {
+      this.storeSymbols(scope, Paths.get(path, Names.getPathFromPackage(scope.getFullName())
+          + ".cdsym").toString());
+    }
+  }
+  
+  /**
+   * completes the symboltable for the given ast
+   *
+   * @param ast the input ast
+   */
+  public void completeSymbolTable(ASTCDCompilationUnit ast) {
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
   
 }

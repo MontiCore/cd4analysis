@@ -3,6 +3,7 @@ package de.monticore.cd.codegen.decorators;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
+import de.monticore.cd.codegen.MCTypeFacadeFix;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.DecoratorData;
 import de.monticore.cd.facade.CDMethodFacade;
@@ -130,7 +131,7 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
     ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), MCTypeFacade.getInstance().createSetTypeOf(type), name);
+        .deepClone(), MCTypeFacadeFix.createSetTypeOf(type), name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
@@ -147,7 +148,7 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
     ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), MCTypeFacade.getInstance().createListTypeOf(type), name);
+        .deepClone(), MCTypeFacadeFix.createListTypeOf(type), name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());

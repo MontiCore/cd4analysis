@@ -35,6 +35,10 @@ public abstract class CDGenTask extends MCAllFilesTask {
   @Input
   abstract Property<Boolean> getClass2MC();
   
+  @Optional
+  @Input
+  abstract Property<Boolean> getClass2MCNoJdk();
+  
   /**
    * Whether CoCos should be checked, default is true
    *
@@ -81,6 +85,9 @@ public abstract class CDGenTask extends MCAllFilesTask {
     }
     if (getClass2MC().isPresent() && getClass2MC().get()) {
       list.add("--class2mc");
+    }
+    if (getClass2MCNoJdk().isPresent() && getClass2MCNoJdk().get()) {
+      list.add("--class2mc-no-jdk");
     }
     if (!getTargetSymbolPath().isEmpty()) { // model paths
       List<Path> modelPath = new ArrayList<>();

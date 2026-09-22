@@ -29,11 +29,16 @@ public class MethodImplementationDecorator extends AbstractDecorator<AbstractDec
       }
       
       // TODO: ALu: Create shared get-marked value source (not only for stereotypes)
-      String template = method.getModifier().getStereotype().getValue("impl");
+      
+      // TODO: Discuss if split via # or separate stereo is better for params?
+      String[] sp = method.getModifier().getStereotype().getValue("impl").split("#");
+      String template = sp[0];
+      Object[] templateParams = new Object[sp.length - 1];
+      System.arraycopy(sp, 1, templateParams, 0, sp.length - 1);
       
       // And finally. replace the empty body template with the given template
       glexOpt.ifPresent(g -> g.replaceTemplate(CD4C.getInstance().getEmptyBodyTemplate(),
-          decoratorData.getAsDecorated(method), new TemplateHookPoint(template)));
+          decoratorData.getAsDecorated(method), new TemplateHookPoint(template, templateParams)));
     }
   }
   

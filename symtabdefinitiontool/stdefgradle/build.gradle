@@ -68,4 +68,9 @@ tasks.withType(Test).configureEach {
   useJUnitPlatform()
   dependsOn project.tasks.getByPath(':cdlang:jar')
   dependsOn project.tasks.getByPath(':symtabdefinitiontool:jar')
+  dependsOn project.tasks.named("generateResources")
+
+  // For the MontiVerse
+  systemProperty "maven.repo.local", System.getProperty("maven.repo.local")
+  systemProperty "useLocalRepo", findProperty("useLocalRepo")
 }

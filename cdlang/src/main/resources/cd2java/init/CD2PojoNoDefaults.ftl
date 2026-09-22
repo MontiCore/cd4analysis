@@ -21,4 +21,5 @@ ${decConfig.withMethodImplementations().applyOnName("impl").ignoreOnName("noImpl
 ${decConfig.withVisitors().applyOnName("visitor").ignoreOnName("noVisitor")}
 ${decConfig.withVisitorImplementations().applyOnName("visitor").ignoreOnName("noVisitor").ignoreOnName("noDefaultVisitor")}
 ${decConfig.withMethodImplementations().applyOnName("impl").ignoreOnName("noImpl")}
+${decConfig.withRequiredArgsConstructors().applyOnName("requiredArgsConstructor").ignoreOnName("noRequiredArgsConstructor")}
 

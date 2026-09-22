@@ -12,7 +12,14 @@ import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
+import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
+import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeIdAsConstructorCTTIVisitor;
+import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
+import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
+import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeIdAsConstructorCTTIVisitor;
 import de.monticore.io.paths.MCPath;
+import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.testcd4codebasis.CD4CodeBasisTestBasis;
@@ -20,6 +27,14 @@ import de.monticore.testcd4codebasis.TestCD4CodeBasisMill;
 import de.monticore.testcd4codebasis._visitor.TestCD4CodeBasisTraverser;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
+import de.monticore.types3.SymTypeRelations;
+import de.monticore.types3.Type4Ast;
+import de.monticore.types3.generics.TypeParameterRelations;
+import de.monticore.types3.generics.context.InferenceContext4Ast;
+import de.monticore.types3.util.*;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -106,6 +121,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
   
   @Test
   public void symbolTableCompleterErrorsTest() {
+    configureTC3();
     TestCD4CodeBasisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
     String artifact = SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/IncorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
@@ -125,7 +141,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     
     ast.accept(t);
     
-    assertEquals(4, Log.getErrorCount());
+    assertEquals(6, Log.getErrorCount());
     Log.clearFindings();
   }
   
@@ -172,6 +188,62 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     ITestCD4CodeBasisArtifactScope as = TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(
         ast);
     return as;
+  }
+  
+  protected void configureTC3() {
+    // TestCD4CodeBasis TC3
+    SymTypeRelations.init();
+    MCCollectionSymTypeRelations.init();
+    OOWithinTypeBasicSymbolsResolver.init();
+    OOWithinScopeBasicSymbolsResolver.init();
+    TypeContextCalculator.init();
+    TypeVisitorOperatorCalculator.init();
+    CommonExpressionsLValueRelations.init();
+    TypeParameterRelations.init();
+    
+    TestCD4CodeBasisTraverser traverser = TestCD4CodeBasisMill.inheritanceTraverser();
+    Type4Ast type4Ast = new Type4Ast();
+    InferenceContext4Ast ctx4Ast = new InferenceContext4Ast();
+    
+    // Literals
+    
+    MCCommonLiteralsTypeVisitor visMCCommonLiterals = new MCCommonLiteralsTypeVisitor();
+    visMCCommonLiterals.setType4Ast(type4Ast);
+    traverser.add4MCCommonLiterals(visMCCommonLiterals);
+    
+    // Expressions
+    
+    BitExpressionsTypeVisitor visBitExpressions = new BitExpressionsTypeVisitor();
+    visBitExpressions.setType4Ast(type4Ast);
+    traverser.add4BitExpressions(visBitExpressions);
+    
+    CommonExpressionsCTTIVisitor visCommonExpressions =
+        new CommonExpressionsTypeIdAsConstructorCTTIVisitor();
+    visCommonExpressions.setType4Ast(type4Ast);
+    visCommonExpressions.setContext4Ast(ctx4Ast);
+    traverser.add4CommonExpressions(visCommonExpressions);
+    traverser.setCommonExpressionsHandler(visCommonExpressions);
+    
+    ExpressionBasisCTTIVisitor visExpressionBasis =
+        new ExpressionBasisTypeIdAsConstructorCTTIVisitor();
+    visExpressionBasis.setType4Ast(type4Ast);
+    visExpressionBasis.setContext4Ast(ctx4Ast);
+    traverser.add4ExpressionsBasis(visExpressionBasis);
+    traverser.setExpressionsBasisHandler(visExpressionBasis);
+    
+    // MCTypes
+    
+    MCBasicTypesTypeVisitor visMCBasicTypes = new MCBasicTypesTypeVisitor();
+    visMCBasicTypes.setType4Ast(type4Ast);
+    traverser.add4MCBasicTypes(visMCBasicTypes);
+    
+    MCCollectionTypesTypeVisitor visMCCollectionTypes = new MCCollectionTypesTypeVisitor();
+    visMCCollectionTypes.setType4Ast(type4Ast);
+    traverser.add4MCCollectionTypes(visMCCollectionTypes);
+    
+    // create delegate
+    MapBasedTypeCheck3 tc3 = new MapBasedTypeCheck3(traverser, type4Ast, ctx4Ast) {};
+    tc3.setThisAsDelegate();
   }
   
 }

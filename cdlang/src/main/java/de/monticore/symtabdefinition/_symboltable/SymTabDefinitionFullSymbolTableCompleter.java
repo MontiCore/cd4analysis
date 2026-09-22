@@ -27,7 +27,7 @@ public class SymTabDefinitionFullSymbolTableCompleter {
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
     traverser.add4CDBasis(cd4CodeBasisVisitor);
     SymTabDefinitionSymbolTableCompleter stDefinitionVisitor =
-        new SymTabDefinitionSymbolTableCompleter(new FullSynthesizeFromCD4Code());
+        new SymTabDefinitionSymbolTableCompleter();
     traverser.add4SymTabDefinition(stDefinitionVisitor);
   }
   

@@ -8,6 +8,9 @@ import de.monticore.types.check.TypeCheck;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
+// todo replace with TypeCheck3
+// base it on VarDeclarationInitializationHasCorrectType?
+
 /** Checks that an attribute assignment is compatible w.r.t. the attribute's type. */
 public class CDAttributeInitialTypeCompatible implements CDBasisASTCDAttributeCoCo {
   

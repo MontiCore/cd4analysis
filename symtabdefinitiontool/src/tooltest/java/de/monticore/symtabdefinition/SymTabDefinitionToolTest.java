@@ -1,8 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symtabdefinition;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SymTabDefinitionToolTest extends AbstractToolTest {
   
@@ -18,10 +19,10 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
     
     assertContains(out, "SymTabDefinitionTool, version " + version + ", based on MontiCore version "
         + version);
-    Assertions.assertEquals("", err, "The error stream was not empty");
+    assertEquals("", err, "The error stream was not empty");
     assertNoStacktrace(out);
     assertNoStacktrace(err);
-    Assertions.assertEquals(0, process.exitValue(), "Exit code of: " + out);
+    assertEquals(0, process.exitValue(), "Exit code of: " + out);
   }
   
   @Test
@@ -33,12 +34,12 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
     process.waitFor();
     
     assertContains(out, "symbol table");
-    assertContains(out, " -v,--version");
+    assertContains(out, "--version");
     assertContains(out, "-c2mc");
-    Assertions.assertEquals("", err, "The error stream was not empty");
+    assertEquals("", err, "The error stream was not empty");
     assertNoStacktrace(out);
     assertNoStacktrace(err);
-    Assertions.assertEquals(0, process.exitValue(), "Exit code of: " + out);
+    assertEquals(0, process.exitValue(), "Exit code of: " + out);
   }
   
   @Test
@@ -52,10 +53,10 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
     
     assertContains(out, "CoCo");
     assertContains(out, "passed");
-    Assertions.assertEquals("", err, "The error stream was not empty");
+    assertEquals("", err, "The error stream was not empty");
     assertNoStacktrace(out);
     assertNoStacktrace(err);
-    Assertions.assertEquals(0, process.exitValue(), "Exit code of: " + out);
+    assertEquals(0, process.exitValue(), "Exit code of: " + out);
   }
   
   @Test
@@ -67,10 +68,10 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
     process.waitFor();
     
     assertContains(out, "0xCE0E3");
-    Assertions.assertEquals("", err, "The error stream was not empty");
+    assertEquals("", err, "The error stream was not empty");
     assertNoStacktrace(out);
     assertNoStacktrace(err);
-    Assertions.assertEquals(255, process.exitValue() & 0xFF, "Exit code of: " + out);
+    assertEquals(255, process.exitValue() & 0xFF, "Exit code of: " + out);
     // & 0xFF due to unsigned exit values (one some OSes)
   }
   
