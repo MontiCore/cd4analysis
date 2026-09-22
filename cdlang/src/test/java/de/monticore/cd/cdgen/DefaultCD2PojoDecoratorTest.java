@@ -33,21 +33,23 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
   @ParameterizedTest
   @ValueSource(booleans = { false, true })
   public void testReservedRolesAcrossCDs(boolean reverseOrder) throws Exception {
-    var base = CD4CodeMill.parser().parse_String(
-        "classdiagram BaseModel { public class Base { protected int class_; } }").orElseThrow();
+    String packageName = "crosscdroles" + reverseOrder;
+    var base = CD4CodeMill.parser().parse_String("package " + packageName
+        + "; classdiagram BaseModel { public class Base { protected int class_; } }").orElseThrow();
     var target = CD4CodeMill.parser().parse_String("""
+        package %s;
         classdiagram TargetModel {
-          public class A extends BaseModel.Base {}
+          public class A extends %s.BaseModel.Base {}
           public class Class {}
           public association A -> Class;
         }
-        """).orElseThrow();
-    var child = CD4CodeMill.parser().parse_String(
-        "classdiagram ChildModel { public class Child extends TargetModel.A { protected int class__; } }")
-        .orElseThrow();
+        """.formatted(packageName, packageName)).orElseThrow();
+    var child = CD4CodeMill.parser().parse_String("package " + packageName
+        + "; classdiagram ChildModel { public class Child extends " + packageName
+        + ".TargetModel.A { protected int class__; } }").orElseThrow();
     var asts = reverseOrder ? List.of(child, target, base) : List.of(base, target, child);
     tool.trafoBeforeSymtab(asts);
-    tool.initializeSymbolTable(false);
+    tool.initializeSymbolTable(false, true);
     asts.forEach(ast -> tool.createSymbolTable(ast));
     asts.forEach(tool::completeSymbolTable);
     outputDir = new File(outputDir, "crossCDRoles" + reverseOrder);
@@ -70,7 +72,7 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
         "classdiagram CachedRoles { class A {} class Class {} association A -> Class; }")
         .orElseThrow();
     tool.trafoBeforeSymtab(List.of(ast));
-    tool.initializeSymbolTable(false);
+    tool.initializeSymbolTable(false, true);
     tool.createSymbolTable(ast);
     tool.completeSymbolTable(ast);
     var owner = ast.getCDDefinition().getCDClassesList().get(0).getSymbol();
