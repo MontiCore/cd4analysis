@@ -16,10 +16,20 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.lang.model.SourceVersion;
 
 /** Adapts association roles to Java identifiers before fields and methods are generated. */
 public class JavaAssociationRoleNameTrafo implements CDAssociationVisitor2, CDBasisVisitor2 {
+  
+  // Keep this check in java.base: Gradle's isolated generator classloader cannot load
+  // javax.lang.model.SourceVersion from the java.compiler module.
+  // Includes reserved keywords, the underscore, and literals; contextual keywords are legal fields.
+  protected static final Set<String> JAVA_RESERVED_NAMES = Set.of("abstract", "assert", "boolean",
+      "break", "byte", "case", "catch", "char", "class", "const", "continue", "default", "do",
+      "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
+      "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
+      "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
+      "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while",
+      "_", "true", "false", "null");
   
   protected final List<ASTCDRole> roles = new ArrayList<>();
   protected final Map<OOTypeSymbol, Set<OOTypeSymbol>> hierarchies = new LinkedHashMap<>();
@@ -43,7 +53,7 @@ public class JavaAssociationRoleNameTrafo implements CDAssociationVisitor2, CDBa
   
   @Override
   public void visit(ASTCDRole node) {
-    if (SourceVersion.isKeyword(node.getName())) {
+    if (JAVA_RESERVED_NAMES.contains(node.getName())) {
       roles.add(node);
     }
   }

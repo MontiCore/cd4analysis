@@ -104,10 +104,13 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
       model.append("public class ").append(type).append(" {} public association A -> ").append(type)
           .append("; ");
     }
-    model.append("}");
+    model.append("public class Underscore {} public association A -> (_) Underscore; }");
     var ast = CD4CodeMill.parser().parse_String(model.toString()).orElseThrow();
     doTest(ast);
     var owner = ast.getCDDefinition().getCDClassesList().get(0);
+    Assertions.assertEquals(1, owner.getSymbol().getFieldList("__").size());
+    Assertions.assertEquals(1, owner.getSymbol().getCDRoleList("__").size());
+    Assertions.assertTrue(owner.getSymbol().getCDRoleList("_").isEmpty());
     for (String keyword : keywords.split(" ")) {
       Assertions.assertEquals(1, owner.getSymbol().getFieldList(keyword + "_").size());
       Assertions.assertEquals(1, owner.getSymbol().getCDRoleList(keyword + "_").size());
