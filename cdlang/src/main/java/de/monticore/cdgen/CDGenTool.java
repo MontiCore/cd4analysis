@@ -166,6 +166,10 @@ public class CDGenTool extends CD4CodeTool {
         asts.forEach(this::runCoCos);
         Log.enableFailQuick(true);
       }
+      else {
+        Log.warn(
+            "0xTODO: You explicitly ran the CD generator without CoCos. This might lead to incorrect Java code and is not supported.");
+      }
       
       // Export original symbol table
       if (cmd.hasOption("s")) {
