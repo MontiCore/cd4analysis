@@ -20,8 +20,8 @@ import java.util.Set;
 /** Adapts association roles to Java identifiers before fields and methods are generated. */
 public class JavaAssociationRoleNameTrafo implements CDAssociationVisitor2, CDBasisVisitor2 {
   
-  // Keep this check in java.base: Gradle's isolated generator classloader cannot load
-  // javax.lang.model.SourceVersion from the java.compiler module.
+  // Avoid SourceVersion because Gradle's isolated generator classloader does not expose
+  // the java.compiler module.
   // Includes reserved keywords, the underscore, and literals; contextual keywords are legal fields.
   protected static final Set<String> JAVA_RESERVED_NAMES = Set.of("abstract", "assert", "boolean",
       "break", "byte", "case", "catch", "char", "class", "const", "continue", "default", "do",
