@@ -40,7 +40,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithSymbolTable() {
     new CDGenTool().run(new String[] { "-i",
-        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-s",
+        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-c", "-s",
         "target/generated/example/symboltable" });
     assertTrue(new File("target/generated/example/symboltable/model/Example.cdsym").isFile());
   }
@@ -48,7 +48,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithJavaGeneration() {
     new CDGenTool().run(new String[] { "-i",
-        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
+        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c", "-c2mc", "-o",
         "target/generated/example/standard", });
     assertTrue(new File("target/generated/example/standard/model/Example/A.java").isFile());
   }
@@ -56,7 +56,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithEmptyCDWithPackage() {
     new CDGenTool().run(new String[] { "-i",
-        "src/test/resources/de/monticore/cdgentool/model/EmptyWithPackage.cd", "-c2mc", "-o",
+        "src/test/resources/de/monticore/cdgentool/model/EmptyWithPackage.cd", "-c", "-c2mc", "-o",
         "target/generated/example/standard", });
     
     assertTrue(new File("target/generated/example/standard/model/EmptyWithPackage").isDirectory());
@@ -66,8 +66,8 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithEmptyCDWithoutPackage() {
     
     new CDGenTool().run(new String[] { "-i",
-        "src/test/resources/de/monticore/cdgentool/model/EmptyWithoutPackage.cd", "-c2mc", "-o",
-        "target/generated/example/standard", });
+        "src/test/resources/de/monticore/cdgentool/model/EmptyWithoutPackage.cd", "-c", "-c2mc",
+        "-o", "target/generated/example/standard", });
     assertTrue(new File("target/generated/example/standard/EmptyWithoutPackage").isDirectory());
   }
   
@@ -93,7 +93,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithHWC() {
     new CDGenTool().run(new String[] { "-i",
-        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-o",
+        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c", "-c2mc", "-o",
         "target/generated/example/hwc", "-hwc", "src/test/resources/de/monticore/cdgentool/hwc" });
     assertTrue(new File("target/generated/example/hwc/model/Example/ATOP.java").isFile());
   }
@@ -113,7 +113,7 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithPkgSymTab() throws IOException {
     new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/pkg/ExampleWithPkg.cd", "-c2mc", "-o",
-        "target/generated/example/examplewithpkg", "-s",
+        "target/generated/example/examplewithpkg", "-c", "-s",
         "target/generated/example/examplewithpkg" });
     File symtab = new File("target/generated/example/examplewithpkg/pkg/ExampleWithPkg.cdsym");
     assertTrue(symtab.isFile());
@@ -135,12 +135,14 @@ public class CDGeneratorToolTest {
   @Test
   public void testImportStatements() {
     new CDGenTool().run(new String[] { "-i",
-        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-o",
+        "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c", "-o",
         "target/generated/example/imports", "-c2mc", "-s", "target/generated/example/imports/" });
+    
+    MCAssertions.assertNoFindings();
     
     new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/ImportTest.cd", "-o",
-        "target/generated/example/imports", "-c2mc", "-path",
+        "target/generated/example/imports", "-c", "-c2mc", "-path",
         "target/generated/example/imports/" });
   }
   
