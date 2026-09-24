@@ -15,6 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CDAssociationLeftAndRightJavaClassInvalidTest extends CDAssociationTestBasis {
   
   @Test
+  public void testValid() throws IOException {
+    coCoChecker.addCoCo(new CDAssociationJavaClassTypeCoCo());
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/CDAssociationLeftAndRightJavaClassValid.cd"));
+    assertTrue(optAST.isPresent());
+    
+    final ASTCDCompilationUnit ast = optAST.get();
+    Log.getFindings().clear();
+    createSymTab(ast);
+    completeSymTab(ast);
+    coCoChecker.checkAll(ast);
+    assertTrue(Log.getFindings().isEmpty());
+  }
+  
+  @Test
   public void testInvalid() throws IOException {
     
     coCoChecker.addCoCo(new CDAssociationJavaClassTypeCoCo());
