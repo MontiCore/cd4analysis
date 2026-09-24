@@ -18,12 +18,12 @@ import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegatorTOP;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdgen.cocos.CD2JavaGenCoCosDelegator;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.class2mc.OOClass2MCResolver;
@@ -444,7 +444,7 @@ public class CDGenTool extends CD4CodeTool {
    * @param ast the original ast
    */
   public void runCoCos(ASTCDCompilationUnit ast) {
-    CD4CodeCoCoChecker checker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
+    CD4CodeCoCoChecker checker = new CD2JavaGenCoCosDelegator().getCheckerForAllCoCos();
     checker.checkAll(ast);
   }
   
