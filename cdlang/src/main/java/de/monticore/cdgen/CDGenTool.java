@@ -6,6 +6,7 @@ import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
+import de.monticore.cd.codegen.trafo.JavaAssociationRoleNameTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
@@ -331,6 +332,7 @@ public class CDGenTool extends CD4CodeTool {
   
   public CDAssociationCreateFieldsFromAllRoles performFieldsFromRolesTrafo(
       Collection<ASTCDCompilationUnit> asts) {
+    new JavaAssociationRoleNameTrafo().transform(asts);
     CDAssociationCreateFieldsFromAllRoles roleTrafo =
         new CDAssociationCreateFieldsFromNavigableRoles();
     final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();

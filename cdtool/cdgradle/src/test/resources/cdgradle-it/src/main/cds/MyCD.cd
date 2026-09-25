@@ -23,6 +23,10 @@ classdiagram MyCD {
 
   association A <-> B;
 
+  // Exercise Java keyword normalization in the isolated Gradle generator classloader.
+  public class Public {}
+  public association A -> Public;
+
   // Test BiDirectional association generation
   class A1;
   class A2;
