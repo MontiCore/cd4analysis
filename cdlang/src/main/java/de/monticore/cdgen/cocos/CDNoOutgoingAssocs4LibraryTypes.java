@@ -1,19 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdgen.cocos;
 
-import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
-public class CDNoOutgoingAssocs4Interfaces implements CDAssociationASTCDAssociationCoCo {
+public class CDNoOutgoingAssocs4LibraryTypes implements CDAssociationASTCDAssociationCoCo {
   
-  public static final String ERROR_CODE = "0xCDCE5";
+  public static final String ERROR_CODE = "0xCDCE7";
   public static final String ERROR_MESSAGE = ERROR_CODE
-      + ": Interface %s must not have outgoing associations.";
+      + ": Cannot add outgoing associations to imported library type %s.";
   
   @Override
   public void check(ASTCDAssociation node) {
@@ -25,14 +24,13 @@ public class CDNoOutgoingAssocs4Interfaces implements CDAssociationASTCDAssociat
     if (node.getCDAssocDir().isDefinitiveNavigableLeft()) {
       checkSide(node.getRight().getMCQualifiedType(), node);
     }
+    
   }
   
   protected void checkSide(ASTMCQualifiedType type, ASTCDAssociation context) {
-    // Resolve the symbol for the type and check if it's an interface
+    // Resolve the symbol for the type and check if it does not have an ASTNode, i.e., is imported
     final SymTypeExpression typeExpression = TypeCheck3.symTypeFromAST(type);
-    if (typeExpression.isObjectType() && typeExpression.hasTypeInfo() && typeExpression
-        .getTypeInfo() instanceof OOTypeSymbol && ((OOTypeSymbol) typeExpression.getTypeInfo())
-            .isIsInterface()) {
+    if (typeExpression.hasTypeInfo() && !typeExpression.getTypeInfo().isPresentAstNode()) {
       Log.error(String.format(ERROR_MESSAGE, type.printType()), context.get_SourcePositionStart(),
           context.get_SourcePositionEnd());
     }
