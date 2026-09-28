@@ -7,41 +7,54 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._visitor.UMLModifierVisitor2;
 
 public class DefaultVisibilityPublicTrafo implements UMLModifierVisitor2, CDBasisVisitor2,
-    CD4CodeBasisVisitor2 {
-
+    CD4CodeBasisVisitor2, CDAssociationVisitor2 {
+  
   protected int classDepth;
-
+  
   @Override
   public void visit(ASTCDClass node) {
     classDepth++;
   }
-
+  
   @Override
   public void endVisit(ASTCDClass node) {
     classDepth--;
   }
-
+  
   @Override
   public void visit(ASTCDAttribute node) {
     relaxClassMemberVisibility(node.getModifier());
   }
-
+  
   @Override
   public void visit(ASTCDMethod node) {
     relaxClassMemberVisibility(node.getModifier());
   }
-
+  
   @Override
   public void visit(ASTCDConstructor node) {
     relaxClassMemberVisibility(node.getModifier());
   }
-
+  
+  @Override
+  public void visit(ASTCDAssocSide node) {
+    relaxVisibility(node.getModifier());
+  }
+  
   protected void relaxClassMemberVisibility(ASTModifier modifier) {
-    if (classDepth > 0 && !modifier.isPublic() && !modifier.isProtected()) {
+    if (classDepth > 0) {
+      relaxVisibility(modifier);
+    }
+  }
+  
+  protected void relaxVisibility(ASTModifier modifier) {
+    if (!modifier.isPublic() && !modifier.isProtected()) {
       modifier.setPrivate(false);
       modifier.setProtected(true);
     }

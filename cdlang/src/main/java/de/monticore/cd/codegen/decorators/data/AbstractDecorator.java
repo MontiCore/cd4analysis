@@ -7,6 +7,7 @@ import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Optional;
 
 /**
@@ -69,6 +70,12 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
     }
     clazz.addCDMember(member);
     return true;
+  }
+  
+  protected ASTModifier getSourceModifier(ASTCDAttribute attribute) {
+    var role = decoratorData.fieldToRoles.get(attribute.getSymbol());
+    return role == null ? attribute.getModifier().deepClone() : role.getAssocSide().getModifier()
+        .deepClone();
   }
   
   public CDGenService getCDGenService() { return decoratorData.cdGenService; }

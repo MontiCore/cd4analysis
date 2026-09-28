@@ -24,7 +24,7 @@ class VisitorDecoratorTest extends AbstractDecoratorTest {
          classdiagram TestVisitor {
          public class A {
           int prim;
-          B b;
+          public B b;
            -> (manyB) B [*] public;
            -> (optB1) B [0..1] public;
            -> (optB2) B [0..1] public;
@@ -32,7 +32,7 @@ class VisitorDecoratorTest extends AbstractDecoratorTest {
            // -> (privateB) B [1] private; // TODO: Compilation error!
          }
          public class B {
-          String bName;
+          public String bName;
          }
          public class C {
           //<-> (manyC) C1 [*] public; - bidirectional not part of CDDirectComposition
@@ -44,10 +44,10 @@ class VisitorDecoratorTest extends AbstractDecoratorTest {
          public class C3 {}
          public class C4 {}
          public class C5 {}
-         association [0..1] C <-> (manyC) C1  [*];
-         association [0..1] C <-> (optC)  C2  [0..1];
-         association [*]    C <-> (manyManyC)  C3  [*];
-         association        C <-> (manyC4) C4 [*];
+         association public [0..1] C <-> (manyC) C1  [*] public;
+         association public [0..1] C <-> (optC)  C2  [0..1] public;
+         association public [*]    C <-> (manyManyC)  C3  [*] public;
+         association public        C <-> (manyC4) C4 [*] public;
         
         }""");
     

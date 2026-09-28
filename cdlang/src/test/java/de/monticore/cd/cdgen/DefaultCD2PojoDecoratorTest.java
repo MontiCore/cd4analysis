@@ -47,7 +47,7 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
               sources)).call(), diagnostics.getDiagnostics().toString());
     }
   }
-
+  
   @Test
   public void testRelaxedClassMemberVisibility() throws Exception {
     var ast = CD4CodeMill.parser().parse_String("""
@@ -61,35 +61,52 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
             public void publicMethod();
             protected void protectedMethod();
           }
+          class B {}
+          association A -> (privateBs) B [*] private;
+          association A -> (packageBs) B [*];
+          association A -> (privateOrderedBs) B [*] private {ordered};
+          association A -> (packageOrderedBs) B [*] {ordered};
+          association A -> (privateOptionalB) B [0..1] private;
+          association A -> (packageOptionalB) B [0..1];
+          association A -> (publicBs) B [*] public;
         }
         """).orElseThrow();
-
+    
     var result = doTest(ast);
     var clazz = result.getDecoratedCD().getCDDefinition().getCDClassesList().get(0);
     assertProtectedOnly(clazz.getCDConstructorList().get(0).getModifier());
-    for (String attributeName : List.of("privateValue", "packageValue")) {
-      var modifier = clazz.getCDAttributeList().stream()
-          .filter(attribute -> attribute.getName().equals(attributeName))
-          .findFirst().orElseThrow().getModifier();
+    for (String attributeName : List.of("privateValue", "packageValue", "privateBs", "packageBs",
+        "privateOrderedBs", "packageOrderedBs", "privateOptionalB", "packageOptionalB")) {
+      var modifier = clazz.getCDAttributeList().stream().filter(attribute -> attribute.getName()
+          .equals(attributeName)).findFirst().orElseThrow().getModifier();
       assertProtectedOnly(modifier);
     }
     for (String methodName : List.of("privateMethod", "packageMethod", "getPrivateValue",
         "setPrivateValue", "getPackageValue", "setPackageValue")) {
-      var modifier = clazz.getCDMethodList().stream()
-          .filter(method -> method.getName().equals(methodName))
-          .findFirst().orElseThrow().getModifier();
+      var modifier = clazz.getCDMethodList().stream().filter(method -> method.getName().equals(
+          methodName)).findFirst().orElseThrow().getModifier();
       assertProtectedOnly(modifier);
     }
-    Assertions.assertTrue(clazz.getCDMethodList().stream()
-        .filter(method -> method.getName().equals("publicMethod"))
-        .findFirst().orElseThrow().getModifier().isPublic());
-    Assertions.assertTrue(clazz.getCDMethodList().stream()
-        .filter(method -> method.getName().equals("protectedMethod"))
-        .findFirst().orElseThrow().getModifier().isProtected());
+    for (String memberSuffix : List.of("PrivateBs", "PackageBs", "PrivateOrderedBs",
+        "PackageOrderedBs", "PrivateOptionalB", "PackageOptionalB")) {
+      var generatedMethods = clazz.getCDMethodList().stream().filter(method -> method.getName()
+          .endsWith(memberSuffix)).collect(Collectors.toList());
+      Assertions.assertFalse(generatedMethods.isEmpty(), memberSuffix);
+      generatedMethods.forEach(method -> assertProtectedOnly(method.getModifier()));
+    }
+    Assertions.assertTrue(clazz.getCDMethodList().stream().filter(method -> method.getName().equals(
+        "publicMethod")).findFirst().orElseThrow().getModifier().isPublic());
+    Assertions.assertTrue(clazz.getCDMethodList().stream().filter(method -> method.getName().equals(
+        "protectedMethod")).findFirst().orElseThrow().getModifier().isProtected());
+    var publicAssociationMethods = clazz.getCDMethodList().stream().filter(method -> method
+        .getName().endsWith("PublicBs")).collect(Collectors.toList());
+    Assertions.assertFalse(publicAssociationMethods.isEmpty());
+    publicAssociationMethods.forEach(method -> Assertions.assertTrue(method.getModifier()
+        .isPublic()));
     MCAssertions.assertNoFindings();
     compileGeneratedSources();
   }
-
+  
   protected void assertProtectedOnly(ASTModifier modifier) {
     Assertions.assertTrue(modifier.isProtected());
     Assertions.assertFalse(modifier.isPrivate());

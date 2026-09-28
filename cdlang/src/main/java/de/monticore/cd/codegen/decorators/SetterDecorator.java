@@ -166,8 +166,8 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
       SetterMethodKind kind, String templateName, String methodName, List<ASTCDParameter> params,
       Object... templateParams) {
     
-    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), methodName, params);
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(getSourceModifier(attribute),
+        methodName, params);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
         templateName, templateParams)));
     

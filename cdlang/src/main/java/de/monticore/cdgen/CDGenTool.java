@@ -456,6 +456,7 @@ public class CDGenTool extends CD4CodeTool {
     var visibilityTrafo = new DefaultVisibilityPublicTrafo();
     t.add4CDBasis(visibilityTrafo);
     t.add4CD4CodeBasis(visibilityTrafo);
+    t.add4CDAssociation(visibilityTrafo);
     t.add4UMLModifier(visibilityTrafo);
     asts.forEach(ast -> ast.accept(t));
     return asts;
