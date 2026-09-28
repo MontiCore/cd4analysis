@@ -3,6 +3,7 @@ package de.monticore.cd.cdgen;
 
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -69,6 +70,10 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
           association A -> (privateOptionalB) B [0..1] private;
           association A -> (packageOptionalB) B [0..1];
           association A -> (publicBs) B [*] public;
+          package Inner {
+            class InnerB {}
+          }
+          association A (innerB) <-> (a) Inner.InnerB;
         }
         """).orElseThrow();
     
@@ -103,6 +108,14 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
     Assertions.assertFalse(publicAssociationMethods.isEmpty());
     publicAssociationMethods.forEach(method -> Assertions.assertTrue(method.getModifier()
         .isPublic()));
+    var innerClass = (ASTCDClass) result.getDecoratedCD().getCDDefinition().getCDPackagesList().get(
+        0).getCDElementList().get(0);
+    for (var associationClass : List.of(clazz, innerClass)) {
+      var localMethods = associationClass.getCDMethodList().stream().filter(method -> method
+          .getName().endsWith("Local")).collect(Collectors.toList());
+      Assertions.assertFalse(localMethods.isEmpty());
+      localMethods.forEach(method -> Assertions.assertTrue(method.getModifier().isPublic()));
+    }
     MCAssertions.assertNoFindings();
     compileGeneratedSources();
   }
