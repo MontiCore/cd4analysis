@@ -453,7 +453,10 @@ public class CDGenTool extends CD4CodeTool {
     asts.forEach(ast -> ast.accept(trafo.getTraverser()));
     // TODO: Have this be done via the config-options (#4310)
     var t = CD4CodeMill.inheritanceTraverser();
-    t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
+    var visibilityTrafo = new DefaultVisibilityPublicTrafo();
+    t.add4CDBasis(visibilityTrafo);
+    t.add4CD4CodeBasis(visibilityTrafo);
+    t.add4UMLModifier(visibilityTrafo);
     asts.forEach(ast -> ast.accept(t));
     return asts;
   }

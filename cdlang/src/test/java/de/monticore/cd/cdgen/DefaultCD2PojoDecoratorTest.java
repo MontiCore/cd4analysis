@@ -8,8 +8,17 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.runtime.junit.MCAssertions;
-
+import de.monticore.umlmodifier._ast.ASTModifier;
+import de.se_rwth.commons.logging.Log;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaFileObject;
+import javax.tools.ToolProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +27,74 @@ import org.junit.jupiter.api.Test;
  * cdlang/src/cdGenIntTest/java/getter/GetterDecoratorResultTest then tests the generated result
  */
 public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
+  
+  protected void compileGeneratedSources() throws Exception {
+    var compiler = ToolProvider.getSystemJavaCompiler();
+    Assertions.assertNotNull(compiler, "The generation regression test requires a JDK");
+    var diagnostics = new DiagnosticCollector<JavaFileObject>();
+    Path classes = outputDir.toPath().resolve("compiled");
+    Files.createDirectories(classes);
+    try (
+        var files = Files.walk(outputDir.toPath());
+        var manager = compiler.getStandardFileManager(diagnostics, null, null)
+    ) {
+      List<File> sources = files.filter(path -> path.toString().endsWith(".java")).map(Path::toFile)
+          .collect(Collectors.toList());
+      String loggingPath = new File(Log.class.getProtectionDomain().getCodeSource().getLocation()
+          .toURI()).getAbsolutePath();
+      Assertions.assertTrue(compiler.getTask(null, manager, diagnostics, List.of("-d", classes
+          .toString(), "-classpath", loggingPath), null, manager.getJavaFileObjectsFromFiles(
+              sources)).call(), diagnostics.getDiagnostics().toString());
+    }
+  }
+
+  @Test
+  public void testRelaxedClassMemberVisibility() throws Exception {
+    var ast = CD4CodeMill.parser().parse_String("""
+        classdiagram RelaxedVisibility {
+          class A {
+            private A();
+            private String privateValue;
+            String packageValue;
+            private void privateMethod();
+            void packageMethod();
+            public void publicMethod();
+            protected void protectedMethod();
+          }
+        }
+        """).orElseThrow();
+
+    var result = doTest(ast);
+    var clazz = result.getDecoratedCD().getCDDefinition().getCDClassesList().get(0);
+    assertProtectedOnly(clazz.getCDConstructorList().get(0).getModifier());
+    for (String attributeName : List.of("privateValue", "packageValue")) {
+      var modifier = clazz.getCDAttributeList().stream()
+          .filter(attribute -> attribute.getName().equals(attributeName))
+          .findFirst().orElseThrow().getModifier();
+      assertProtectedOnly(modifier);
+    }
+    for (String methodName : List.of("privateMethod", "packageMethod", "getPrivateValue",
+        "setPrivateValue", "getPackageValue", "setPackageValue")) {
+      var modifier = clazz.getCDMethodList().stream()
+          .filter(method -> method.getName().equals(methodName))
+          .findFirst().orElseThrow().getModifier();
+      assertProtectedOnly(modifier);
+    }
+    Assertions.assertTrue(clazz.getCDMethodList().stream()
+        .filter(method -> method.getName().equals("publicMethod"))
+        .findFirst().orElseThrow().getModifier().isPublic());
+    Assertions.assertTrue(clazz.getCDMethodList().stream()
+        .filter(method -> method.getName().equals("protectedMethod"))
+        .findFirst().orElseThrow().getModifier().isProtected());
+    MCAssertions.assertNoFindings();
+    compileGeneratedSources();
+  }
+
+  protected void assertProtectedOnly(ASTModifier modifier) {
+    Assertions.assertTrue(modifier.isProtected());
+    Assertions.assertFalse(modifier.isPrivate());
+    Assertions.assertFalse(modifier.isPublic());
+  }
   
   @Test
   public void testAll() throws Exception {
