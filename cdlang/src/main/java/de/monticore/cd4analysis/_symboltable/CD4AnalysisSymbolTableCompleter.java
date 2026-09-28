@@ -32,12 +32,17 @@ public class CD4AnalysisSymbolTableCompleter {
         new FullSynthesizeFromCD4Analysis());
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
+    //TODO remove iSynthesize
     final CDAssociationSymbolTableCompleter cDAssociationVisitor =
         new CDAssociationSymbolTableCompleter(new FullSynthesizeFromCD4Analysis());
+    //TODO End
     traverser.add4CDAssociation(cDAssociationVisitor);
     traverser.setCDAssociationHandler(cDAssociationVisitor);
+    
+    //TODO ISynthsize enumInterface
     final CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor =
-        new CDInterfaceAndEnumSymbolTableCompleter(new FullSynthesizeFromCD4Analysis());
+        new CDInterfaceAndEnumSymbolTableCompleter();
+    //tODO end
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
   }
   

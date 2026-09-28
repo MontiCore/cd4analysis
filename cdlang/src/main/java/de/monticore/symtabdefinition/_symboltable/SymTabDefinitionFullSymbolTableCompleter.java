@@ -19,8 +19,10 @@ public class SymTabDefinitionFullSymbolTableCompleter {
         new FullSynthesizeFromCD4Code());
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
+    //TODO enumInterface
     CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor =
-        new CDInterfaceAndEnumSymbolTableCompleter(new FullSynthesizeFromCD4Code());
+        new CDInterfaceAndEnumSymbolTableCompleter();
+    //TODO end
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
     CD4CodeBasisSymbolTableCompleter cd4CodeBasisVisitor = new CD4CodeBasisSymbolTableCompleter(
         new FullSynthesizeFromCD4Code());
