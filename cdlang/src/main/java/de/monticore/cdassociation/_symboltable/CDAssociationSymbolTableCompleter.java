@@ -21,15 +21,8 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     CDAssociationHandler {
   
   protected CDAssociationTraverser traverser;
-  //TODO remove ISynthsize from the constructor if possible
-  //protected ISynthesize typeSynthesizer;
-  
-  /*public CDAssociationSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
-  }*/
-  
+
   public CDAssociationSymbolTableCompleter() {
-    //this(new FullSynthesizeFromMCBasicTypes());
   }
   
   @Override

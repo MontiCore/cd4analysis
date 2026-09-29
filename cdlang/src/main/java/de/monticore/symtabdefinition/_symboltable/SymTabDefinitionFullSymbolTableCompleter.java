@@ -14,19 +14,13 @@ public class SymTabDefinitionFullSymbolTableCompleter {
   public SymTabDefinitionFullSymbolTableCompleter() {
     this.traverser = SymTabDefinitionMill.inheritanceTraverser();
     
-    //TODO remove CDBasisSymbolTableCompleter
     CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter();
-    //TODO end
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
-    //TODO enumInterface
     CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor =
         new CDInterfaceAndEnumSymbolTableCompleter();
-    //TODO end
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
-    //TODO CD4CodeBasisSymbolTableCompleter
     CD4CodeBasisSymbolTableCompleter cd4CodeBasisVisitor = new CD4CodeBasisSymbolTableCompleter();
-    //TODO end
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
     traverser.add4CDBasis(cd4CodeBasisVisitor);
     SymTabDefinitionSymbolTableCompleter stDefinitionVisitor =

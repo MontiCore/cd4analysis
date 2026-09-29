@@ -27,24 +27,18 @@ public class CD4CodeSymbolTableCompleter {
       ASTMCQualifiedName packageDeclaration) {
     this.traverser = CD4CodeMill.inheritanceTraverser();
     
-    //TODO CD4CodeSymbolTableCompleter
     final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter();
-    //TODO end
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
-    //TODO remove CDAssociationSymbolTableCompleter
     final CDAssociationSymbolTableCompleter cDAssociationVisitor =
         new CDAssociationSymbolTableCompleter();
-    //TODO end
     traverser.add4CDAssociation(cDAssociationVisitor);
     traverser.setCDAssociationHandler(cDAssociationVisitor);
     final CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor =
         new CDInterfaceAndEnumSymbolTableCompleter();
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
-    //TODO CD4CodeBasisSymbolTableCompleter
     final CD4CodeBasisSymbolTableCompleter cd4CodeBasisVisitor =
         new CD4CodeBasisSymbolTableCompleter();
-    //TODO end
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
     traverser.add4CDBasis(cd4CodeBasisVisitor);
   }

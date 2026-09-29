@@ -22,18 +22,12 @@ import java.util.stream.Collectors;
 public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {
   
   protected CDBasisTraverser traverser;
-  //TODO remove ISynthesize from the constructor if possible
-  //protected ISynthesize typeSynthesizer;
   protected CDBasisFullPrettyPrinter prettyPrinter;
   
   public CDBasisSymbolTableCompleter() {
-    //this.typeSynthesizer = typeSynthesizer;
     prettyPrinter = new CDBasisFullPrettyPrinter(new IndentPrinter());
   }
   
-  /*public CDBasisSymbolTableCompleter() {
-    this(new FullSynthesizeFromMCBasicTypes());
-  }*/
   
   @Override
   public void visit(ASTCDCompilationUnit node) {

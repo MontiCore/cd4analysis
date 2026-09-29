@@ -16,15 +16,7 @@ import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
   
-  //TODO remove ISynthesize from the constructor if possible
-  //protected ISynthesize typeSynthesizer;
-  
-  /*public CDInterfaceAndEnumSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
-  }*/
-  
   public CDInterfaceAndEnumSymbolTableCompleter() {
-    //this(new FullSynthesizeFromMCBasicTypes());
   }
   
   @Override

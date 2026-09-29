@@ -22,19 +22,10 @@ import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, CDBasisVisitor2 {
   
-  //TODO if possible remove ISynthesize from the constructor
-  //protected ISynthesize typeSynthesizer;
-  
-  /*public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
-  }*/
-  
   public CD4CodeBasisSymbolTableCompleter(int i) {
-    //this.typeSynthesizer = typeSynthesizer;
   }
   
   public CD4CodeBasisSymbolTableCompleter() {
-    //this(new FullSynthesizeFromMCCollectionTypes());
   }
   
   @Override
