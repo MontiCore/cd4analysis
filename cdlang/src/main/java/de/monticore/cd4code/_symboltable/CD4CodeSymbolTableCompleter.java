@@ -4,7 +4,6 @@ package de.monticore.cd4code._symboltable;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -28,8 +27,9 @@ public class CD4CodeSymbolTableCompleter {
       ASTMCQualifiedName packageDeclaration) {
     this.traverser = CD4CodeMill.inheritanceTraverser();
     
-    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(
-        new FullSynthesizeFromCD4Code());
+    //TODO CD4CodeSymbolTableCompleter
+    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter();
+    //TODO end
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
     //TODO remove CDAssociationSymbolTableCompleter

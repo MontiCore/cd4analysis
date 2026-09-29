@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symtabdefinition._symboltable;
 
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
@@ -15,8 +14,9 @@ public class SymTabDefinitionFullSymbolTableCompleter {
   public SymTabDefinitionFullSymbolTableCompleter() {
     this.traverser = SymTabDefinitionMill.inheritanceTraverser();
     
-    CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(
-        new FullSynthesizeFromCD4Code());
+    //TODO remove CDBasisSymbolTableCompleter
+    CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter();
+    //TODO end
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
     //TODO enumInterface

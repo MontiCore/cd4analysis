@@ -13,8 +13,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._visitor.OOSymbolsVisitor2;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -25,17 +23,17 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
   
   protected CDBasisTraverser traverser;
   //TODO remove ISynthesize from the constructor if possible
-  protected ISynthesize typeSynthesizer;
+  //protected ISynthesize typeSynthesizer;
   protected CDBasisFullPrettyPrinter prettyPrinter;
   
-  public CDBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
+  public CDBasisSymbolTableCompleter() {
+    //this.typeSynthesizer = typeSynthesizer;
     prettyPrinter = new CDBasisFullPrettyPrinter(new IndentPrinter());
   }
   
-  public CDBasisSymbolTableCompleter() {
+  /*public CDBasisSymbolTableCompleter() {
     this(new FullSynthesizeFromMCBasicTypes());
-  }
+  }*/
   
   @Override
   public void visit(ASTCDCompilationUnit node) {
