@@ -12,8 +12,6 @@ import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.types.check.FullSynthesizeFromMCCollectionTypes;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfObject;
@@ -25,18 +23,18 @@ import java.util.stream.Collectors;
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, CDBasisVisitor2 {
   
   //TODO if possible remove ISynthesize from the constructor
-  protected ISynthesize typeSynthesizer;
+  //protected ISynthesize typeSynthesizer;
   
-  public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
+  /*public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
-  }
+  }*/
   
   public CD4CodeBasisSymbolTableCompleter(int i) {
-    this.typeSynthesizer = typeSynthesizer;
+    //this.typeSynthesizer = typeSynthesizer;
   }
   
   public CD4CodeBasisSymbolTableCompleter() {
-    this(new FullSynthesizeFromMCCollectionTypes());
+    //this(new FullSynthesizeFromMCCollectionTypes());
   }
   
   @Override
