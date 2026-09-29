@@ -1,8 +1,8 @@
-# CD4Analysis language
-This project contains the language server for CD4Analysis.
+# CD4Analysis and CD4Code language servers
+This project contains language servers for CD4Analysis and CD4Code.
 
-It can be build with Gradle:
-- `gradle build`, the resulting jar can be found in build/lib
+Build the executable servers with `gradle :language-server:packCD4AnalysisLanguageServer`
+and `gradle :language-server:packCD4CodeLanguageServer`. The JARs are written to `target/libs`.
 
 References for the CD4Analysis:
 - https://github.com/MontiCore/cd4analysis
@@ -10,5 +10,7 @@ References for the CD4Analysis:
 
 You can customize the resulting LSP via the TOP mechanism.
 
-# Running the server
-`gradle runCD4AnalysisVscodePluginAttached`
+# Running the servers
+Use `gradle :language-server:runCD4AnalysisVscodePluginAttached -PbuildVscodePlugin=true`
+or `gradle :language-server:runCD4CodeVscodePluginAttached -PbuildVscodePlugin=true` to run a
+server with its VS Code plugin attached.
