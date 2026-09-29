@@ -34,7 +34,7 @@ public class CD4AnalysisSymbolTableCompleter {
     traverser.add4OOSymbols(cDBasisVisitor);
     //TODO remove iSynthesize
     final CDAssociationSymbolTableCompleter cDAssociationVisitor =
-        new CDAssociationSymbolTableCompleter(new FullSynthesizeFromCD4Analysis());
+        new CDAssociationSymbolTableCompleter();
     //TODO End
     traverser.add4CDAssociation(cDAssociationVisitor);
     traverser.setCDAssociationHandler(cDAssociationVisitor);

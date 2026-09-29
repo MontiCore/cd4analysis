@@ -32,8 +32,10 @@ public class CD4CodeSymbolTableCompleter {
         new FullSynthesizeFromCD4Code());
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
+    //TODO remove CDAssociationSymbolTableCompleter
     final CDAssociationSymbolTableCompleter cDAssociationVisitor =
-        new CDAssociationSymbolTableCompleter(new FullSynthesizeFromCD4Code());
+        new CDAssociationSymbolTableCompleter();
+    //TODO end
     traverser.add4CDAssociation(cDAssociationVisitor);
     traverser.setCDAssociationHandler(cDAssociationVisitor);
     final CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor =
