@@ -4,6 +4,7 @@ package de.monticore.cd4code.cocos;
 import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeOverridden;
+import de.monticore.types.mcbasictypes.cocos.QualifiedTypeHasNoTypeParameters;
 import de.monticore.types.typeparameters.cocos.TypeParameterNoCyclicInheritance;
 import de.monticore.types.typeparameters.cocos.TypeParametersHaveUniqueNames;
 
@@ -31,6 +32,8 @@ public class CD4CodeCoCos extends CoCoParent<CD4CodeCoCoChecker> {
     checker.addCoCo(new TypeParametersHaveUniqueNames());
     // TypeParameter
     checker.addCoCo(new TypeParameterNoCyclicInheritance());
+    // MCBasicTypes
+    checker.addCoCo(new QualifiedTypeHasNoTypeParameters());
     return checker;
   }
   
