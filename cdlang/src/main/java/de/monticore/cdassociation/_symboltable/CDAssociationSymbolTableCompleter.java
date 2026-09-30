@@ -11,8 +11,6 @@ import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -23,16 +21,6 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
     CDAssociationHandler {
   
   protected CDAssociationTraverser traverser;
-  //TODO remove ISynthsize from the constructor if possible
-  protected ISynthesize typeSynthesizer;
-  
-  public CDAssociationSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
-  }
-  
-  public CDAssociationSymbolTableCompleter() {
-    this(new FullSynthesizeFromMCBasicTypes());
-  }
   
   @Override
   public void handle(ASTCDAssociation node) {
