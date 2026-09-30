@@ -6,15 +6,17 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
-import java.util.List;
-import java.util.Optional;
 
 /** Checks that only interfaces are implemented. */
 public abstract class ImplementOnlyInterfaces {
+  
+  public static final String CLASS_ERROR_CODE = "0xCDCF4";
+  public static final String ENUM_ERROR_CODE = "0xCDCF5";
+  public static final String INTERFACE_ERROR_CODE = "0xCDCF6";
   
   /**
    * Actual check that the class's interfaces are really interfaces.
@@ -27,32 +29,23 @@ public abstract class ImplementOnlyInterfaces {
     if (!node.isPresentCDInterfaceUsage()) {
       return;
     }
-    final List<ASTMCObjectType> interfaceList = node.getCDInterfaceUsage().getInterfaceList();
-    interfaceList.stream().map(s -> symbol.getEnclosingScope().resolveOOType(getObjectName(s)))
-        .filter(Optional::isPresent).map(Optional::get).filter(e -> !e.isIsInterface()).forEach(
-            e -> Log.error(String.format(
-                "0xCDCF4: Class %s cannot implement %s %s. A class may only implement interfaces.",
-                node.getName(), CDMill.cDTypeKindPrinter().print(e), e.getName()), node
-                    .get_SourcePositionStart()));
-  }
-  
-  protected String getObjectName(ASTMCObjectType type) {
-    // TODO: This is a fix for the following types:
-    // class State_Pat implements IState, IElem<IState>
-    // class Opt<T> implements IElem<T>
-    //   interface IElem<T> {  }
-    // -> this tries to resolve "IElem<T>.class", which fails HARD due to illegal chars!
-    // TODO: Discuss where to place such a thing
     
-    if (type instanceof ASTMCQualifiedType qualifiedType) {
-      return qualifiedType.getMCQualifiedName().getQName();
-    }
-    else if (type instanceof ASTMCGenericType genericType) {
-      return genericType.printWithoutTypeArguments();
-    }
-    else {
-      throw new IllegalStateException("Unhandled MCObjectType " + type.getClass() + " of `" + type
-          .printType() + "` when trying to resolve source");
+    for (ASTMCObjectType typeRef : node.getCDInterfaceUsage().getInterfaceList()) {
+      SymTypeExpression steRef = TypeCheck3.symTypeFromAST(typeRef);
+      if (steRef.hasTypeInfo()) {
+        if (!CoCoHelper.isInterface(steRef.getTypeInfo()))
+          Log.error(String.format(
+              "%s: Class %s cannot implement %s %s. A class may only implement interfaces.",
+              CLASS_ERROR_CODE, node.getName(), CDMill.cDTypeKindPrinter().print(steRef
+                  .getTypeInfo()), steRef.getTypeInfo().getName()), node.get_SourcePositionStart());
+        
+      }
+      else {
+        Log.error(String.format(
+            "%s: Class %s cannot implement <missing type info>. A class may only implement interfaces.",
+            CLASS_ERROR_CODE, node.getName()), node.get_SourcePositionStart());
+        
+      }
     }
   }
   
@@ -68,10 +61,10 @@ public abstract class ImplementOnlyInterfaces {
     }
     symbol.streamSuperTypes().filter(i -> !CoCoHelper.isInterface(i.getTypeInfo())).forEach(e -> Log
         .error(String.format(
-            "0xCDCF5: The %s %s cannot implement %s %s. Only interfaces may be implemented.", CDMill
-                .cDTypeKindPrinter().print(node), symbol.getName(), CDMill.cDTypeKindPrinter()
-                    .print(e.getTypeInfo()), e.getTypeInfo().getName()), node
-                        .get_SourcePositionStart()));
+            "%s: The %s %s cannot implement %s %s. Only interfaces may be implemented.",
+            ENUM_ERROR_CODE, CDMill.cDTypeKindPrinter().print(node), symbol.getName(), CDMill
+                .cDTypeKindPrinter().print(e.getTypeInfo()), e.getTypeInfo().getName()), node
+                    .get_SourcePositionStart()));
   }
   
   /**
@@ -85,11 +78,10 @@ public abstract class ImplementOnlyInterfaces {
       return;
     }
     symbol.streamSuperTypes().filter(i -> !CoCoHelper.isInterface(i.getTypeInfo())).forEach(e -> Log
-        .error(String.format(
-            "0xCDCF6: The %s %s cannot extend %s %s. Only interfaces may be extended.", CDMill
-                .cDTypeKindPrinter().print(node), symbol.getName(), CDMill.cDTypeKindPrinter()
-                    .print(e.getTypeInfo()), e.getTypeInfo().getName()), node
-                        .get_SourcePositionStart()));
+        .error(String.format("%s: The %s %s cannot extend %s %s. Only interfaces may be extended.",
+            INTERFACE_ERROR_CODE, CDMill.cDTypeKindPrinter().print(node), symbol.getName(), CDMill
+                .cDTypeKindPrinter().print(e.getTypeInfo()), e.getTypeInfo().getName()), node
+                    .get_SourcePositionStart()));
   }
   
 }
