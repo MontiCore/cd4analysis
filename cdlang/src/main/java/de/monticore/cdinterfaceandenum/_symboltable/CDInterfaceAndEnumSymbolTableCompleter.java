@@ -2,7 +2,6 @@
 package de.monticore.cdinterfaceandenum._symboltable;
 
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -16,15 +15,7 @@ import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
   
-  //TODO remove ISynthesize from the constructor if possible
-  protected ISynthesize typeSynthesizer;
-  
-  public CDInterfaceAndEnumSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
-  }
-  
   public CDInterfaceAndEnumSymbolTableCompleter() {
-    this(new FullSynthesizeFromMCBasicTypes());
   }
   
   @Override
@@ -51,13 +42,15 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
         final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
-        if (result == null) {
-          Log.error(String.format(
-              "0xCDA30: The type of the extended interfaces (%s) could not be calculated",
-              CDInterfaceAndEnumMill.prettyPrint(s, false)), s.get_SourcePositionStart());
+        if (result.isObscureType()) {
+          // The error is already printed by the IDerive visitors, thus we would spam the log if we would log an error
+          // again. Therefore, we only leave a note in the debug log.
+          Log.debug(String.format(
+              "0xCDA30: The type of the extended interfaces (%s) could not be calculated", s
+                  .printType()), "STC");
         }
         return result;
-      }).filter(res -> res != null && !res.isObscureType()).collect(Collectors.toList()));
+      }).filter(res -> !res.isObscureType()).collect(Collectors.toList()));
     }
   }
   
