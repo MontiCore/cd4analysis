@@ -42,7 +42,7 @@ public class CD4CodeTestBasis extends TestBasis {
     
     final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
-    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
+    globalScope.setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
     
     cd4CodeCoCos = new CD4CodeCoCos();
