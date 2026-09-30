@@ -124,8 +124,8 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
         CDAssociationSymbolTableCompleter.addRoleToTheirType(l.getSymbol(), rType.getTypeInfo());
       }
       else {
-        Log.error("0xCDCD1 Right type for role symbol " + l.getSymbol().getName()
-            + " not available.");
+        Log.error("0xCDCD1: Right type for role symbol " + l.getSymbol().getName()
+            + " not available.", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
     }
     if (r.isPresentSymbol()) {
@@ -134,7 +134,7 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
       }
       else {
         Log.error("0xCDCD2 Left type for role symbol " + r.getSymbol().getName()
-            + " not available.");
+            + " not available.", node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
     }
   }
