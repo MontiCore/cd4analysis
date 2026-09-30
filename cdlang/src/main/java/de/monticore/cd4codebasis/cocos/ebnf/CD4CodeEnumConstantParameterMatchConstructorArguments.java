@@ -60,7 +60,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments implements
     for (ASTCDConstructor constructor : cdConstructorList) {
       List<VariableSymbol> formalParams = constructor.getSymbol().getParameterList();
       if (paramTypes.size() != formalParams.size()) {
-        return false;
+        continue;
       }
       boolean success = true;
       for (int i = 0; i < formalParams.size(); i++) {
