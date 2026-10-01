@@ -44,8 +44,8 @@ public class JavaAssociationRoleNameTrafo implements CDAssociationVisitor2, CDBa
   protected void collectAncestors(OOTypeSymbol type, Set<OOTypeSymbol> ancestors) {
     if (ancestors.add(type)) {
       type.getSuperTypesList().forEach(superType -> {
-        if (superType.getTypeInfo() instanceof OOTypeSymbol) {
-          collectAncestors((OOTypeSymbol) superType.getTypeInfo(), ancestors);
+        if (superType.getTypeInfo() instanceof OOTypeSymbol ooSuperTypeInfo) {
+          collectAncestors(ooSuperTypeInfo, ancestors);
         }
       });
     }
