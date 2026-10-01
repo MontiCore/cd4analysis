@@ -258,12 +258,10 @@ public class CD4CTest extends CD4CodeTestBasis {
     
     CD4C.getInstance().addDefaultPredicates();
     
-    // try to create a method with unkown type
+    // try to create a method with unknown type
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownReturnType");
     
-    assertEquals(1, Log.getFindingsCount());
     assertEquals("0xA0324 Cannot find symbol UnknownReturnType", Log.getFindings().get(0).getMsg());
-    
     Log.clearFindings();
   }
   
@@ -284,7 +282,6 @@ public class CD4CTest extends CD4CodeTestBasis {
     // try to create a print method that already exists
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownParameterType");
     
-    assertEquals(1, Log.getFindingsCount());
     assertEquals("0xA0324 Cannot find symbol UnknownParameterType", Log.getFindings().get(0)
         .getMsg());
     

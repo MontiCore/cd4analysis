@@ -8,6 +8,7 @@ import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDClass;
 import de.monticore.cd4codebasis._ast.ASTCDInterface;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -18,9 +19,14 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
+import de.monticore.types.mcfullgenerictypes._ast.ASTMCWildcardTypeArgumentBuilder;
+import de.monticore.types.typeparameters._ast.ASTTypeParameter;
+import de.se_rwth.commons.logging.Log;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
@@ -77,6 +83,17 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
     this._interfaceVisitorArtifact = null;
   }
   
+  static ASTMCTypeArgument typeParamToArg(ASTTypeParameter parameter) {
+    ASTMCWildcardTypeArgumentBuilder wildcardTypeArgumentBuilder = CD4CodeMill
+        .mCWildcardTypeArgumentBuilder();
+    if (!parameter.getMCTypeList().isEmpty()) {
+      // without extends
+      Log.error("0xTODO: NYI multiple extends of ASTTypeParameter " + parameter, parameter
+          .get_SourcePositionStart(), parameter.get_SourcePositionEnd());
+    }
+    return wildcardTypeArgumentBuilder.build();
+  }
+  
   @Override
   public void visit(ASTCDType type) {
     if (decoratorData.shouldDecorate(this.getClass(), type)) {
@@ -94,6 +111,26 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
           .setMCType(visitorInterfaceQualifiedType).build();
       //create a type of the class
       ASTMCType classType = MCTypeFacade.getInstance().createQualifiedType(type.getName());
+      
+      // Workaround to add <?> type paras
+      if (type instanceof ASTCDClass typeOfClass) {
+        if (typeOfClass.isPresentTypeParameters() && !typeOfClass.getTypeParameters()
+            .getTypeParameterList().isEmpty()) {
+          classType = CD4CodeMill.mCBasicGenericTypeBuilder().addName(type.getName())
+              .addAllMCTypeArguments(typeOfClass.getTypeParameters().getTypeParameterList().stream()
+                  .map(VisitorDecorator::typeParamToArg).collect(Collectors.toList())).build();
+        }
+      }
+      else if (type instanceof ASTCDInterface typeOfInterface) {
+        if (typeOfInterface.isPresentTypeParameters() && !typeOfInterface.getTypeParameters()
+            .getTypeParameterList().isEmpty()) {
+          classType = CD4CodeMill.mCBasicGenericTypeBuilder().addName(type.getName())
+              .addAllMCTypeArguments(typeOfInterface.getTypeParameters().getTypeParameterList()
+                  .stream().map(VisitorDecorator::typeParamToArg).collect(Collectors.toList()))
+              .build();
+        }
+      }
+      
       ASTCDParameter classParameter = CD4CodeMill.cDParameterBuilder().setName("node").setMCType(
           classType).build();
       

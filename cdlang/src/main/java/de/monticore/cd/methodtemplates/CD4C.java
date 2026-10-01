@@ -9,8 +9,6 @@ import de.monticore.cd.codegen.methods.AccessorDecorator;
 import de.monticore.cd.codegen.methods.MutatorDecorator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
-import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDMethodSignatureCoCo;
@@ -24,9 +22,8 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.check.AbstractSynthesize;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
@@ -62,9 +59,6 @@ public class CD4C {
   protected final Map<ASTCDType, Set<ASTMCImportStatement>> importMap = Maps.newHashMap();
   
   protected String emptyBodyTemplate = "de.monticore.cd.methodtemplates.core.EmptyMethod";
-  protected CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter(
-      new IndentPrinter(), true);
-  protected AbstractSynthesize typesCalculator = new FullSynthesizeFromCD4Code();
   
   protected GeneratorSetup config;
   protected boolean isInitialized;
@@ -139,12 +133,6 @@ public class CD4C {
   }
   
   public CD4C setPrettyPrinter(CD4CodeFullPrettyPrinter prettyPrinter) {
-    this.prettyPrinter = prettyPrinter;
-    return this;
-  }
-  
-  public CD4C setTypesCalculator(AbstractSynthesize typesCalculator) {
-    this.typesCalculator = typesCalculator;
     return this;
   }
   
@@ -217,7 +205,7 @@ public class CD4C {
     checkInitialized();
     
     Optional<ASTCDMethodSignature> method = this.createMethod(astcdType, template, arguments);
-    if (!method.isPresent()) {
+    if (method.isEmpty()) {
       Log.error("0x11010: There was no method created in the template '" + template + "'");
       return null;
     }
@@ -601,27 +589,25 @@ public class CD4C {
     addPredicate((m) -> {
       final List<String> unknownTypes = m.getCDParameterList().stream().filter(p ->
       // if parameter types are not valid/exist
-      !typesCalculator.synthesizeType(p.getMCType()).isPresentResult()).map(p -> prettyPrinter
-          .prettyprint(p.getMCType())).collect(Collectors.toList());
+      TypeCheck3.symTypeFromAST(p.getMCType()).isObscureType()).map(p -> CD4CodeMill.prettyPrint(p
+          .getMCType(), true)).collect(Collectors.toList());
       if (unknownTypes.isEmpty()) {
         return true;
       }
       else {
-        Log.error("0x110C0: The following types of the method signature (" + prettyPrinter
-            .prettyprint((ASTCD4CodeBasisNode) m) + ") could not be resolved '" + Joiners.COMMA
-                .join(unknownTypes) + "'.");
+        Log.error("0x110C0: The following types of the method signature (" + CD4CodeMill
+            .prettyPrint(m, true) + ") could not be resolved '" + Joiners.COMMA.join(unknownTypes)
+            + "'.");
         return false;
       }
     });
     // check return type
     addPredicate((m) -> {
-      if (m instanceof ASTCDMethod) {
-        final ASTCDMethod method = (ASTCDMethod) m;
-        if (!new FullSynthesizeFromCD4Code().synthesizeType(method.getMCReturnType())
-            .isPresentResult()) {
-          Log.error("0x110C1: The return type '" + prettyPrinter.prettyprint(method
-              .getMCReturnType()) + "' of the method signature (" + prettyPrinter.prettyprint(
-                  (ASTCD4CodeBasisNode) m) + ") could not be resolved.");
+      if (m instanceof ASTCDMethod method) {
+        if (TypeCheck3.symTypeFromAST(method.getMCReturnType()).isObscureType()) {
+          Log.info("0x110C1: The return type '" + CD4CodeMill.prettyPrint(method.getMCReturnType(),
+              true) + "' of the method signature (" + CD4CodeMill.prettyPrint(m, true)
+              + ") could not be resolved.", "CD4C");
           return false;
         }
       }
@@ -632,11 +618,12 @@ public class CD4C {
     // attributes
     // check type
     addAttributePredicate((attribute) -> {
-      if (!new FullSynthesizeFromCD4Code().synthesizeType(attribute.getMCType())
-          .isPresentResult()) {
-        Log.error("0x110C2: The type '" + prettyPrinter.prettyprint(attribute.getMCType())
-            + "' of the attribute declaration (" + prettyPrinter.prettyprint(attribute)
-            + ") could not be resolved.");
+      if (TypeCheck3.symTypeFromAST(attribute.getMCType()).isObscureType()) {
+        // The error is already printed by the IDerive visitors, thus we would spam the log if we would log an error
+        // again. Therefore, we only leave a note in the debug log.
+        Log.debug("0x110C2: The type '" + CD4CodeMill.prettyPrint(attribute.getMCType(), true)
+            + "' of the attribute declaration (" + CD4CodeMill.prettyPrint(attribute, true)
+            + ") could not be resolved.", getClass().getName());
         return false;
       }
       
@@ -675,13 +662,12 @@ public class CD4C {
   public CD4C addDefaultClassPredicates() {
     // methods
     addClassPredicate((c, m) -> {
-      final List<String> parameterTypes = m.getCDParameterList().stream().map(p -> typesCalculator
-          .synthesizeType(p.getMCType()).getResult().getTypeInfo().getFullName()).collect(Collectors
-              .toList());
+      final List<String> parameterTypes = m.getCDParameterList().stream().map(p -> TypeCheck3
+          .symTypeFromAST(p.getMCType()).getTypeInfo().getFullName()).collect(Collectors.toList());
       if (c.getCDMethodSignatureList().stream().anyMatch(cm -> {
-        final List<String> parameter = cm.getCDParameterList().stream().map(p -> typesCalculator
-            .synthesizeType(p.getMCType()).getResult().getTypeInfo().getFullName()).collect(
-                Collectors.toList());
+        final List<String> parameter = cm.getCDParameterList().stream().map(p -> TypeCheck3
+            .symTypeFromAST(p.getMCType()).getTypeInfo().getFullName()).collect(Collectors
+                .toList());
         return m.getName().equals(cm.getName()) && Iterables.elementsEqual(parameterTypes,
             parameter);
       })) {
@@ -694,10 +680,9 @@ public class CD4C {
     
     // attributes
     addAttrClassPredicate((c, a) -> {
-      final String attrType = typesCalculator.synthesizeType(a.getMCType()).getResult()
-          .getTypeInfo().getFullName();
-      if (c.getCDAttributeList().stream().anyMatch(ca -> attrType.equals(typesCalculator
-          .synthesizeType(ca.getMCType()).getResult().getTypeInfo().getFullName()))) {
+      final String attrType = TypeCheck3.symTypeFromAST(a.getMCType()).getTypeInfo().getFullName();
+      if (c.getCDAttributeList().stream().anyMatch(ca -> attrType.equals(TypeCheck3.symTypeFromAST(
+          ca.getMCType()).getTypeInfo().getFullName()))) {
         Log.error("0x110C9: The class '" + c.getName() + "' already has a attribute named '" + a
             .getName() + "'");
         return false;
