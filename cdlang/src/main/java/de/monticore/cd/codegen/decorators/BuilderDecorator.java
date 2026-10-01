@@ -78,108 +78,111 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       // Get decorated pojo class
       ASTCDClass decClazz = this.decoratorData.getAsDecorated(node);
       
-      // Create a new class with the "Builder" suffix
-      ASTCDClassBuilder builderClassB = CD4CodeMill.cDClassBuilder();
-      builderClassB.setName(node.getName() + "Builder");
-      builderClassB.setModifier(node.getModifier().deepClone());
-      ASTCDClass builderClass = builderClassB.build();
-      // Add the builder class to the decorated CD
-      addElementToParent(decParent, builderClass);
-      
-      // Add Log import to the builder class
-      CD4C.getInstance().addImport(builderClass, "de.se_rwth.commons.logging.Log");
-      
-      // Add builder attribute for TOP safety
-      builderClass.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill
-          .modifierBuilder().PROTECTED().build(), builderClass.getName(), "realBuilder"));
-      
-      // Add a constructor to the builder class
-      ASTCDConstructor constructor = CDConstructorFacade.getInstance().createConstructor(CD4CodeMill
-          .modifierBuilder().PUBLIC().build(), builderClass.getName());
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, constructor, new StringHookPoint(
-          "this.realBuilder = (" + builderClass.getName() + ") this;")));
-      addToClass(builderClass, constructor);
-      
-      // Add a isValid() method to the builder class
-      List<ASTCDAttribute> allAttributeList = getAllCDAttributes(node);
-      String staticErrorCode = "0x16725";
-      ASTCDMethod isValidMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
-          .modifierBuilder().PRIVATE().build(), MCTypeFacade.getInstance().createBooleanType(),
-          "isValid");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isValidMethod,
-          new TemplateHookPoint("methods.builder.isValid", allAttributeList, staticErrorCode)));
-      addToClass(builderClass, isValidMethod);
-      
-      // Add a build() method to the builder class
-      ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
-          .modifierBuilder().PUBLIC().build(), node.getName(), "build");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod, new TemplateHookPoint(
-          "methods.builder.build", node.getName())));
-      addToClass(builderClass, buildMethod);
-      
-      // Add the unsafeBuild() method to the builder class
-      ASTCDMethod unsafeBuildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
-          .modifierBuilder().PUBLIC().build(), node.getName(), "unsafeBuild");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, unsafeBuildMethod,
-          new TemplateHookPoint("methods.builder.unsafeBuild", node.getName())));
-      addToClass(builderClass, unsafeBuildMethod);
-      
-      // Add attributes to the builder class
-      for (ASTCDAttribute attribute : allAttributeList) {
+      if (!(node.getModifier().isAbstract())) {
+        // Create a new class with the "Builder" suffix
+        ASTCDClassBuilder builderClassB = CD4CodeMill.cDClassBuilder();
+        builderClassB.setName(node.getName() + "Builder");
+        builderClassB.setModifier(node.getModifier().deepClone());
+        ASTCDClass builderClass = builderClassB.build();
+        // Add the builder class to the decorated CD
+        addElementToParent(decParent, builderClass);
+        
+        // Add Log import to the builder class
+        CD4C.getInstance().addImport(builderClass, "de.se_rwth.commons.logging.Log");
+        
+        // Add builder attribute for TOP safety
         builderClass.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill
-            .modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
-      }
-      
-      // Add setter methods to the builder class
-      for (ASTCDAttribute attribute : allAttributeList) {
-        ASTCDParameter param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName())
-            .setMCType(attribute.getMCType()).build();
-        if (dispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType())) {
-          //set of optional with type directly and not with optional<type>
-          ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType())
-              .deepClone();
-          param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName()).setMCType(type)
-              .build();
+            .modifierBuilder().PROTECTED().build(), builderClass.getName(), "realBuilder"));
+        
+        // Add a constructor to the builder class
+        ASTCDConstructor constructor = CDConstructorFacade.getInstance().createConstructor(
+            CD4CodeMill.modifierBuilder().PUBLIC().build(), builderClass.getName());
+        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, constructor, new StringHookPoint(
+            "this.realBuilder = (" + builderClass.getName() + ") this;")));
+        addToClass(builderClass, constructor);
+        
+        // Add a isValid() method to the builder class
+        List<ASTCDAttribute> allAttributeList = getAllCDAttributes(node);
+        String staticErrorCode = "0x16725";
+        ASTCDMethod isValidMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+            .modifierBuilder().PRIVATE().build(), MCTypeFacade.getInstance().createBooleanType(),
+            "isValid");
+        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isValidMethod,
+            new TemplateHookPoint("methods.builder.isValid", allAttributeList, staticErrorCode)));
+        addToClass(builderClass, isValidMethod);
+        
+        // Add a build() method to the builder class
+        ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+            .modifierBuilder().PUBLIC().build(), node.getName(), "build");
+        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod,
+            new TemplateHookPoint("methods.builder.build", node.getName())));
+        addToClass(builderClass, buildMethod);
+        
+        // Add the unsafeBuild() method to the builder class
+        ASTCDMethod unsafeBuildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+            .modifierBuilder().PUBLIC().build(), node.getName(), "unsafeBuild");
+        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, unsafeBuildMethod,
+            new TemplateHookPoint("methods.builder.unsafeBuild", node.getName())));
+        addToClass(builderClass, unsafeBuildMethod);
+        
+        // Add attributes to the builder class
+        for (ASTCDAttribute attribute : allAttributeList) {
+          builderClass.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill
+              .modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
         }
-        ASTCDMethod setMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
-            .modifierBuilder().PUBLIC().build(), builderClass.getName(), "set"
-                + StringTransformations.capitalize(attribute.getName()), param);
-        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod, new TemplateHookPoint(
-            "methods.builder.set", attribute)));
-        addToClass(builderClass, setMethod);
         
-        // it is required to check if a setter method exists by checking the methods of the SetterDecorator for
-        // an exact match of "set" + attribute.getName()
-        // if this method does not exist,
-        // we need to reference the attribute directly in the build method
-        boolean hasSetterMethod;
-        List<SetterDecorator.MethodInformation> methods = decoratorData.getDecoratorData(
-            SetterDecorator.class) != null ? decoratorData.getDecoratorData(SetterDecorator.class)
-                .getMethods(attribute) : List.of();
-        hasSetterMethod = methods.stream().anyMatch(mi -> mi.getKind()
-            == SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT);
-        
-        // Add set attributes in the build method
-        glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", buildMethod,
-            new TemplateHookPoint("methods.builder.setAttribute", attribute, hasSetterMethod)));
-        
-        // Add set attributes in the unsafeBuild method
-        glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.unsafeBuild:Inner",
-            unsafeBuildMethod, new TemplateHookPoint("methods.builder.setAttribute", attribute,
-                hasSetterMethod)));
-      }
-      
-      // Add isAbsent methods for all attributes with cardinality != 1
-      for (ASTCDAttribute attribute : allAttributeList) {
-        if (dispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType()) || dispatcher
-            .isMCCollectionTypesASTMCOptionalType(attribute.getMCType()) || dispatcher
-                .isMCCollectionTypesASTMCSetType(attribute.getMCType())) {
-          ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+        // Add setter methods to the builder class
+        for (ASTCDAttribute attribute : allAttributeList) {
+          ASTCDParameter param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName())
+              .setMCType(attribute.getMCType()).build();
+          if (dispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType())) {
+            //set of optional with type directly and not with optional<type>
+            ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType())
+                .deepClone();
+            param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName()).setMCType(type)
+                .build();
+          }
+          ASTCDMethod setMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
               .modifierBuilder().PUBLIC().build(), builderClass.getName(), "set"
-                  + StringTransformations.capitalize(attribute.getName()) + "Absent");
-          glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setAbsentMethod,
-              new TemplateHookPoint("methods.builder.setAbsent", attribute)));
-          addToClass(builderClass, setAbsentMethod);
+                  + StringTransformations.capitalize(attribute.getName()), param);
+          glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod,
+              new TemplateHookPoint("methods.builder.set", attribute)));
+          addToClass(builderClass, setMethod);
+          
+          // it is required to check if a setter method exists by checking the methods of the SetterDecorator for
+          // an exact match of "set" + attribute.getName()
+          // if this method does not exist,
+          // we need to reference the attribute directly in the build method
+          boolean hasSetterMethod;
+          List<SetterDecorator.MethodInformation> methods = decoratorData.getDecoratorData(
+              SetterDecorator.class) != null ? decoratorData.getDecoratorData(SetterDecorator.class)
+                  .getMethods(attribute) : List.of();
+          hasSetterMethod = methods.stream().anyMatch(mi -> mi.getKind()
+              == SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT);
+          
+          // Add set attributes in the build method
+          glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner",
+              buildMethod, new TemplateHookPoint("methods.builder.setAttribute", attribute,
+                  hasSetterMethod)));
+          
+          // Add set attributes in the unsafeBuild method
+          glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.unsafeBuild:Inner",
+              unsafeBuildMethod, new TemplateHookPoint("methods.builder.setAttribute", attribute,
+                  hasSetterMethod)));
+        }
+        
+        // Add isAbsent methods for all attributes with cardinality != 1
+        for (ASTCDAttribute attribute : allAttributeList) {
+          if (dispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType()) || dispatcher
+              .isMCCollectionTypesASTMCOptionalType(attribute.getMCType()) || dispatcher
+                  .isMCCollectionTypesASTMCSetType(attribute.getMCType())) {
+            ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+                .modifierBuilder().PUBLIC().build(), builderClass.getName(), "set"
+                    + StringTransformations.capitalize(attribute.getName()) + "Absent");
+            glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setAbsentMethod,
+                new TemplateHookPoint("methods.builder.setAbsent", attribute)));
+            addToClass(builderClass, setAbsentMethod);
+          }
         }
       }
       

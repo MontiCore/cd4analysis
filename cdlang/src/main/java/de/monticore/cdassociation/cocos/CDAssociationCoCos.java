@@ -28,6 +28,7 @@ public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
     checker.addCoCo(new CDAssociationOrderedCardinalityGreaterOne());
     checker.addCoCo(new CDAssociationRoleNameLowerCase());
     checker.addCoCo(new CDAssociationRoleNameNoConflictWithLocalAttribute());
+    checker.addCoCo(new CDAssociationModifierCoCo());
   }
   
 }
