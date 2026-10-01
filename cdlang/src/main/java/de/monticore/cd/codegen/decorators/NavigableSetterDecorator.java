@@ -208,8 +208,12 @@ public class NavigableSetterDecorator extends
       SetterDecorator.SetterMethodKind kind, String templateName, String methodName,
       List<ASTCDParameter> params, String paramName, Object... templateParams) {
     
-    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(role.getAssocSide().getModifier()
-        .deepClone(), methodName, params);
+    var modifier = role.getAssocSide().getModifier().deepClone();
+    // Local synchronization methods can be called by an association end in another package.
+    modifier.setPrivate(false);
+    modifier.setProtected(false);
+    modifier.setPublic(true);
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(modifier, methodName, params);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
         templateName, templateParams)));
     

@@ -8,7 +8,6 @@ import de.mclsg.lsp.document_management.DocumentManager;
 import de.mclsg.lsp.features.code_lens.CodeLensStrategy;
 import de.mclsg.lsp.features.reference.CommonReferencesProvider;
 import de.mclsg.parser.MatchedToken;
-import de.monticore.cd4analysis._lsp.code_lens.CD4AnalysisServerCommandCodeLens;
 import de.monticore.cd4analysis._parser.CD4AnalysisParserInfo;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.lsp4j.CodeLens;
+import org.eclipse.lsp4j.Command;
 
 public class AssociationCodeLensStrategy implements CodeLensStrategy {
   
@@ -64,7 +64,7 @@ public class AssociationCodeLensStrategy implements CodeLensStrategy {
               
               String title = "Part of " + associationTokens.size() + " Association"
                   + (associationTokens.size() > 1 ? "s" : "");
-              return new CD4AnalysisServerCommandCodeLens(matchedToken.range, title, "", List.of());
+              return new CodeLens(matchedToken.range, new Command(title, "", List.of()), null);
             }).filter(Objects::nonNull).map(cl -> (CodeLens) cl).findFirst();
   }
   

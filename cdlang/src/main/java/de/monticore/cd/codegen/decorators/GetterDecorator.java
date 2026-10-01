@@ -91,8 +91,8 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     String name = (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType()) ? "is" : "get")
         + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = attribute.getMCType().deepClone();
-    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), type, name);
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(getSourceModifier(attribute),
+        type, name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
         "methods.Get", attribute)));
     method.getModifier().setAbstract(attribute.getModifier().isDerived());
@@ -115,8 +115,8 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     
     String generatedErrorCode = getCDGenService().getGeneratedErrorCode(attribute.getName()
         + attribute.getMCType().printType());
-    ASTCDMethod getMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), type, name);
+    ASTCDMethod getMethod = CDMethodFacade.getInstance().createMethod(getSourceModifier(attribute),
+        type, name);
     String nativeAttributeName = StringUtils.capitalize(getCDGenService().getNativeAttributeName(
         attribute.getName()));
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getMethod, new TemplateHookPoint(
@@ -134,8 +134,8 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
   
   protected Optional<MethodInformation> decorateOptionalIsPresent(ASTCDType decoratedType,
       ASTCDAttribute attribute) {
-    ASTCDMethod isPresentMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), MCTypeFacade.getInstance().createBooleanType(), "isPresent"
+    ASTCDMethod isPresentMethod = CDMethodFacade.getInstance().createMethod(getSourceModifier(
+        attribute), MCTypeFacade.getInstance().createBooleanType(), "isPresent"
             + StringTransformations.capitalize(attribute.getName()));
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isPresentMethod,
         new TemplateHookPoint("methods.opt.IsPresent4Opt", attribute)));
@@ -154,8 +154,8 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
-    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), MCTypeFacadeFix.createSetTypeOf(type), name);
+    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(getSourceModifier(
+        attribute), MCTypeFacadeFix.createSetTypeOf(type), name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
@@ -175,8 +175,8 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
-    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
-        .deepClone(), MCTypeFacadeFix.createListTypeOf(type), name);
+    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(getSourceModifier(
+        attribute), MCTypeFacadeFix.createListTypeOf(type), name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
@@ -224,6 +224,7 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
                   capitalizedAttributeNameWithS), String.format(HASHCODE,
                       capitalizedAttributeNameWithS))) {
         ASTCDMethod method = CDMethodFacade.getInstance().createMethodByDefinition(signature);
+        method.setModifier(getSourceModifier(attribute));
         addToClass(decoratedType, method);
         this.glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
             createListImplementation(method, capitalizedAttributeNameWithOutS)));
@@ -237,7 +238,7 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
                             capitalizedAttributeNameWithS), String.format(SUBLIST, attributeType,
                                 capitalizedAttributeNameWithS))) {
           ASTCDMethod method = CDMethodFacade.getInstance().createMethodByDefinition(signature);
-          method.setModifier(attribute.getModifier().deepClone());
+          method.setModifier(getSourceModifier(attribute));
           addToClass(decoratedType, method);
           this.glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
               createListImplementation(method, capitalizedAttributeNameWithOutS)));

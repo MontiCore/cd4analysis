@@ -25,8 +25,8 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
            boolean myBool; public int myInt;
            <<noGetter>> public int pubX;
          }
-         public association TestGetterC -> (roleB) Other [*];
-         public association TestGetterC -> (orderedRole) Other [*] {ordered};
+         public association TestGetterC -> (roleB) Other [*] public;
+         public association TestGetterC -> (orderedRole) Other [*] public {ordered};
          <<getter>> public class Other {
          }
          <<getter>> public class AlreadyExisting {

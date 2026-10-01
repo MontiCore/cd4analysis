@@ -7,6 +7,7 @@ import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Optional;
 
 /**
@@ -69,6 +70,20 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
     }
     clazz.addCDMember(member);
     return true;
+  }
+  
+  /**
+   * Returns the original model modifier for an attribute. For attributes generated from association
+   * roles, the association side modifier is the source of truth because accessor decorators must
+   * derive their visibility from the modeled role, not from the already generated field.
+   *
+   * @param attribute the generated or modeled attribute
+   * @return the source modifier to use for visibility-sensitive derived members
+   */
+  protected ASTModifier getSourceModifier(ASTCDAttribute attribute) {
+    var role = decoratorData.fieldToRoles.get(attribute.getSymbol());
+    return role == null ? attribute.getModifier().deepClone() : role.getAssocSide().getModifier()
+        .deepClone();
   }
   
   public CDGenService getCDGenService() { return decoratorData.cdGenService; }
