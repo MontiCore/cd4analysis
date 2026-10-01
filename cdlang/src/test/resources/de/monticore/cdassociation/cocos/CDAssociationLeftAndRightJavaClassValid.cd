@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationLeftAndRightJavaClassInvalid{
+
+  public class A{
+    java.lang.String attributeA1;
+    java.lang.Integer attributeA2;
+  }
+
+  private abstract class B{
+    readonly int attributeB1;
+    final java.lang.String attributeB2;
+  }
+
+  protected static class C {
+  }
+
+  association abstract B -> A;
+  association [0..2] A -> B;
+
+  association A -> C;
+
+}
