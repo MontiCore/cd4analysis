@@ -72,6 +72,14 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
     return true;
   }
   
+  /**
+   * Returns the original model modifier for an attribute. For attributes generated from association
+   * roles, the association side modifier is the source of truth because accessor decorators must
+   * derive their visibility from the modeled role, not from the already generated field.
+   *
+   * @param attribute the generated or modeled attribute
+   * @return the source modifier to use for visibility-sensitive derived members
+   */
   protected ASTModifier getSourceModifier(ASTCDAttribute attribute) {
     var role = decoratorData.fieldToRoles.get(attribute.getSymbol());
     return role == null ? attribute.getModifier().deepClone() : role.getAssocSide().getModifier()

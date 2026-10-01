@@ -48,6 +48,7 @@ class VisitorDecoratorTest extends AbstractDecoratorTest {
          association public [0..1] C <-> (optC)  C2  [0..1] public;
          association public [*]    C <-> (manyManyC)  C3  [*] public;
          association public        C <-> (manyC4) C4 [*] public;
+         class WithTO<T> {}
         
         }""");
     
