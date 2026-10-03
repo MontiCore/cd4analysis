@@ -54,25 +54,27 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
       
       switch (info.getMultiplicity()) {
         case OPTIONAL:
-          this.setterData.getOrCreateMethods(attribute).add(decorateOptionalAbsent(decClazz,
-              attribute));
-          this.setterData.getOrCreateMethods(attribute).add(decorateOptSet(decClazz, attribute));
+          decorateOptionalAbsent(decClazz, attribute).ifPresent(this.setterData.getOrCreateMethods(
+              attribute)::add);
+          decorateOptSet(decClazz, attribute).ifPresent(this.setterData.getOrCreateMethods(
+              attribute)::add);
           break;
         case MANDATORY:
-          this.setterData.getOrCreateMethods(attribute).add(decorateMandatory(decClazz, attribute));
+          decorateMandatory(decClazz, attribute).ifPresent(this.setterData.getOrCreateMethods(
+              attribute)::add);
           break;
         case SET:
           if (info.isOrdered()) {
-            this.setterData.getOrCreateMethods(attribute).add(decorateAddWithIndex(decClazz,
-                attribute));
-            this.setterData.getOrCreateMethods(attribute).add(decorateRemoveWithIndex(decClazz,
-                attribute));
+            decorateAddWithIndex(decClazz, attribute).ifPresent(this.setterData.getOrCreateMethods(
+                attribute)::add);
+            decorateRemoveWithIndex(decClazz, attribute).ifPresent(this.setterData
+                .getOrCreateMethods(attribute)::add);
           }
           else {
-            this.setterData.getOrCreateMethods(attribute).add(decorateAddUnordered(decClazz,
-                attribute));
-            this.setterData.getOrCreateMethods(attribute).add(decorateRemoveUnordered(decClazz,
-                attribute));
+            decorateAddUnordered(decClazz, attribute).ifPresent(this.setterData.getOrCreateMethods(
+                attribute)::add);
+            decorateRemoveUnordered(decClazz, attribute).ifPresent(this.setterData
+                .getOrCreateMethods(attribute)::add);
           }
           
       }
@@ -80,14 +82,15 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     }
   }
   
-  protected MethodInformation decorateMandatory(ASTCDType clazz, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateMandatory(ASTCDType clazz,
+      ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     return decorate(clazz, attribute, SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.Set", name,
         CDParameterFacade.getInstance().createParameters(attribute), attribute);
   }
   
-  protected MethodInformation decorateOptSet(ASTCDType clazz, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateOptSet(ASTCDType clazz, ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
@@ -96,14 +99,16 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
         attribute, "--unused--");
   }
   
-  protected MethodInformation decorateOptionalAbsent(ASTCDType clazz, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateOptionalAbsent(ASTCDType clazz,
+      ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName())) + "Absent";
     return decorate(clazz, attribute, SetterMethodKind.UNSET_OPTIONAL, "methods.opt.SetAbsent",
         name, List.of(), attribute);
   }
   
-  protected MethodInformation decorateAddWithIndex(ASTCDType clazz, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateAddWithIndex(ASTCDType clazz,
+      ASTCDAttribute attribute) {
     String name = "add" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
@@ -112,40 +117,52 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
             .getInstance().createParameter(type, attribute.getName())), attribute);
   }
   
-  protected MethodInformation decorateRemoveWithIndex(ASTCDType clazz, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateRemoveWithIndex(ASTCDType clazz,
+      ASTCDAttribute attribute) {
     String name = "remove" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     var m = decorate(clazz, attribute, SetterMethodKind.REM, "methods.list.Rem", name, List.of(
         CDParameterFacade.getInstance().createParameter(int.class, "index")), attribute);
-    m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(type)
+    if (m.isEmpty()) {
+      return m;
+    }
+    m.get().getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(type)
         .build());
     return m;
   }
   
-  protected MethodInformation decorateAddUnordered(ASTCDType clazz, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateAddUnordered(ASTCDType clazz,
+      ASTCDAttribute attribute) {
     String name = "add" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     var m = decorate(clazz, attribute, SetterMethodKind.ADD, "methods.list.AddUnordered", name, List
         .of(CDParameterFacade.getInstance().createParameter(type, attribute.getName())), attribute);
-    m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(MCTypeFacade
-        .getInstance().createBooleanType()).build());
+    if (m.isEmpty()) {
+      return m;
+    }
+    m.get().getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(
+        MCTypeFacade.getInstance().createBooleanType()).build());
     return m;
   }
   
-  protected MethodInformation decorateRemoveUnordered(ASTCDType clazz, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateRemoveUnordered(ASTCDType clazz,
+      ASTCDAttribute attribute) {
     String name = "remove" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     var m = decorate(clazz, attribute, SetterMethodKind.REM, "methods.list.RemUnordered", name, List
         .of(CDParameterFacade.getInstance().createParameter(type, attribute.getName())), attribute);
-    m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(MCTypeFacade
-        .getInstance().createBooleanType()).build());
+    if (m.isEmpty()) {
+      return m;
+    }
+    m.get().getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(
+        MCTypeFacade.getInstance().createBooleanType()).build());
     return m;
   }
   
-  protected MethodInformation decorate(ASTCDType decParent, ASTCDAttribute attribute,
+  protected Optional<MethodInformation> decorate(ASTCDType decParent, ASTCDAttribute attribute,
       SetterMethodKind kind, String templateName, String methodName, List<ASTCDParameter> params,
       Object... templateParams) {
     
@@ -154,9 +171,14 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
         templateName, templateParams)));
     
-    addToClass(decParent, method);
+    if (!addToClass(decParent, method)) {
+      Log.warn("0xTODO: Unable to decorate setter of `" + attribute.getName()
+          + "` as such a method already exists.", attribute.get_SourcePositionStart(), attribute
+              .get_SourcePositionEnd());
+      return Optional.empty();
+    }
     
-    return new MethodInformation(kind, method, templateName, attribute.getName());
+    return Optional.of(new MethodInformation(kind, method, templateName, attribute.getName()));
     
   }
   

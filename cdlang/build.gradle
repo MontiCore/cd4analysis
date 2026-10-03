@@ -87,6 +87,7 @@ dependencies {
   testImplementation testFixtures("de.monticore:monticore-grammar:$mc_version")
 
   testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testFixturesApi testFixtures("de.monticore:monticore-grammar:$mc_version")
 
   //dependencies for trafo
   if (withDSTLGen) {

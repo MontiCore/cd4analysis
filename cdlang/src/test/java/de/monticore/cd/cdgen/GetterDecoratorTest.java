@@ -7,7 +7,7 @@ import de.monticore.cd.codegen.decorators.GetterDecorator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.se_rwth.commons.logging.Log;
+import de.monticore.runtime.junit.MCAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,18 +19,28 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
   
   @Test
   public void testGetter() throws Exception {
-    var opt = CD4CodeMill.parser().parse_String("classdiagram TestGetter {\n"
-        + " <<getter>> public class TestGetterC { \n" + " boolean myBool;" + " public int myInt;"
-        + " <<noGetter>> public int pubX;" + " }\n"
-        + " public association TestGetterC -> (roleB) Other [*];\n"
-        + " public association TestGetterC -> (orderedRole) Other [*] {ordered};\n"
-        + " <<getter>> public class Other { \n" + "}\n" + "}");
+    var opt = CD4CodeMill.parser().parse_String("""
+        classdiagram TestGetter {
+         <<getter>> public class TestGetterC {
+           boolean myBool; public int myInt;
+           <<noGetter>> public int pubX;
+         }
+         public association TestGetterC -> (roleB) Other [*];
+         public association TestGetterC -> (orderedRole) Other [*] {ordered};
+         <<getter>> public class Other {
+         }
+         <<getter>> public class AlreadyExisting {
+          String x;
+          void getX(); // already existing
+         }
+        }""");
     
     Assertions.assertTrue(opt.isPresent());
     
     super.doTest(opt.get());
     
-    Assertions.assertTrue(Log.getFindings().isEmpty());
+    MCAssertions.assertHasFindingsStartingWith(
+        "0xTODO: Unable to decorate setter of `x` as such a method already exists.");
   }
   
   @Override

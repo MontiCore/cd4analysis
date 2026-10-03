@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
@@ -107,6 +108,15 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
     if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
       ASTCDClass decClazz = decoratorData.getAsDecorated(clazz);
       ASTMCType classType = MCTypeFacade.getInstance().createQualifiedType(clazz.getName());
+      // Workaround to add <?> type paras
+      if (clazz instanceof de.monticore.cd4codebasis._ast.ASTCDClass typeOfClass) {
+        if (typeOfClass.isPresentTypeParameters() && !typeOfClass.getTypeParameters()
+            .getTypeParameterList().isEmpty()) {
+          classType = CD4CodeMill.mCBasicGenericTypeBuilder().addName(clazz.getName())
+              .addAllMCTypeArguments(typeOfClass.getTypeParameters().getTypeParameterList().stream()
+                  .map(VisitorDecorator::typeParamToArg).collect(Collectors.toList())).build();
+        }
+      }
       ASTCDParameter classParameter = CD4CodeMill.cDParameterBuilder().setName("node").setMCType(
           classType).build();
       
@@ -223,6 +233,12 @@ public class VisitorImplementationDecorator extends AbstractDecorator<AbstractDe
   public void visit(ASTCDInterface cdInterface) {
     if (decoratorData.shouldDecorate(this.getClass(), cdInterface)) {
       ASTMCType classType = MCTypeFacade.getInstance().createQualifiedType(cdInterface.getName());
+      if (cdInterface.isPresentTypeParameters() && !cdInterface.getTypeParameters()
+          .getTypeParameterList().isEmpty()) {
+        classType = CD4CodeMill.mCBasicGenericTypeBuilder().addName(cdInterface.getName())
+            .addAllMCTypeArguments(cdInterface.getTypeParameters().getTypeParameterList().stream()
+                .map(VisitorDecorator::typeParamToArg).collect(Collectors.toList())).build();
+      }
       ASTCDParameter classParameter = CD4CodeMill.cDParameterBuilder().setName("node").setMCType(
           classType).build();
       
