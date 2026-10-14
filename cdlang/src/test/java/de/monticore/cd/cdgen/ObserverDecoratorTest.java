@@ -42,25 +42,25 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
           <<observable,setter>>   class CB {}
           <<observable,setter>>   class CC {}
           <<observable,setter>>   class CD {}
-          association CA <-> CB;
-          association CA <-> CC [*];
-          association CA <-> CD [0..1];
+          association public CA <-> CB public;
+          association public CA <-> CC [*] public;
+          association public CA <-> CD [0..1] public;
         
           <<observable,setter>>   class DA {}
           <<setter>>              class DB {}
           <<setter>>              class DC {}
           <<setter>>              class DD {}
-          association DA <-> DB;
-          association DA <-> DC [*];
-          association DA <-> DD [0..1];
+          association public DA <-> DB public;
+          association public DA <-> DC [*] public;
+          association public DA <-> DD [0..1] public;
         
           <<setter>>              class EA {}
           <<observable,setter>>   class EB {}
           <<observable,setter>>   class EC {}
           <<observable,setter>>   class ED {}
-          association EA <-> EB;
-          association EA <-> EC [*];
-          association EA <-> ED [0..1];
+          association public EA <-> EB public;
+          association public EA <-> EC [*] public;
+          association public EA <-> ED [0..1] public;
         
         }""");
     

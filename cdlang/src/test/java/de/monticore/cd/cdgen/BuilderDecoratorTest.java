@@ -63,7 +63,7 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
           }
           interface Level1Interface;
           class Level2class implements Level1Interface{
-            int myInt;
+            public int myInt;
           }
         }""");
     
