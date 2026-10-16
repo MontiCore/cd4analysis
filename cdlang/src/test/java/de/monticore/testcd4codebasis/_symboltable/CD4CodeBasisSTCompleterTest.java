@@ -4,6 +4,7 @@ package de.monticore.testcd4codebasis._symboltable;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.common.collect.LinkedListMultimap;
+import de.monticore.cd4code.types3.CDWithinScopeBasicsSymbolResolver;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
@@ -195,7 +196,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     SymTypeRelations.init();
     MCCollectionSymTypeRelations.init();
     OOWithinTypeBasicSymbolsResolver.init();
-    OOWithinScopeBasicSymbolsResolver.init();
+    CDWithinScopeBasicsSymbolResolver.init();
     TypeContextCalculator.init();
     TypeVisitorOperatorCalculator.init();
     CommonExpressionsLValueRelations.init();
