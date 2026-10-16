@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationModifierCoCoVisibilityInvalid{
+
+ package p1 {
+      public class A {
+        int foo;
+        int bar;
+        int field;
+      }
+      class B extends A;
+    }
+    package p2 {
+      class C;
+    }
+
+  public association Bar public p1.A -> p2.C;
+  private association Bar1 public p1.A -> p2.C;
+
+  private association Bar4 p1.A -> p2.C;
+  association Bar5 private p1.A -> p2.C;
+}

@@ -42,6 +42,9 @@ public class CDAssociationModifierCoCo implements CDAssociationASTCDAssociationC
           a.get_SourcePositionStart());
     }
     
+    //----------------------------------check the rest modifiers-----------------------------------------------------------
+    String assocName = a.isPresentName() ? a.getName() : "unnamed";
+    
     //check whether the association or symbolRole use the static modifier
     boolean mainStatic = a.getModifier() != null && a.getModifier().isStatic();
     boolean leftStatic = a.getLeft().getModifier() != null && a.getLeft().getModifier().isStatic();
@@ -49,10 +52,36 @@ public class CDAssociationModifierCoCo implements CDAssociationASTCDAssociationC
         .isStatic();
     
     if (mainStatic || leftStatic || rightStatic) {
-      String assocName = a.isPresentName() ? a.getName() : "unnamed";
-      Log.error(String.format("0xCDA61: The association '%s' must not use static modifiers.",
+      Log.error(String.format(
+          "0xCDA61: The association '%s' (or its roles) must not use static modifiers.", assocName),
+          a.get_SourcePositionStart());
+    }
+    
+    //check whether the association or symbolRole use the abstract modifier
+    
+    boolean leftAbstract = a.getLeft().getModifier() != null && a.getLeft().getModifier()
+        .isAbstract();
+    boolean rightAbstract = a.getRight().getModifier() != null && a.getRight().getModifier()
+        .isAbstract();
+    boolean mainAbstract = a.getModifier() != null && a.getModifier().isAbstract();
+    
+    if (leftAbstract || rightAbstract || mainAbstract) {
+      Log.error(String.format(
+          "0xCDA66: The association '%s' (or its roles) must not use an abstract modifier.",
           assocName), a.get_SourcePositionStart());
+    }
+    
+    //check whether the association or symbolRole use the local modifier
+    boolean leftLocal = a.getLeft().getModifier() != null && a.getLeft().getModifier().isLocal();
+    boolean rightLocal = a.getRight().getModifier() != null && a.getRight().getModifier().isLocal();
+    boolean mainLocal = a.getModifier() != null && a.getModifier().isLocal();
+    
+    if (leftLocal || rightLocal || mainLocal) {
+      Log.error(String.format(
+          "0xCDA67: The association '%s' (or its roles) must not use a local modifier.", assocName),
+          a.get_SourcePositionStart());
     }
   }
   
 }
+//TODO: LD check comments
