@@ -1,13 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.cocos.ebnf;
 
-import de.monticore.cd.CDMill;
+import de.monticore.cd.prettyprint.CDTypeKindPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.monticore.cdassociation._prettyprint.CDAssociationPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
+import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
 
 /** Checks that the attribute connected by associations exist. */
@@ -26,10 +29,12 @@ public class CDAssociationByAttributeFieldExist implements CDAssociationASTCDAss
     if (side.isPresentCDQualifier() && side.getCDQualifier().isPresentByAttributeName()) {
       final String attributeName = side.getCDQualifier().getByAttributeName();
       final SymTypeExpression type = side.getCDRole().getSymbol().getType();
-      if (type.getFieldList(attributeName, false).size() == 0) {
-        Log.error(String.format("0xCDC6B: The attribute %s does not exists in %s %s.",
-            attributeName, CDMill.cDTypeKindPrinter().print(type), type.print()), assoc
-                .get_SourcePositionStart());
+      if (WithinTypeBasicSymbolsResolver.canResolveIn(type)) {
+        OOWithinTypeBasicSymbolsResolver.resolveVariable(type, attributeName,
+            AccessModifier.ALL_INCLUSION, x -> true).ifPresentOrElse(s -> {}, () -> Log.error(
+            String.format("0xCDC6B: The attribute %s does not exists in %s %s.", attributeName,
+                new CDTypeKindPrinter().print(type), type.printFullName()),
+            assoc.get_SourcePositionStart(), assoc.get_SourcePositionEnd()));
       }
     }
   }
