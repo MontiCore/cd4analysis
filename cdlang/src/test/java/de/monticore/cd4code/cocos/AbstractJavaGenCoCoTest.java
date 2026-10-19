@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractJavaGenCoCoTest extends CD4CodeTestBasis {
   
@@ -50,7 +50,7 @@ public abstract class AbstractJavaGenCoCoTest extends CD4CodeTestBasis {
   
   private void runTest(String model, boolean expectError, String errorCode) throws IOException {
     Optional<ASTCDCompilationUnit> ast = CD4CodeMill.parser().parse_String(model);
-    assertTrue("Failed to parse model: " + model, ast.isPresent());
+    assertTrue(ast.isPresent(), "Failed to parse model: " + model);
     
     // Prepare Symbol Table from the base class
     prepareST(ast.get());
@@ -59,15 +59,14 @@ public abstract class AbstractJavaGenCoCoTest extends CD4CodeTestBasis {
     checker.checkAll(ast.get());
     
     if (expectError) {
-      assertTrue("Expected an error, but none was logged.", Log.getErrorCount() > 0);
+      assertTrue(Log.getErrorCount() > 0, "Expected an error, but none was logged.");
       if (errorCode != null) {
-        Log.getFindings().forEach(f -> assertTrue("Expected error code '" + errorCode
-            + "' but got: " + f.getMsg(), f.getMsg().startsWith(errorCode)));
+        Log.getFindings().forEach(f -> assertTrue(f.getMsg().startsWith(errorCode), "Expected error code '" + errorCode
+            + "' but got: " + f.getMsg()));
       }
     }
     else {
-      assertFalse("Expected no errors, but found some: " + Log.getFindings(), Log.getErrorCount()
-          > 0);
+      assertFalse(Log.getErrorCount() > 0, "Expected no errors, but found some: " + Log.getFindings());
     }
     // Clear findings for the next test
     Log.clearFindings();
