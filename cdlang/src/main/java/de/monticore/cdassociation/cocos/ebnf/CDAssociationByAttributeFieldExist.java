@@ -31,10 +31,10 @@ public class CDAssociationByAttributeFieldExist implements CDAssociationASTCDAss
       final SymTypeExpression type = side.getCDRole().getSymbol().getType();
       if (WithinTypeBasicSymbolsResolver.canResolveIn(type)) {
         OOWithinTypeBasicSymbolsResolver.resolveVariable(type, attributeName,
-            AccessModifier.ALL_INCLUSION, x -> true).ifPresentOrElse(s -> {}, () -> Log.error(
-            String.format("0xCDC6B: The attribute %s does not exists in %s %s.", attributeName,
-                new CDTypeKindPrinter().print(type), type.printFullName()),
-            assoc.get_SourcePositionStart(), assoc.get_SourcePositionEnd()));
+            AccessModifier.ALL_INCLUSION, x -> true).ifPresentOrElse(s -> {}, () -> Log.error(String
+                .format("0xCDC6B: The attribute %s does not exists in %s %s.", attributeName,
+                    new CDTypeKindPrinter().print(type), type.printFullName()), assoc
+                        .get_SourcePositionStart(), assoc.get_SourcePositionEnd()));
       }
     }
   }
