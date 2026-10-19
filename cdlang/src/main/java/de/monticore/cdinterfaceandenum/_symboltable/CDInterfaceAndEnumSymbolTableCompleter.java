@@ -9,8 +9,11 @@ import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.*;
 import de.monticore.types3.TypeCheck3;
+import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
@@ -84,9 +87,15 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = ast.getEnclosingScope().getName();
     // call getEnclosingScope() twice, to achieve the correct package name
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, ast
-        .getEnclosingScope().getEnclosingScope());
-    symbol.setType(typeObject);
+    Optional<SymTypeExpression> enumType = WithinScopeBasicSymbolsResolver
+        .resolveType(symbol.getEnclosingScope().getEnclosingScope(), enumName);
+    if (enumType.isEmpty()) {
+      Log.error(String.format(
+              "0xCDA96: The type of the enum constant (%s) could not be resolved", symbol.getName()),
+          ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+    } else {
+      symbol.setType(enumType.get());
+    }
     
     // Don't store the arguments in the ST
   }

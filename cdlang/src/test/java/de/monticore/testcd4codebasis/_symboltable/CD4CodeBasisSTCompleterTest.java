@@ -15,10 +15,8 @@ import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
-import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeIdAsConstructorCTTIVisitor;
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
-import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeIdAsConstructorCTTIVisitor;
 import de.monticore.io.paths.MCPath;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -218,15 +216,13 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     visBitExpressions.setType4Ast(type4Ast);
     traverser.add4BitExpressions(visBitExpressions);
     
-    CommonExpressionsCTTIVisitor visCommonExpressions =
-        new CommonExpressionsTypeIdAsConstructorCTTIVisitor();
+    CommonExpressionsCTTIVisitor visCommonExpressions = new CommonExpressionsCTTIVisitor();
     visCommonExpressions.setType4Ast(type4Ast);
     visCommonExpressions.setContext4Ast(ctx4Ast);
     traverser.add4CommonExpressions(visCommonExpressions);
     traverser.setCommonExpressionsHandler(visCommonExpressions);
     
-    ExpressionBasisCTTIVisitor visExpressionBasis =
-        new ExpressionBasisTypeIdAsConstructorCTTIVisitor();
+    ExpressionBasisCTTIVisitor visExpressionBasis = new ExpressionBasisCTTIVisitor();
     visExpressionBasis.setType4Ast(type4Ast);
     visExpressionBasis.setContext4Ast(ctx4Ast);
     traverser.add4ExpressionsBasis(visExpressionBasis);

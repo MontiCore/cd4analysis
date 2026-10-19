@@ -6,10 +6,8 @@ import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4code.types3.CDWithinScopeBasicsSymbolResolver;
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
-import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeIdAsConstructorCTTIVisitor;
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
-import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeIdAsConstructorCTTIVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.types.mcarraytypes.types3.MCArrayTypesTypeVisitor;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
@@ -57,15 +55,13 @@ public class CD4AnalysisTypeCheck3 extends MapBasedTypeCheck3 {
     visBitExpressions.setType4Ast(type4Ast);
     traverser.add4BitExpressions(visBitExpressions);
     
-    CommonExpressionsCTTIVisitor visCommonExpressions =
-        new CommonExpressionsTypeIdAsConstructorCTTIVisitor();
+    CommonExpressionsCTTIVisitor visCommonExpressions = new CommonExpressionsCTTIVisitor();
     visCommonExpressions.setType4Ast(type4Ast);
     visCommonExpressions.setContext4Ast(ctx4Ast);
     traverser.add4CommonExpressions(visCommonExpressions);
     traverser.setCommonExpressionsHandler(visCommonExpressions);
     
-    ExpressionBasisCTTIVisitor visExpressionBasis =
-        new ExpressionBasisTypeIdAsConstructorCTTIVisitor();
+    ExpressionBasisCTTIVisitor visExpressionBasis = new ExpressionBasisCTTIVisitor();
     visExpressionBasis.setType4Ast(type4Ast);
     visExpressionBasis.setContext4Ast(ctx4Ast);
     traverser.add4ExpressionsBasis(visExpressionBasis);

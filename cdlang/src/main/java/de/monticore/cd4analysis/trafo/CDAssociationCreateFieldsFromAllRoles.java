@@ -19,10 +19,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
@@ -140,19 +140,15 @@ public class CDAssociationCreateFieldsFromAllRoles implements CDAssociationVisit
     else {
       final ASTCDCardinality cardinality = symbol.getCardinality();
       if (cardinality.isOpt()) {
-        type = SymTypeExpressionFactory.createGenerics("java.util.Optional", symbol
-            .getEnclosingScope(), symbol.getType());
+        type = MCCollectionSymTypeFactory.createOptional(symbol.getType());
       }
       else {
-        final String container;
         if (symbol.isIsOrdered()) {
-          container = "java.util.List";
+          type = MCCollectionSymTypeFactory.createList(symbol.getType());
         }
         else {
-          container = "java.util.Set";
+          type = MCCollectionSymTypeFactory.createSet(symbol.getType());
         }
-        type = SymTypeExpressionFactory.createGenerics(container, symbol.getEnclosingScope(), symbol
-            .getType());
       }
     }
     
