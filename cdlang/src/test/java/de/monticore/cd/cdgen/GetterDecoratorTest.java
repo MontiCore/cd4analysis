@@ -20,6 +20,7 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
   @Test
   public void testGetter() throws Exception {
     var opt = CD4CodeMill.parser().parse_String("""
+        import java.lang.String;
         classdiagram TestGetter {
          <<getter>> public class TestGetterC {
            boolean myBool; public int myInt;
@@ -33,6 +34,10 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
           String x;
           void getX(); // already existing
          }
+         interface SomeInterface<T> {}
+         <<getter>> public class  GenericTest implements SomeInterface<GenericTest> {
+          java.util.List<SomeInterface<GenericTest>> innerList;
+         }
         }""");
     
     Assertions.assertTrue(opt.isPresent());
@@ -41,6 +46,11 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
     
     MCAssertions.assertHasFindingsStartingWith(
         "0xTODO: Unable to decorate setter of `x` as such a method already exists.");
+  }
+  
+  @Override
+  protected boolean withClass2MC() {
+    return true;
   }
   
   @Override
