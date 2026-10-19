@@ -111,16 +111,16 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     symbol.setIsConstructor(true);
     symbol.setIsAbstract(ast.getModifier().isAbstract());
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
-    Optional<SymTypeExpression> symType = WithinScopeBasicSymbolsResolver.resolveType(symbol.getEnclosingScope(), symbol.getName());
+    Optional<SymTypeExpression> symType = WithinScopeBasicSymbolsResolver.resolveType(symbol
+        .getEnclosingScope(), symbol.getName());
     if (symType.isEmpty()) {
-      Log.error(String.format(
-          "0xCDA94: The type of the constructor (%s) could not be resolved", symbol.getName()),
-          ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+      Log.error(String.format("0xCDA94: The type of the constructor (%s) could not be resolved",
+          symbol.getName()), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
     }
     else {
       symbol.setType(symType.get());
     }
-
+    
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
         final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
@@ -174,16 +174,16 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = ast.getEnclosingScope().getName();
     // call getEnclosingScope() twice, so the full name of the type evaluates to the correct package
-    Optional<SymTypeExpression> enumType = WithinScopeBasicSymbolsResolver
-        .resolveType(symbol.getEnclosingScope().getEnclosingScope(), enumName);
+    Optional<SymTypeExpression> enumType = WithinScopeBasicSymbolsResolver.resolveType(symbol
+        .getEnclosingScope().getEnclosingScope(), enumName);
     if (enumType.isEmpty()) {
-      Log.error(String.format(
-          "0xCDA95: The type of the enum constant (%s) could not be resolved", symbol.getName()),
-          ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
-    } else {
+      Log.error(String.format("0xCDA95: The type of the enum constant (%s) could not be resolved",
+          symbol.getName()), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+    }
+    else {
       symbol.setType(enumType.get());
     }
-
+    
     // Don't store the arguments in the ST
   }
   

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CDGenTest {
-
+  
   @Test
   public void doTest() throws Exception {
     LogStub.initPlusLog();
@@ -76,7 +76,7 @@ public class CDGenTest {
     // After parse Trafos
     var afterParseTrafo = new CD4AnalysisAfterParseTrafo();
     afterParseTrafo.transform(opt.get());
-
+    
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     MCCollectionSymTypeRelations.init();
     
@@ -98,20 +98,21 @@ public class CDGenTest {
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     glex.setGlobalValue("cdGenService", new CDGenService());
-
-    TemplateHashModel freemarkerStaticModels =
-        new BeansWrapper(GeneratorSetup.FREEMARKER_VERSION).getStaticModels();
+    
+    TemplateHashModel freemarkerStaticModels = new BeansWrapper(GeneratorSetup.FREEMARKER_VERSION)
+        .getStaticModels();
     try {
-      glex.defineGlobalVar("TypeCheck3",
-          freemarkerStaticModels.get("de.monticore.types3.TypeCheck3"));
+      glex.defineGlobalVar("TypeCheck3", freemarkerStaticModels.get(
+          "de.monticore.types3.TypeCheck3"));
       glex.defineGlobalVar("SymTypeRelations", freemarkerStaticModels.get(
           "de.monticore.types3.SymTypeRelations"));
       glex.defineGlobalVar("MCCollectionSymTypeRelations", freemarkerStaticModels.get(
           "de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations"));
-    } catch (TemplateModelException e) {
+    }
+    catch (TemplateModelException e) {
       Log.error("0xCDD63: Could not set up FreeMarker static models for CDGenTool", e);
     }
-
+    
     GeneratorSetup generatorSetup = new GeneratorSetup();
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/outtest"));

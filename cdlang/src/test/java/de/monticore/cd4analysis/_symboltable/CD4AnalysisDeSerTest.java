@@ -124,10 +124,11 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final Optional<CDTypeSymbol> c = scope.resolveCDType("A");
     final ICD4AnalysisScope innerSpanningScope = CD4AnalysisMill.scope();
     innerSpanningScope.setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope());
-    Optional<SymTypeExpression> aType = WithinScopeBasicSymbolsResolver.resolveType(innerSpanningScope, "A");
+    Optional<SymTypeExpression> aType = WithinScopeBasicSymbolsResolver.resolveType(
+        innerSpanningScope, "A");
     assertTrue(aType.isPresent());
-    innerSpanningScope.add(OOSymbolsMill.fieldSymbolBuilder().setName("field").setType(
-        aType.get()).build());
+    innerSpanningScope.add(OOSymbolsMill.fieldSymbolBuilder().setName("field").setType(aType.get())
+        .build());
     final CDTypeSymbol inner = CDBasisMill.cDTypeSymbolBuilder().setName("Inner").setIsClass(true)
         .setIsStatic(true).setSpannedScope(innerSpanningScope).build();
     c.get().getSpannedScope().add(inner);

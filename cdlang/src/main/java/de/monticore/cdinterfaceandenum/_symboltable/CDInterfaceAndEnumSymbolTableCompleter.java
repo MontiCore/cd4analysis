@@ -87,13 +87,13 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = ast.getEnclosingScope().getName();
     // call getEnclosingScope() twice, to achieve the correct package name
-    Optional<SymTypeExpression> enumType = WithinScopeBasicSymbolsResolver
-        .resolveType(symbol.getEnclosingScope().getEnclosingScope(), enumName);
+    Optional<SymTypeExpression> enumType = WithinScopeBasicSymbolsResolver.resolveType(symbol
+        .getEnclosingScope().getEnclosingScope(), enumName);
     if (enumType.isEmpty()) {
-      Log.error(String.format(
-              "0xCDA96: The type of the enum constant (%s) could not be resolved", symbol.getName()),
-          ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
-    } else {
+      Log.error(String.format("0xCDA96: The type of the enum constant (%s) could not be resolved",
+          symbol.getName()), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+    }
+    else {
       symbol.setType(enumType.get());
     }
     

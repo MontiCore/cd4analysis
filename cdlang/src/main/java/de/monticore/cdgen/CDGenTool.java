@@ -265,23 +265,24 @@ public class CDGenTool extends CD4CodeTool {
       Collection<ASTCDCompilationUnit> asts) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     glex.setGlobalValue("cdGenService", new CDGenService());
-
-    TemplateHashModel freemarkerStaticModels =
-        new BeansWrapper(GeneratorSetup.FREEMARKER_VERSION).getStaticModels();
+    
+    TemplateHashModel freemarkerStaticModels = new BeansWrapper(GeneratorSetup.FREEMARKER_VERSION)
+        .getStaticModels();
     try {
-      glex.defineGlobalVar("TypeCheck3",
-          freemarkerStaticModels.get("de.monticore.types3.TypeCheck3"));
+      glex.defineGlobalVar("TypeCheck3", freemarkerStaticModels.get(
+          "de.monticore.types3.TypeCheck3"));
       glex.defineGlobalVar("SymTypeRelations", freemarkerStaticModels.get(
           "de.monticore.types3.SymTypeRelations"));
       glex.defineGlobalVar("MCCollectionSymTypeRelations", freemarkerStaticModels.get(
           "de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations"));
-    } catch (TemplateModelException e) {
+    }
+    catch (TemplateModelException e) {
       Log.error("0xCDD63: Could not set up FreeMarker static models for CDGenTool", e);
     }
-
+    
     CDGenerator generator = new CDGenerator(setup);
     DecoratorConfig decSetup = new DecoratorConfig();
-
+    
     // e.g., prepare the global scope for decorated symbol table
     initDecoratedGlobalScope.run();
     

@@ -61,12 +61,13 @@ public abstract class AbstractJavaGenCoCoTest extends CD4CodeTestBasis {
     if (expectError) {
       assertTrue(Log.getErrorCount() > 0, "Expected an error, but none was logged.");
       if (errorCode != null) {
-        Log.getFindings().forEach(f -> assertTrue(f.getMsg().startsWith(errorCode), "Expected error code '" + errorCode
-            + "' but got: " + f.getMsg()));
+        Log.getFindings().forEach(f -> assertTrue(f.getMsg().startsWith(errorCode),
+            "Expected error code '" + errorCode + "' but got: " + f.getMsg()));
       }
     }
     else {
-      assertFalse(Log.getErrorCount() > 0, "Expected no errors, but found some: " + Log.getFindings());
+      assertFalse(Log.getErrorCount() > 0, "Expected no errors, but found some: " + Log
+          .getFindings());
     }
     // Clear findings for the next test
     Log.clearFindings();

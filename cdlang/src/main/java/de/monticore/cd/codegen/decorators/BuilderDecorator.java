@@ -181,9 +181,8 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
           Log.error("0xCDD62: Could not determine type of attribute " + attribute.getName(),
               attribute.get_SourcePositionStart(), attribute.get_SourcePositionEnd());
         }
-        if (MCCollectionSymTypeRelations.isList(attributeType)
-            || MCCollectionSymTypeRelations.isOptional(attributeType)
-            || MCCollectionSymTypeRelations.isSet(attributeType)) {
+        if (MCCollectionSymTypeRelations.isList(attributeType) || MCCollectionSymTypeRelations
+            .isOptional(attributeType) || MCCollectionSymTypeRelations.isSet(attributeType)) {
           ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
               .modifierBuilder().PUBLIC().build(), builderClass.getName(), "set"
                   + StringTransformations.capitalize(attribute.getName()) + "Absent");
