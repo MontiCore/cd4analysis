@@ -20,11 +20,11 @@ public class GetterDecoratorResultTest {
     obj.__setMyInt(42);
     Assertions.assertEquals(42, obj.getMyInt());
     
-    // Check if the boolean is prefixed with is & has the "public" default visibility (via default)
+    // Check if the boolean is prefixed with is and has relaxed protected visibility
     Method isMyBool = TestGetter.TestGetterC.class.getDeclaredMethod("isMyBool");
-    Assertions.assertTrue(Modifier.isPublic(isMyBool.getModifiers()));
+    Assertions.assertFalse(Modifier.isPublic(isMyBool.getModifiers()));
     Assertions.assertFalse(Modifier.isPrivate(isMyBool.getModifiers()));
-    Assertions.assertFalse(Modifier.isProtected(isMyBool.getModifiers()));
+    Assertions.assertTrue(Modifier.isProtected(isMyBool.getModifiers()));
     
     // Test NoGetter / public
     Assertions.assertEquals(0, obj.pubX);
