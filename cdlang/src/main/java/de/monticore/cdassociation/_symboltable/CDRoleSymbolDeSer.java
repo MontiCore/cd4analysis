@@ -96,7 +96,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
     if (symbolJson.hasMember("attributeQualifier")) {
       final String fieldName = symbolJson.getStringMember("attributeQualifier");
       final SymTypeExpression type = SymTypeExpressionDeSer.deserializeMember("type", symbolJson);
-      // crate a surrogate to link to the existing variable
+      // create a surrogate to link to the existing variable
       return Optional.of(OOSymbolsMill.fieldSymbolSurrogateBuilder().setName(fieldName)
           .setEnclosingScope(CDAssociationMill.globalScope()).setType(type).build());
     }
