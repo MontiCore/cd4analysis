@@ -29,9 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
-import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
-import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -154,23 +151,27 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     
     final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("cd4code.parser.Complete.A");
     assertTrue(aType1.isPresent());
-
+    
     SymTypeExpression aType1Expr = SymTypeExpressionFactory.createFromSymbol(aType1.get());
-
-    List<SymTypeOfFunction > meths1 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(aType1Expr, "getName", BasicAccessModifier.PUBLIC, t->true);
+    
+    List<SymTypeOfFunction> meths1 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(aType1Expr,
+        "getName", BasicAccessModifier.PUBLIC, t -> true);
     assertEquals(1, meths1.size());
-
-    List<SymTypeOfFunction > meths2 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(aType1Expr, "getX", AccessModifier.ALL_INCLUSION, t->true);
+    
+    List<SymTypeOfFunction> meths2 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(aType1Expr,
+        "getX", AccessModifier.ALL_INCLUSION, t -> true);
     assertEquals(0, meths2.size());
     
     final Optional<CDTypeSymbol> bType1 = gs.resolveCDType("cd4code.parser.Complete.B");
     assertTrue(bType1.isPresent());
-
+    
     SymTypeExpression bType1Expr = SymTypeExpressionFactory.createFromSymbol(bType1.get());
-    List<SymTypeOfFunction > meths3 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(bType1Expr, "getName", BasicAccessModifier.PUBLIC, t->true);
+    List<SymTypeOfFunction> meths3 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(bType1Expr,
+        "getName", BasicAccessModifier.PUBLIC, t -> true);
     assertEquals(1, meths3.size());
-
-    List<SymTypeOfFunction > meths4 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(bType1Expr, "getX", AccessModifier.ALL_INCLUSION, t->true);
+    
+    List<SymTypeOfFunction> meths4 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(bType1Expr,
+        "getX", AccessModifier.ALL_INCLUSION, t -> true);
     assertEquals(1, meths4.size());
     MethodSymbol meth4 = (MethodSymbol) meths4.getFirst().getSymbol();
     

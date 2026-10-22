@@ -142,8 +142,8 @@ public class TestCDBasisResolvingTest extends TestBasis {
     final Optional<OOTypeSymbol> d0 = artifactScope.resolveOOTypeDown("d.D");
     assertTrue(d0.isPresent(), "OOTypeSymbol d.D could not be resolved:\n" + getJoinedErrors());
     final Optional<SymTypeExpression> a1_4 = OOWithinTypeBasicSymbolsResolver.resolveVariable(
-        SymTypeExpressionFactory.createFromSymbol(d0.get()), "a1",
-        AccessModifier.ALL_INCLUSION, v -> true);
+        SymTypeExpressionFactory.createFromSymbol(d0.get()), "a1", AccessModifier.ALL_INCLUSION,
+        v -> true);
     assertTrue(a1_4.isPresent(), "Field d.D.a1 could not be resolved:\n" + getJoinedErrors());
     checkLogError();
     
@@ -165,8 +165,8 @@ public class TestCDBasisResolvingTest extends TestBasis {
     
     // a1 is inherited from a.B and thus only resolvable including supertypes
     final Optional<SymTypeExpression> a1_7 = OOWithinTypeBasicSymbolsResolver.resolveVariable(
-        SymTypeExpressionFactory.createFromSymbol(d.get()), "a1",
-        AccessModifier.ALL_INCLUSION, v -> true);
+        SymTypeExpressionFactory.createFromSymbol(d.get()), "a1", AccessModifier.ALL_INCLUSION,
+        v -> true);
     assertTrue(a1_7.isPresent(), "Field a1 could not be resolved:\n" + getJoinedErrors());
     assertTrue(a1_7.get().getSourceInfo().getSourceSymbol().isPresent());
     assertSame(a1_5.get(), a1_7.get().getSourceInfo().getSourceSymbol().get(),
