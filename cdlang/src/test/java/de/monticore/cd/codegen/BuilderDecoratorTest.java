@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BuilderDecoratorTest extends AbstractDecoratorTest {
 
-
   @Test
   public void decoratorTest() throws IOException {
 
@@ -43,7 +42,7 @@ public class BuilderDecoratorTest extends AbstractDecoratorTest {
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
 
-    super.doTest(optAST.get());
+    super.doTest(ast);
 
     assertTrue(Log.getFindings().isEmpty());
   }
