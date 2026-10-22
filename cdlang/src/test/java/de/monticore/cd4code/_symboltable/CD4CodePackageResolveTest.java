@@ -11,28 +11,32 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.runtime.junit.TestWithMCLanguage;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.symboltable.modifiers.AccessModifier;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfFunction;
 import de.monticore.types.check.SymTypeOfGenerics;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
+import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
+import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
+@TestWithMCLanguage(CD4CodeMill.class)
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
-  
-  @BeforeAll
-  public static void beforeClass() throws Exception {
-    CD4CodeMill.reset();
-    CD4CodeMill.init();
-  }
   
   @Test
   public void resolvingWithPackages() throws IOException {
@@ -139,7 +143,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
   }
   
   @Test
-  public void resolving() throws IOException {
+  public void resolving() {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cd4code/parser/Complete.cd");
     ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(
         astcdCompilationUnit);
@@ -150,26 +154,30 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     
     final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("cd4code.parser.Complete.A");
     assertTrue(aType1.isPresent());
-    
-    final Optional<MethodSymbol> meth1 = aType1.get().getSpannedScope().resolveMethod("getName");
-    assertTrue(meth1.isPresent());
-    
-    final Optional<MethodSymbol> meth2 = aType1.get().getSpannedScope().resolveMethod("getX");
-    assertFalse(meth2.isPresent());
+
+    SymTypeExpression aType1Expr = SymTypeExpressionFactory.createFromSymbol(aType1.get());
+
+    List<SymTypeOfFunction > meths1 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(aType1Expr, "getName", BasicAccessModifier.PUBLIC, t->true);
+    assertEquals(1, meths1.size());
+
+    List<SymTypeOfFunction > meths2 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(aType1Expr, "getX", AccessModifier.ALL_INCLUSION, t->true);
+    assertEquals(0, meths2.size());
     
     final Optional<CDTypeSymbol> bType1 = gs.resolveCDType("cd4code.parser.Complete.B");
-    assertTrue(aType1.isPresent());
+    assertTrue(bType1.isPresent());
+
+    SymTypeExpression bType1Expr = SymTypeExpressionFactory.createFromSymbol(bType1.get());
+    List<SymTypeOfFunction > meths3 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(bType1Expr, "getName", BasicAccessModifier.PUBLIC, t->true);
+    assertEquals(1, meths3.size());
+
+    List<SymTypeOfFunction > meths4 = OOWithinTypeBasicSymbolsResolver.resolveFunctions(bType1Expr, "getX", AccessModifier.ALL_INCLUSION, t->true);
+    assertEquals(1, meths4.size());
+    MethodSymbol meth4 = (MethodSymbol) meths4.getFirst().getSymbol();
     
-    final Optional<MethodSymbol> meth3 = bType1.get().getSpannedScope().resolveMethod("getName");
-    assertTrue(meth3.isPresent());
-    
-    final Optional<MethodSymbol> meth4 = bType1.get().getSpannedScope().resolveMethod("getX");
-    assertTrue(meth4.isPresent());
-    
-    final Optional<VariableSymbol> field1 = meth4.get().getSpannedScope().resolveVariable("a");
+    final Optional<VariableSymbol> field1 = meth4.getSpannedScope().resolveVariable("a");
     assertTrue(field1.isPresent());
     
-    final Optional<VariableSymbol> field2 = meth4.get().getEnclosingScope().resolveVariable("a");
+    final Optional<VariableSymbol> field2 = meth4.getEnclosingScope().resolveVariable("a");
     assertFalse(field2.isPresent());
   }
   

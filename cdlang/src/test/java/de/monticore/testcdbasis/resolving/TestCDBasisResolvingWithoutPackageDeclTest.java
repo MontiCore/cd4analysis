@@ -2,6 +2,7 @@
 package de.monticore.testcdbasis.resolving;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd.TestBasis;
@@ -18,9 +19,13 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.testcdbasis.TestCDBasisMill;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -135,10 +140,14 @@ public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
     assertTrue(a1_3.isPresent(), "Field a.B.a1 could not be resolved:\n" + getJoinedErrors());
     checkLogError();
     
-    final Optional<FieldSymbol> a1_4 = artifactScope.resolveFieldDown("d.D.a1");
+    final Optional<OOTypeSymbol> d0 = artifactScope.resolveOOTypeDown("d.D");
+    assertTrue(d0.isPresent(), "OOTypeSymbol d.D could not be resolved:\n" + getJoinedErrors());
+    final Optional<SymTypeExpression> a1_4 = OOWithinTypeBasicSymbolsResolver.resolveVariable(
+        SymTypeExpressionFactory.createFromSymbol(d0.get()), "a1",
+        AccessModifier.ALL_INCLUSION, v -> true);
     assertTrue(a1_4.isPresent(), "Field d.D.a1 could not be resolved:\n" + getJoinedErrors());
     checkLogError();
-    
+
     final Optional<OOTypeSymbol> b = globalScope.resolveOOType("Packages.a.B");
     assertTrue(b.isPresent(), "OOTypeSymbol a.B could not be resolved:\n" + getJoinedErrors());
     checkLogError();
@@ -155,12 +164,14 @@ public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
     assertTrue(d.isPresent(), "OOTypeSymbol d.D could not be resolved:\n" + getJoinedErrors());
     checkLogError();
     
-    final Optional<FieldSymbol> a1_7 = d.get().getSpannedScope().resolveField("a1");
+    // a1 is inherited from a.B and thus only resolvable including supertypes
+    final Optional<SymTypeExpression> a1_7 = OOWithinTypeBasicSymbolsResolver.resolveVariable(
+        SymTypeExpressionFactory.createFromSymbol(d.get()), "a1",
+        AccessModifier.ALL_INCLUSION, v -> true);
     assertTrue(a1_7.isPresent(), "Field a1 could not be resolved:\n" + getJoinedErrors());
-    checkLogError();
-    
-    final Optional<VariableSymbol> a1_8 = d.get().getSpannedScope().resolveVariable("a1");
-    assertTrue(a1_8.isPresent(), "Field a1 could not be resolved:\n" + getJoinedErrors());
+    assertTrue(a1_7.get().getSourceInfo().getSourceSymbol().isPresent());
+    assertSame(a1_5.get(), a1_7.get().getSourceInfo().getSourceSymbol().get(),
+        "Field a1 of D should be the field a1 inherited from a.B");
     checkLogError();
   }
   
