@@ -43,7 +43,8 @@ public class CDAssociationModifierCoCo implements CDAssociationASTCDAssociationC
           assocName), a.get_SourcePositionStart());
     }
     
-    //// Ensure that neither the association nor its roles use forbidden modifiers (static, abstract, local)
+    //// Ensure that neither the association nor its roles use forbidden modifiers (static,
+    /// abstract, local)
     checkForbiddenModifier(a, ASTModifier::isStatic, "0xCDA61", String.format(
         "The association '%s' (or its roles) must not use static modifiers.", assocName));
     checkForbiddenModifier(a, ASTModifier::isAbstract, "0xCDA67", String.format(
