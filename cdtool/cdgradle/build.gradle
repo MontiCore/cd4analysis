@@ -62,6 +62,7 @@ tasks.register('generateResources') {
     propFile = layout.buildDirectory.file("generated/buildInfo.properties")
   }
   outputs.file propFile
+  inputs.property("version", project.findProperty("version"))
   doLast {
     File f = propFile.get().asFile
     f.parentFile.mkdirs()

@@ -3,6 +3,7 @@ package de.monticore.cd.codegen.decorators;
 
 import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
+import de.monticore.cd.codegen.MCTypeFacadeFix;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.facade.CDParameterFacade;
@@ -72,7 +73,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       {
         //create an attribute of the type and the name of an observer
         ASTCDAttribute observerList = CD4CodeMill.cDAttributeBuilder().setName(OBS_LIST_ATTR)
-            .setMCType(MCTypeFacade.getInstance().createListTypeOf(observerInterfaceQualifiedType))
+            .setMCType(MCTypeFacadeFix.createListTypeOf(observerInterfaceQualifiedType))
             .setModifier(CD4CodeMill.modifierBuilder().PROTECTED().build()).build();
         decClazz.addCDMember(observerList);
         

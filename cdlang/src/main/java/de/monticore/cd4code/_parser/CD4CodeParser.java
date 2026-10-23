@@ -8,7 +8,24 @@ import java.util.Optional;
 
 public class CD4CodeParser extends CD4CodeParserTOP {
   
-  boolean _checkFileAndPackageName = true;
+  protected boolean _checkFileAndPackageName;
+  
+  /**
+   * The parser for this grammar.
+   * {@link de.monticore.cd4code.CD4CodeMill#parser()} should be preferred over this constructor, as
+   * this further enables language composition.
+   *
+   * @deprecated new instances of a parser should be retrieved via a language's mill
+   */
+  @Deprecated
+  public CD4CodeParser() {
+    this(true);
+  }
+  
+  @SuppressWarnings("deprecation")
+  public CD4CodeParser(boolean _checkFileAndPackageName) {
+    this._checkFileAndPackageName = _checkFileAndPackageName;
+  }
   
   @Override
   public Optional<ASTCDCompilationUnit> parse(String fileName) throws IOException {

@@ -96,6 +96,10 @@ public class DecoratorConfig {
     return this.withDecorator(new MethodImplementationDecorator());
   }
   
+  public ChainableGenSetup withRequiredArgsConstructors() {
+    return this.withDecorator(new RequiredArgsConstructorDecorator());
+  }
+  
   @SuppressWarnings("unchecked")
   public ChainableGenSetup withDecorator(String className) {
     IDecorator<?> newObj = (IDecorator<?>) ObjectFactory.createObject(className);

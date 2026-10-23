@@ -38,7 +38,6 @@ dependencies {
   testImplementation "org.freemarker:freemarker:$freemarker_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
-  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
   testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
   testImplementation ("de.monticore:monticore-runtime:$mc_version") capabilities {
@@ -47,6 +46,7 @@ dependencies {
   testImplementation "com.google.code.findbugs:jsr305:$findbugs_version"
   testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
   testImplementation testFixtures(project(':cdlang'))
+  testImplementation testFixtures("de.monticore:monticore-runtime:$mc_version")
   implementationWithoutExtras("de.monticore.lang:od:$mc_version") {
     exclude group: 'de.monticore.lang', module:'cd4analysis'
   }
@@ -102,6 +102,7 @@ tasks.register('toolTest', Test) {
   systemProperty "toolJarFile",  tasks.shadowJar.outputs.files.singleFile
   // Pass mc_version to the test
   systemProperty "mc_version",  mc_version
+  inputs.property("version", project.findProperty("version"))
 }
 
 check.dependsOn toolTest

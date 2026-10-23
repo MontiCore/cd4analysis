@@ -122,7 +122,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     assertTrue(fieldSymbol.isPresent());
     final SymTypeExpression type = fieldSymbol.get().getType();
     assertTrue(type.isGenericType());
-    assertEquals("java.util.List", ((SymTypeOfGenerics) type).getFullName());
+    assertEquals("java.util.List", ((SymTypeOfGenerics) type).getTypeConstructorFullName());
     assertEquals("java.lang.String", ((SymTypeOfGenerics) type).getArgumentList().get(0)
         .getTypeInfo().getFullName());
     

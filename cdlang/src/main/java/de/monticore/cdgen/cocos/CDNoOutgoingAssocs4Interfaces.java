@@ -3,8 +3,10 @@ package de.monticore.cdgen.cocos;
 
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
 public class CDNoOutgoingAssocs4Interfaces implements CDAssociationASTCDAssociationCoCo {
@@ -23,17 +25,17 @@ public class CDNoOutgoingAssocs4Interfaces implements CDAssociationASTCDAssociat
     if (node.getCDAssocDir().isDefinitiveNavigableLeft()) {
       checkSide(node.getRight().getMCQualifiedType(), node);
     }
-    
   }
   
   protected void checkSide(ASTMCQualifiedType type, ASTCDAssociation context) {
     // Resolve the symbol for the type and check if it's an interface
-    context.getEnclosingScope().resolveCDType(type.printType()).ifPresent(symbol -> {
-      if (symbol.getAstNode() instanceof ASTCDInterface) {
-        Log.error(String.format(ERROR_MESSAGE, symbol.getName()), context
-            .get_SourcePositionStart());
-      }
-    });
+    final SymTypeExpression typeExpression = TypeCheck3.symTypeFromAST(type);
+    if (typeExpression.isObjectType() && typeExpression.hasTypeInfo() && typeExpression
+        .getTypeInfo() instanceof OOTypeSymbol && ((OOTypeSymbol) typeExpression.getTypeInfo())
+            .isIsInterface()) {
+      Log.error(String.format(ERROR_MESSAGE, type.printType()), context.get_SourcePositionStart(),
+          context.get_SourcePositionEnd());
+    }
   }
   
 }

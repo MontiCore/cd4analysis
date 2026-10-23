@@ -14,6 +14,8 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,7 +27,7 @@ class MethodSignatureStringTest {
   
   @BeforeAll
   public static void setup() {
-    Log.init();
+    LogStub.initPlusLog();
     Log.enableFailQuick(false);
     Log.clearFindings();
     CD4CodeMill.reset();

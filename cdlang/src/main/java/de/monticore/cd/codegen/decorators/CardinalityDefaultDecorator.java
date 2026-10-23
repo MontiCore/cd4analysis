@@ -3,6 +3,7 @@ package de.monticore.cd.codegen.decorators;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
+import com.google.common.collect.Iterables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -77,7 +78,7 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
     // Setting the initial value of the attribute fails, as
     // "new"/CreatorExpression is not part of CD4C
     glex.addAfterTemplate(EMPTY_BODY, c, new TemplateHookPoint("methods.Instantiation", attribute
-        .getName(), ArrayList.class.getName()))));
+        .getName(), ArrayList.class.getName() + "<>"))));
   }
   
   protected ASTModifier createModifier(ASTModifier original) {
@@ -101,6 +102,13 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
+  }
+  
+  @Override
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
+    // Constructors may be added here
+    return Iterables.concat(super.getMustRunAfter(), List.of(
+        RequiredArgsConstructorDecorator.class));
   }
   
 }

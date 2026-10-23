@@ -9,15 +9,8 @@ import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassExtendsOnlyClasses;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsNotCyclic;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsOnlyInterfaces;
-import de.monticore.types.check.AbstractDerive;
 
 public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
-  
-  private final AbstractDerive calculator;
-  
-  public CDBasisCoCos(AbstractDerive calculator) {
-    this.calculator = calculator;
-  }
   
   @Override
   public CDBasisCoCoChecker createNewChecker() {
@@ -36,7 +29,7 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     // CDAttribute
     checker.addCoCo(new CDAttributeTypeExists());
     checker.addCoCo(new CDAttributeNameLowerCaseIfNotStatic());
-    checker.addCoCo(new CDAttributeInitialTypeCompatible(calculator));
+    checker.addCoCo(new CDAttributeInitialTypeCompatible());
     checker.addCoCo(new CDAttributeUniqueInClass());
     
     // CDClass
