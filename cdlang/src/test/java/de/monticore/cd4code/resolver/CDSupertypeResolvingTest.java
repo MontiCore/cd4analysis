@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
   
@@ -114,14 +114,13 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     
     // can the class be resolved without using the symboltable completer
     var resolved = simpleClassA.getEnclosingScope().resolveCDType("SimpleClassB");
-    assertTrue("SuperType B can be resolved without the symbol table completer.", resolved
-        .isPresent());
+    assertTrue(resolved.isPresent(),
+        "SuperType B can be resolved without the symbol table completer.");
     
     // can an attribute be resolved without using the symboltable completer? it should not work not but who knows
     var resolvedVar = simpleClassA.getEnclosingScope().resolveVariable("valueB");
-    assertFalse(
-        "Attribute valueB from SuperClassB was unexpectedly resolved without the symbol table completer",
-        resolvedVar.isPresent());
+    assertFalse(resolvedVar.isPresent(),
+        "Attribute valueB from SuperClassB was unexpectedly resolved without the symbol table completer");
   }
   
   @Test
@@ -136,8 +135,8 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
         .stream().filter(c -> c.getName().equals("InterfaceClassA")).findFirst().get();
     
     var resolvedInterface = interfaceClassA.getEnclosingScope().resolveCDType("I");
-    assertTrue("The implemented interface I should be resolvable even without the completer.",
-        resolvedInterface.isPresent());
+    assertTrue(resolvedInterface.isPresent(),
+        "The implemented interface I should be resolvable even without the completer.");
   }
   
   @Test
@@ -152,12 +151,12 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
         .getFirst();
     
     var resolvedClassB = cascadingClass.getEnclosingScope().resolveCDType("SimpleClassB");
-    assertTrue("The SuperClass ClassB should be resolvable even without the completer.",
-        resolvedClassB.isPresent());
+    assertTrue(resolvedClassB.isPresent(),
+        "The SuperClass ClassB should be resolvable even without the completer.");
     
     var resolvedClassC = cascadingClass.getEnclosingScope().resolveCDType("SimpleClassC");
-    assertTrue("The SuperClass ClassC should be resolvable even without the completer.",
-        resolvedClassC.isPresent());
+    assertTrue(resolvedClassC.isPresent(),
+        "The SuperClass ClassC should be resolvable even without the completer.");
   }
   
   // test with packages
@@ -172,8 +171,8 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
         .filter(c -> c.getName().equals("ClassA")).findFirst().get();
     
     var resolved = packageClassA.getEnclosingScope().resolveCDType("p1.ClassB");
-    assertTrue("ClassA  should be able to resolve ClassB from package p1.", resolved.isPresent());
-    assertEquals(resolved.get().getFullName(), "CDPackage.p1.ClassB");
+    assertTrue(resolved.isPresent(), "ClassA  should be able to resolve ClassB from package p1.");
+    assertEquals("CDPackage.p1.ClassB", resolved.get().getFullName());
   }
   
   @Test
@@ -188,8 +187,8 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     
     var resolved = classA.getEnclosingScope().resolveCDType("ClassB");
     
-    assertTrue("ClassA inside package p1 should be able to resolve ClassB outside the package.",
-        resolved.isPresent());
+    assertTrue(resolved.isPresent(),
+        "ClassA inside package p1 should be able to resolve ClassB outside the package.");
     assertEquals("CDPackage2.ClassB", resolved.get().getFullName());
   }
   
@@ -205,8 +204,8 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     
     var resolved = classA.getEnclosingScope().resolveCDType("p1.ClassB");
     
-    assertTrue("ClassA inside package p1 should be able to resolve ClassB inside package p1.",
-        resolved.isPresent());
+    assertTrue(resolved.isPresent(),
+        "ClassA inside package p1 should be able to resolve ClassB inside package p1.");
     assertEquals("CDPackage3.p1.ClassB", resolved.get().getFullName());
   }
   
@@ -219,7 +218,7 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     ASTCDCompilationUnit ast = opt.get();
     
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    //TODO
+    //TODO LD
   }
   
 }

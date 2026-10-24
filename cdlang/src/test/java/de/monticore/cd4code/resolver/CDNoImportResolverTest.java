@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CDNoImportResolverTest extends CD4CodeTestBasis {
   
@@ -81,7 +81,7 @@ public class CDNoImportResolverTest extends CD4CodeTestBasis {
     
     var resolved = astB.getEnclosingScope().resolveCDType("p2.p3.ClassA");
     
-    assertTrue("ClassA could not be found!", resolved.isPresent());
+    assertTrue(resolved.isPresent(), "ClassA could not be found!");
     
     var siblingSymbol = astA.getEnclosingScope().resolveCDType("p2.ClassC");
     assertTrue(siblingSymbol.isPresent());
@@ -113,7 +113,7 @@ public class CDNoImportResolverTest extends CD4CodeTestBasis {
     
     var resolved = astB.getEnclosingScope().resolveCDType("p2.p3.ClassA");
     
-    assertTrue("ClassA could not be found!", resolved.isPresent());
+    assertTrue(resolved.isPresent(), "ClassA could not be found!");
   }
   
 }
