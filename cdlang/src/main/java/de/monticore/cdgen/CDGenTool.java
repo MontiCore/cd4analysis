@@ -8,7 +8,6 @@ import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
-import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -18,12 +17,12 @@ import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegatorTOP;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdgen.cocos.CD2JavaGenCoCosDelegator;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.class2mc.OOClass2MCResolver;
@@ -49,6 +48,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateModelException;
 import org.apache.commons.cli.*;
 
 /**
@@ -165,6 +167,10 @@ public class CDGenTool extends CD4CodeTool {
         asts.forEach(this::runCoCos);
         Log.enableFailQuick(true);
       }
+      else {
+        Log.warn(
+            "0xTODO: You explicitly ran the CD generator without CoCos. This might lead to incorrect Java code and is not supported.");
+      }
       
       // Export original symbol table
       if (cmd.hasOption("s")) {
@@ -258,20 +264,32 @@ public class CDGenTool extends CD4CodeTool {
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
       Collection<ASTCDCompilationUnit> asts) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance()); // TODO: Remove from templates
     glex.setGlobalValue("cdGenService", new CDGenService());
-    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher()); // TODO: Remove from templates
+    
+    TemplateHashModel freemarkerStaticModels = new BeansWrapper(GeneratorSetup.FREEMARKER_VERSION)
+        .getStaticModels();
+    try {
+      glex.defineGlobalVar("TypeCheck3", freemarkerStaticModels.get(
+          "de.monticore.types3.TypeCheck3"));
+      glex.defineGlobalVar("SymTypeRelations", freemarkerStaticModels.get(
+          "de.monticore.types3.SymTypeRelations"));
+      glex.defineGlobalVar("MCCollectionSymTypeRelations", freemarkerStaticModels.get(
+          "de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations"));
+    }
+    catch (TemplateModelException e) {
+      Log.error("0xCDD63: Could not set up FreeMarker static models for CDGenTool", e);
+    }
     
     CDGenerator generator = new CDGenerator(setup);
     DecoratorConfig decSetup = new DecoratorConfig();
+    
+    // e.g., prepare the global scope for decorated symbol table
+    initDecoratedGlobalScope.run();
     
     CDAssociationCreateFieldsFromAllRoles roleTrafo = performFieldsFromRolesTrafo(asts);
     
     // Load the initial decorator config
     initializeDecConf.accept(decSetup);
-    
-    // e.g., prepare the global scope for decorated symbol table
-    initDecoratedGlobalScope.run();
     
     for (ASTCDCompilationUnit ast : asts) {
       var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
@@ -440,7 +458,7 @@ public class CDGenTool extends CD4CodeTool {
    * @param ast the original ast
    */
   public void runCoCos(ASTCDCompilationUnit ast) {
-    CD4CodeCoCoChecker checker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
+    CD4CodeCoCoChecker checker = new CD2JavaGenCoCosDelegator().getCheckerForAllCoCos();
     checker.checkAll(ast);
   }
   

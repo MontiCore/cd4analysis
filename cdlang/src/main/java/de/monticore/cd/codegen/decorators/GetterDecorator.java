@@ -53,28 +53,41 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
       //
       var decType = (ASTCDType) decoratorData.getAsDecorated(originalClazz);
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-        this.getterData.getOrCreateMethods(attribute).add(decorateMandatory(decType, attribute));
+        decorateMandatory(decType, attribute).ifPresent(this.getterData.getOrCreateMethods(
+            attribute)::add);
       }
       else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-        this.getterData.getOrCreateMethods(attribute).add(decorateList(decType, attribute));
+        decorateList(decType, attribute).ifPresent(this.getterData.getOrCreateMethods(
+            attribute)::add);
         decorateWithAssocFunctions(decType, attribute, true);
       }
       else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-        this.getterData.getOrCreateMethods(attribute).add(decorateSet(decType, attribute));
+        decorateSet(decType, attribute).ifPresent(this.getterData.getOrCreateMethods(
+            attribute)::add);
         decorateWithAssocFunctions(decType, attribute, false);
       }
       else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-        this.getterData.getOrCreateMethods(attribute).add(decorateOptional(decType, attribute));
-        this.getterData.getOrCreateMethods(attribute).add(decorateOptionalIsPresent(decType,
-            attribute));
+        decorateOptional(decType, attribute).ifPresent(this.getterData.getOrCreateMethods(
+            attribute)::add);
+        decorateOptionalIsPresent(decType, attribute).ifPresent(this.getterData.getOrCreateMethods(
+            attribute)::add);
       }
       else {
-        this.getterData.getOrCreateMethods(attribute).add(decorateMandatory(decType, attribute));
+        decorateMandatory(decType, attribute).ifPresent(this.getterData.getOrCreateMethods(
+            attribute)::add);
       }
     }
   }
   
-  protected MethodInformation decorateMandatory(ASTCDType decoratedType, ASTCDAttribute attribute) {
+  protected void logAlreadyExistingWarning(ASTCDAttribute attribute) {
+    Log.warn("0xTODO: Unable to decorate setter of `" + attribute.getName()
+        + "` as such a method already exists.", attribute.get_SourcePositionStart(), attribute
+            .get_SourcePositionEnd());
+    
+  }
+  
+  protected Optional<MethodInformation> decorateMandatory(ASTCDType decoratedType,
+      ASTCDAttribute attribute) {
     String name = (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType()) ? "is" : "get")
         + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = attribute.getMCType().deepClone();
@@ -84,15 +97,19 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
         "methods.Get", attribute)));
     method.getModifier().setAbstract(attribute.getModifier().isDerived());
     
-    addToClass(decoratedType, method);
+    if (!addToClass(decoratedType, method)) {
+      logAlreadyExistingWarning(attribute);
+      return Optional.empty();
+    }
     
     this.updateModifier(attribute);
     
-    return new MethodInformation(GetterMethodKind.GET_MANDATORY_OR_OPT, method, "methods.Get",
-        attribute.getName());
+    return Optional.of(new MethodInformation(GetterMethodKind.GET_MANDATORY_OR_OPT, method,
+        "methods.Get", attribute.getName()));
   }
   
-  protected MethodInformation decorateOptional(ASTCDType decoratedType, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateOptional(ASTCDType decoratedType,
+      ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
@@ -107,26 +124,33 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     getMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     CD4C.getInstance().addImport(decoratedType, Log.class.getName());
     
-    addToClass(decoratedType, getMethod);
-    return new MethodInformation(GetterMethodKind.GET_MANDATORY_OR_OPT, getMethod,
-        "methods.opt.Get4Opt", attribute.getName());
+    if (!addToClass(decoratedType, getMethod)) {
+      logAlreadyExistingWarning(attribute);
+      return Optional.empty();
+    }
+    return Optional.of(new MethodInformation(GetterMethodKind.GET_MANDATORY_OR_OPT, getMethod,
+        "methods.opt.Get4Opt", attribute.getName()));
   }
   
-  protected MethodInformation decorateOptionalIsPresent(ASTCDType decoratedType,
+  protected Optional<MethodInformation> decorateOptionalIsPresent(ASTCDType decoratedType,
       ASTCDAttribute attribute) {
     ASTCDMethod isPresentMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), MCTypeFacade.getInstance().createBooleanType(), "isPresent"
             + StringTransformations.capitalize(attribute.getName()));
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isPresentMethod,
         new TemplateHookPoint("methods.opt.IsPresent4Opt", attribute)));
-    addToClass(decoratedType, isPresentMethod);
+    if (!addToClass(decoratedType, isPresentMethod)) {
+      logAlreadyExistingWarning(attribute);
+      return Optional.empty();
+    }
     
     this.updateModifier(attribute);
-    return new MethodInformation(GetterMethodKind.IS_PRESENT, isPresentMethod,
-        "methods.opt.IsPresent4Opt", attribute.getName());
+    return Optional.of(new MethodInformation(GetterMethodKind.IS_PRESENT, isPresentMethod,
+        "methods.opt.IsPresent4Opt", attribute.getName()));
   }
   
-  protected MethodInformation decorateSet(ASTCDType decoratedType, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateSet(ASTCDType decoratedType,
+      ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
@@ -135,15 +159,19 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
-    addToClass(decoratedType, getListMethod);
+    if (!addToClass(decoratedType, getListMethod)) {
+      logAlreadyExistingWarning(attribute);
+      return Optional.empty();
+    }
     
     this.updateModifier(attribute);
     
-    return new MethodInformation(GetterMethodKind.GET_COLLECTION, getListMethod, "methods.Get",
-        attribute.getName());
+    return Optional.of(new MethodInformation(GetterMethodKind.GET_COLLECTION, getListMethod,
+        "methods.Get", attribute.getName()));
   }
   
-  protected MethodInformation decorateList(ASTCDType decoratedType, ASTCDAttribute attribute) {
+  protected Optional<MethodInformation> decorateList(ASTCDType decoratedType,
+      ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     
@@ -152,11 +180,14 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
         "methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
-    addToClass(decoratedType, getListMethod);
+    if (!addToClass(decoratedType, getListMethod)) {
+      logAlreadyExistingWarning(attribute);
+      return Optional.empty();
+    }
     
     this.updateModifier(attribute);
-    return new MethodInformation(GetterMethodKind.GET_COLLECTION, getListMethod, "methods.Get",
-        attribute.getName());
+    return Optional.of(new MethodInformation(GetterMethodKind.GET_COLLECTION, getListMethod,
+        "methods.Get", attribute.getName()));
   }
   
   protected void decorateWithAssocFunctions(ASTCDType decoratedType, ASTCDAttribute attribute,

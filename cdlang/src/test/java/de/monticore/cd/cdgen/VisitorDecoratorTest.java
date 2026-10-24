@@ -20,6 +20,7 @@ class VisitorDecoratorTest extends AbstractDecoratorTest {
   @Test
   void testVisitor() throws Exception {
     var opt = CD4CodeMill.parser().parse_String("""
+         import java.lang.String;
          <<getter,setter,visitor>>
          classdiagram TestVisitor {
          public class A {
@@ -48,6 +49,12 @@ class VisitorDecoratorTest extends AbstractDecoratorTest {
          association [0..1] C <-> (optC)  C2  [0..1];
          association [*]    C <-> (manyManyC)  C3  [*];
          association        C <-> (manyC4) C4 [*];
+         class WithTO<T> {}
+        
+         interface SomeInterface<T> {}
+         public class GenericTest implements SomeInterface<GenericTest> {
+          java.util.List<SomeInterface<GenericTest>> innerList;
+         }
         
         }""");
     
@@ -56,6 +63,11 @@ class VisitorDecoratorTest extends AbstractDecoratorTest {
     super.doTest(opt.get());
     
     MCAssertions.assertNoFindings();
+  }
+  
+  @Override
+  protected boolean withClass2MC() {
+    return true;
   }
   
   @Test

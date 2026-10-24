@@ -12,7 +12,8 @@ public class CDTypeModifierNotPrivate implements CDBasisASTCDTypeCoCo {
   @Override
   public void check(ASTCDType node) {
     if (node.getModifier().isPrivate()) {
-      Log.error(ERROR_CODE + ": Types may not be 'private'.");
+      Log.error(ERROR_CODE + ": Types may not be 'private'.", node.get_SourcePositionStart(), node
+          .get_SourcePositionEnd());
     }
   }
   

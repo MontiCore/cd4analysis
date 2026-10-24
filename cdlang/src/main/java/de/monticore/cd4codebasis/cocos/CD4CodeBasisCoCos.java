@@ -8,15 +8,11 @@ import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUniqu
 import de.monticore.cdbasis._cocos.CDBasisASTCDTargetImportStatementCoCo;
 import de.monticore.cdbasis.cocos.CDOnlyResolvableImportStatements;
 import de.monticore.cdbasis.cocos.ConstructorNameEqualsClassNameCoCo;
-import de.monticore.types.check.AbstractDerive;
 import de.monticore.types.mcbasictypes._cocos.MCBasicTypesASTMCImportStatementCoCo;
 
 public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
   
-  protected final AbstractDerive calculator;
-  
-  public CD4CodeBasisCoCos(AbstractDerive calculator) {
-    this.calculator = calculator;
+  public CD4CodeBasisCoCos() {
   }
   
   @Override
@@ -52,7 +48,7 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
     checker.addCoCo(new CDMethodSignatureParameterNamesUnique());
     
     // CD4CodeEnumConstant
-    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments(calculator));
+    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
   }
   
 }

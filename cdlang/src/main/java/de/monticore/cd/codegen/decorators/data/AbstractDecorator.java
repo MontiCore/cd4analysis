@@ -4,6 +4,7 @@ package de.monticore.cd.codegen.decorators.data;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.decorators.IDecorator;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import java.util.Optional;
@@ -37,9 +38,37 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
           .getName());
   }
   
-  protected void addToClass(ASTCDType clazz, ASTCDMember member) {
-    // TODO: Only add iff not yet present (#4310)
+  /**
+   * Adds a member to a class, if it does not already exist
+   *
+   * @param clazz the class
+   * @param member the to-be added member
+   * @return whether a conflict already exists
+   */
+  protected boolean addToClass(ASTCDType clazz, ASTCDMember member) {
+    // add iff not yet present (#4310)
+    if (member instanceof ASTCDMethod method) {
+      for (ASTCDMember mem : clazz.getCDMemberList()) {
+        if (mem instanceof ASTCDMethod meth) {
+          if (method.getName().equals(meth.getName()) && method.getCDParameterList().size() == meth
+              .getCDParameterList().size()) {
+            // TODO: Check if params are compatible? (#4310)
+            return false;
+          }
+        }
+      }
+    }
+    else if (member instanceof ASTCDAttribute attribute) {
+      for (ASTCDMember mem : clazz.getCDMemberList()) {
+        if (mem instanceof ASTCDAttribute attr) {
+          if (attr.getName().equals(attribute.getName())) {
+            return false;
+          }
+        }
+      }
+    }
     clazz.addCDMember(member);
+    return true;
   }
   
   public CDGenService getCDGenService() { return decoratorData.cdGenService; }

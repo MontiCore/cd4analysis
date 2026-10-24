@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.io.IOException;
 import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -20,7 +20,7 @@ public class CD4CodeSymbolTableCreatorDelegatorTest extends CD4CodeTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
     
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    prepareST(node);
     checkLogError();
     
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);

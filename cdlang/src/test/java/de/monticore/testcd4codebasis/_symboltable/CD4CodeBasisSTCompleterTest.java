@@ -4,6 +4,7 @@ package de.monticore.testcd4codebasis._symboltable;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.common.collect.LinkedListMultimap;
+import de.monticore.cd4code.types3.CDWithinScopeBasicsSymbolResolver;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
@@ -14,10 +15,8 @@ import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
-import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeIdAsConstructorCTTIVisitor;
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
-import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeIdAsConstructorCTTIVisitor;
 import de.monticore.io.paths.MCPath;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -195,7 +194,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     SymTypeRelations.init();
     MCCollectionSymTypeRelations.init();
     OOWithinTypeBasicSymbolsResolver.init();
-    OOWithinScopeBasicSymbolsResolver.init();
+    CDWithinScopeBasicsSymbolResolver.init();
     TypeContextCalculator.init();
     TypeVisitorOperatorCalculator.init();
     CommonExpressionsLValueRelations.init();
@@ -217,15 +216,13 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     visBitExpressions.setType4Ast(type4Ast);
     traverser.add4BitExpressions(visBitExpressions);
     
-    CommonExpressionsCTTIVisitor visCommonExpressions =
-        new CommonExpressionsTypeIdAsConstructorCTTIVisitor();
+    CommonExpressionsCTTIVisitor visCommonExpressions = new CommonExpressionsCTTIVisitor();
     visCommonExpressions.setType4Ast(type4Ast);
     visCommonExpressions.setContext4Ast(ctx4Ast);
     traverser.add4CommonExpressions(visCommonExpressions);
     traverser.setCommonExpressionsHandler(visCommonExpressions);
     
-    ExpressionBasisCTTIVisitor visExpressionBasis =
-        new ExpressionBasisTypeIdAsConstructorCTTIVisitor();
+    ExpressionBasisCTTIVisitor visExpressionBasis = new ExpressionBasisCTTIVisitor();
     visExpressionBasis.setType4Ast(type4Ast);
     visExpressionBasis.setContext4Ast(ctx4Ast);
     traverser.add4ExpressionsBasis(visExpressionBasis);

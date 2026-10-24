@@ -1,13 +1,14 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("attribute")}
-<#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
-<#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType())>
+<#assign attributeType = TypeCheck3.symTypeFromAST(attribute.getMCType())>
+
+<#if MCCollectionSymTypeRelations.isList(attributeType)>
 this.${attribute.name} = new ArrayList<>();
   <#else>
-  <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute)>
+  <#if MCCollectionSymTypeRelations.isSet(attributeType)>
 this.${attribute.name} = new LinkedHashSet<>();
     <#else>
-    <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute)>
+    <#if MCCollectionSymTypeRelations.isOptional(attributeType)>
 this.${attribute.name} = Optional.empty();
     </#if>
   </#if>

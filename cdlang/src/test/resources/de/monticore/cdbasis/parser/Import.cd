@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.parser;
 
-import de.monticore.cdbasis.parser.Simple;
+import de.monticore.cdbasis.parser.Simple.C;
 
 classdiagram Import {
 

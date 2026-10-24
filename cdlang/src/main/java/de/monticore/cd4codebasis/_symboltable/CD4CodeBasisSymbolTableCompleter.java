@@ -12,31 +12,23 @@ import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.types.check.FullSynthesizeFromMCCollectionTypes;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfObject;
 import de.monticore.types3.TypeCheck3;
+import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, CDBasisVisitor2 {
   
-  //TODO if possible remove ISynthesize from the constructor
-  protected ISynthesize typeSynthesizer;
-  
-  public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
-  }
-  
+  @Deprecated(forRemoval = true)
   public CD4CodeBasisSymbolTableCompleter(int i) {
-    this.typeSynthesizer = typeSynthesizer;
   }
   
   public CD4CodeBasisSymbolTableCompleter() {
-    this(new FullSynthesizeFromMCCollectionTypes());
   }
   
   @Override
@@ -68,7 +60,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     if (node.getCDConstructorList().isEmpty()) {
       CDMethodSignatureSymbol constructor = CD4CodeBasisMill.cDMethodSignatureSymbolBuilder()
           .setIsPublic(true).setIsStatic(true).setIsConstructor(true).setName(node.getName())
-          .setType(SymTypeExpressionFactory.createTypeExpression(node.getSymbol())).build();
+          .setType(SymTypeExpressionFactory.createFromSymbol(node.getSymbol())).build();
       ICD4CodeBasisScope scope = CD4CodeBasisMill.scope();
       scope.setName(node.getName());
       constructor.setSpannedScope(scope);
@@ -119,9 +111,15 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     symbol.setIsConstructor(true);
     symbol.setIsAbstract(ast.getModifier().isAbstract());
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
-    
-    symbol.setType(SymTypeExpressionFactory.createTypeObject(symbol.getName(), symbol
-        .getEnclosingScope()));
+    Optional<SymTypeExpression> symType = WithinScopeBasicSymbolsResolver.resolveType(symbol
+        .getEnclosingScope(), symbol.getName());
+    if (symType.isEmpty()) {
+      Log.error(String.format("0xCDA94: The type of the constructor (%s) could not be resolved",
+          symbol.getName()), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+    }
+    else {
+      symbol.setType(symType.get());
+    }
     
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
@@ -152,8 +150,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
       
       final SymTypeExpression finalTypeResult;
       if (ast.isEllipsis()) {
-        finalTypeResult = SymTypeExpressionFactory.createTypeArray(CD4CodeBasisMill.prettyPrint(ast
-            .getMCType(), false), symbol.getEnclosingScope(), 1, typeResult);
+        finalTypeResult = SymTypeExpressionFactory.createTypeArray(typeResult, 1);
       }
       else {
         finalTypeResult = typeResult;
@@ -177,9 +174,15 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = ast.getEnclosingScope().getName();
     // call getEnclosingScope() twice, so the full name of the type evaluates to the correct package
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, symbol
-        .getEnclosingScope().getEnclosingScope());
-    symbol.setType(typeObject);
+    Optional<SymTypeExpression> enumType = WithinScopeBasicSymbolsResolver.resolveType(symbol
+        .getEnclosingScope().getEnclosingScope(), enumName);
+    if (enumType.isEmpty()) {
+      Log.error(String.format("0xCDA95: The type of the enum constant (%s) could not be resolved",
+          symbol.getName()), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+    }
+    else {
+      symbol.setType(enumType.get());
+    }
     
     // Don't store the arguments in the ST
   }
