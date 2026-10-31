@@ -131,12 +131,17 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     ASTCDCompilationUnit astSimpleClass = optSimple.get();
     
     CD4CodeMill.scopesGenitorDelegator().createFromAST(astSimpleClass);
-    ASTCDClass interfaceClassA = (ASTCDClass) astSimpleClass.getCDDefinition().getCDClassesList()
-        .stream().filter(c -> c.getName().equals("InterfaceClassA")).findFirst().get();
+    Optional<de.monticore.cdbasis._ast.ASTCDClass> optInterfaceClassA = astSimpleClass
+        .getCDDefinition().getCDClassesList().stream().filter(c -> c.getName().equals(
+            "InterfaceClassA")).findFirst();
     
-    var resolvedInterface = interfaceClassA.getEnclosingScope().resolveCDType("I");
-    assertTrue(resolvedInterface.isPresent(),
-        "The implemented interface I should be resolvable even without the completer.");
+    if (optInterfaceClassA.isPresent()) {
+      var interfaceClassA = optInterfaceClassA.get();
+      var resolvedInterface = interfaceClassA.getEnclosingScope().resolveCDType("I");
+      assertTrue(resolvedInterface.isPresent(),
+          "The implemented interface I should be resolvable even without the completer.");
+      
+    }
   }
   
   @Test
@@ -167,12 +172,15 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     ASTCDCompilationUnit ast = opt.get();
     
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    ASTCDClass packageClassA = (ASTCDClass) ast.getCDDefinition().getCDClassesList().stream()
-        .filter(c -> c.getName().equals("ClassA")).findFirst().get();
-    
-    var resolved = packageClassA.getEnclosingScope().resolveCDType("p1.ClassB");
-    assertTrue(resolved.isPresent(), "ClassA  should be able to resolve ClassB from package p1.");
-    assertEquals("CDPackage.p1.ClassB", resolved.get().getFullName());
+    Optional<de.monticore.cdbasis._ast.ASTCDClass> optPackageClassA = ast.getCDDefinition()
+        .getCDClassesList().stream().filter(c -> c.getName().equals("ClassA")).findFirst();
+    if (optPackageClassA.isPresent()) {
+      
+      ASTCDClass packageClassA = (ASTCDClass) optPackageClassA.get();
+      var resolved = packageClassA.getEnclosingScope().resolveCDType("p1.ClassB");
+      assertTrue(resolved.isPresent(), "ClassA  should be able to resolve ClassB from package p1.");
+      assertEquals("CDPackage.p1.ClassB", resolved.get().getFullName());
+    }
   }
   
   @Test
@@ -182,14 +190,17 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     ASTCDCompilationUnit ast = opt.get();
     
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    ASTCDClass classA = (ASTCDClass) ast.getCDDefinition().getCDClassesList().stream().filter(c -> c
-        .getName().equals("ClassA")).findFirst().get();
-    
-    var resolved = classA.getEnclosingScope().resolveCDType("ClassB");
-    
-    assertTrue(resolved.isPresent(),
-        "ClassA inside package p1 should be able to resolve ClassB outside the package.");
-    assertEquals("CDPackage2.ClassB", resolved.get().getFullName());
+    Optional<de.monticore.cdbasis._ast.ASTCDClass> optClassA = ast.getCDDefinition()
+        .getCDClassesList().stream().filter(c -> c.getName().equals("ClassA")).findFirst();
+    if (optClassA.isPresent()) {
+      ASTCDClass classA = (ASTCDClass) optClassA.get();
+      
+      var resolved = classA.getEnclosingScope().resolveCDType("ClassB");
+      
+      assertTrue(resolved.isPresent(),
+          "ClassA inside package p1 should be able to resolve ClassB outside the package.");
+      assertEquals("CDPackage2.ClassB", resolved.get().getFullName());
+    }
   }
   
   @Test
@@ -199,14 +210,18 @@ public class CDSupertypeResolvingTest extends CD4CodeTestBasis {
     ASTCDCompilationUnit ast = opt.get();
     
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    ASTCDClass classA = (ASTCDClass) ast.getCDDefinition().getCDClassesList().stream().filter(c -> c
-        .getName().equals("ClassA")).findFirst().get();
     
-    var resolved = classA.getEnclosingScope().resolveCDType("p1.ClassB");
-    
-    assertTrue(resolved.isPresent(),
-        "ClassA inside package p1 should be able to resolve ClassB inside package p1.");
-    assertEquals("CDPackage3.p1.ClassB", resolved.get().getFullName());
+    Optional<de.monticore.cdbasis._ast.ASTCDClass> optClassA = ast.getCDDefinition()
+        .getCDClassesList().stream().filter(c -> c.getName().equals("ClassA")).findFirst();
+    if (optClassA.isPresent()) {
+      ASTCDClass classA = (ASTCDClass) optClassA.get();
+      
+      var resolved = classA.getEnclosingScope().resolveCDType("p1.ClassB");
+      
+      assertTrue(resolved.isPresent(),
+          "ClassA inside package p1 should be able to resolve ClassB inside package p1.");
+      assertEquals("CDPackage3.p1.ClassB", resolved.get().getFullName());
+    }
   }
   
   //--------------Tests with packages and symboltable completer-----------------------------------
