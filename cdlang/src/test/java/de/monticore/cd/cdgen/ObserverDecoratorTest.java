@@ -5,6 +5,7 @@ import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.*;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.runtime.junit.MCAssertions;
@@ -35,7 +36,7 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
            -> (oneB) B [1] public;
            public int ov;
          }
-        <<setter>>public class B {}
+         <<setter>>public class B {}
         
           // Test Setter&Observer interaction
           <<observable,setter>>   class CA {}
@@ -62,6 +63,11 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
           association EA <-> EC [*];
           association EA <-> ED [0..1];
         
+          interface SomeInterface<T> {}
+          <<setter,observer>> public class GenericTest implements SomeInterface<GenericTest> {
+            java.util.List<SomeInterface<GenericTest>> innerList;
+          }
+        
         }""");
     
     // The classes CA, CB, CC, and CD test observers with bidirectional assocs
@@ -73,6 +79,14 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
     super.doTest(opt.get());
     
     MCAssertions.assertNoFindings();
+  }
+  
+  @Override
+  protected boolean withClass2MC() {
+    CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
+    CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
+    
+    return super.withClass2MC();
   }
   
   @Test

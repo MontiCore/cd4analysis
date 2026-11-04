@@ -1,12 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symtabdefinition.types3;
 
+import de.monticore.cd4code.types3.CDWithinScopeBasicsSymbolResolver;
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsCTTIVisitor;
-import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeIdAsConstructorCTTIVisitor;
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
-import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeIdAsConstructorCTTIVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.symtabdefinition.SymTabDefinitionMill;
 import de.monticore.symtabdefinition._visitor.SymTabDefinitionTraverser;
@@ -22,7 +21,6 @@ import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.generics.TypeParameterRelations;
 import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.util.MapBasedTypeCheck3;
-import de.monticore.types3.util.OOWithinScopeBasicSymbolsResolver;
 import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
 import de.monticore.types3.util.TypeContextCalculator;
 import de.monticore.types3.util.TypeVisitorOperatorCalculator;
@@ -37,7 +35,7 @@ public class SymTabDefinitionTypeCheck3 extends MapBasedTypeCheck3 {
     SymTypeRelations.init();
     MCCollectionSymTypeRelations.init();
     OOWithinTypeBasicSymbolsResolver.init();
-    OOWithinScopeBasicSymbolsResolver.init();
+    CDWithinScopeBasicsSymbolResolver.init();
     TypeContextCalculator.init();
     TypeVisitorOperatorCalculator.init();
     CommonExpressionsLValueRelations.init();
@@ -59,15 +57,13 @@ public class SymTabDefinitionTypeCheck3 extends MapBasedTypeCheck3 {
     visBitExpressions.setType4Ast(type4Ast);
     traverser.add4BitExpressions(visBitExpressions);
     
-    CommonExpressionsCTTIVisitor visCommonExpressions =
-        new CommonExpressionsTypeIdAsConstructorCTTIVisitor();
+    CommonExpressionsCTTIVisitor visCommonExpressions = new CommonExpressionsCTTIVisitor();
     visCommonExpressions.setType4Ast(type4Ast);
     visCommonExpressions.setContext4Ast(ctx4Ast);
     traverser.add4CommonExpressions(visCommonExpressions);
     traverser.setCommonExpressionsHandler(visCommonExpressions);
     
-    ExpressionBasisCTTIVisitor visExpressionBasis =
-        new ExpressionBasisTypeIdAsConstructorCTTIVisitor();
+    ExpressionBasisCTTIVisitor visExpressionBasis = new ExpressionBasisCTTIVisitor();
     visExpressionBasis.setType4Ast(type4Ast);
     visExpressionBasis.setContext4Ast(ctx4Ast);
     traverser.add4ExpressionsBasis(visExpressionBasis);
@@ -105,7 +101,7 @@ public class SymTabDefinitionTypeCheck3 extends MapBasedTypeCheck3 {
     SymTypeRelations.reset();
     MCCollectionSymTypeRelations.reset();
     OOWithinTypeBasicSymbolsResolver.reset();
-    OOWithinScopeBasicSymbolsResolver.reset();
+    CDWithinScopeBasicsSymbolResolver.reset();
     TypeContextCalculator.reset();
     TypeVisitorOperatorCalculator.reset();
     CommonExpressionsLValueRelations.reset();

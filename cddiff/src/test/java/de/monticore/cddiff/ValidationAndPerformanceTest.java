@@ -419,7 +419,6 @@ public class ValidationAndPerformanceTest {
   
   @ParameterizedTest
   @MethodSource("cd4analysisSet")
-  @Disabled // TODO: MSh: unknown fail (due to resolving?)
   public void testReductionBasedOWDiff3(String file1, String file2, boolean diff) {
     String path = "src/test/resources/validation/cd4analysis/";
     try {

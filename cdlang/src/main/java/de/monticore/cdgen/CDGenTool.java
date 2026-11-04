@@ -8,7 +8,6 @@ import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
-import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -49,6 +48,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateModelException;
 import org.apache.commons.cli.*;
 
 /**
@@ -262,20 +264,32 @@ public class CDGenTool extends CD4CodeTool {
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
       Collection<ASTCDCompilationUnit> asts) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance()); // TODO: Remove from templates
     glex.setGlobalValue("cdGenService", new CDGenService());
-    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher()); // TODO: Remove from templates
+    
+    TemplateHashModel freemarkerStaticModels = new BeansWrapper(GeneratorSetup.FREEMARKER_VERSION)
+        .getStaticModels();
+    try {
+      glex.defineGlobalVar("TypeCheck3", freemarkerStaticModels.get(
+          "de.monticore.types3.TypeCheck3"));
+      glex.defineGlobalVar("SymTypeRelations", freemarkerStaticModels.get(
+          "de.monticore.types3.SymTypeRelations"));
+      glex.defineGlobalVar("MCCollectionSymTypeRelations", freemarkerStaticModels.get(
+          "de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations"));
+    }
+    catch (TemplateModelException e) {
+      Log.error("0xCDD63: Could not set up FreeMarker static models for CDGenTool", e);
+    }
     
     CDGenerator generator = new CDGenerator(setup);
     DecoratorConfig decSetup = new DecoratorConfig();
+    
+    // e.g., prepare the global scope for decorated symbol table
+    initDecoratedGlobalScope.run();
     
     CDAssociationCreateFieldsFromAllRoles roleTrafo = performFieldsFromRolesTrafo(asts);
     
     // Load the initial decorator config
     initializeDecConf.accept(decSetup);
-    
-    // e.g., prepare the global scope for decorated symbol table
-    initDecoratedGlobalScope.run();
     
     for (ASTCDCompilationUnit ast : asts) {
       var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));

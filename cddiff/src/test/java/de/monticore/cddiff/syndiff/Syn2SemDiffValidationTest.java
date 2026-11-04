@@ -199,7 +199,6 @@ public class Syn2SemDiffValidationTest {
   
   @ParameterizedTest // Fixed test
   @MethodSource("cd4analysisSet")
-  @Disabled // TODO: 0xFD226 internal error: resolved 2 occurrences of Symbol, but expected only one
   public void testReductionBasedOWDiff3(String file1, String file2, boolean diff) {
     String path = "src/test/resources/validation/cd4analysis/";
     checkReductionBasedDiff(path, file1, file2, diff);
