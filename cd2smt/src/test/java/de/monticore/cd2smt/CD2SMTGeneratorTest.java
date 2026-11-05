@@ -17,7 +17,6 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,16 +48,11 @@ public class CD2SMTGeneratorTest {
     cfg.put("model", "true");
     context = new Context(cfg);
     
-    try {
-      Optional<ASTCDCompilationUnit> optCD = CD4CodeMill.parser().parse(Paths.get(
-          RELATIVE_MODEL_PATH, fileName).toString());
-      assertTrue(optCD.isPresent());
-      astCD = optCD.get();
-      (new CD4CodeAfterParseTrafo()).transform(astCD);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
+    Optional<ASTCDCompilationUnit> optCD = CD4CodeMill.parser().parse(Paths.get(RELATIVE_MODEL_PATH,
+        fileName).toString());
+    assertTrue(optCD.isPresent());
+    astCD = optCD.get();
+    (new CD4CodeAfterParseTrafo()).transform(astCD);
     CD2SMTMill.initDefault();
     cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(astCD, context);

@@ -5,7 +5,6 @@ import com.google.common.io.Files;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -48,7 +47,7 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
   }
   
   @Override
-  public Optional<ASTCDCompilationUnit> parse(String fileName) throws IOException {
+  public Optional<ASTCDCompilationUnit> parse(String fileName) {
     final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
     if (_checkFileAndPackageName) {
       parse.ifPresent(p -> checkFileAndPackageName(fileName, p));
