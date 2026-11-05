@@ -164,8 +164,7 @@ public class CDMethodFacade {
    * of the other methods fit your context !
    */
   public ASTCDMethod createMethodByDefinition(final String signature) {
-    Optional<ASTCDMethod> method = CD4CodeMill.parser()
-        .parse_StringCDMethod(signature);
+    Optional<ASTCDMethod> method = CD4CodeMill.parser().parse_StringCDMethod(signature);
     
     if (!method.isPresent()) {
       throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_METHOD, signature);

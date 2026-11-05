@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -40,8 +38,8 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
   }
   
   protected ASTCDCompilationUnit parseModel(String modelName) {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parseCDCompilationUnit(Paths.get(modelName).toString());
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(Paths.get(
+        modelName).toString());
     
     checkNullAndPresence(p, astcdCompilationUnit);
     return astcdCompilationUnit.get();

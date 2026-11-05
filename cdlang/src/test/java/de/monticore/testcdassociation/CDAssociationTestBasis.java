@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cdassociation._cocos.CDAssociationCoCoChecker;
@@ -40,8 +38,8 @@ public class CDAssociationTestBasis extends TestBasis {
   }
   
   protected ASTCDCompilationUnit parseModel(String modelName) {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parseCDCompilationUnit(getFilePath(modelName));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(
+        getFilePath(modelName));
     
     checkNullAndPresence(p, astcdCompilationUnit);
     return astcdCompilationUnit.get();

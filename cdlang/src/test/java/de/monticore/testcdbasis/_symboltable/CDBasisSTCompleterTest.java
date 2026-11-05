@@ -21,7 +21,6 @@ import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -309,7 +308,7 @@ public class CDBasisSTCompleterTest {
       return parser.parse(Paths.get(pathToArtifact).toString()).orElseThrow(
           NoSuchElementException::new);
     }
-    catch (IOException | NoSuchElementException e) {
+    catch (NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
     }

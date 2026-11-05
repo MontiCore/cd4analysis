@@ -32,9 +32,8 @@ public class CD4CTemplateHelper {
       methodSignature += ";";
     }
     
-    this.astcdMethod = CD4CodeMill.parser()
-        .parseCDMethod(new StringReader(methodSignature)).map(
-            m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+    this.astcdMethod = CD4CodeMill.parser().parseCDMethod(new StringReader(methodSignature)).map(
+        m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
     // Optional<ASTCDMethod>
   }
   

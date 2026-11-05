@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
@@ -53,8 +51,7 @@ public class CD4CodeTestBasis extends TestBasis {
   }
   
   protected ASTCDCompilationUnit parse(String filePath) {
-    Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parse(getFilePath(filePath));
+    Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath(filePath));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     
