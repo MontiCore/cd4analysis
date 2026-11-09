@@ -58,6 +58,11 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
             private PrivateDefaultConstructor();
             int i;
           }
+          <<setter,getter,builder>>
+          public abstract class TestAbstractBuilder {
+            public int myAbstractInt;
+            public boolean myAbstractBool;
+          }
           enum TestEnum {
             RUNNING, IDLE, ERROR;
           }
@@ -74,6 +79,12 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     for (int i = 0; i < 7; i++) // Test, that the warning about missing setters is present
       MCAssertions.assertHasFinding(f -> f.getMsg().startsWith("Requested setter of TestBuilder")
           && f.isWarning());
+
+    // No builder must be generated for abstract classes
+    Assertions.assertTrue(outputDir.toPath().resolve("TestBuilder/TestAbstractBuilder.java")
+        .toFile().exists());
+    Assertions.assertFalse(outputDir.toPath().resolve("TestBuilder/TestAbstractBuilderBuilder.java")
+        .toFile().exists());
   }
   
   @Test
