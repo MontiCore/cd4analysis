@@ -45,7 +45,7 @@ public class SymTabDefinitionGradlePluginTest {
     
     File cdlangLibs = new File("../../cdlang/target/libs");
     File cd4aJarFile = new File(cdlangLibs, "cd4analysis-" + projVersion + ".jar");
-    assertTrue(cd4aJarFile.exists());
+    assertTrue(cd4aJarFile.exists(), "CD4A Jar missing: " + cd4aJarFile.getAbsolutePath());
     
     File stdeftoolLibs = new File("../target/libs");
     File stdeftoolJarFile = new File(stdeftoolLibs, "cd4analysis-" + projVersion

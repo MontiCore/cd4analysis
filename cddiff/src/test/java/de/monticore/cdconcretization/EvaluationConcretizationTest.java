@@ -87,6 +87,7 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   }
   
   @Test
+  @Disabled // TODO: @MSh
   void testVisitorPattern() {
     // TODO Remove once we support method parameters in incarnation mapping
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);

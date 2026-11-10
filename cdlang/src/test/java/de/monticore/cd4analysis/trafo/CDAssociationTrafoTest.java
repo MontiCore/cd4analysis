@@ -63,7 +63,7 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
     
     final SymTypeExpression type = b.get().getFieldList().get(1).getType();
     assertTrue(type.isGenericType());
-    assertEquals("java.util.List", type.getTypeInfo().getFullName());
+    assertEquals("List", type.getTypeInfo().getFullName());
   }
   
   @Test

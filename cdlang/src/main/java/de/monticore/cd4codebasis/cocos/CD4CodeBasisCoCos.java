@@ -5,15 +5,14 @@ import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisCoCoChecker;
 import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
+import de.monticore.cdbasis._cocos.CDBasisASTCDTargetImportStatementCoCo;
+import de.monticore.cdbasis.cocos.CDOnlyResolvableImportStatements;
 import de.monticore.cdbasis.cocos.ConstructorNameEqualsClassNameCoCo;
-import de.monticore.types.check.AbstractDerive;
+import de.monticore.types.mcbasictypes._cocos.MCBasicTypesASTMCImportStatementCoCo;
 
 public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
   
-  protected final AbstractDerive calculator;
-  
-  public CD4CodeBasisCoCos(AbstractDerive calculator) {
-    this.calculator = calculator;
+  public CD4CodeBasisCoCos() {
   }
   
   @Override
@@ -29,6 +28,16 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
   }
   
   @Override
+  protected void addMcgCoCos(CD4CodeBasisCoCoChecker checker) {
+    super.addMcgCoCos(checker);
+    
+    // CDImport Statements
+    CDOnlyResolvableImportStatements resolvableImports = new CDOnlyResolvableImportStatements();
+    checker.addCoCo((CDBasisASTCDTargetImportStatementCoCo) resolvableImports);
+    checker.addCoCo((MCBasicTypesASTMCImportStatementCoCo) resolvableImports);
+  }
+  
+  @Override
   protected void addEbnfCoCos(CD4CodeBasisCoCoChecker checker) {
     super.addEbnfCoCos(checker);
     
@@ -39,7 +48,7 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
     checker.addCoCo(new CDMethodSignatureParameterNamesUnique());
     
     // CD4CodeEnumConstant
-    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments(calculator));
+    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
   }
   
 }

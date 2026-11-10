@@ -10,7 +10,6 @@ import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
-import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
@@ -23,8 +22,13 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.StringTransformations;
+import de.se_rwth.commons.logging.Log;
+
 import java.util.Collections;
 import java.util.*;
 
@@ -33,10 +37,6 @@ import java.util.*;
  */
 public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
     CDBasisVisitor2 {
-  
-  // TODO: Replace dispatcher with AttrHelper & use visit() instead of getAttributes()
-  // TODO: Remove type-dispatcher calls from the templates
-  CD4AnalysisTypeDispatcher dispatcher = new CD4AnalysisTypeDispatcher();
   
   @Override
   @SuppressWarnings("rawtypes")
@@ -134,7 +134,12 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       for (ASTCDAttribute attribute : allAttributeList) {
         ASTCDParameter param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName())
             .setMCType(attribute.getMCType()).build();
-        if (dispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType())) {
+        SymTypeExpression symType = TypeCheck3.symTypeFromAST(attribute.getMCType());
+        if (symType.isObscureType()) {
+          Log.error("0xCDD61: Could not determine type of attribute " + attribute.getName(),
+              attribute.get_SourcePositionStart(), attribute.get_SourcePositionEnd());
+        }
+        if (MCCollectionSymTypeRelations.isOptional(symType)) {
           //set of optional with type directly and not with optional<type>
           ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType())
               .deepClone();
@@ -171,9 +176,13 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       
       // Add isAbsent methods for all attributes with cardinality != 1
       for (ASTCDAttribute attribute : allAttributeList) {
-        if (dispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType()) || dispatcher
-            .isMCCollectionTypesASTMCOptionalType(attribute.getMCType()) || dispatcher
-                .isMCCollectionTypesASTMCSetType(attribute.getMCType())) {
+        SymTypeExpression attributeType = TypeCheck3.symTypeFromAST(attribute.getMCType());
+        if (attributeType.isObscureType()) {
+          Log.error("0xCDD62: Could not determine type of attribute " + attribute.getName(),
+              attribute.get_SourcePositionStart(), attribute.get_SourcePositionEnd());
+        }
+        if (MCCollectionSymTypeRelations.isList(attributeType) || MCCollectionSymTypeRelations
+            .isOptional(attributeType) || MCCollectionSymTypeRelations.isSet(attributeType)) {
           ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
               .modifierBuilder().PUBLIC().build(), builderClass.getName(), "set"
                   + StringTransformations.capitalize(attribute.getName()) + "Absent");

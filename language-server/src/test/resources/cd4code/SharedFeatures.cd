@@ -1,0 +1,7 @@
+classdiagram SharedFeatures {
+  class Source {
+    public void run();
+  }
+  class Target;
+  association Source -> Target;
+}

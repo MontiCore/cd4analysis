@@ -1,12 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.mctype;
 
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdmatcher.BooleanMatchingStrategy;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.generics.bounds.Bound;
 import de.se_rwth.commons.logging.Log;
 
@@ -24,12 +23,10 @@ import java.util.List;
 public class TypeCheckMCTypeMatchingStrategy implements MCTypeMatchingStrategy {
   
   protected String underspecifiedTypeName;
-  protected ISynthesize typeCalculator; // TODO Use TypeCheck3 once available
   protected IncMappingAwareSymTypeCompatibilityCalculator compatibilityCalculator;
   
   public TypeCheckMCTypeMatchingStrategy(String underspecifiedTypeName) {
     this.underspecifiedTypeName = underspecifiedTypeName;
-    this.typeCalculator = new FullSynthesizeFromCD4Code();
     this.compatibilityCalculator = new IncMappingAwareSymTypeCompatibilityCalculator();
   }
   
@@ -51,9 +48,8 @@ public class TypeCheckMCTypeMatchingStrategy implements MCTypeMatchingStrategy {
       // every type is allowed if the reference type is underspecified
       return true;
     }
-    // TODO Use TypeCheck3
-    SymTypeExpression concreteType = typeCalculator.synthesizeType(conType).getResult();
-    SymTypeExpression referenceType = typeCalculator.synthesizeType(refType).getResult();
+    SymTypeExpression concreteType = TypeCheck3.symTypeFromAST(conType);
+    SymTypeExpression referenceType = TypeCheck3.symTypeFromAST(refType);
     /*
      * Compatibility calculator knows the incarnation mapping and checks if the concrete
      * type is an incarnation of the reference type.if both are CDTypeSymbols.

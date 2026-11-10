@@ -2,6 +2,7 @@
 package de.monticore.cd4analysis._lsp.features.code_lens;
 
 import de.mclsg.PositionUtils;
+import de.mclsg.TokenXPath;
 import de.mclsg.lsp.ISymbolUsageResolutionProvider;
 import de.mclsg.lsp.document_management.DocumentInformation;
 import de.mclsg.lsp.document_management.DocumentManager;
@@ -9,7 +10,6 @@ import de.mclsg.lsp.features.code_lens.CodeLensStrategy;
 import de.mclsg.lsp.features.reference.CommonReferencesProvider;
 import de.mclsg.parser.MatchedToken;
 import de.monticore.cd4analysis._lsp.code_lens.CD4AnalysisServerCommandCodeLens;
-import de.monticore.cd4analysis._parser.CD4AnalysisParserInfo;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.lsp4j.CodeLens;
 
@@ -35,11 +36,15 @@ public class AssociationCodeLensStrategy implements CodeLensStrategy {
     this.symbolUsageResolutionProvider = symbolUsageResolutionProvider;
   }
   
+  static final TokenXPath className = TokenXPath.compilePattern("//cdClass/name:/");
+  
   @Override
   public boolean matches(MatchedToken matchedToken) {
-    return CD4AnalysisParserInfo.stateDefinesName(matchedToken.parserState) && matchedToken
-        .tokenPathMatches(".*.cDClass.cDClass");
+    return matchedToken.tokenXPathMatches(className);
   }
+  
+  static final TokenXPath assocSideQType = TokenXPath.compilePattern(
+      "//cDAssocSide/mCQualifiedType/mCQualifiedName");
   
   @Override
   public Optional<CodeLens> apply(MatchedToken matchedToken) {
@@ -55,9 +60,7 @@ public class AssociationCodeLensStrategy implements CodeLensStrategy {
                   symbol), Stream.of(Pair.of(matchedToken, symbol))).flatMap(
                       pair -> referencesProvider.getReferencingTokens(pair.getKey(), pair
                           .getValue(), false).stream()).filter(referencingToken -> referencingToken
-                              .tokenPathMatches(
-                                  ".*.cDAssoc(Left|Right)Side.mCQualifiedType.mCQualifiedName"))
-                  .collect(Collectors.toList());
+                              .tokenXPathMatches(assocSideQType)).collect(Collectors.toList());
               
               if (associationTokens.isEmpty())
                 return null;

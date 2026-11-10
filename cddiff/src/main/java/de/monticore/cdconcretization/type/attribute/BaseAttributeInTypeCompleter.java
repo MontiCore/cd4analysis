@@ -4,7 +4,6 @@ package de.monticore.cdconcretization.type.attribute;
 import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
@@ -14,6 +13,8 @@ import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.TypeCheck3;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -55,8 +56,7 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
    */
   private void createAttributeIncarnations(ASTCDType concreteType,
       ASTCDAttribute referenceAttribute, TypeCompletionContext context) throws CompletionException {
-    SymTypeExpression attributeSymType = new FullSynthesizeFromCD4Code().synthesizeType(
-        referenceAttribute.getMCType()).getResult();
+    SymTypeExpression attributeSymType = TypeCheck3.symTypeFromAST(referenceAttribute.getMCType());
     
     // make sure we do not add the 'any' type to the concrete CD
     if (attributeSymType.getTypeInfo().getFullName().equals(context

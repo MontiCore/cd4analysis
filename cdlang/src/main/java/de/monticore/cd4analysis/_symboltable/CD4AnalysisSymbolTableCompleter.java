@@ -4,7 +4,6 @@ package de.monticore.cd4analysis._symboltable;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4analysis.typescalculator.FullSynthesizeFromCD4Analysis;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -28,16 +27,15 @@ public class CD4AnalysisSymbolTableCompleter {
       ASTMCQualifiedName packageDeclaration) {
     this.traverser = CD4AnalysisMill.inheritanceTraverser();
     
-    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(
-        new FullSynthesizeFromCD4Analysis());
+    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter();
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
     final CDAssociationSymbolTableCompleter cDAssociationVisitor =
-        new CDAssociationSymbolTableCompleter(new FullSynthesizeFromCD4Analysis());
+        new CDAssociationSymbolTableCompleter();
     traverser.add4CDAssociation(cDAssociationVisitor);
     traverser.setCDAssociationHandler(cDAssociationVisitor);
     final CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor =
-        new CDInterfaceAndEnumSymbolTableCompleter(new FullSynthesizeFromCD4Analysis());
+        new CDInterfaceAndEnumSymbolTableCompleter();
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
   }
   

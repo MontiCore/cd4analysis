@@ -482,6 +482,30 @@ public class MergeTool {
   }
   
   private void checkCoCos(ASTCDCompilationUnit cd) {
+    //======= test =====================
+    System.out.println("\n==============================================");
+    System.out.println("Merge test for field symbols...");
+    System.out.println("==============================================");
+    
+    cd.getCDDefinition().getCDClassesList().stream().filter(c -> c.getName().equals("Office"))
+        .findFirst().ifPresentOrElse(officeClass -> {
+          System.out.println("Class Office found in the scope");
+          
+          var scope = officeClass.getEnclosingScope();
+          System.out.println("Enclosing Scope: " + scope.getClass().getSimpleName());
+          
+          System.out.println("field symbols: ");
+          var fieldSymbols = scope.getLocalFieldSymbols();
+          System.out.println("fieldsize : " + fieldSymbols.size());
+          for (var fieldSym : fieldSymbols) {
+            System.out.println("-> found fields: '" + fieldSym.getName() + "'");
+            System.out.println(" Java Class: " + fieldSymbols.getClass().getName());
+          }
+          
+        }, () -> {
+          System.out.println("--> error: class office could not be found!");
+        });
+    //============================================================
     mergeBlackBoard.addLog(ErrorLevel.FINE,
         "Checking CD4Code context conditions for merged class diagram.", MergePhase.VALIDATION);
     // Ensure that the CoCos won't terminate the program

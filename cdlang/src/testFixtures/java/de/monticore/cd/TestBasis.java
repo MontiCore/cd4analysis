@@ -29,6 +29,8 @@ public class TestBasis {
   
   public static final String PATH = "src/test/resources/de/monticore/";
   
+  public static final String SYMBOL_PATH = "src/test/resources/";
+  
   /** have a temporary folder for the tests */
   @TempDir
   Path folderPath;

@@ -12,30 +12,23 @@ import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.types.check.FullSynthesizeFromMCCollectionTypes;
-import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types3.TypeCheck3;
+import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, CDBasisVisitor2 {
   
-  protected ISynthesize typeSynthesizer;
-  
-  public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
-  }
-  
+  @Deprecated(forRemoval = true)
   public CD4CodeBasisSymbolTableCompleter(int i) {
-    this.typeSynthesizer = typeSynthesizer;
   }
   
   public CD4CodeBasisSymbolTableCompleter() {
-    this(new FullSynthesizeFromMCCollectionTypes());
   }
   
   @Override
@@ -67,7 +60,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     if (node.getCDConstructorList().isEmpty()) {
       CDMethodSignatureSymbol constructor = CD4CodeBasisMill.cDMethodSignatureSymbolBuilder()
           .setIsPublic(true).setIsStatic(true).setIsConstructor(true).setName(node.getName())
-          .setType(SymTypeExpressionFactory.createTypeExpression(node.getSymbol())).build();
+          .setType(SymTypeExpressionFactory.createFromSymbol(node.getSymbol())).build();
       ICD4CodeBasisScope scope = CD4CodeBasisMill.scope();
       scope.setName(node.getName());
       constructor.setSpannedScope(scope);
@@ -85,14 +78,14 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     symbol.setIsMethod(true);
     symbol.setIsAbstract(ast.getModifier().isAbstract());
     
-    final TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(ast.getMCReturnType());
-    if (!typeResult.isPresentResult()) {
+    final SymTypeExpression typeResult = TypeCheck3.symTypeFromAST(ast.getMCReturnType());
+    if (typeResult == null) {
       Log.error(String.format("0xCDA90: The type of the return type (%s) could not be calculated",
           ast.getMCReturnType().getClass().getSimpleName()), ast.getMCReturnType()
               .get_SourcePositionStart());
     }
     else {
-      symbol.setType(typeResult.getResult());
+      symbol.setType(typeResult);
     }
     
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
@@ -100,15 +93,14 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     // the exception types don't have to be resolved
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
-        final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
+        final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
+        if (result == null) {
           Log.error(String.format(
               "0xCDA91: The type of the exception classes (%s) could not be calculated", s
                   .getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors
-          .toList()));
+      }).filter(res -> res != null && !res.isObscureType()).collect(Collectors.toList()));
     }
     
     setupModifiers(ast.getModifier(), symbol);
@@ -119,21 +111,26 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     symbol.setIsConstructor(true);
     symbol.setIsAbstract(ast.getModifier().isAbstract());
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
-    
-    symbol.setType(SymTypeExpressionFactory.createTypeObject(symbol.getName(), symbol
-        .getEnclosingScope()));
+    Optional<SymTypeExpression> symType = WithinScopeBasicSymbolsResolver.resolveType(symbol
+        .getEnclosingScope(), symbol.getName());
+    if (symType.isEmpty()) {
+      Log.error(String.format("0xCDA94: The type of the constructor (%s) could not be resolved",
+          symbol.getName()), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+    }
+    else {
+      symbol.setType(symType.get());
+    }
     
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
-        final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
+        final SymTypeExpression result = TypeCheck3.symTypeFromAST(s);
+        if (result == null) {
           Log.error(String.format(
               "0xCDA92: The type of the exception classes (%s) could not be calculated", s
                   .getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors
-          .toList()));
+      }).filter(res -> res != null && !res.isObscureType()).collect(Collectors.toList()));
     }
     
     setupModifiers(ast.getModifier(), symbol);
@@ -141,9 +138,9 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
   
   protected void initialize_CDParameter(ASTCDParameter ast) {
     FieldSymbol symbol = ast.getSymbol();
-    TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(ast.getMCType());
+    SymTypeExpression typeResult = TypeCheck3.symTypeFromAST(ast.getMCType());
     
-    if (!typeResult.isPresentResult()) {
+    if (typeResult == null) {
       Log.error(String.format(
           "0xCDA93: The type (%s) of the attribute (%s) could not be calculated", CD4CodeBasisMill
               .prettyPrint(ast.getMCType(), false), ast.getName()), ast.getMCType()
@@ -153,11 +150,10 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
       
       final SymTypeExpression finalTypeResult;
       if (ast.isEllipsis()) {
-        finalTypeResult = SymTypeExpressionFactory.createTypeArray(CD4CodeBasisMill.prettyPrint(ast
-            .getMCType(), false), symbol.getEnclosingScope(), 1, typeResult.getResult());
+        finalTypeResult = SymTypeExpressionFactory.createTypeArray(typeResult, 1);
       }
       else {
-        finalTypeResult = typeResult.getResult();
+        finalTypeResult = typeResult;
       }
       
       symbol.setType(finalTypeResult);
@@ -178,9 +174,15 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = ast.getEnclosingScope().getName();
     // call getEnclosingScope() twice, so the full name of the type evaluates to the correct package
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, symbol
-        .getEnclosingScope().getEnclosingScope());
-    symbol.setType(typeObject);
+    Optional<SymTypeExpression> enumType = WithinScopeBasicSymbolsResolver.resolveType(symbol
+        .getEnclosingScope().getEnclosingScope(), enumName);
+    if (enumType.isEmpty()) {
+      Log.error(String.format("0xCDA95: The type of the enum constant (%s) could not be resolved",
+          symbol.getName()), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
+    }
+    else {
+      symbol.setType(enumType.get());
+    }
     
     // Don't store the arguments in the ST
   }
@@ -190,12 +192,6 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     methodSymbol.setIsPrivate(modifier.isPrivate());
     methodSymbol.setIsProtected(modifier.isProtected());
     methodSymbol.setIsStatic(modifier.isStatic());
-  }
-  
-  public ISynthesize getTypeSynthesizer() { return typeSynthesizer; }
-  
-  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
-    this.typeSynthesizer = typeSynthesizer;
   }
   
 }
