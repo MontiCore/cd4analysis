@@ -95,7 +95,7 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
     return templateHookPoint(templateName, "", templateArguments);
   }
 
-  protected void decorateOptional(ASTCDType decoratedType, ASTCDAttribute attribute) {
+  protected MethodInformation decorateOptional(ASTCDType decoratedType, ASTCDAttribute attribute) {
     String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
 
