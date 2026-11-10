@@ -12,7 +12,6 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.apache.commons.io.file.PathUtils;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -370,9 +369,6 @@ public class CDDiffCLIToolTest {
   }
   
   @Test
-  @Disabled // TODO: @MSh [2]0xFD226 internal error: resolved 2 occurrences of Symbol, but expected only one:
-  //  Employees8.emp.Employee
-  //  Employees7.emp.Employee
   public void testNoOpenWorldDiffWithPackages() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
     final String cd1 = TOOL_PATH + "cddiff/Employees/Employees8.cd";

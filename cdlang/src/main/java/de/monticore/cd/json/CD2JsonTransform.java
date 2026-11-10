@@ -19,6 +19,7 @@ import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.SymTypeOfObject;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.*;
@@ -145,9 +146,8 @@ public class CD2JsonTransform {
     if (m.containsKey(attr.getTypeInfo().getName())) { // Primitive Types
       result.put("type", m.get(attr.getTypeInfo().getName()));
     }
-    else if (attr instanceof SymTypeOfGenerics) { // List<T> OR Optional<T>
-      SymTypeOfGenerics gAttr = (SymTypeOfGenerics) attr;
-      if (gAttr.getFullName().equals("java.util.Optional")) {
+    else if (attr instanceof SymTypeOfGenerics gAttr) { // List<T> OR Optional<T>
+      if (MCCollectionSymTypeRelations.isOptional(gAttr)) {
         result.setAll(getAttribute(gAttr.getArgument(0)));
       }
       else {
