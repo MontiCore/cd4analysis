@@ -231,6 +231,19 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       astcdAttributeList.addAll(astcdClass.getCDAttributeList());
     }
     
+    // Ignore private attributes
+    Iterator<ASTCDAttribute> attributeIterator = astcdAttributeList.iterator();
+    while (attributeIterator.hasNext()) {
+      ASTCDAttribute attribute = attributeIterator.next();
+      if (attribute.getModifier().isPrivate()) {
+        Log.warn(String.format(
+            "0xCDD64: No Builder for attribute `%s` can be added, since its private. Consider not decorating it with a builder or making it at least protected.",
+            attribute.getName()), attribute.getModifier().get_SourcePositionStart(), attribute
+                .getModifier().get_SourcePositionEnd());
+        attributeIterator.remove();
+      }
+    }
+    
     return astcdAttributeList;
   }
   

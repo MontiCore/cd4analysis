@@ -33,6 +33,7 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
             -> (oneB) B [1] public;
             public TestEnum myTestEnum;
             public Level1Interface myLevel1;
+            private boolean myPrivateBool;
           }
           <<setter,getter,builder>>
           public class TestBuilderWithSuperClass extends TestBuilderWithSetter;
@@ -74,6 +75,10 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     for (int i = 0; i < 7; i++) // Test, that the warning about missing setters is present
       MCAssertions.assertHasFinding(f -> f.getMsg().startsWith("Requested setter of TestBuilder")
           && f.isWarning());
+    
+    MCAssertions.assertHasFindingsStartingWith(
+        "0xCDD64: No Builder for attribute `myPrivateBool` can be added, since its private.");
+    
   }
   
   @Test
