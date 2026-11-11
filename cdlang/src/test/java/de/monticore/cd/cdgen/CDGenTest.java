@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.*;
-import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
@@ -16,13 +16,16 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
+
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateModelException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -74,7 +77,7 @@ public class CDGenTest {
     var afterParseTrafo = new CD4AnalysisAfterParseTrafo();
     afterParseTrafo.transform(opt.get());
     
-    BasicSymbolsMill.initializePrimitives();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     MCCollectionSymTypeRelations.init();
     
     // Create ST
@@ -94,9 +97,22 @@ public class CDGenTest {
     // Prepare
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
     glex.setGlobalValue("cdGenService", new CDGenService());
-    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
+    
+    TemplateHashModel freemarkerStaticModels = new BeansWrapper(GeneratorSetup.FREEMARKER_VERSION)
+        .getStaticModels();
+    try {
+      glex.defineGlobalVar("TypeCheck3", freemarkerStaticModels.get(
+          "de.monticore.types3.TypeCheck3"));
+      glex.defineGlobalVar("SymTypeRelations", freemarkerStaticModels.get(
+          "de.monticore.types3.SymTypeRelations"));
+      glex.defineGlobalVar("MCCollectionSymTypeRelations", freemarkerStaticModels.get(
+          "de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations"));
+    }
+    catch (TemplateModelException e) {
+      Log.error("0xCDD63: Could not set up FreeMarker static models for CDGenTool", e);
+    }
+    
     GeneratorSetup generatorSetup = new GeneratorSetup();
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/outtest"));

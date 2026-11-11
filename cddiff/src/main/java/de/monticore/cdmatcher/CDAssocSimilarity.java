@@ -5,8 +5,9 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.symboltable.ISymbol;
 import java.util.*;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.TypeCheck3;
 import org.antlr.v4.runtime.misc.Triple;
 
 public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
@@ -58,23 +59,27 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
      * as well as their sub- and supertypes.
      */
     
-    Optional<ISymbol> srcTSymbol = srcSide.getMCQualifiedType().getDefiningSymbol();
-    Optional<ISymbol> tgtTSymbol = tgtSide.getMCQualifiedType().getDefiningSymbol();
+    SymTypeExpression symTypesrcTSymbol = TypeCheck3.symTypeFromAST(srcSide.getMCQualifiedType());
+    SymTypeExpression symTypetgtTSymbol = TypeCheck3.symTypeFromAST(tgtSide.getMCQualifiedType());
     
-    // The defining symbol is unfortunately not always present.
-    if (srcTSymbol.isPresent() && srcTSymbol.get() instanceof CDTypeSymbol && tgtTSymbol.isPresent()
-        && tgtTSymbol.get() instanceof CDTypeSymbol) {
-      
-      ASTCDType srcType = ((CDTypeSymbol) srcTSymbol.get()).getAstNode();
-      ASTCDType tgtType = ((CDTypeSymbol) tgtTSymbol.get()).getAstNode();
-      
-      // Is there a better way to do this?
-      Optional<Triple<ASTCDType, ASTCDType, Double>> entry = typeSimilaritySet.stream().filter(
-          t -> t.a.equals(srcType) && t.b.equals(tgtType)).findFirst();
-      
-      if (entry.isPresent()) {
-        // We scale the score down to max 1.02.
-        score += Double.min(entry.get().c, 1.02);
+    if (!symTypesrcTSymbol.isObscureType() && !symTypetgtTSymbol.isObscureType()
+        && symTypesrcTSymbol.getSourceInfo().getSourceSymbol().isPresent() && symTypetgtTSymbol
+            .getSourceInfo().getSourceSymbol().isPresent()) {
+      if (symTypesrcTSymbol.getSourceInfo().getSourceSymbol().get() instanceof CDTypeSymbol
+          && symTypetgtTSymbol.getSourceInfo().getSourceSymbol().get() instanceof CDTypeSymbol) {
+        ASTCDType srcType = ((CDTypeSymbol) symTypesrcTSymbol.getSourceInfo().getSourceSymbol()
+            .get()).getAstNode();
+        ASTCDType tgtType = ((CDTypeSymbol) symTypetgtTSymbol.getSourceInfo().getSourceSymbol()
+            .get()).getAstNode();
+        
+        // Is there a better way to do this?
+        Optional<Triple<ASTCDType, ASTCDType, Double>> entry = typeSimilaritySet.stream().filter(
+            t -> t.a.equals(srcType) && t.b.equals(tgtType)).findFirst();
+        
+        if (entry.isPresent()) {
+          // We scale the score down to max 1.02.
+          score += Double.min(entry.get().c, 1.02);
+        }
       }
       
     }

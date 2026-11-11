@@ -15,8 +15,8 @@ import de.monticore.types.MCTypeFacade;
 import de.se_rwth.commons.logging.LogStub;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 @Disabled("For manual performance checks between revisions")
 public class GetCDMemberListBenchmark {

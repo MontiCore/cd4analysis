@@ -72,11 +72,10 @@ dependencies {
   implementation "$var_path:class2mc:$mc_version"
   implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+  implementation "org.freemarker:freemarker:$freemarker_version"
 
-  testImplementation "org.freemarker:freemarker:$freemarker_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
-  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
   testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
   testImplementation ("de.monticore:monticore-runtime:$mc_version") capabilities {
@@ -87,6 +86,7 @@ dependencies {
   testImplementation testFixtures("de.monticore:monticore-grammar:$mc_version")
 
   testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testFixturesApi testFixtures("de.monticore:monticore-grammar:$mc_version")
 
   //dependencies for trafo
   if (withDSTLGen) {

@@ -7,6 +7,7 @@ import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
+import de.monticore.runtime.junit.MCAssertions;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.apache.commons.io.file.PathUtils;
@@ -32,6 +33,9 @@ public class CDDiffCLIToolTest {
   @BeforeEach
   public void init() {
     LogStub.init();
+    LogStub.setErrorHook(() -> {
+      throw new RuntimeException();
+    });
   }
   
   @Test
@@ -41,7 +45,7 @@ public class CDDiffCLIToolTest {
     final String output = "./target/generated/chain";
     String[] args = { "-i", cd1, "--merge", cd2, "--semdiff", cd2, "-o", output, "-pp",
         "Employees12.cd" };
-    CD4CodeTool.main(args);
+    new CD4CodeTool().run(args);
     
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertEquals(Log.getErrorCount(), 0);
@@ -51,7 +55,7 @@ public class CDDiffCLIToolTest {
   public void testSyntaxDiff() {
     final String cd1 = TOOL_PATH + "cddiff/Employees/Employees2.cd";
     final String cd2 = TOOL_PATH + "cddiff/Employees/Employees1.cd";
-    CD4CodeTool.main(new String[] { "-i", cd1, "--syntaxdiff", cd2, "--show", "all" });
+    new CD4CodeTool().run(new String[] { "-i", cd1, "--syntaxdiff", cd2, "--show", "all" });
     
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertEquals(Log.getErrorCount(), 0);
@@ -61,7 +65,7 @@ public class CDDiffCLIToolTest {
   public void testConformance() {
     final String con = TOOL_PATH + "cdconformance/adapter/GraphAdapter.cd";
     final String ref = TOOL_PATH + "cdconformance/adapter/Adapter.cd";
-    CD4CodeTool.main(new String[] { "-i", con, "--reference", ref, "--map", "m1", "m2" });
+    new CD4CodeTool().run(new String[] { "-i", con, "--reference", ref, "--map", "m1", "m2" });
     
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertEquals(Log.getErrorCount(), 0);
@@ -103,7 +107,7 @@ public class CDDiffCLIToolTest {
     
     String[] args = new String[] { "-i", con, "--reference", ref, "--map", "ref", "--complete",
         "-o", output, "-pp", outFileName };
-    CD4CodeTool.main(ObjectArrays.concat(args, additionalArgs, String.class));
+    new CD4CodeTool().run(ObjectArrays.concat(args, additionalArgs, String.class));
     
     assertEquals(Log.getErrorCount(), 0, "unexpected error during execution");
     
@@ -139,7 +143,7 @@ public class CDDiffCLIToolTest {
       // when CD4CodeTool is used to compute the semantic difference
       String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
           "--difflimit", "20", cwDiffOption };
-      CD4CodeTool.main(args);
+      new CD4CodeTool().run(args);
       
       try {
         ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
@@ -183,7 +187,7 @@ public class CDDiffCLIToolTest {
       // when CD4CodeTool is used to compute the semantic difference
       String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
           "--difflimit", "20", cwDiffOption };
-      CD4CodeTool.main(args);
+      new CD4CodeTool().run(args);
       
       // no corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -218,7 +222,7 @@ public class CDDiffCLIToolTest {
     
     // when CD4CodeTool is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "-o", output };
-    CD4CodeTool.main(args);
+    new CD4CodeTool().run(args);
     
     try {
       ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
@@ -261,7 +265,7 @@ public class CDDiffCLIToolTest {
         // when CD4CodeTool is used to compute the semantic difference
         String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
             "--difflimit", "20", "--open-world", owDiffOption, cwDiffOption };
-        CD4CodeTool.main(args);
+        new CD4CodeTool().run(args);
         
         // some corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -298,7 +302,7 @@ public class CDDiffCLIToolTest {
         // when CD4CodeTool is used to compute the semantic difference
         String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
             "--difflimit", "20", "--open-world", owDiffOption, cwDiffOption };
-        CD4CodeTool.main(args);
+        new CD4CodeTool().run(args);
         
         // no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -337,7 +341,7 @@ public class CDDiffCLIToolTest {
         // when CD4CodeTool is used to compute the semantic difference
         String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
             "--difflimit", "20", "--open-world", owDiffOption, cwDiffOption };
-        CD4CodeTool.main(args);
+        new CD4CodeTool().run(args);
         
         // no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -377,12 +381,12 @@ public class CDDiffCLIToolTest {
         // when CD4CodeTool is used to compute the semantic difference
         String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
             "--difflimit", "20", "--open-world", owDiffOption, cwDiffOption };
-        CD4CodeTool.main(args);
+        new CD4CodeTool().run(args);
         
         // no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
         if (odFiles == null) {
-          assertEquals(0, Log.getErrorCount());
+          MCAssertions.assertNoFindings();
           return;
         }
         List<String> odFilePaths = new LinkedList<>();
@@ -416,7 +420,7 @@ public class CDDiffCLIToolTest {
       // when CD4CodeTool is used to compute the semantic difference
       String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
           "--difflimit", "20", cwDiffOption };
-      CD4CodeTool.main(args);
+      new CD4CodeTool().run(args);
       
       try {
         ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
@@ -452,7 +456,7 @@ public class CDDiffCLIToolTest {
       // when CD4CodeTool is used to compute the semantic difference
       String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
           "--difflimit", "20", "--open-world", "reduction-based", cwDiffOption };
-      CD4CodeTool.main(args);
+      new CD4CodeTool().run(args);
       
       // no corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -486,7 +490,7 @@ public class CDDiffCLIToolTest {
     // when CD4CodeTool is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
         "20", "--open-world", "reduction-based" };
-    CD4CodeTool.main(args);
+    new CD4CodeTool().run(args);
     
     // no corresponding .od files are generated
     File[] odFiles = Paths.get(output).toFile().listFiles();

@@ -3,7 +3,7 @@ package de.monticore.cdbasis.parser;
 
 import de.monticore.cdbasis.parser.Simple.*;
 
-targetimport additional.imports;
+targetimport java.util.LinkedList; // an additional import
 
 classdiagram Complete {
 

@@ -4,7 +4,6 @@ package de.monticore.testcdbasis.cocos;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.monticore.cd4analysis.typescalculator.FullDeriveFromCD4Analysis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeInitialTypeCompatible;
 import de.monticore.testcdbasis.CDBasisTestBasis;
@@ -18,7 +17,7 @@ public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
   
   @Test
   public void testValid() throws IOException {
-    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible(new FullDeriveFromCD4Analysis()));
+    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible());
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
@@ -31,7 +30,7 @@ public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
   
   @Test
   public void testInvalid() throws IOException {
-    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible(new FullDeriveFromCD4Analysis()));
+    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible());
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
         "cdbasis/cocos/CDAttributeInitialTypeCompatibleInvalid.cd"));
     assertTrue(optAST.isPresent());

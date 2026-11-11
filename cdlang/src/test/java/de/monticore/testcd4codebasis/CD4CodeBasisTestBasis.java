@@ -27,9 +27,7 @@ public class CD4CodeBasisTestBasis extends TestBasis {
     BasicSymbolsMill.initializePrimitives();
     p = TestCD4CodeBasisMill.parser();
     
-    //    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
-    
-    cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos(new FullDeriveFromTestCD4CodeBasis());
+    cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos();
     coCoChecker = new TestCD4CodeBasisCoCoChecker();
   }
   

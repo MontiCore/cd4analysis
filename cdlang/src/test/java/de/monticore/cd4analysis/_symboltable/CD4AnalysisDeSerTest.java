@@ -18,12 +18,15 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeExpression;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -121,8 +124,11 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final Optional<CDTypeSymbol> c = scope.resolveCDType("A");
     final ICD4AnalysisScope innerSpanningScope = CD4AnalysisMill.scope();
     innerSpanningScope.setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope());
-    innerSpanningScope.add(OOSymbolsMill.fieldSymbolBuilder().setName("field").setType(
-        SymTypeExpressionFactory.createTypeObject("A", innerSpanningScope)).build());
+    Optional<SymTypeExpression> aType = WithinScopeBasicSymbolsResolver.resolveType(
+        innerSpanningScope, "A");
+    assertTrue(aType.isPresent());
+    innerSpanningScope.add(OOSymbolsMill.fieldSymbolBuilder().setName("field").setType(aType.get())
+        .build());
     final CDTypeSymbol inner = CDBasisMill.cDTypeSymbolBuilder().setName("Inner").setIsClass(true)
         .setIsStatic(true).setSpannedScope(innerSpanningScope).build();
     c.get().getSpannedScope().add(inner);

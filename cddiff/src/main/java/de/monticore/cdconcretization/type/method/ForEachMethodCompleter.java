@@ -16,6 +16,9 @@ import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.MethodOverloadingOOSymbolsIncMapping;
+import de.monticore.symboltable.ISymbol;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.Names;
 
 import java.util.List;
@@ -158,14 +161,20 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
       ASTCDMethod newMethod = cloneWithOriginalTypes(referenceMethod);
       
       // 1. decide return type of the new method
-      if (referenceMethod.getMCReturnType().isPresentMCType() && referenceMethod.getMCReturnType()
-          .getMCType().getDefiningSymbol().get().getFullName().equals(paramType.getSymbol()
-              .getFullName())) {
-        // Convention: If the param attribute type matches the reference method return type
-        // -> Use the attribute incarnation type as return type
-        newMethod.setMCReturnType(CD4CodeMill.mCReturnTypeBuilder().setMCType(
-            createQualifiedTypeInScope(context.getConcreteType().getSpannedScope(), paramTypeInc
-                .getSymbol().getInternalQualifiedName())).build());
+      if (referenceMethod.getMCReturnType().isPresentMCType()) {
+        SymTypeExpression returnSymType = TypeCheck3.symTypeFromAST(referenceMethod
+            .getMCReturnType().getMCType());
+        if (!returnSymType.isObscureType() && returnSymType.getSourceInfo().getSourceSymbol()
+            .isPresent()) {
+          ISymbol returnSymbol = returnSymType.getSourceInfo().getSourceSymbol().get();
+          if (returnSymbol.getFullName().equals(paramType.getSymbol().getFullName())) {
+            // Convention: If the param attribute type matches the reference method return type
+            // -> Use the attribute incarnation type as return type
+            newMethod.setMCReturnType(CD4CodeMill.mCReturnTypeBuilder().setMCType(
+                createQualifiedTypeInScope(context.getConcreteType().getSpannedScope(), paramTypeInc
+                    .getSymbol().getInternalQualifiedName())).build());
+          }
+        }
       }
       // ELSE: Default: keep the return type of the reference method resp.
       
@@ -183,16 +192,22 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
         // ELSE: parameter name stays as is! only needs to be unique in scope of the method
         
         // 2.2 parameter type
-        if (referenceParameter.getMCType().getDefiningSymbol().get().getFullName().equals(paramType
-            .getSymbol().getFullName())) {
-          // TODO naming is weird when we talk about parameters and a parameter element!
-          // Convention: If the param type matches the reference method parameter type
-          // -> Use the type incarnation as parameter type
-          newParameter.setMCType(createQualifiedTypeInScope(context.getConcreteType()
-              .getEnclosingScope(), paramTypeInc.getSymbol().getInternalQualifiedName()));
-          parameterSignatureAdapted = true;
+        SymTypeExpression referenceSymType = TypeCheck3.symTypeFromAST(referenceParameter
+            .getMCType());
+        if (!referenceSymType.isObscureType() && referenceSymType.getSourceInfo().getSourceSymbol()
+            .isPresent()) {
+          ISymbol referenceSymbol = referenceSymType.getSourceInfo().getSourceSymbol().get();
+          if (referenceSymbol.getFullName().equals(paramType.getSymbol().getFullName())) {
+            // TODO naming is weird when we talk about parameters and a parameter element!
+            // Convention: If the param type matches the reference method parameter type
+            // -> Use the type incarnation as parameter type
+            newParameter.setMCType(createQualifiedTypeInScope(context.getConcreteType()
+                .getEnclosingScope(), paramTypeInc.getSymbol().getInternalQualifiedName()));
+            parameterSignatureAdapted = true;
+          }
+          // ELSE: Default: keep the parameter type of the reference method resp.
+          
         }
-        // ELSE: Default: keep the parameter type of the reference method resp.
       }
       
       // 3. decide name of the new method
