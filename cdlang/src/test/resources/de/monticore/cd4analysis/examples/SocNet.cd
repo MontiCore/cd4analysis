@@ -75,17 +75,17 @@ classdiagram SocNet {
 
   association initiated [*] Relationship <-> Profile [1];
 
-  association received [*] Profile <-> Post [*] {ordered};
+  association received [*] Profile <-> post.Post [*] {ordered};
 
-  // class Post can be also referenced with its package name
+  // class post.Post can be also referenced with its package name
   association sent [1] Profile <-> post.Post [*] {ordered};
 
-  association [*] InstantMessage <-> (replyTo) InstantMessage [1];
+  association [*] post.InstantMessage <-> (replyTo) post.InstantMessage [1];
 
-  association [*] Photo (picture) <-> PhotoMessage;
+  association [*] post.Photo (picture) <-> post.PhotoMessage;
 
-  association [1] Person (tagged) <-> Tag [*];
+  association [1] Person (tagged) <-> post.Tag [*];
 
-  association [*] Tag <-> Photo [1];
+  association [*] post.Tag <-> post.Photo [1];
 
 }
