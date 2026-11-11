@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AssocRoleImplicitNameAdaptConc {
+  <<ref="Task">>    class Ticket;
+  <<ref="Project">> class Sprint;
+  // role name "assignedTask" copied from reference and adapted: "Task" -> "Ticket"
+  association Sprint -> (assignedTicket) Ticket [*];
+}

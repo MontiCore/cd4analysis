@@ -16,15 +16,12 @@ import java.util.List;
  * and compatible types, Associations with the same type references and compatible specification
  */
 public class DefaultCDMatcher extends CDMatcher {
-
-  public DefaultCDMatcher(
-      MergeBlackBoard blackboard,
-      TypeMatcher typeMatcher,
-      AttributeMatcher attributeMatcher,
-      AssociationMatcher associationMatcher) {
+  
+  public DefaultCDMatcher(MergeBlackBoard blackboard, TypeMatcher typeMatcher,
+      AttributeMatcher attributeMatcher, AssociationMatcher associationMatcher) {
     super(blackboard, typeMatcher, attributeMatcher, associationMatcher);
   }
-
+  
   @Override
   public CDMatch createCDMatch(List<ASTCDDefinition> cds) throws MergingException {
     CDMatch matchResult = new CDMatch(cds);
@@ -38,4 +35,5 @@ public class DefaultCDMatcher extends CDMatcher {
     log(ErrorLevel.FINE, matchResult.toString());
     return matchResult;
   }
+  
 }

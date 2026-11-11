@@ -1,0 +1,8 @@
+classdiagram AttributeTypeMIRef {
+
+  class SomeValueType;
+
+  class Employee {
+    SomeValueType value;
+  }
+}

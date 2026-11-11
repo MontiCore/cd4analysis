@@ -1,0 +1,10 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeDifferentReturnTypeConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+}

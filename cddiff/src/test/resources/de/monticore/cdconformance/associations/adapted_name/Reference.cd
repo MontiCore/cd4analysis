@@ -1,0 +1,9 @@
+// Role names "myAccount" and "myPerson" are custom (not the implicit lowercase role names),
+// so ImplicitRoleNameAssocIncStrategy would not match them. AdaptedRoleNameAssocIncStrategy
+// is required.
+classdiagram Reference {
+  class Account;
+  class Person;
+
+  association Account (myAccount) -> (myPerson) Person[1];
+}

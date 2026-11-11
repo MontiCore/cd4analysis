@@ -2,7 +2,7 @@
 
 import java.lang.String;
 
-classdiagram MyLectures {
+classdiagram ManagementV1 {
   class Employee {
     String name;
   }

@@ -1,0 +1,8 @@
+classdiagram Reference {
+  class Task;
+
+  class Processor {
+    Task findTask();
+    void processTask(Task task);
+  }
+}

@@ -10,18 +10,16 @@ import java.util.stream.Collectors;
 
 /** Checks that classes do only extend other classes. */
 public class CDClassExtendsAtMostOneClass implements CDBasisASTCDClassCoCo {
+  
   @Override
   public void check(ASTCDClass clazz) {
     final List<SymTypeExpression> superclassList = clazz.getSymbol().getSuperClassesOnly();
     if (superclassList.size() > 1) {
-      Log.error(
-          String.format(
-              "0xCDC2F: Class %s cannot extend multiple classes, but extends (%s). A class may only extend one class.",
-              clazz.getName(),
-              superclassList.stream()
-                  .map(s -> s.getTypeInfo().getName())
-                  .collect(Collectors.joining(", "))),
-          clazz.get_SourcePositionStart());
+      Log.error(String.format(
+          "0xCDC2F: Class %s cannot extend multiple classes, but extends (%s). A class may only extend one class.",
+          clazz.getName(), superclassList.stream().map(s -> s.getTypeInfo().getName()).collect(
+              Collectors.joining(", "))), clazz.get_SourcePositionStart());
     }
   }
+  
 }

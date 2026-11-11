@@ -1,4 +1,0 @@
-classdiagram ConcMissingInheritance {
-  class Teacher {
-  }
-}

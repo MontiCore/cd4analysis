@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram AnyParamInConcrete {
+
+  class Operator {
+    void operation(String input, any param);
+  }
+}

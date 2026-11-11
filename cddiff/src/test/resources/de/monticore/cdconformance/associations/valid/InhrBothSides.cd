@@ -11,5 +11,5 @@ abstract  class PersonTop;
   class Person  extends PersonTop;
 
   association belongTo AccountTop    -> Person[1];
-  association access   PersonTop     -> Account[*];
+  association access   PersonTop     -> AccountTop[*];
 }

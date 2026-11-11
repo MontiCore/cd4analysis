@@ -7,9 +7,9 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDInterfaceCoCo;
 
 /** Checks that interfaces do only extend other interfaces. */
-public class CDInterfaceExtendsOnlyInterfaces extends ImplementOnlyInterfaces
-    implements CDInterfaceAndEnumASTCDInterfaceCoCo {
-
+public class CDInterfaceExtendsOnlyInterfaces extends ImplementOnlyInterfaces implements
+    CDInterfaceAndEnumASTCDInterfaceCoCo {
+  
   /**
    * @see de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo#check(ASTCDEnum)
    */
@@ -17,4 +17,5 @@ public class CDInterfaceExtendsOnlyInterfaces extends ImplementOnlyInterfaces
   public void check(ASTCDInterface node) {
     super.check(node);
   }
+  
 }

@@ -1,0 +1,8 @@
+classdiagram AssociationInSuperTypeRef {
+  class Account;
+
+  class Person ;
+
+  association Account -> Person[1];
+  association Person  -> Account[*] ;
+}

@@ -1,0 +1,17 @@
+import java.lang.String;
+
+classdiagram AttributeInDeepSuperClassConc { 
+  class Person { 
+    String firstName;
+    String lastName;
+  }
+
+  class AbstractEmployee extends Person { 
+    String someOtherProperty;
+  }
+
+  class Employee extends AbstractEmployee { 
+    int number;
+    int salary;
+  }
+} 

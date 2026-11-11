@@ -1,5 +1,4 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cd._symboltable;
 
 import com.google.common.collect.Lists;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CDSymbolTables {
-
+  
   public static List<ASTCDAttribute> getAttributesInHierarchy(ASTCDType ast) {
     List<ASTCDAttribute> attributes = Lists.newArrayList(ast.getCDAttributeList());
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
@@ -23,7 +22,7 @@ public class CDSymbolTables {
     }
     return attributes;
   }
-
+  
   public static List<ASTCDMethod> getMethodsInHierarchy(ASTCDType ast) {
     List<ASTCDMethod> attributes = Lists.newArrayList(ast.getCDMethodList());
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
@@ -31,20 +30,18 @@ public class CDSymbolTables {
     }
     return attributes;
   }
-
+  
   public static List<ASTCDAttribute> getInheritedAttributesInHierarchy(ASTCDType ast) {
     List<ASTCDAttribute> attributes = getAttributesInHierarchy(ast);
     attributes.removeAll(ast.getCDAttributeList());
     return attributes;
   }
-
+  
   public static List<ASTCDAssocSide> getAssociations(ASTCDType ast) {
-    return ast.getSymbol().getCDRoleList().stream()
-        .filter(r -> r.isIsDefinitiveNavigable())
-        .map(a -> a.getAssocSide())
-        .collect(Collectors.toList());
+    return ast.getSymbol().getCDRoleList().stream().filter(r -> r.isIsDefinitiveNavigable()).map(
+        a -> a.getAssocSide()).collect(Collectors.toList());
   }
-
+  
   public static List<ASTCDAssocSide> getAssociationsInHierarchy(ASTCDType ast) {
     List<ASTCDAssocSide> assocs = Lists.newArrayList(getAssociations(ast));
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
@@ -52,7 +49,7 @@ public class CDSymbolTables {
     }
     return assocs;
   }
-
+  
   public static List<ASTCDClass> getTransitiveSuperClasses(ASTCDClass ast) {
     List<ASTCDClass> classes = Lists.newArrayList();
     ASTType currentClass = ast;
@@ -65,7 +62,7 @@ public class CDSymbolTables {
     }
     return classes;
   }
-
+  
   public static List<ASTCDInterface> getTransitiveSuperInterfaces(ASTCDType ast) {
     List<ASTCDInterface> interfaces = Lists.newArrayList();
     for (SymTypeExpression s : ast.getSymbol().getInterfaceList()) {
@@ -78,7 +75,7 @@ public class CDSymbolTables {
     }
     return interfaces;
   }
-
+  
   public static List<ASTCDType> getTransitiveSuperTypes(ASTCDType ast) {
     List<ASTCDType> types = Lists.newArrayList();
     if (ast instanceof ASTCDClass) {
@@ -93,4 +90,5 @@ public class CDSymbolTables {
     types.addAll(getTransitiveSuperInterfaces(ast));
     return types;
   }
+  
 }

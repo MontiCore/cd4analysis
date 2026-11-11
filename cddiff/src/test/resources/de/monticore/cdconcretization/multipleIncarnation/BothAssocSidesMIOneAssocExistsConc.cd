@@ -1,0 +1,18 @@
+classdiagram BothAssocSidesMIConc {
+
+  <<ref="SuperTeacher">> class SuperTeacher1 {
+  }
+  <<ref="SuperTeacher">> class SuperTeacher2 {
+  }
+  <<ref="Teacher">> class Teacher1 {
+  }
+  <<ref="Teacher">> class Teacher2 {
+  }
+  <<ref="Department">> class Department1 {
+  }
+  <<ref="Department">> class Department2 {
+  }
+
+  association Teacher1 (hasTeacher) -- (teachesIn) Department1;
+  association Teacher2 (hasTeacher) -- (teachesIn) Department2;
+}

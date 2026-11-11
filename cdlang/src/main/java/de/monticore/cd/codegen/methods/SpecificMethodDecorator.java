@@ -11,15 +11,14 @@ import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
 import java.util.List;
 
 abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
-
+  
   protected final AbstractMethodDecorator mandatoryMethodDecorator;
-
+  
   protected final AbstractMethodDecorator optionalMethodDecorator;
-
+  
   protected final AbstractMethodDecorator listMethodDecorator;
-
-  SpecificMethodDecorator(
-      final GlobalExtensionManagement glex,
+  
+  SpecificMethodDecorator(final GlobalExtensionManagement glex,
       final AbstractMethodDecorator mandatoryMethodDecorator,
       final AbstractMethodDecorator optionalMethodDecorator,
       final AbstractMethodDecorator listMethodDecorator) {
@@ -28,47 +27,48 @@ abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
     this.optionalMethodDecorator = optionalMethodDecorator;
     this.listMethodDecorator = listMethodDecorator;
   }
-
-  SpecificMethodDecorator(
-      final GlobalExtensionManagement glex,
+  
+  SpecificMethodDecorator(final GlobalExtensionManagement glex,
       final AbstractMethodDecorator mandatoryMethodDecorator,
       final AbstractMethodDecorator optionalMethodDecorator,
-      final AbstractMethodDecorator listMethodDecorator,
-      final CDGenService service) {
+      final AbstractMethodDecorator listMethodDecorator, final CDGenService service) {
     super(glex, service);
     this.mandatoryMethodDecorator = mandatoryMethodDecorator;
     this.optionalMethodDecorator = optionalMethodDecorator;
     this.listMethodDecorator = listMethodDecorator;
   }
-
+  
   @Override
   public void enableTemplates() {
     mandatoryMethodDecorator.enableTemplates();
     optionalMethodDecorator.enableTemplates();
     listMethodDecorator.enableTemplates();
   }
-
+  
   @Override
   public void disableTemplates() {
     mandatoryMethodDecorator.disableTemplates();
     optionalMethodDecorator.disableTemplates();
     listMethodDecorator.disableTemplates();
   }
-
+  
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
     AbstractMethodDecorator specificMethodDecorator = determineMethodDecoratorStrategy(ast);
     return specificMethodDecorator.decorate(ast);
   }
-
+  
   protected AbstractMethodDecorator determineMethodDecoratorStrategy(final ASTCDAttribute ast) {
     if (MCTypeFacade.getInstance().isBooleanType(ast.getMCType())) {
       return mandatoryMethodDecorator;
-    } else if (ast.getMCType() instanceof ASTMCListType) {
+    }
+    else if (ast.getMCType() instanceof ASTMCListType) {
       return listMethodDecorator;
-    } else if (ast.getMCType() instanceof ASTMCOptionalType) {
+    }
+    else if (ast.getMCType() instanceof ASTMCOptionalType) {
       return optionalMethodDecorator;
     }
     return mandatoryMethodDecorator;
   }
+  
 }

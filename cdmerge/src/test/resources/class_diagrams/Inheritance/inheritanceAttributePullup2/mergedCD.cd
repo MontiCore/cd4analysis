@@ -1,5 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package inheritanceAttributePullup2;
+
+import java.util.Date;
+
 classdiagram mergedCD {
 
 	class Person {
@@ -10,7 +13,7 @@ classdiagram mergedCD {
 	class Customer extends Person {
 		String name;
 	}
-	
+
 	class Student extends Person {
 		String name;
 		int enrollmentNumber;

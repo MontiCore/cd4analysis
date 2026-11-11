@@ -6,11 +6,11 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 
 public class SymTabDefinitionScopesGenitor extends SymTabDefinitionScopesGenitorTOP {
-
+  
   @Override
   public ISymTabDefinitionArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     ISymTabDefinitionArtifactScope as = super.createFromAST(rootNode);
-
+    
     // set package
     if (rootNode.isPresentMCPackageDeclaration()) {
       as.setPackageName(rootNode.getMCPackageDeclaration().getMCQualifiedName().getQName());
@@ -19,7 +19,8 @@ public class SymTabDefinitionScopesGenitor extends SymTabDefinitionScopesGenitor
     for (ASTMCImportStatement i : rootNode.getMCImportStatementList()) {
       as.addImports(new ImportStatement(i.getQName(), i.isStar()));
     }
-
+    
     return as;
   }
+  
 }

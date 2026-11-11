@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class ModelLoader {
-
+  
   protected Optional<ASTCDCompilationUnit> loadCDModel(File cdModel) throws FileNotFoundException {
-
+    
     if (cdModel.exists() && cdModel.isFile()) {
       Optional<ASTCDCompilationUnit> cdAST = Optional.empty();
       try {
@@ -24,22 +24,24 @@ public class ModelLoader {
         if (parser.hasErrors()) {
           Log.error("Model parsed with errors. Model path: " + cdModel.getPath());
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         Log.error("Could not parse CD model.");
         e.printStackTrace();
       }
-
+      
       cdAST.ifPresent(CDDiffUtil::refreshSymbolTable);
       return cdAST;
-
-    } else {
+      
+    }
+    else {
       Log.error("No File found using path: " + cdModel.getPath());
       throw new FileNotFoundException();
     }
   }
-
+  
   protected Optional<ASTODArtifact> loadODModel(File odModel) throws FileNotFoundException {
-
+    
     if (odModel.exists() && odModel.isFile()) {
       Optional<ASTODArtifact> odAST = Optional.empty();
       try {
@@ -48,16 +50,19 @@ public class ModelLoader {
         if (parser.hasErrors()) {
           Log.error("Model parsed with errors. Model path: " + odModel.getPath());
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         Log.error("Could not parse CD model.");
         e.printStackTrace();
       }
-
+      
       return odAST;
-
-    } else {
+      
+    }
+    else {
       Log.error("No File found using path: " + odModel.getPath());
       throw new FileNotFoundException();
     }
   }
+  
 }

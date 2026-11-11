@@ -14,9 +14,9 @@ import de.se_rwth.commons.logging.Log;
  * @montitoolbox
  */
 public class ObserverPattern implements DesignPattern {
-
+  
   public ObserverPattern() {}
-
+  
   /**
    * Applies the observer pattern to the the given class {@code subjectName}
    *
@@ -26,11 +26,11 @@ public class ObserverPattern implements DesignPattern {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceObserverPattern(
-      String subjectName, String observerName, String observableName, ASTCDCompilationUnit ast) {
-
+  public boolean introduceObserverPattern(String subjectName, String observerName,
+      String observableName, ASTCDCompilationUnit ast) {
+    
     String concreteObserverName = "Concrete" + observerName;
-
+    
     // Create observer, observable and concreteObserver
     Observer observer = new Observer(ast);
     observer.set_$concreteObserver(concreteObserverName);
@@ -43,21 +43,19 @@ public class ObserverPattern implements DesignPattern {
     observer.set_$subjectName(subjectName);
     if (observer.doPatternMatching()) {
       observer.doReplacement();
-
+      
       if (transformationUtility.createInheritanceToClass(subjectName, observableName, ast)) {
         return true;
-      } else {
-        Log.info(
-            "0xF4041: Could not introduce Inheritance between "
-                + subjectName
-                + " and "
-                + observableName,
-            ObserverPattern.class.getName());
+      }
+      else {
+        Log.info("0xF4041: Could not introduce Inheritance between " + subjectName + " and "
+            + observableName, ObserverPattern.class.getName());
       }
     }
-
-    Log.info(
-        "0xF4042: Could not introduce Design Pattern Observer", ObserverPattern.class.getName());
+    
+    Log.info("0xF4042: Could not introduce Design Pattern Observer", ObserverPattern.class
+        .getName());
     return false;
   }
+  
 }

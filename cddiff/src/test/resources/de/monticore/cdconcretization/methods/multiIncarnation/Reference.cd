@@ -1,0 +1,10 @@
+classdiagram Reference {
+  class Account;
+
+  class Transaction;
+
+  class Bank {
+    void createAccount(Account account);
+    Transaction transfer(Account from, Account to, int amount);
+  }
+}

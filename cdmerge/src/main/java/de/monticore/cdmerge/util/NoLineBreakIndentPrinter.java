@@ -8,20 +8,21 @@ import de.monticore.prettyprint.IndentPrinter;
  * just for simple model elements
  */
 public class NoLineBreakIndentPrinter extends IndentPrinter {
-
+  
   /** @see {@link IndentPrinter} */
   public NoLineBreakIndentPrinter(StringBuilder sb) {
     super(sb);
   }
-
+  
   @Override
   public void println() {
     doPrint(" ");
   }
-
+  
   @Override
   public String getContent() {
     String printResult = super.getContent();
     return printResult.replaceAll("\n", " ");
   }
+  
 }

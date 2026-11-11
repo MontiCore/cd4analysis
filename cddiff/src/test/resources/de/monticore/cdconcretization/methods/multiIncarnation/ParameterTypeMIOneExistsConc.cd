@@ -1,0 +1,9 @@
+classdiagram ParameterTypeMIOneExistsConc {
+
+  <<ref="Account">> class PersonalAccount;
+  <<ref="Account">> class BusinessAccount;
+
+  class Bank {
+    void createAccount(PersonalAccount account);
+  }
+}

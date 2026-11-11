@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram ParameterTypeUnderspecifiedIncarnatedConc {
+
+  <<ref="Operator">> class MyOperator {
+    <<ref="operation">> void foo(String param);
+  }
+}

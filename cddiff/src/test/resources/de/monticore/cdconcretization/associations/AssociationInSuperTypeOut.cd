@@ -1,0 +1,12 @@
+classdiagram AssociationInSuperTypeConc {
+
+  abstract class AccountTop;
+
+  class Account extends AccountTop;
+
+  class Person ;
+
+  association AccountTop -> Person[1];
+  association Person     -> Account[*];
+  // there is no association missing to be conform to reference CD. So the tool should not add any association
+}

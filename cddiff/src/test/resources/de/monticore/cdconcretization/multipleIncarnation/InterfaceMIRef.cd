@@ -1,0 +1,6 @@
+classdiagram InterfaceMIRef {
+
+  interface IEmployee;
+
+  class Employee implements IEmployee;
+}

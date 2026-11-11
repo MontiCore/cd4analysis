@@ -5,13 +5,16 @@ pluginManagement {
       mavenLocal()
     }
     maven {
-      credentials.username mavenUser
-      credentials.password mavenPassword
-      url repo
+      credentials.username = mavenUser
+      credentials.password = mavenPassword
+      url = repo
     }
     mavenCentral()
     gradlePluginPortal()
   }
+}
+plugins {
+  id 'org.gradle.toolchains.foojay-resolver-convention' version '0.9.0'
 }
 
 rootProject.name = 'cd4analysis'
@@ -23,9 +26,16 @@ if(!hasProperty('bootstrap')) {
   include(':cd2smt')
   include(':cdmerge')
   include(':cdtool')
-  include(':symtabdefinitiontool')
   include(':language-server')
   if("true".equals(getProperty('genTR'))){
     include(":trafo-library")
   }
+  include(':cdtool:cdgradle')
+}
+include(':cd-runtime')
+include(':symtabdefinitiontool')
+include(':symtabdefinitiontool:stdefgradle')
+
+if(("true").equals(getProperty('buildIntelliJPlugin'))){
+  include(':language-server:cd4a-intellij-plugin')
 }

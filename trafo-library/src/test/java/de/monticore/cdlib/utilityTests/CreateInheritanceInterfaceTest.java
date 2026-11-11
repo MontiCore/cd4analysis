@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.utilityTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdlib.utilities.FileUtility;
@@ -14,8 +14,9 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test class TransformationUtility
@@ -24,69 +25,70 @@ import org.junit.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class CreateInheritanceInterfaceTest {
-
-  @BeforeClass
+  
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   // Test method createInheritanceToInterface
   @Test
   public void testCreateInheritanceInterface() throws IOException {
     FileUtility utility = new FileUtility("cdlib/AInterface");
     TransformationUtility refactoring = new TransformationUtility();
-
+    
     // Check if classdiagram is as expected
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("B", utility.getAst().getCDDefinition().getCDInterfacesList().get(0).getName());
-
+    
     // Change Inheritance
     assertTrue(refactoring.createInheritanceToInterface("A", "B", utility.getAst()));
-
+    
     // Check if inheritance was changed
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("B", utility.getAst().getCDDefinition().getCDInterfacesList().get(0).getName());
-    assertEquals(
-        "B", utility.getAst().getCDDefinition().getCDClassesList().get(0).printInterfaces());
+    assertEquals("B", utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .printInterfaces());
   }
-
+  
   // Test method addInheritanceToInterface
   @Test
   public void testCreateInheritance2Interface() throws IOException {
     FileUtility utility = new FileUtility("cdlib/A2Interface");
     TransformationUtility refactoring = new TransformationUtility();
-
+    
     // Check if classdiagram is as expected
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("B", utility.getAst().getCDDefinition().getCDInterfacesList().get(0).getName());
     assertEquals("C", utility.getAst().getCDDefinition().getCDInterfacesList().get(1).getName());
-
+    
     // Change Inheritance
     assertTrue(refactoring.addInheritanceToInterface("A", "C", utility.getAst()));
-
+    
     // Check if inheritance was changed
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("B", utility.getAst().getCDDefinition().getCDInterfacesList().get(0).getName());
     assertEquals("C", utility.getAst().getCDDefinition().getCDInterfacesList().get(1).getName());
-    assertEquals(
-        "B,C", utility.getAst().getCDDefinition().getCDClassesList().get(0).printInterfaces());
+    assertEquals("B,C", utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .printInterfaces());
   }
+  
 }

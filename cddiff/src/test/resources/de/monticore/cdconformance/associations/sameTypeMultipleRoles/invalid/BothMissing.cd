@@ -1,0 +1,5 @@
+classdiagram BothExist {
+
+  class Account;
+  class Transaction;
+}

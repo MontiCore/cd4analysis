@@ -1,0 +1,11 @@
+classdiagram MillRef {
+
+  class MillProduct;
+
+	class Mill {
+    static void init();
+    static void initMe(Mill me);
+    <<forEach="MillProduct">> MillProduct _MillProduct();
+    <<forEach="MillProduct">> static MillProduct millProduct();
+  }
+}

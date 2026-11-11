@@ -1,0 +1,6 @@
+classdiagram AssociationReverseMatchConc {
+  class A;
+  class B;
+
+  association [*] B <- (partOf) A;
+}

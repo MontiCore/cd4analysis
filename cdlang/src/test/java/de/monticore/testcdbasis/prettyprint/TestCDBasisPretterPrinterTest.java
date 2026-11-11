@@ -8,23 +8,25 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisPretterPrinterTest extends TestBasis {
+  
   final TestCDBasisParser p = new TestCDBasisParser();
   final CDBasisFullPrettyPrinter printer = new CDBasisFullPrettyPrinter(new IndentPrinter());
-
+  
   @Test
   public void completeModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parseCDCompilationUnit(getFilePath("cdbasis/parser/Complete.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(
+        getFilePath("cdbasis/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
-
+    
     String output = printer.prettyprint(astcdCompilationUnit.get());
-
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
-        p.parse_StringCDCompilationUnit(output);
+    
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed = p
+        .parse_StringCDCompilationUnit(output);
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
   }
+  
 }

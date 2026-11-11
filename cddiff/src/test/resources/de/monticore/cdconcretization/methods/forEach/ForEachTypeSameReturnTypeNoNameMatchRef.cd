@@ -1,0 +1,9 @@
+classdiagram ForEachTypeSameReturnTypeNoNameMatchRef {
+  class Builder;
+
+  class Mill {
+    // we intentionally not use 'Builder' as infix of the method name here, to demonstrate that
+    // the tools needs to add a suffix to the method for each type if it cannot adapt the name
+    <<forEach="Builder">> Builder create();
+  }
+}

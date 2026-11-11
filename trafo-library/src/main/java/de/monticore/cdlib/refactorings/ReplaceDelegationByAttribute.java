@@ -13,8 +13,9 @@ import de.monticore.cdlib.Refactoring.*;
  * @montitoolbox
  */
 public class ReplaceDelegationByAttribute implements Refactoring {
+  
   public ReplaceDelegationByAttribute() {}
-
+  
   /**
    * Replace an association (delegation) by an attribute
    *
@@ -23,9 +24,9 @@ public class ReplaceDelegationByAttribute implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean replaceAssociationByAttribute(
-      String className, String classToAttribute, ASTCDCompilationUnit ast) {
-
+  public boolean replaceAssociationByAttribute(String className, String classToAttribute,
+      ASTCDCompilationUnit ast) {
+    
     ReplaceDelegationByAttributeTransformation replace =
         new ReplaceDelegationByAttributeTransformation(ast);
     replace.set_$attrName(de.se_rwth.commons.StringTransformations.uncapitalize(classToAttribute));
@@ -38,4 +39,5 @@ public class ReplaceDelegationByAttribute implements Refactoring {
     }
     return false;
   }
+  
 }

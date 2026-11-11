@@ -1,0 +1,47 @@
+/* (c) https://github.com/MontiCore/monticore */
+// ######################################################################
+// This project acts both as a unit test, as well as a playground project
+// ######################################################################
+plugins {
+  id 'de.rwth.se.cdgen' version "$version"
+}
+repositories {
+  if (("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
+  maven { url 'https://nexus.se.rwth-aachen.de/content/groups/public' }
+  mavenCentral()
+}
+//start integration-test
+// the following lines are NOT required for your standard cdgen usage
+//  - we will use them for the integration test within the cd4a project
+// We have to inject the cdlang jar for this project (as it is not yet published)
+dependencies {
+  cdTool files(project.cdgen_cd4aJarFile)
+  cdToolTargetRuntime files(project.cdgen_runtimeJarFile)
+  implementation "de.monticore:monticore-runtime:$version"
+  // Along with the transitive dependencies
+  cdTool "de.monticore:monticore-grammar:$version"
+}
+// Exclude runtime
+configurations.api {
+  exclude group:'de.monticore.lang', module: 'cd-runtime'
+}
+
+// end integration-test
+
+if ("true".equals(project.findProperty("withCustomDec"))) {
+  sourceSets {
+    decorators {
+      java.srcDir('src/dec/java')
+    }
+  }
+
+  // the decorator source-set requires the same dependencies as cdTool
+  configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)
+  generateClassDiagrams {
+    configTemplate = 'CD2OwnDecorator'
+    tmplDir = file('src/dec/resources')
+    getExtraClasspathElements().from(sourceSets.decorators.output)
+  }
+}

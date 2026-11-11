@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeNoTargetIncRef {
+  class DataClass {
+    // TODO This example only works once we have the 'matchStructure' stereotype implemented
+    // TODO alternative: implement a stereotype 'optional' that cna be used to mark elements that must not be incarnated
+    <<matchStructure>> any attribute;
+  }
+
+  class Builder {
+    <<forEach="DataClass.attribute">> any attribute;
+  }
+}

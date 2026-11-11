@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.ast;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdassociation._ast.ASTCDCardAtLeastOne;
 import de.monticore.cdassociation._ast.ASTCDCardMult;
@@ -10,10 +10,10 @@ import de.monticore.cdassociation._ast.ASTCDCardOpt;
 import de.monticore.testcdassociation.TestCDAssociationMill;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ASTCDCardinalityDeepEqualsTest {
-
+  
   @Test
   public void testDeepEqualsOpt() throws IOException {
     Optional<ASTCDCardOpt> optCard = TestCDAssociationMill.parser().parse_StringCDCardOpt("[0..1]");
@@ -22,7 +22,7 @@ public class ASTCDCardinalityDeepEqualsTest {
     ASTCDCardOpt cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
-
+  
   @Test
   public void testDeepEqualsOne() throws IOException {
     Optional<ASTCDCardOne> optCard = TestCDAssociationMill.parser().parse_StringCDCardOne("[1]");
@@ -31,17 +31,17 @@ public class ASTCDCardinalityDeepEqualsTest {
     ASTCDCardOne cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
-
+  
   @Test
   public void testDeepEqualsAtLeastOne() throws IOException {
-    Optional<ASTCDCardAtLeastOne> optCard =
-        TestCDAssociationMill.parser().parse_StringCDCardAtLeastOne("[1..*]");
+    Optional<ASTCDCardAtLeastOne> optCard = TestCDAssociationMill.parser()
+        .parse_StringCDCardAtLeastOne("[1..*]");
     assertTrue(optCard.isPresent());
     ASTCDCardAtLeastOne card1 = optCard.get();
     ASTCDCardAtLeastOne cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
-
+  
   @Test
   public void testDeepEqualsMult() throws IOException {
     Optional<ASTCDCardMult> optCard = TestCDAssociationMill.parser().parse_StringCDCardMult("[*]");
@@ -50,4 +50,5 @@ public class ASTCDCardinalityDeepEqualsTest {
     ASTCDCardMult cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
+  
 }

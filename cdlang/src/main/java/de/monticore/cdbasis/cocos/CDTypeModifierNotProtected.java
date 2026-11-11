@@ -6,13 +6,14 @@ import de.monticore.cdbasis._cocos.CDBasisASTCDTypeCoCo;
 import de.se_rwth.commons.logging.Log;
 
 public class CDTypeModifierNotProtected implements CDBasisASTCDTypeCoCo {
-
+  
   public static final String ERROR_CODE = "0xCDC22";
-
+  
   @Override
   public void check(ASTCDType node) {
     if (node.getModifier().isProtected()) {
       Log.error(ERROR_CODE + ": Types may not be 'protected'.");
     }
   }
+  
 }

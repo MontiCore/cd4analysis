@@ -1,0 +1,20 @@
+classdiagram ParameterTypeMIOneExistsConc {
+
+  <<ref="Account">> class PersonalAccount;
+  <<ref="Account">> class BusinessAccount;
+
+  class Transaction;
+
+  class Bank {
+    void createAccount(PersonalAccount account);
+    // NO second createAccount method, for BusinessAccount because we already have one incarnation
+    // that satisfies the conformance check
+    // if we want the tool to complete all combinations: use "forEach" in reference model
+    // ---
+    // for 'transfer' all possible combinations are completed as there was not a single incarnation
+    <<ref="Reference.Bank.transfer">> Transaction transfer(PersonalAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> Transaction transfer(PersonalAccount from, BusinessAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> Transaction transfer(BusinessAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> Transaction transfer(BusinessAccount from, BusinessAccount to, int amount);
+  }
+}

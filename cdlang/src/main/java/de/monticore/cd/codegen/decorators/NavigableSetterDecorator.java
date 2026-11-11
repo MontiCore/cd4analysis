@@ -1,0 +1,242 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd.codegen.decorators;
+
+import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+import static de.monticore.cd.codegen.decorators.SetterDecorator.AFTER_SETTER_BODY;
+
+import com.google.common.collect.Iterables;
+import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
+import de.monticore.cd.codegen.decorators.data.DecoratorData;
+import de.monticore.cd.facade.CDMethodFacade;
+import de.monticore.cd.facade.CDParameterFacade;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cdassociation._symboltable.CDRoleSymbol;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.types.MCTypeFacade;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.se_rwth.commons.StringTransformations;
+import de.se_rwth.commons.logging.Log;
+
+import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * Add special handling to the setters of bidirectional associations
+ * TODO: This decorator requires testing
+ * TODO: The previous values of elements are currently not updated
+ */
+public class NavigableSetterDecorator extends
+    AbstractDecorator<NavigableSetterDecorator.NavSetterData> implements CDBasisVisitor2 {
+  
+  protected NavSetterData setterData;
+  
+  @Override
+  @SuppressWarnings("rawtypes")
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
+    // We require data of the Setter Decorator
+    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
+        SetterDecorator.class));
+  }
+  
+  @Override
+  public void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt) {
+    super.init(util, glexOpt);
+    this.setterData = this.decoratorData.createDataIfAbsent(this.getClass(),
+        NavigableSetterDecorator.NavSetterData::new);
+  }
+  
+  @Override
+  public void visit(ASTCDAttribute attribute) {
+    if (attribute.getModifier().isDerived() || attribute.getModifier().isReadonly() || attribute
+        .getModifier().isFinal())
+      return;
+    
+    if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
+      // For every attribute, for which the SetterDecorator has created methods:
+      var methods = decoratorData.getDecoratorData(SetterDecorator.class).getMethods(attribute);
+      if (methods == null || methods.isEmpty())
+        return;
+      
+      var role = this.decoratorData.fieldToRoles.get(attribute.getSymbol());
+      
+      // And for which a role symbol was present (before being transformed away) and which is
+      // navigable in both directions
+      if (role == null || !role.isIsDefinitiveNavigable()) {
+        return;
+      }
+      if (!role.isPresentAssoc()) {
+        // happens in case trafos before STC are skipped
+        Log.error("Assoc of role " + role.getName() + " not present", role.getSourcePosition());
+        return;
+      }
+      if (!role.getOtherSide().isIsDefinitiveNavigable())
+        return;
+      
+      // We have to store the "local" method on the other side of the assoc
+      var other = this.decoratorData.rolesToFields.get(role.getOtherSide());
+      ASTCDAttribute otherSideAttr = (ASTCDAttribute) other.getAstNode();
+      
+      String thisName = role.getEnclosingScope().getName();
+      var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
+      var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
+      
+      var thisSideAttrInfo = decoratorData.getAttrHelper().getFromRole(role);
+      var otherSideAttrInfo = decoratorData.getAttrHelper().getFromRole(role.getOtherSide());
+      
+      var otherRole = role.getOtherSide();
+      
+      if (otherSideAttrInfo.getTypeKind() != AttrHelper.TypeKind.DOMAIN) {
+        Log.error("0xCDD60: Unable to have a navigable assoc to a type of " + otherSideAttrInfo
+            .getSymTypeExpression().print(), role.getSourcePosition());
+        return;
+      }
+      switch (otherSideAttrInfo.getMultiplicity()) {
+        case MANDATORY:
+          // Add set${role}Local method
+          String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
+              .getName()) + "Local");
+          this.setterData.getOrCreateMethods(otherSideAttr).add(decorate(otherClassDec, otherRole,
+              SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.Set", name, List.of(
+                  CDParameterFacade.getInstance().createParameter(otherRole.getType()
+                      .printFullName(), otherRole.getName())), otherRole.getName(), otherRole));
+          
+          callLocal(thisSideAttrInfo, methods, role, "set", thisName);
+          
+          break;
+        case OPTIONAL:
+          // Add set${role}Local method for opt
+          name = "set" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
+              .getName()) + "Local");
+          this.setterData.getOrCreateMethods(otherSideAttr).add(decorate(otherClassDec, otherRole,
+              SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.opt.Set4Opt", name,
+              List.of(CDParameterFacade.getInstance().createParameter(otherRole.getType()
+                  .printFullName(), otherRole.getName())), otherRole.getName(), otherRole,
+              "--unused--"));
+          
+          callLocal(thisSideAttrInfo, methods, role, "set", thisName);
+          break;
+        case SET:
+          // Add set${role}Local method for *
+          if (otherSideAttrInfo.isOrdered()) {
+            Log.warn("0xTODO: Ordered navigable setters are still WIP", attribute
+                .get_SourcePositionStart());
+          }
+          else {
+            name = "add" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
+                .getName()) + "Local");
+            var m = decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.ADD,
+                "methods.list.AddUnordered", name, List.of(CDParameterFacade.getInstance()
+                    .createParameter(otherRole.getType().printFullName(), otherRole.getName())),
+                otherRole.getName(), otherRole);
+            m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(
+                MCTypeFacade.getInstance().createBooleanType()).build());
+            this.setterData.getOrCreateMethods(otherSideAttr).add(m);
+            
+            name = "remove" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
+                .getName()) + "Local");
+            m = decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.REM,
+                "methods.list.RemUnordered", name, List.of(CDParameterFacade.getInstance()
+                    .createParameter(otherRole.getType().printFullName(), otherRole.getName())),
+                otherRole.getName(), otherRole);
+            m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(
+                MCTypeFacade.getInstance().createBooleanType()).build());
+            this.setterData.getOrCreateMethods(otherSideAttr).add(m);
+          }
+          callLocal(thisSideAttrInfo, methods, role, "add", thisName);
+          break;
+        default:
+          Log.error("0xTODO: Unhandled multiplicity " + otherSideAttrInfo.getMultiplicity()
+              + " in NavigableSetter", attribute.get_SourcePositionStart());
+      }
+      
+    }
+  }
+  
+  /**
+   * Use the template replacement mechanism to add
+   *
+   * @param thisSideAttrInfo attr info of this side
+   * @param methods setters of the domain class
+   * @param role the role
+   * @param method the methodName
+   * @param clazz the current class' name, to support TOP mechanism
+   */
+  protected void callLocal(AttrHelper.AttrData thisSideAttrInfo,
+      List<SetterDecorator.MethodInformation> methods, CDRoleSymbol role, String method,
+      String clazz) {
+    if (thisSideAttrInfo.getMultiplicity() == AttrHelper.Multiplicity.MANDATORY) {
+      // Call ${role}.set${otherRole}Local when updating
+      methods.stream().filter(m -> m.getKind()
+          == SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT).forEach(m -> glexOpt.ifPresent(
+              g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(), new TemplateHookPoint(
+                  "methods.navsetter.CallLocal", role, role.getOtherSide().getName(), method,
+                  clazz))));
+    }
+    else if (thisSideAttrInfo.getMultiplicity() == AttrHelper.Multiplicity.OPTIONAL) {
+      // Call ${role}.set${otherRole}Local when updating
+      methods.stream().filter(m -> m.getKind()
+          == SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT).forEach(m -> glexOpt.ifPresent(
+              g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(), new TemplateHookPoint(
+                  "methods.navsetter.CallLocalOpt", role, role.getOtherSide().getName(), method,
+                  clazz))));
+    }
+    else if (thisSideAttrInfo.getMultiplicity() == AttrHelper.Multiplicity.SET) {
+      methods.stream().filter(m -> m.getKind() == SetterDecorator.SetterMethodKind.ADD).forEach(
+          m -> glexOpt.ifPresent(g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(),
+              new TemplateHookPoint("methods.navsetter.CallLocalAddSet", role, role.getOtherSide()
+                  .getName(), method, clazz))));
+      // Call remove of previous
+      methods.stream().filter(m -> m.getKind() == SetterDecorator.SetterMethodKind.REM).forEach(
+          m -> glexOpt.ifPresent(g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(),
+              new TemplateHookPoint("methods.navsetter.CallLocalRemSet", role, role.getOtherSide()
+                  .getName(), method))));
+    }
+    else {
+      Log.warn("0xTODO: Unhandled multiplicity" + thisSideAttrInfo.getMultiplicity()
+          + " in NavigableSetter#callLocal", role.getSourcePosition());
+    }
+  }
+  
+  protected SetterDecorator.MethodInformation decorate(ASTCDClass decParent, CDRoleSymbol role,
+      SetterDecorator.SetterMethodKind kind, String templateName, String methodName,
+      List<ASTCDParameter> params, String paramName, Object... templateParams) {
+    
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(role.getAssocSide().getModifier()
+        .deepClone(), methodName, params);
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
+        templateName, templateParams)));
+    
+    addToClass(decParent, method);
+    
+    return new SetterDecorator.MethodInformation(kind, method, templateName, paramName);
+  }
+  
+  @Override
+  public void addToTraverser(CD4CodeTraverser traverser) {
+    traverser.add4CDBasis(this);
+  }
+  
+  public static class NavSetterData {
+    
+    protected final Map<ASTCDAttribute, List<SetterDecorator.MethodInformation>> attributesData =
+        new LinkedHashMap<>();
+    
+    public List<SetterDecorator.MethodInformation> getMethods(ASTCDAttribute node) {
+      var ret = attributesData.get(node);
+      return ret == null ? Collections.emptyList() : ret;
+    }
+    
+    protected List<SetterDecorator.MethodInformation> getOrCreateMethods(ASTCDAttribute node) {
+      return this.attributesData.computeIfAbsent(node, a -> new ArrayList<>());
+    }
+    
+  }
+  
+}

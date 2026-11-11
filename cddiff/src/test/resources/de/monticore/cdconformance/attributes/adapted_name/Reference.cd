@@ -1,0 +1,7 @@
+classdiagram Reference {
+  class Task;
+
+  class Board {
+    Task assignedTask;
+  }
+}

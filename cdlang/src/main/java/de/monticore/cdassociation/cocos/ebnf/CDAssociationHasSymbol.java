@@ -7,19 +7,16 @@ import de.se_rwth.commons.logging.Log;
 
 /** Checks that associations only have a symbol is they have a name. */
 public class CDAssociationHasSymbol implements CDAssociationASTCDAssociationCoCo {
-
+  
   @Override
   public void check(ASTCDAssociation a) {
-    if ((a.isPresentName() && !a.isPresentSymbol())
-        || (!a.isPresentName() && a.isPresentSymbol())) {
+    if ((a.isPresentName() && !a.isPresentSymbol()) || (!a.isPresentName() && a
+        .isPresentSymbol())) {
       final String assocName = a.getName();
-
-      Log.error(
-          String.format(
-              "0xCDC62: Association %s has no associated symbol. "
-                  + "Did you forget to create a symbol table?",
-              assocName),
-          a.get_SourcePositionStart());
+      
+      Log.error(String.format("0xCDC62: Association %s has no associated symbol. "
+          + "Did you forget to create a symbol table?", assocName), a.get_SourcePositionStart());
     }
   }
+  
 }

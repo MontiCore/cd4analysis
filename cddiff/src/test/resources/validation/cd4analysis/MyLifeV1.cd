@@ -5,7 +5,7 @@ import java.lang.String;
 import java.util.List;
 import java.util.Date;
 
-classdiagram MyLife {
+classdiagram MyLifeV1 {
   abstract class Person {
     int age;
     Date birthday;

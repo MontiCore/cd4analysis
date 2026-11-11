@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram SetterRef {
+  class DataClass {
+    // TODO use <<matchStructure>> here once it is implemented
+    any attribute;
+    <<forEach="attribute">> void setAttribute(any attribute);
+  }
+}

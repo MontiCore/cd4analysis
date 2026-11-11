@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -11,35 +12,31 @@ import java.util.List;
  * the astcdClass in the srcCD (astcdClass.a).
  */
 public class InheritanceDiff {
+  
   private Pair<ASTCDType, ASTCDType> astcdClasses;
   private List<ASTCDType> deletedSuperClasses;
   private List<ASTCDType> newSuperClasses;
-
+  
   public InheritanceDiff(Pair<ASTCDType, ASTCDType> astcdClasses) {
     this.astcdClasses = astcdClasses;
   }
-
-  public Pair<ASTCDType, ASTCDType> getAstcdClasses() {
-    return astcdClasses;
-  }
-
+  
+  public Pair<ASTCDType, ASTCDType> getAstcdClasses() { return astcdClasses; }
+  
   public void setAstcdClasses(Pair<ASTCDType, ASTCDType> astcdClasses) {
     this.astcdClasses = astcdClasses;
   }
-
-  public List<ASTCDType> getDeletedSuperClasses() {
-    return deletedSuperClasses;
-  }
-
+  
+  public List<ASTCDType> getDeletedSuperClasses() { return deletedSuperClasses; }
+  
   public void setDeletedSuperClasses(List<ASTCDType> deletedSuperClasses) {
     this.deletedSuperClasses = deletedSuperClasses;
   }
-
-  public List<ASTCDType> getNewSuperClasses() {
-    return newSuperClasses;
-  }
-
+  
+  public List<ASTCDType> getNewSuperClasses() { return newSuperClasses; }
+  
   public void setNewSuperClasses(List<ASTCDType> newSuperClasses) {
     this.newSuperClasses = newSuperClasses;
   }
+  
 }

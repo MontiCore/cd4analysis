@@ -1,0 +1,6 @@
+classdiagram WrongSignatureConc {
+  class Account {
+    void withdraw(double amount);
+    void deposit(double amount);
+  }
+}

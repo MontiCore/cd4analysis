@@ -16,9 +16,9 @@ import java.util.List;
  * @montitoolbox
  */
 public class VisitorPattern implements DesignPattern {
-
+  
   public VisitorPattern() {}
-
+  
   // Generate name for Visitors
   /**
    * Applies the visitor pattern to a given class {@code node}
@@ -28,19 +28,18 @@ public class VisitorPattern implements DesignPattern {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceVisitorPattern(
-      String node, List<String> replacedMethods, ASTCDCompilationUnit ast) throws IOException {
+  public boolean introduceVisitorPattern(String node, List<String> replacedMethods,
+      ASTCDCompilationUnit ast) throws IOException {
     List<String> visitors = new ArrayList<String>();
     for (int i = 0; i < replacedMethods.size(); i++) {
-      visitors.add(
-          de.se_rwth.commons.StringTransformations.capitalize(
-              replacedMethods.get(i).concat("Visitor")));
+      visitors.add(de.se_rwth.commons.StringTransformations.capitalize(replacedMethods.get(i)
+          .concat("Visitor")));
     }
     return introduceVisitorPattern(node, replacedMethods, visitors, ast);
   }
-
+  
   // Main method
-
+  
   /**
    * Applies the visitor pattern to a given class {@code node}.
    *
@@ -50,10 +49,9 @@ public class VisitorPattern implements DesignPattern {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceVisitorPattern(
-      String node, List<String> replacedMethods, List<String> visitors, ASTCDCompilationUnit ast)
-      throws IOException {
-
+  public boolean introduceVisitorPattern(String node, List<String> replacedMethods,
+      List<String> visitors, ASTCDCompilationUnit ast) throws IOException {
+    
     if (checkNode(node, replacedMethods, ast)) {
       // Create NodeVisitors
       if (createVisitors(node, visitors, ast)) {
@@ -68,29 +66,29 @@ public class VisitorPattern implements DesignPattern {
     }
     return false;
   }
-
+  
   // Creates the Visitor Classes
   private boolean createVisitors(String node, List<String> visitors, ASTCDCompilationUnit ast) {
     String visitorSuperclass = node + "Visitor";
-
+    
     // Create Superclass Visitor
     if (!transformationUtility.createSimpleClass(visitorSuperclass, ast)) {
       return false;
     }
-
+    
     // Create Subclasses of Visitor and the inheritance to the Visitor
     for (int i = 0; i < visitors.size(); i++) {
       if (!transformationUtility.createSimpleClass(visitors.get(i), ast)) {
         return false;
       }
-      if (!transformationUtility.createInheritanceToClass(
-          visitors.get(i), visitorSuperclass, ast)) {
+      if (!transformationUtility.createInheritanceToClass(visitors.get(i), visitorSuperclass,
+          ast)) {
         return true;
       }
     }
     return true;
   }
-
+  
   // Creates the Visitor Classes
   private boolean checkNode(String node, List<String> replacedMethods, ASTCDCompilationUnit ast) {
     for (int i = 0; i < replacedMethods.size(); i++) {
@@ -100,7 +98,7 @@ public class VisitorPattern implements DesignPattern {
     }
     return true;
   }
-
+  
   // Adaptes the Visitor classes to the Visitor Pattern
   private boolean adaptVisitor(String node, List<String> visitors, ASTCDCompilationUnit ast) {
     // Adds Methods to Children of Nodes
@@ -113,7 +111,7 @@ public class VisitorPattern implements DesignPattern {
       visitor.set_$nodeName(node);
       visitor.set_$NodeVisitor(node + "Visitor");
     }
-
+    
     // Adds Methods to Node Class
     NodeVisitorParentAddMethods visitorParent = new NodeVisitorParentAddMethods(ast);
     visitorParent.set_$NodeVisitor(node + "Visitor");
@@ -126,13 +124,13 @@ public class VisitorPattern implements DesignPattern {
     }
     return true;
   }
-
+  
   // Adaptes the Node Classes to the Visitor Pattern
   private boolean adaptNodes(String node, List<String> replacedMethods, ASTCDCompilationUnit ast) {
     // Delete replacedMethods
     for (int i = 0; i < replacedMethods.size(); i++) {
       // Delete Methods in Subnodes of Node
-
+      
       SubNodesDeleteMethods visitor = new SubNodesDeleteMethods(ast);
       visitor.set_$name(replacedMethods.get(i));
       visitor.set_$nodeName(node);
@@ -142,7 +140,7 @@ public class VisitorPattern implements DesignPattern {
         visitor.set_$nodeName(node);
       }
     }
-
+    
     for (int i = 0; i < replacedMethods.size(); i++) {
       // Delete Methods in Node
       ParentNodeDeleteMethods visitorParent = new ParentNodeDeleteMethods(ast);
@@ -155,37 +153,38 @@ public class VisitorPattern implements DesignPattern {
         visitorParent.set_$node(node);
       }
     }
-
+    
     // add method +accept(NodeVisitor) in Subnodes
     String nodeVisitor = node + "Visitor";
     SubNodesAddMethod subNodeAdd = new SubNodesAddMethod(ast);
     subNodeAdd.set_$nodeName(node);
-    subNodeAdd.set_$parameterName(
-        de.se_rwth.commons.StringTransformations.uncapitalize(nodeVisitor));
+    subNodeAdd.set_$parameterName(de.se_rwth.commons.StringTransformations.uncapitalize(
+        nodeVisitor));
     subNodeAdd.set_$parameterType(de.se_rwth.commons.StringTransformations.capitalize(nodeVisitor));
-
+    
     while (subNodeAdd.doPatternMatching()) {
       subNodeAdd.doReplacement();
       subNodeAdd = new SubNodesAddMethod(ast);
-      subNodeAdd.set_$parameterName(
-          de.se_rwth.commons.StringTransformations.uncapitalize(nodeVisitor));
-      subNodeAdd.set_$parameterType(
-          de.se_rwth.commons.StringTransformations.capitalize(nodeVisitor));
+      subNodeAdd.set_$parameterName(de.se_rwth.commons.StringTransformations.uncapitalize(
+          nodeVisitor));
+      subNodeAdd.set_$parameterType(de.se_rwth.commons.StringTransformations.capitalize(
+          nodeVisitor));
       subNodeAdd.set_$nodeName(node);
     }
-
+    
     // add method +accept(NodeVisitor) in parent node
     ParentNodeAddMethod parentNodeAdd = new ParentNodeAddMethod(ast);
     parentNodeAdd.set_$node(node);
-    parentNodeAdd.set_$parameterName(
-        de.se_rwth.commons.StringTransformations.uncapitalize(nodeVisitor));
-    parentNodeAdd.set_$parameterType(
-        de.se_rwth.commons.StringTransformations.capitalize(nodeVisitor));
-
+    parentNodeAdd.set_$parameterName(de.se_rwth.commons.StringTransformations.uncapitalize(
+        nodeVisitor));
+    parentNodeAdd.set_$parameterType(de.se_rwth.commons.StringTransformations.capitalize(
+        nodeVisitor));
+    
     if (parentNodeAdd.doPatternMatching()) {
       parentNodeAdd.doReplacement();
     }
-
+    
     return true;
   }
+  
 }

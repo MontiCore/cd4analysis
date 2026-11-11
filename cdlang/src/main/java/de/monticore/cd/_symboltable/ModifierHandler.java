@@ -9,7 +9,7 @@ import de.monticore.symbols.oosymbols._symboltable.*;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
 public class ModifierHandler {
-
+  
   // used multiple times
   public void handle(ASTModifier modifier, CDTypeSymbolBuilder typeSymbol) {
     typeSymbol.setIsPublic(modifier.isPublic());
@@ -19,7 +19,7 @@ public class ModifierHandler {
     typeSymbol.setIsAbstract(modifier.isAbstract());
     typeSymbol.setIsDerived(modifier.isDerived());
   }
-
+  
   // used
   public void handle(ASTModifier modifier, FieldSymbolBuilder fieldSymbol) {
     fieldSymbol.setIsPublic(modifier.isPublic());
@@ -29,7 +29,7 @@ public class ModifierHandler {
     fieldSymbol.setIsFinal(modifier.isFinal());
     fieldSymbol.setIsDerived(modifier.isDerived());
   }
-
+  
   // used
   public void handle(ASTModifier modifier, CDRoleSymbolBuilder roleSymbol) {
     roleSymbol.setIsPublic(modifier.isPublic());
@@ -39,14 +39,14 @@ public class ModifierHandler {
     roleSymbol.setIsFinal(modifier.isFinal());
     roleSymbol.setIsDerived(modifier.isDerived());
   }
-
+  
   public void handle(ASTModifier modifier, MethodSymbolBuilder methodSymbol) {
     methodSymbol.setIsPublic(modifier.isPublic());
     methodSymbol.setIsPrivate(modifier.isPrivate());
     methodSymbol.setIsProtected(modifier.isProtected());
     methodSymbol.setIsStatic(modifier.isStatic());
   }
-
+  
   /**
    * @param modifier
    * @param typeSymbol
@@ -59,7 +59,7 @@ public class ModifierHandler {
     typeSymbol.setIsAbstract(modifier.isAbstract());
     typeSymbol.setIsDerived(modifier.isDerived());
   }
-
+  
   /**
    * @param modifier
    * @param fieldSymbol
@@ -72,7 +72,7 @@ public class ModifierHandler {
     fieldSymbol.setIsFinal(modifier.isFinal());
     fieldSymbol.setIsDerived(modifier.isDerived());
   }
-
+  
   /**
    * @param modifier
    * @param roleSymbol
@@ -85,7 +85,7 @@ public class ModifierHandler {
     roleSymbol.setIsFinal(modifier.isFinal());
     roleSymbol.setIsDerived(modifier.isDerived());
   }
-
+  
   /**
    * @param modifier
    * @param methodSymbol
@@ -97,4 +97,5 @@ public class ModifierHandler {
     methodSymbol.setIsProtected(modifier.isProtected());
     methodSymbol.setIsStatic(modifier.isStatic());
   }
+  
 }

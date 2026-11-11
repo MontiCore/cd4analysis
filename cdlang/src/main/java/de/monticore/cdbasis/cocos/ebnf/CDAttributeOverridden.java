@@ -18,36 +18,30 @@ import java.util.stream.Collectors;
  * when the class diagram is used by a generator.
  */
 public class CDAttributeOverridden implements CDBasisASTCDAttributeCoCo {
-
+  
   /** @see de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo#check(ASTCDAttribute) */
   @Override
   public void check(ASTCDAttribute node) {
     FieldSymbol attrSym = node.getSymbol();
     OOTypeSymbol subClassSym = (OOTypeSymbol) node.getEnclosingScope().getSpanningSymbol();
     Collection<VariableSymbol> superAttrs = new ArrayList<>();
-    subClassSym
-        .getSuperClassesOnly()
+    subClassSym.getSuperClassesOnly()
         // Add all attributes of the super types and all inherited attributes of the super types
-        .forEach(
-            sT -> {
-              superAttrs.addAll(sT.getTypeInfo().getVariableList());
-              superAttrs.addAll(OOTypeHelper.getAllVariablesOfSuperTypes(sT.getTypeInfo()));
-            });
-    List<VariableSymbol> overriddenSymbols =
-        superAttrs.stream()
-            // same name
-            .filter(sA -> sA.getName().equals(attrSym.getName()))
-            .collect(Collectors.toList());
-
+        .forEach(sT -> {
+          superAttrs.addAll(sT.getTypeInfo().getVariableList());
+          superAttrs.addAll(OOTypeHelper.getAllVariablesOfSuperTypes(sT.getTypeInfo()));
+        });
+    List<VariableSymbol> overriddenSymbols = superAttrs.stream()
+        // same name
+        .filter(sA -> sA.getName().equals(attrSym.getName())).collect(Collectors.toList());
+    
     if (!overriddenSymbols.isEmpty()) {
       VariableSymbol anOverriddenSym = overriddenSymbols.get(0);
-      Log.error(
-          String.format(
-              "0xCDC04: Class %s overrides the attribute %s of class %s which is not allowed.",
-              subClassSym.getName(),
-              anOverriddenSym.getName(),
-              anOverriddenSym.getEnclosingScope().getName()),
-          node.get_SourcePositionStart());
+      Log.error(String.format(
+          "0xCDC04: Class %s overrides the attribute %s of class %s which is not allowed.",
+          subClassSym.getName(), anOverriddenSym.getName(), anOverriddenSym.getEnclosingScope()
+              .getName()), node.get_SourcePositionStart());
     }
   }
+  
 }

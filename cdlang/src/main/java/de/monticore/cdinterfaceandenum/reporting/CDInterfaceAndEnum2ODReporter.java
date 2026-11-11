@@ -14,19 +14,18 @@ import de.se_rwth.commons.Names;
 import java.io.File;
 
 public class CDInterfaceAndEnum2ODReporter extends AReporter {
+  
   private final String modelName;
   private final ReportingRepository reporting;
-
-  public CDInterfaceAndEnum2ODReporter(
-      String outputDir, String modelName, ReportingRepository reporting) {
-    super(
-        outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator + modelName,
-        Names.getSimpleName(modelName) + "_AST",
-        ReportingConstants.OD_FILE_EXTENSION);
+  
+  public CDInterfaceAndEnum2ODReporter(String outputDir, String modelName,
+      ReportingRepository reporting) {
+    super(outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator
+        + modelName, Names.getSimpleName(modelName) + "_AST", ReportingConstants.OD_FILE_EXTENSION);
     this.modelName = modelName;
     this.reporting = reporting;
   }
-
+  
   @Override
   protected void writeHeader() {
     writeLine("/*");
@@ -34,21 +33,21 @@ public class CDInterfaceAndEnum2ODReporter extends AReporter {
         " * ========================================================== AST for CDInterfaceAndEnum");
     writeLine(" */");
   }
-
+  
   private void writeFooter() {
     writeLine("/*");
     writeLine(" * ========================================================== Explanation");
     writeLine(" * Shows the AST with all attributes as object diagram");
     writeLine(" */");
   }
-
+  
   @Override
   public void flush(ASTNode ast) {
     writeContent(ast);
     writeFooter();
     super.flush(ast);
   }
-
+  
   /** @param ast the ASTNode used to write the object diagram */
   private void writeContent(ASTNode ast) {
     if (ast instanceof ASTCDCompilationUnit || ast instanceof ASTCDDefinition) {
@@ -59,4 +58,5 @@ public class CDInterfaceAndEnum2ODReporter extends AReporter {
       writeLine(pp.getContent());
     }
   }
+  
 }

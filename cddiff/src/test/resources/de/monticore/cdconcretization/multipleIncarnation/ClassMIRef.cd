@@ -1,0 +1,5 @@
+classdiagram ClassMIRef {
+  class Department {
+    int deptID;
+  }
+}

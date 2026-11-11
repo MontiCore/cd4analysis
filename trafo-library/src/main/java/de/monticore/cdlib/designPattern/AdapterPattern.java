@@ -19,11 +19,11 @@ import java.io.IOException;
  * @montitoolbox
  */
 public class AdapterPattern implements DesignPattern {
-
+  
   public AdapterPattern() {}
-
+  
   /* Object adapter */
-
+  
   /**
    * Applies the object adapter pattern to a class with name {@code adapteeName} without methods
    *
@@ -32,29 +32,28 @@ public class AdapterPattern implements DesignPattern {
    * @param ast class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceObjectAdapterPattern(
-      String adapteeName, String targetName, ASTCDCompilationUnit ast) throws IOException {
-
+  public boolean introduceObjectAdapterPattern(String adapteeName, String targetName,
+      ASTCDCompilationUnit ast) throws IOException {
+    
     // Set variables for transformation
     String adapterName = adapteeName + "Adapter";
     ObjectAdapter adapter = new ObjectAdapter(ast);
-
+    
     // Set Variables for Transformation
     adapter.set_$adapterName(adapterName);
     adapter.set_$targetName(targetName);
     adapter.set_$adapteeName(adapteeName);
-
+    
     // do Transformation
     if (adapter.doPatternMatching()) {
       adapter.doReplacement();
       return true;
     }
-    Log.info(
-        "0xF4011: Could not introduce Design Pattern Object Adapter",
-        AdapterPattern.class.getName());
+    Log.info("0xF4011: Could not introduce Design Pattern Object Adapter", AdapterPattern.class
+        .getName());
     return false;
   }
-
+  
   /**
    * Applies the object adapter pattern to a class with name {@code adapteeName} with methods
    *
@@ -64,33 +63,31 @@ public class AdapterPattern implements DesignPattern {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceObjectAdapterPattern(
-      String adapteeName, String targetName, ASTCDMethod method, ASTCDCompilationUnit ast)
-      throws IOException {
-
+  public boolean introduceObjectAdapterPattern(String adapteeName, String targetName,
+      ASTCDMethod method, ASTCDCompilationUnit ast) throws IOException {
+    
     String adapterName = adapteeName + "Adapter";
     ObjectAdapterMethod adapter = new ObjectAdapterMethod(ast);
-
+    
     // Set Variables for Transformation
     adapter.set_$adapterName(adapterName);
     adapter.set_$targetName(targetName);
     adapter.set_$adapteeName(adapteeName);
     adapter.set_$A(method);
     adapter.set_$B(method.deepClone());
-
+    
     // do Transformation
     if (adapter.doPatternMatching()) {
       adapter.doReplacement();
       return true;
     }
-    Log.info(
-        "0xF4012: Could not introduce Design Pattern Object Adapter",
-        AdapterPattern.class.getName());
+    Log.info("0xF4012: Could not introduce Design Pattern Object Adapter", AdapterPattern.class
+        .getName());
     return false;
   }
-
+  
   /* Class adapter with methods */
-
+  
   /**
    * Applies the class adapter pattern to a class with name {@code adapteeName} with methods
    *
@@ -100,31 +97,29 @@ public class AdapterPattern implements DesignPattern {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceClassAdapterPattern(
-      String adapteeName, String targetName, ASTCDMethod method, ASTCDCompilationUnit ast)
-      throws IOException {
+  public boolean introduceClassAdapterPattern(String adapteeName, String targetName,
+      ASTCDMethod method, ASTCDCompilationUnit ast) throws IOException {
     // Set variables for transformation
     String adapterName = adapteeName + "Adapter";
-
+    
     ClassAdapterMethod adapter = new ClassAdapterMethod(ast);
     adapter.set_$adapter(adapterName);
     adapter.set_$targetName(targetName);
     adapter.set_$adaptee(adapteeName);
     adapter.set_$A(method);
     adapter.set_$B(method.deepClone());
-
+    
     if (adapter.doPatternMatching()) {
       adapter.doReplacement();
       return true;
     }
-    Log.info(
-        "0xF4013: Could not introduce Design Pattern Object Adapter",
-        AdapterPattern.class.getName());
+    Log.info("0xF4013: Could not introduce Design Pattern Object Adapter", AdapterPattern.class
+        .getName());
     return false;
   }
-
+  
   /* Class adapter without methods */
-
+  
   /**
    * Applies the class adapter pattern to a class with name {@code adapteeName} without methods
    *
@@ -133,22 +128,22 @@ public class AdapterPattern implements DesignPattern {
    * @param ast class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceClassAdapterPattern(
-      String adapteeName, String targetName, ASTCDCompilationUnit ast) throws IOException {
+  public boolean introduceClassAdapterPattern(String adapteeName, String targetName,
+      ASTCDCompilationUnit ast) throws IOException {
     // Set variables for transformation
     String adapterName = adapteeName + "Adapter";
     ClassAdapter adapter = new ClassAdapter(ast);
     adapter.set_$adapter(adapterName);
     adapter.set_$targetName(targetName);
     adapter.set_$adaptee(adapteeName);
-
+    
     if (adapter.doPatternMatching()) {
       adapter.doReplacement();
       return true;
     }
-    Log.info(
-        "0xF4014: Could not introduce Design Pattern Object Adapter",
-        AdapterPattern.class.getName());
+    Log.info("0xF4014: Could not introduce Design Pattern Object Adapter", AdapterPattern.class
+        .getName());
     return false;
   }
+  
 }

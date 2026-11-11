@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -10,8 +10,8 @@ import de.monticore.tf.AddMethodToEnum;
 import de.monticore.tf.RefactorCDs;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by
@@ -19,43 +19,44 @@ import org.junit.Test;
  * @author KH
  */
 public class RefactorCDsTest {
-
-  @BeforeClass
+  
+  @BeforeAll
   public static void init() {
+    CD4CodeMill.reset();
     CD4CodeMill.init();
   }
-
+  
   @Test
   public void testRefactorCDs() throws IOException {
     String input = "src/test/resources/de/monticore/trafo/RefactorCDsValid.cd";
     Optional<ASTCDCompilationUnit> ast = CD4CodeMill.parser().parse(input);
-
+    
     assertTrue(ast.isPresent());
-
+    
     RefactorCDs refactorCDs = new RefactorCDs(ast.get());
-
+    
     assertTrue(refactorCDs.doPatternMatching());
     refactorCDs.doReplacement();
-
+    
     //    System.out.println(new CDPrettyPrinterConcreteVisitor(new
     // IndentPrinter()).prettyprint(ast.get()));
-
+    
   }
-
+  
   @Test
   public void testRefactorCDs_Invalid() throws IOException {
     String input = "src/test/resources/de/monticore/trafo/RefactorCDsInvalid.cd";
     Optional<ASTCDCompilationUnit> ast = CD4CodeMill.parser().parse(input);
-
+    
     assertTrue(ast.isPresent());
-
+    
     RefactorCDs refactorCDs = new RefactorCDs(ast.get());
-
+    
     assertFalse(refactorCDs.doPatternMatching());
-
+    
     //    System.out.println(new CDPrettyPrinterConcreteVisitor(new
     // IndentPrinter()).prettyprint(ast.get()));
-
+    
   }
   // TODO: Fix me
   //  @Test
@@ -80,21 +81,22 @@ public class RefactorCDsTest {
   //      System.out.println(pp.getPrintedAST());
   //    }
   //  }
-
+  
   @Test
   public void testAdMethodToEnum() throws IOException {
     String input = "src/test/resources/de/monticore/trafo/Enum.cd";
     Optional<ASTCDCompilationUnit> ast = CD4CodeMill.parser().parse(input);
-
+    
     assertTrue(ast.isPresent());
-
+    
     AddMethodToEnum refactorCDs = new AddMethodToEnum(ast.get());
-
+    
     assertTrue(refactorCDs.doPatternMatching());
-
+    
     refactorCDs.doReplacement();
-
+    
     //    System.out.println(new CDPrettyPrinterConcreteVisitor(new
     // IndentPrinter()).prettyprint(ast.get()));
   }
+  
 }

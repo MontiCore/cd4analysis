@@ -1,25 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
-import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdmatcher.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SyntaxDiffHelper implements ICDPrintDiff {
-
+  
   protected static final String COLOR_DELETE = "\033[1;31m";
-
+  
   protected static final String COLOR_ADD = "\033[1;32m";
-
+  
   protected static final String COLOR_INHERITED = "\033[1;35m";
-
+  
   protected static final String COLOR_CHANGE = "\033[1;33m";
-
+  
   protected static final String RESET = "\033[0m";
-
+  
   /**
    * Concatenates a list of strings with spaces in between.
    *
@@ -29,7 +25,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStrings(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(field).append(" ");
@@ -40,7 +36,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Concatenates a list of strings with spaces in between and applies a green color to each string.
    *
@@ -50,7 +46,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStringsAndGreen(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(COLOR_ADD).append(field).append(" ");
@@ -61,7 +57,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Concatenates a list of strings with spaces in between and applies a red color to each string.
    *
@@ -71,7 +67,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStringsAndRed(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(COLOR_DELETE).append(field).append(" ");
@@ -82,7 +78,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Concatenates a list of strings with spaces in between and applies a red color to each string.
    *
@@ -92,7 +88,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStringsAndPurple(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(COLOR_INHERITED).append(field).append(" ");
@@ -103,7 +99,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Gets the color code based on the action associated with the difference.
    *
@@ -114,77 +110,15 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     if (diff.getAction().isPresent()) {
       if (diff.getAction().get().equals(Actions.REMOVED)) {
         return COLOR_DELETE;
-      } else if (diff.getAction().get().equals(Actions.ADDED)) {
+      }
+      else if (diff.getAction().get().equals(Actions.ADDED)) {
         return COLOR_ADD;
-      } else if (diff.getAction().get().equals(Actions.CHANGED)) {
+      }
+      else if (diff.getAction().get().equals(Actions.CHANGED)) {
         return COLOR_CHANGE;
       }
     }
     return "";
   }
-
-  /**
-   * Computes a matching map of CD types between the source and target CD. It uses a combination of
-   * type matching strategies to match types based on name, structure, and super types. The matching
-   * strategies are applied to the list of CD types to create the final matching map.
-   *
-   * @param listToMatch The list of CD types to be matched.
-   * @param srcCD The source CD.
-   * @param tgtCD The target CD.
-   * @return A map containing matched CD types between source and target CDs.
-   */
-  public Map<ASTCDType, ASTCDType> computeMatchingMapTypes(
-      List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
-    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchNameType =
-        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchStructureType =
-        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
-    List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatchNameType);
-    typeMatchers.add(superTypeMatchStructureType);
-
-    CD2CDCombinedMatching<ASTCDType> combinedMatching =
-        new CombinedCDTypeMatching(listToMatch, srcCD, tgtCD, typeMatchers);
-
-    return combinedMatching.getMatches();
-  }
-
-  /**
-   * Computes a matching map of CD associations between the source and target CD. It uses a
-   * combination of association matching strategies to match associations based on name, type, and
-   * structure. The matching strategies are applied to the list of CD associations to create the
-   * final matching map.
-   *
-   * @param listToMatch The list of CD associations to be matched.
-   * @param srcCD The source CD.
-   * @param tgtCD The target CD.
-   * @return A map containing matched CD associations between source and target CDs.
-   */
-  public Map<ASTCDAssociation, ASTCDAssociation> computeMatchingMapAssocs(
-      List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    MatchCDAssocsByName nameAssocMatch = new MatchCDAssocsByName(tgtCD);
-    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
-    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchNameType =
-        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchStructureType =
-        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
-    MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchStructureType =
-        new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchStructureType, srcCD, tgtCD);
-    MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchNameType =
-        new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
-    List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatchNameType);
-    assocMatchers.add(associationSrcTgtMatchStructureType);
-
-    CD2CDCombinedMatching<ASTCDAssociation> combinedMatching =
-        new CombinedCDAssocMatching(listToMatch, srcCD, tgtCD, assocMatchers);
-
-    return combinedMatching.getMatches();
-  }
+  
 }

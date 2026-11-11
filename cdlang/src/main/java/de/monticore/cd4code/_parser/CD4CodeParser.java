@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class CD4CodeParser extends CD4CodeParserTOP {
+  
   boolean _checkFileAndPackageName = true;
-
+  
   @Override
   public Optional<ASTCDCompilationUnit> parse(String fileName) throws IOException {
     final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
@@ -17,4 +18,5 @@ public class CD4CodeParser extends CD4CodeParserTOP {
     }
     return parse;
   }
+  
 }

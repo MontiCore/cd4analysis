@@ -1,0 +1,40 @@
+import java.lang.String;
+
+classdiagram EcommerceDomain {
+  <<ref="Entity">> class Product {
+    <<ref="key">> String sku;
+    double price;
+  }
+
+  <<ref="Entity">> class Order {
+     <<ref="key">> long id;
+  }
+
+  <<ref="Entity">> class Customer {
+     <<ref="key">> long id;
+     <<ref="key">> String email;
+  }
+
+  <<ref="RepositoryRef.EntityRepository">>class ProductRepository {
+    <<ref="RepositoryRef.EntityRepository.findByKey">> Optional<Product> findBySku(String sku);
+    List<Product> findAll();
+    Product save(Product product);
+    <<ref="RepositoryRef.EntityRepository.removeByKey">> void removeBySku(String sku);
+  }
+  
+  <<ref="RepositoryRef.EntityRepository">>class OrderRepository {
+    <<ref="RepositoryRef.EntityRepository.findByKey">> Optional<Order> findById(long id);
+    List<Order> findAll();
+    Order save(Order order);
+    <<ref="RepositoryRef.EntityRepository.removeByKey">> void removeById(long id);
+  }
+
+  <<ref="RepositoryRef.EntityRepository">>class CustomerRepository {
+    <<ref="RepositoryRef.EntityRepository.findByKey">> Optional<Customer> findById(long id);
+    <<ref="RepositoryRef.EntityRepository.findByKey">> Optional<Customer> findByEmail(String email);
+    List<Customer> findAll();
+    Customer save(Customer customer);
+    <<ref="RepositoryRef.EntityRepository.removeByKey">> void removeById(long id);
+    <<ref="RepositoryRef.EntityRepository.removeByKey">> void removeByEmail(String email);
+  }
+}

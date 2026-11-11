@@ -14,27 +14,24 @@ import java.util.Optional;
 
 /** A log entry for recording events during a merging process */
 public class LogEntry implements Comparable<LogEntry> {
+  
   private final LocalDateTime timestamp = LocalDateTime.now();
-
+  
   private final ErrorLevel level;
-
+  
   private final String message;
-
+  
   private final Optional<ASTNode> node1;
-
+  
   private final Optional<ASTNode> node2;
-
+  
   private final MergePhase phase;
-
+  
   public LogEntry(ErrorLevel level, String message, MergePhase phase) {
     this(level, message, phase, Optional.empty(), Optional.empty());
   }
-
-  public LogEntry(
-      ErrorLevel level,
-      String message,
-      MergePhase phase,
-      Optional<ASTNode> left,
+  
+  public LogEntry(ErrorLevel level, String message, MergePhase phase, Optional<ASTNode> left,
       Optional<ASTNode> right) {
     this.level = level;
     this.message = message;
@@ -42,15 +39,11 @@ public class LogEntry implements Comparable<LogEntry> {
     this.node2 = right;
     this.phase = phase;
   }
-
-  public LocalDateTime getTimestamp() {
-    return timestamp;
-  }
-
-  public ErrorLevel getLevel() {
-    return level;
-  }
-
+  
+  public LocalDateTime getTimestamp() { return timestamp; }
+  
+  public ErrorLevel getLevel() { return level; }
+  
   public String getMessage() {
     String logMessage = message;
     if (this.node1.isPresent()) {
@@ -61,28 +54,23 @@ public class LogEntry implements Comparable<LogEntry> {
     }
     return logMessage;
   }
-
-  public Optional<ASTNode> getLeftNode() {
-    return node1;
-  }
-
-  public Optional<ASTNode> getRightNode() {
-    return node2;
-  }
-
-  public MergePhase getPhase() {
-    return phase;
-  }
-
+  
+  public Optional<ASTNode> getLeftNode() { return node1; }
+  
+  public Optional<ASTNode> getRightNode() { return node2; }
+  
+  public MergePhase getPhase() { return phase; }
+  
   /** Compares this log entry with the other chronologically */
   public int compareTo(LogEntry other) {
     if (this.timestamp.compareTo(other.timestamp) == 0) {
       return this.phase.compareTo(other.phase);
-    } else {
+    }
+    else {
       return this.timestamp.compareTo(other.timestamp);
     }
   }
-
+  
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -95,12 +83,12 @@ public class LogEntry implements Comparable<LogEntry> {
     }
     return sb.toString();
   }
-
+  
   public String toStringWithTimeStamp() {
     StringBuilder sb = new StringBuilder();
     String datetime = this.timestamp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-    sb.append(
-        "(" + datetime + ") [" + this.level + "]  <" + this.phase + ">" + " : " + this.message);
+    sb.append("(" + datetime + ") [" + this.level + "]  <" + this.phase + ">" + " : "
+        + this.message);
     if (node1.isPresent()) {
       sb.append(" {" + astToString(node1.get()) + "}");
     }
@@ -109,19 +97,24 @@ public class LogEntry implements Comparable<LogEntry> {
     }
     return sb.toString();
   }
-
+  
   private String astToString(ASTNode node) {
     if (node instanceof ASTCDCompilationUnit) {
       return ((ASTCDCompilationUnit) node).getCDDefinition().getName();
-    } else if (node instanceof ASTCDDefinition) {
+    }
+    else if (node instanceof ASTCDDefinition) {
       return ((ASTCDDefinition) node).getName();
-    } else if (node instanceof ASTCDAssociationNode) {
+    }
+    else if (node instanceof ASTCDAssociationNode) {
       return CDMergeUtils.prettyPrintInline((ASTCDAssociationNode) node);
-    } else if (node instanceof ASTCD4CodeNode) {
+    }
+    else if (node instanceof ASTCD4CodeNode) {
       return CDMergeUtils.prettyPrintInline((ASTCD4CodeNode) node);
-    } else if (node instanceof ASTCDBasisNode) {
+    }
+    else if (node instanceof ASTCDBasisNode) {
       return CDMergeUtils.prettyPrintInline((ASTCDBasisNode) node);
     }
     return "";
   }
+  
 }

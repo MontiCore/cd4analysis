@@ -1,0 +1,8 @@
+// BankAccount incarnates Account, User incarnates Person, but the role names do not
+// follow the template adaptation — should fail even with ADAPTED_NAME_MAPPING.
+classdiagram WrongRoles {
+  <<ref="Account">> class BankAccount;
+  <<ref="Person">> class User;
+
+  association BankAccount (randomRole) -> (anotherRole) User[1];
+}

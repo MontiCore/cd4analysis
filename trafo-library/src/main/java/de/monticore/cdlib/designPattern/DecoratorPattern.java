@@ -15,9 +15,9 @@ import java.io.IOException;
  * @montitoolbox
  */
 public class DecoratorPattern implements DesignPattern {
-
+  
   public DecoratorPattern() {}
-
+  
   /**
    * Applies the decorator pattern to a class {@code concreteComponent} and a method {@code method}.
    *
@@ -27,12 +27,11 @@ public class DecoratorPattern implements DesignPattern {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceDecoratorPattern(
-      String concreteComponent, String componentName, String method, ASTCDCompilationUnit ast)
-      throws IOException {
+  public boolean introduceDecoratorPattern(String concreteComponent, String componentName,
+      String method, ASTCDCompilationUnit ast) throws IOException {
     // Set variables for transformation
     String decoratorName = concreteComponent + "Decorator";
-
+    
     // Create Decorator class
     Decorator decorator = new Decorator(ast);
     decorator.set_$componentName(componentName);
@@ -43,9 +42,9 @@ public class DecoratorPattern implements DesignPattern {
       decorator.doReplacement();
       return true;
     }
-    Log.info(
-        "0xF4021: Could not introduce Design Pattern Object Adapter",
-        DecoratorPattern.class.getName());
+    Log.info("0xF4021: Could not introduce Design Pattern Object Adapter", DecoratorPattern.class
+        .getName());
     return false;
   }
+  
 }

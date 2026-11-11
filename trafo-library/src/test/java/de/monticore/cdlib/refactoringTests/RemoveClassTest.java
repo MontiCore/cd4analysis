@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.refactoringTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdlib.refactorings.Remove;
@@ -14,8 +14,9 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test class Remove Removing class
@@ -24,49 +25,49 @@ import org.junit.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class RemoveClassTest {
-
-  @BeforeClass
+  
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   /** Test method removeClass */
   @Test
   public void testRemove() throws IOException {
     FileUtility utility = new FileUtility("cdlib/ClassAndAssociationLeft");
     Remove refactoring = new Remove();
-
+    
     // Check input
     assertEquals(2, utility.getAst().getCDDefinition().getCDClassesList().size());
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("Old", utility.getAst().getCDDefinition().getCDClassesList().get(1).getName());
-
+    
     // Remove Class Old
     assertTrue(refactoring.removeClass("Old", utility.getAst()));
-
+    
     // Check if Class Old was removed
     assertEquals(1, utility.getAst().getCDDefinition().getCDClassesList().size());
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
   }
-
+  
   // /**
   // * Test method removeClass
   // */
@@ -87,5 +88,5 @@ public class RemoveClassTest {
   // assertEquals(1,
   // utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
   // }
-
+  
 }

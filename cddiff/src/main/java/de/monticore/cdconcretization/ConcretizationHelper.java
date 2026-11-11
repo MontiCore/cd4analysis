@@ -1,46 +1,49 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
+import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdconformance.inc.association.CompAssocIncStrategy;
-import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ConcretizationHelper {
-
+  
   private final ASTCDCompilationUnit ccd;
   private final ASTCDCompilationUnit rcd;
-  private final CompTypeIncStrategy compTypeIncStrategy;
-  private final CompAssocIncStrategy compAssocIncStrategy;
-
+  private final BooleanMatchingStrategy<ASTCDType> typeIncStrategy;
+  private final BooleanMatchingStrategy<ASTCDAssociation> assocIncStrategy;
+  
   // Mappings to store results
   public Map<CDTypeSymbol, Set<CDTypeSymbol>> typeMapping;
   public Map<CDRoleSymbol, Set<CDRoleSymbol>> roleMapping;
   public Map<CDRoleSymbol, Set<CDTypeSymbol>> roleToTypeMapping;
-
+  
   // Constructor
-  public ConcretizationHelper(
-      ASTCDCompilationUnit ccd,
-      ASTCDCompilationUnit rcd,
-      CompTypeIncStrategy compTypeIncStrategy,
-      CompAssocIncStrategy compAssocIncStrategy) {
+  public ConcretizationHelper(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd,
+      BooleanMatchingStrategy<ASTCDType> compTypeIncStrategy,
+      BooleanMatchingStrategy<ASTCDAssociation> compAssocIncStrategy) {
     this.ccd = ccd;
     this.rcd = rcd;
-    this.compTypeIncStrategy = compTypeIncStrategy;
-    this.compAssocIncStrategy = compAssocIncStrategy;
-    this.typeMapping = new HashMap<>();
-    this.roleMapping = new HashMap<>();
-    this.roleToTypeMapping = new HashMap<>();
+    this.typeIncStrategy = compTypeIncStrategy;
+    this.assocIncStrategy = compAssocIncStrategy;
+    this.typeMapping = new LinkedHashMap<>();
+    this.roleMapping = new LinkedHashMap<>();
+    this.roleToTypeMapping = new LinkedHashMap<>();
   }
-
+  
   // Main function to map reference roles to concrete roles
   public void mapReferenceToConcreteRoles() throws CompletionException {
     CDDiffUtil.refreshSymbolTable(ccd);
@@ -49,48 +52,45 @@ public class ConcretizationHelper {
       processAssociationsForType(refType);
     }
   }
-
+  
   private void processAssociationsForType(ASTCDType refType) throws CompletionException {
     for (ASTCDAssociation refAssoc : getAssociationsReferencingType(refType, rcd)) {
       // Get all concrete types that incarnate refType
       Set<ASTCDType> concreteTypes = getConcreteTypesForReferenceType(refType);
-
+      
       // Process each concrete type that incarnates refType
       for (ASTCDType conType : concreteTypes) {
         // Map reference type to concrete type
-        typeMapping
-            .computeIfAbsent(refType.getSymbol(), k -> new HashSet<>())
-            .add(conType.getSymbol());
-
+        typeMapping.computeIfAbsent(refType.getSymbol(), k -> new LinkedHashSet<>()).add(conType
+            .getSymbol());
+        
         // Get concrete associations incarnating the reference association and referencing conType
         Set<ASTCDAssociation> conAssocSet = getConcreteAssociationsForType(conType, refAssoc);
-
+        
         for (ASTCDAssociation conAssoc : conAssocSet) {
           // Process left and right side of associations separately
-          processAssociationSides(
-              refAssoc.getLeft(), conAssoc.getLeft(), refAssoc.getRight(), conAssoc.getRight());
-          processAssociationSides(
-              refAssoc.getRight(), conAssoc.getRight(), refAssoc.getLeft(), conAssoc.getLeft());
+          processAssociationSides(refAssoc.getLeft(), conAssoc.getLeft(), refAssoc.getRight(),
+              conAssoc.getRight());
+          processAssociationSides(refAssoc.getRight(), conAssoc.getRight(), refAssoc.getLeft(),
+              conAssoc.getLeft());
         }
       }
     }
   }
-
+  
   // Helper to get all associations in the reference diagram that reference a given type
-  private Set<ASTCDAssociation> getAssociationsReferencingType(
-      ASTCDType refType, ASTCDCompilationUnit cd) {
-    return cd.getCDDefinition().getCDAssociationsList().stream()
-        .filter(
-            refAssoc -> {
-              try {
-                return isAssociationReferencingType(refAssoc, refType);
-              } catch (CompletionException e) {
-                throw new RuntimeException(e);
-              }
-            })
-        .collect(Collectors.toSet());
+  private Set<ASTCDAssociation> getAssociationsReferencingType(ASTCDType refType,
+      ASTCDCompilationUnit cd) {
+    return cd.getCDDefinition().getCDAssociationsList().stream().filter(refAssoc -> {
+      try {
+        return isAssociationReferencingType(refAssoc, refType);
+      }
+      catch (CompletionException e) {
+        throw new RuntimeException(e);
+      }
+    }).collect(Collectors.toSet());
   }
-
+  
   // Check if an association references a type on either side
   private boolean isAssociationReferencingType(ASTCDAssociation assoc, ASTCDType type)
       throws CompletionException {
@@ -98,136 +98,178 @@ public class ConcretizationHelper {
     ASTCDType assocRightType = getAssocRightType(rcd, assoc);
     return type.equals(assocLeftType) || type.equals(assocRightType);
   }
-
+  
   // Helper to get all concrete types that incarnate the reference type
   private Set<ASTCDType> getConcreteTypesForReferenceType(ASTCDType refType) {
-    return getCDTypes(ccd).stream()
-        .filter(conType -> compTypeIncStrategy.isMatched(conType, refType))
+    return getCDTypes(ccd).stream().filter(conType -> typeIncStrategy.isMatched(conType, refType))
         .collect(Collectors.toSet());
   }
-
+  
   // Helper to get all concrete associations for a given concrete type and reference association
-  private Set<ASTCDAssociation> getConcreteAssociationsForType(
-      ASTCDType conType, ASTCDAssociation refAssoc) throws CompletionException {
-    Set<ASTCDAssociation> set = new HashSet<>();
+  private Set<ASTCDAssociation> getConcreteAssociationsForType(ASTCDType conType,
+      ASTCDAssociation refAssoc) throws CompletionException {
+    Set<ASTCDAssociation> set = new LinkedHashSet<>();
     for (ASTCDAssociation assoc : ccd.getCDDefinition().getCDAssociationsList()) {
-      if (compAssocIncStrategy.isMatched(assoc, refAssoc)
-          && (getTypeFromAssocSide(assoc.getLeft()).equals(conType)
-              || getTypeFromAssocSide(assoc.getRight()).equals(conType))) {
+      if (assocIncStrategy.isMatched(assoc, refAssoc) && (getTypeFromAssocSide(assoc.getLeft())
+          .equals(conType) || getTypeFromAssocSide(assoc.getRight()).equals(conType))) {
         set.add(assoc);
       }
     }
     return set;
   }
-
+  
   // Process both sides of the association to map roles and other types
-  private void processAssociationSides(
-      ASTCDAssocSide refAssocSide,
-      ASTCDAssocSide conAssocSide,
-      ASTCDAssocSide refOtherSide,
-      ASTCDAssocSide conOtherSide)
-      throws CompletionException {
-
+  private void processAssociationSides(ASTCDAssocSide refAssocSide, ASTCDAssocSide conAssocSide,
+      ASTCDAssocSide refOtherSide, ASTCDAssocSide conOtherSide) throws CompletionException {
+    
     // Get reference and concrete role names for the current side
     Optional<CDRoleSymbol> refRoleOpt = getRoleSymbol(refAssocSide);
     Optional<CDRoleSymbol> conRoleOpt = getRoleSymbol(conAssocSide);
-
+    
     // Add reference role to concrete role mapping
     if (refRoleOpt.isPresent() && conRoleOpt.isPresent()) {
       CDRoleSymbol refRole = refRoleOpt.get();
       CDRoleSymbol conRole = conRoleOpt.get();
       addToMapping(roleMapping, refRole, conRole);
     }
-
+    
     // Map the reference role to the other reference type (for roleToTypeMapping)
     ASTCDType refOtherType = getTypeFromAssocSide(refOtherSide);
     refRoleOpt.ifPresent(role -> addToMapping(roleToTypeMapping, role, refOtherType.getSymbol()));
-
+    
     // Map the concrete role to the other concrete type (for roleToTypeMapping)
     ASTCDType conOtherType = getTypeFromAssocSide(conOtherSide);
     conRoleOpt.ifPresent(role -> addToMapping(roleToTypeMapping, role, conOtherType.getSymbol()));
   }
-
-  private void addToMapping(
-      Map<CDRoleSymbol, Set<CDTypeSymbol>> map, CDRoleSymbol key, CDTypeSymbol value) {
+  
+  private void addToMapping(Map<CDRoleSymbol, Set<CDTypeSymbol>> map, CDRoleSymbol key,
+      CDTypeSymbol value) {
     // If the key doesn't exist, create a new set for it
-    map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
+    map.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value);
   }
-
-  private void addToMapping(
-      Map<CDRoleSymbol, Set<CDRoleSymbol>> map, CDRoleSymbol key, CDRoleSymbol value) {
+  
+  private void addToMapping(Map<CDRoleSymbol, Set<CDRoleSymbol>> map, CDRoleSymbol key,
+      CDRoleSymbol value) {
     // If the key doesn't exist, create a new set for it
-    map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
+    map.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value);
   }
-
+  
   // Helper to get the role name of an association side
   private Optional<CDRoleSymbol> getRoleSymbol(ASTCDAssocSide assocSide) {
-    return assocSide.isPresentCDRole()
-        ? Optional.of(assocSide.getCDRole().getSymbol())
-        : Optional.empty();
+    return assocSide.isPresentCDRole() ? Optional.of(assocSide.getCDRole().getSymbol()) : Optional
+        .empty();
   }
-
+  
   // Helper to get the type from an association side
   private ASTCDType getTypeFromAssocSide(ASTCDAssocSide side) throws CompletionException {
     // how to get QName from side?
-    Optional<CDTypeSymbol> typeSymbol =
-        ccd.getEnclosingScope()
-            .resolveCDTypeDown(side.getMCQualifiedType().getMCQualifiedName().getQName());
-
+    Optional<CDTypeSymbol> typeSymbol = ccd.getEnclosingScope().resolveCDTypeDown(side
+        .getMCQualifiedType().getMCQualifiedName().getQName());
+    
     if (typeSymbol.isPresent()) {
       return typeSymbol.get().getAstNode();
-    } else {
+    }
+    else {
       throw new CompletionException("There was a problem getting a type from an association");
     }
   }
-
-  protected Set<ASTCDType> getCDTypes(ASTCDCompilationUnit cd) {
-    Set<ASTCDType> cdTypes = new HashSet<>();
+  
+  public static Set<ASTCDType> getCDTypes(ASTCDCompilationUnit cd) {
+    Set<ASTCDType> cdTypes = new LinkedHashSet<>();
     cdTypes.addAll(cd.getCDDefinition().getCDClassesList());
     cdTypes.addAll(cd.getCDDefinition().getCDInterfacesList());
     cdTypes.addAll(cd.getCDDefinition().getCDEnumsList());
     return cdTypes;
   }
-
-  ASTCDType getAssocLeftType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
+  
+  public static ASTCDType getAssocLeftType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
       throws CompletionException {
-    Optional<CDTypeSymbol> typeSymbol =
-        cd.getEnclosingScope().resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
-
+    Optional<CDTypeSymbol> typeSymbol = cd.getEnclosingScope().resolveCDTypeDown(assoc
+        .getLeftQualifiedName().getQName());
+    
     if (typeSymbol.isPresent()) {
       return typeSymbol.get().getAstNode();
-    } else {
+    }
+    else {
       throw new CompletionException("There was a problem getting a type from an association");
     }
   }
-
-  ASTCDType getAssocRightType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
+  
+  public static ASTCDType getAssocRightType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
       throws CompletionException {
-    Optional<CDTypeSymbol> typeSymbol =
-        cd.getEnclosingScope().resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
-
+    Optional<CDTypeSymbol> typeSymbol = cd.getEnclosingScope().resolveCDTypeDown(assoc
+        .getRightQualifiedName().getQName());
+    
     if (typeSymbol.isPresent()) {
       return typeSymbol.get().getAstNode();
-    } else {
+    }
+    else {
       throw new CompletionException("There was a problem getting a type from an association");
     }
   }
-
-  ASTCDType getAssocTypeByQName(ASTCDCompilationUnit cd, String QName) throws CompletionException {
+  
+  public static ASTCDType getAssocTypeByQName(ASTCDCompilationUnit cd, String QName)
+      throws CompletionException {
     Optional<CDTypeSymbol> typeSymbol = cd.getEnclosingScope().resolveCDTypeDown(QName);
-
+    
     if (typeSymbol.isPresent()) {
       return typeSymbol.get().getAstNode();
-    } else {
+    }
+    else {
       throw new CompletionException("There was a problem getting a type from an association");
     }
   }
-
+  
   public static void reorderElements(ASTCDDefinition cdDefinition) {
-    List<ASTCDClass> classList = new ArrayList<>(cdDefinition.getCDClassesList());
-    List<ASTCDAssociation> assocList = new ArrayList<>(cdDefinition.getCDAssociationsList());
-    cdDefinition.getCDElementList().clear();
-    cdDefinition.addAllCDElements(classList);
-    cdDefinition.addAllCDElements(assocList);
+    List<ASTCDElement> elements = new ArrayList<>(cdDefinition.getCDElementList());
+    elements.sort(Comparator.comparingInt((element) -> {
+      if (element instanceof ASTCDClass) {
+        return 0;
+      }
+      else if (element instanceof ASTCDInterface) {
+        return 1;
+      }
+      else if (element instanceof ASTCDEnum) {
+        return 2;
+      }
+      else if (element instanceof ASTCDAssociation) {
+        return 3;
+      }
+      else if (element instanceof ASTCDPackage) {
+        return 4;
+      }
+      else {
+        // all other elements at the end
+        return 5;
+      }
+    }));
+    cdDefinition.setCDElementList(elements);
   }
+  
+  /**
+   * Workaround to create an {@link ASTMCQualifiedType} instance that is already linked
+   * into the symbol table.<br>
+   * <br>
+   * This is required as we sometimes execute the type check for AST elements created by one
+   * completer (e.g. a for each completer) which passes the newly created instanced down to
+   * the Base completer. If we do not link an enclosing scope manually, the type check fails.
+   *
+   * @param scope the scope that should be used as enclosing scope for the type
+   * @param name the name of the type to create, e.g. "com.example.Foo"
+   * @return a new {@link ASTMCQualifiedType} instance with the given name and scope
+   */
+  public static ASTMCQualifiedType createQualifiedTypeInScope(IBasicSymbolsScope scope,
+      String name) {
+    ASTMCQualifiedName mcQualifiedName = MCQualifiedNameFacade.createQualifiedName(name);
+    /*
+     * We have to set the enclosing scope so the type can be resolved if the type check is
+     * used on the cloned method.
+     */
+    mcQualifiedName.setEnclosingScope(scope);
+    ASTMCQualifiedType qualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+        mcQualifiedName).build();
+    qualifiedType.setEnclosingScope(scope);
+    return qualifiedType;
+  }
+  
 }

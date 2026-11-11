@@ -13,3 +13,7 @@ gradle/
 gradlew
 gradlew.bat
 ~$*
+.intellijPlatform/
+
+# AI
+.claude/**

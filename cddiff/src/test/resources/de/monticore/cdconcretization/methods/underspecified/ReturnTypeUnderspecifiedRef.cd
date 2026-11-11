@@ -1,0 +1,6 @@
+classdiagram ReturnTypeUnderspecifiedRef {
+
+  class Operator {
+    any operation();
+  }
+}

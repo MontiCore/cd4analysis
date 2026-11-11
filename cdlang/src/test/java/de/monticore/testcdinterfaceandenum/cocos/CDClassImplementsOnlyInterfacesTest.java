@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsOnlyInterfaces;
@@ -10,16 +10,16 @@ import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CDClassImplementsOnlyInterfacesTest extends CDInterfaceAndEnumTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDClassImplementsOnlyInterfaces());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdinterfaceenum/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdinterfaceenum/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -28,12 +28,12 @@ public class CDClassImplementsOnlyInterfacesTest extends CDInterfaceAndEnumTestB
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDClassImplementsOnlyInterfaces());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdinterfaceenum/cocos/CDClassImplementsOnlyInterfacesInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdinterfaceenum/cocos/CDClassImplementsOnlyInterfacesInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -43,7 +43,8 @@ public class CDClassImplementsOnlyInterfacesTest extends CDInterfaceAndEnumTestB
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCF4"));
   }
-
-  @After
+  
+  @AfterEach
   public void after() {}
+  
 }

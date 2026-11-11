@@ -11,15 +11,16 @@ import java.util.Optional;
  * difference solution size
  */
 public class SemanticObjectSizeMeasure {
+  
   // Parameter to specify the size of the search space
   int k;
-
+  
   /** Constructor for de.cddiff.similaritymeasure.measures.SemanticObjectSizeMeasure */
   public SemanticObjectSizeMeasure() {
     // TODO Set to better size or estimate it.
     this.k = 2;
   }
-
+  
   /**
    * Constructor for de.cddiff.similaritymeasure.measures.SemanticObjectSizeMeasure
    *
@@ -28,7 +29,7 @@ public class SemanticObjectSizeMeasure {
   public SemanticObjectSizeMeasure(int k) {
     this.k = k;
   }
-
+  
   /**
    * Computes the size based difference measure between two ASTs, without regarding their order.
    *
@@ -39,17 +40,17 @@ public class SemanticObjectSizeMeasure {
    */
   public double sizeDifference(ASTCDCompilationUnit x, ASTCDCompilationUnit y, int k) {
     double result = 0;
-
+    
     Optional<AlloyDiffSolution> optS = AlloyCDDiff.getAlloyDiffSolution(x, y, k);
-
+    
     if (optS.isPresent()) {
       AlloyDiffSolution S = optS.get();
       result = S.generateUniqueODs().size();
     }
-
+    
     return result;
   }
-
+  
   /**
    * Computes the size based difference measure between two ASTs, regarding their order.
    *
@@ -58,9 +59,10 @@ public class SemanticObjectSizeMeasure {
    * @return Size based difference measurement of x and y
    */
   public double difference(ASTCDCompilationUnit x, ASTCDCompilationUnit y) {
-
+    
     double xy = sizeDifference(x, y, k);
     double yx = sizeDifference(y, x, k);
     return Math.max(xy, yx);
   }
+  
 }

@@ -5,7 +5,7 @@ import de.monticore.cdmerge.BaseTest;
 
 /** UnitTests for the MatchResult class. */
 public class MatchResultTest extends BaseTest {
-
+  
   //	public static final MatchNode<Integer, String> matchNode1 = new MatchNode<Integer, String>
   //	(1, "odd");
   //

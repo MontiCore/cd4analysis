@@ -14,8 +14,9 @@ import java.util.List;
  * @montitoolbox
  */
 public class Move implements Refactoring {
+  
   public Move() {}
-
+  
   /**
    * Moves all methods and attributes from a source class {@code sourceClass} to a target class
    * {@code targetClass}
@@ -25,15 +26,15 @@ public class Move implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true
    */
-  public boolean moveMethodsAndAttributes(
-      String sourceClass, String targetClass, ASTCDCompilationUnit ast) {
+  public boolean moveMethodsAndAttributes(String sourceClass, String targetClass,
+      ASTCDCompilationUnit ast) {
     while (moveMethod(sourceClass, targetClass, ast))
       ;
     while (moveAttribute(sourceClass, targetClass, ast))
       ;
     return true;
   }
-
+  
   /**
    * Move all methods and attributes from a source class {@code sourceClass} to a target class
    * {@code targetClass}, if their connected with a one-to-one association
@@ -43,8 +44,8 @@ public class Move implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean moveMethodsAndAttributesToNeighborClass(
-      String sourceClass, String targetClass, ASTCDCompilationUnit ast) {
+  public boolean moveMethodsAndAttributesToNeighborClass(String sourceClass, String targetClass,
+      ASTCDCompilationUnit ast) {
     IsNeighbor isNeighbor = new IsNeighbor(ast);
     isNeighbor.set_$c1(sourceClass);
     isNeighbor.set_$c2(targetClass);
@@ -53,7 +54,7 @@ public class Move implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Move all methods from a source class {@code sourceClass} to a target class {@code targetClass}
    *
@@ -69,7 +70,7 @@ public class Move implements Refactoring {
     }
     return success;
   }
-
+  
   /**
    * Moves the first method from the source class {@code sourceClass} to a target class {@code
    * targetClass}
@@ -87,10 +88,10 @@ public class Move implements Refactoring {
       moveMethod.doReplacement();
       return true;
     }
-
+    
     return false;
   }
-
+  
   /**
    * Move the methods with the names of {@code methodsToMove} from a source class {@code
    * sourceClass} to a target class {@code targetClass}
@@ -101,10 +102,7 @@ public class Move implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean moveMethods(
-      String sourceClass,
-      String targetClass,
-      List<String> methodsToMove,
+  public boolean moveMethods(String sourceClass, String targetClass, List<String> methodsToMove,
       ASTCDCompilationUnit ast) {
     for (int i = 0; i < methodsToMove.size(); i++) {
       MoveConcreteMethod moveMethod = new MoveConcreteMethod(ast);
@@ -113,13 +111,14 @@ public class Move implements Refactoring {
       moveMethod.set_$name(methodsToMove.get(i));
       if (moveMethod.doPatternMatching()) {
         moveMethod.doReplacement();
-      } else {
+      }
+      else {
         return false;
       }
     }
     return true;
   }
-
+  
   /**
    * Moves the given methods {@code methodsToMove} from the source class {@code sourceClass} to the
    * target class {@code targetClass}, if their connected with a one-to-one association
@@ -130,11 +129,8 @@ public class Move implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean moveMethodsToNeighborClass(
-      String sourceClass,
-      String targetClass,
-      List<String> methodsToMove,
-      ASTCDCompilationUnit ast) {
+  public boolean moveMethodsToNeighborClass(String sourceClass, String targetClass,
+      List<String> methodsToMove, ASTCDCompilationUnit ast) {
     IsNeighbor isNeighbor = new IsNeighbor(ast);
     isNeighbor.set_$c1(sourceClass);
     isNeighbor.set_$c2(targetClass);
@@ -143,7 +139,7 @@ public class Move implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Move all attributes from a source class {@code sourceClass} to a target class {@code
    * targetClass}
@@ -153,15 +149,15 @@ public class Move implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean moveAllAttributes(
-      String sourceClass, String targetClass, ASTCDCompilationUnit ast) {
+  public boolean moveAllAttributes(String sourceClass, String targetClass,
+      ASTCDCompilationUnit ast) {
     boolean success = false;
     while (moveAttribute(sourceClass, targetClass, ast)) {
       success = true;
     }
     return success;
   }
-
+  
   /**
    * Moves the first attribute from the source class {@code sourceClass} to the target class {@code
    * targetClass}
@@ -181,7 +177,7 @@ public class Move implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Move the attributes with the names of {@code attributesToMove} from the source class {@code
    * sourceClass} to the target class {@code targetClass}
@@ -192,11 +188,8 @@ public class Move implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean moveAttributes(
-      String sourceClass,
-      String targetClass,
-      List<String> attributesToMove,
-      ASTCDCompilationUnit ast) {
+  public boolean moveAttributes(String sourceClass, String targetClass,
+      List<String> attributesToMove, ASTCDCompilationUnit ast) {
     for (int i = 0; i < attributesToMove.size(); i++) {
       MoveConcreteAttribute moveMethod = new MoveConcreteAttribute(ast);
       moveMethod.set_$startClassName(sourceClass);
@@ -204,13 +197,14 @@ public class Move implements Refactoring {
       moveMethod.set_$name(attributesToMove.get(i));
       if (moveMethod.doPatternMatching()) {
         moveMethod.doReplacement();
-      } else {
+      }
+      else {
         return false;
       }
     }
     return true;
   }
-
+  
   /**
    * Moves the given attributes {@code attributesToMove} from the source class {@code sourceClass}
    * to the target class {@code targetClass}, if their connected with a one-to-one association
@@ -221,11 +215,8 @@ public class Move implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean moveAttributesToNeighborClass(
-      String sourceClass,
-      String targetClass,
-      List<String> attributesToMove,
-      ASTCDCompilationUnit ast) {
+  public boolean moveAttributesToNeighborClass(String sourceClass, String targetClass,
+      List<String> attributesToMove, ASTCDCompilationUnit ast) {
     IsNeighbor isNeighbor = new IsNeighbor(ast);
     isNeighbor.set_$c1(sourceClass);
     isNeighbor.set_$c2(targetClass);
@@ -234,4 +225,5 @@ public class Move implements Refactoring {
     }
     return false;
   }
+  
 }

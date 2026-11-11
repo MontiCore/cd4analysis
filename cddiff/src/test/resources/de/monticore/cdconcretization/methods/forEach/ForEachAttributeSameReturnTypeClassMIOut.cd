@@ -1,0 +1,23 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeSameReturnTypeClassMIConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+    // added methods
+    <<ref="ForEachAttributeSameReturnTypeRef.DataClass.getAttribute">> String getFirstName();
+    <<ref="ForEachAttributeSameReturnTypeRef.DataClass.getAttribute">> String getLastName();
+    <<ref="ForEachAttributeSameReturnTypeRef.DataClass.getAttribute">> int getNumber();
+    <<ref="ForEachAttributeSameReturnTypeRef.DataClass.getAttribute">> int getSalary();
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+    // added methods
+    <<ref="ForEachAttributeSameReturnTypeRef.DataClass.getAttribute">> String getManagerName();
+    <<ref="ForEachAttributeSameReturnTypeRef.DataClass.getAttribute">> int getDepId();
+  }
+}

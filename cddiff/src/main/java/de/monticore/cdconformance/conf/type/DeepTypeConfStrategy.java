@@ -1,75 +1,57 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.conf.type;
 
 import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.CDAttributeChecker;
-import de.monticore.cdconformance.conf.ICDMethodChecker;
+import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
+import de.monticore.cdconformance.conf.method.CDMethodChecker;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.MatchingStrategy;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
-  public DeepTypeConfStrategy(
-      ASTCDCompilationUnit conCD,
-      ASTCDCompilationUnit refCD,
-      CDAttributeChecker attributeChecker,
-      ICDMethodChecker methodChecker,
-      MatchingStrategy<ASTCDType> typeInc,
-      MatchingStrategy<ASTCDAssociation> assocInc) {
-    super(conCD, refCD, attributeChecker, methodChecker, typeInc, assocInc);
+  
+  public DeepTypeConfStrategy(ASTCDCompilationUnit conCD, ASTCDCompilationUnit refCD,
+      CDAttributeChecker attributeChecker, CDMethodChecker methodChecker,
+      CDIncarnationMapping incMapping) {
+    super(conCD, refCD, attributeChecker, methodChecker, incMapping);
   }
-
+  
   @Override
   protected boolean checkAttributeIncarnation(ASTCDType concrete, ASTCDType ref) {
-    return checkAttributeIncarnation(
-        new HashSet<>(CDSymbolTables.getAttributesInHierarchy(concrete)),
-        new HashSet<>(ref.getCDAttributeList()));
+    return checkAttributeIncarnation(new LinkedHashSet<>(CDSymbolTables.getAttributesInHierarchy(
+        concrete)), new LinkedHashSet<>(ref.getCDAttributeList()));
   }
-
+  
   @Override
   protected boolean checkMethodIncarnation(ASTCDType concrete, ASTCDType ref) {
-    return checkMethodIncarnation(
-        new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)),
-        new HashSet<>(ref.getCDMethodList()));
+    return checkMethodIncarnation(new LinkedHashSet<>(CDSymbolTables.getMethodsInHierarchy(
+        concrete)), new LinkedHashSet<>(ref.getCDMethodList()));
   }
-
+  
   @Override
-  protected boolean checkAttributeConformance(ASTCDType concrete) {
-    return checkAttributeConformance(
-        new HashSet<>(CDSymbolTables.getAttributesInHierarchy(concrete)));
+  protected boolean checkAttributeConformance(ASTCDType concrete, ASTCDType refType) {
+    return checkAttributeConformance(new LinkedHashSet<>(CDSymbolTables.getAttributesInHierarchy(
+        concrete)), refType);
   }
-
+  
   @Override
-  protected boolean checkMethodConformance(ASTCDType concrete) {
-    return checkMethodConformance(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)));
+  protected boolean checkMethodConformance(ASTCDType concrete, ASTCDType refType) {
+    return checkMethodConformance(new LinkedHashSet<>(CDSymbolTables.getMethodsInHierarchy(
+        concrete)), refType);
   }
-
+  
   @Override
   protected boolean checkAssocIncarnation(ASTCDType concrete, ASTCDType ref) {
-
-    Set<ASTCDAssociation> conAssocSet =
-        CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream()
-            .flatMap(
-                supertype ->
-                    CDDiffUtil.getReferencingAssociations(supertype, conCD).stream()
-                        .filter(
-                            assoc ->
-                                supertype
-                                        .getSymbol()
-                                        .getInternalQualifiedName()
-                                        .contains(assoc.getLeftQualifiedName().getQName())
-                                    || supertype
-                                        .getSymbol()
-                                        .getInternalQualifiedName()
-                                        .contains(assoc.getRightQualifiedName().getQName())))
-            .collect(Collectors.toSet());
-
-    conAssocSet.addAll(CDDiffUtil.getReferencingAssociations(concrete, conCD));
-
+    Set<ASTCDAssociation> conAssocSet = CDDiffUtil.getAllSuperTypes(concrete).stream().flatMap(
+        supertype -> CDDiffUtil.getReferencingAssociations(supertype, conCD).stream()).collect(
+            Collectors.toSet());
+    
     return checkAssocIncarnation(conAssocSet, CDDiffUtil.getReferencingAssociations(ref, refCD));
   }
+  
 }

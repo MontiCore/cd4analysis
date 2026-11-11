@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram AttributeInSuperClassConc { 
+  class Person { 
+    String firstName;
+    String lastName;
+  }
+
+  class Employee extends Person { 
+    int number;
+    int salary;
+  }
+} 

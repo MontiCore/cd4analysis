@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp.features.syntax_highlighting.rule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,19 +18,19 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 class HighlightAttributeTypeTest {
-
+  
   @Test
   void testInterfaceName() throws IOException {
-    CD4AnalysisLexerProvider lexerProvider =
-        new CD4AnalysisLexerProvider(
-            new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
+    CD4AnalysisLexerProvider lexerProvider = new CD4AnalysisLexerProvider(
+        new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
     Path pathToModel = Paths.get("src/test/resources/highlighting/ExtendClassName.cd");
     String content = IOUtils.toString(pathToModel.toUri(), StandardCharsets.UTF_8);
-
+    
     List<Token> classifiedTokens = lexerProvider.getTokensForInput(content);
-
+    
     int keywordToken = 12;
-    assertEquals(
-        SemanticTokenTypesWrapper.Keyword.value, classifiedTokens.get(keywordToken).getName());
+    assertEquals(SemanticTokenTypesWrapper.Keyword.value, classifiedTokens.get(keywordToken)
+        .getName());
   }
+  
 }

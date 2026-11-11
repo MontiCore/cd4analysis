@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AssocNameImplicitNameAdaptRef {
+  class Task;
+  class Project;
+  // association name "taskAssignment" starts with uncapitalised "task" -> adapted to "ticketAssignment"
+  association taskAssignment Project -> Task [*];
+}

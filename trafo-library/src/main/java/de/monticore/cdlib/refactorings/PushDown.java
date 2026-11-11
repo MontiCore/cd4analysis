@@ -15,8 +15,9 @@ import java.util.List;
  * @montitoolbox
  */
 public class PushDown implements Refactoring {
+  
   public PushDown() {}
-
+  
   /**
    * Push down all attributes of the super class {@code superClassName} to all given subClasses
    *
@@ -26,7 +27,7 @@ public class PushDown implements Refactoring {
    */
   public boolean pushDown(String superClassName, ASTCDCompilationUnit ast) {
     boolean success = false;
-
+    
     if (pushDownAllAttributes(superClassName, ast)) {
       success = true;
     }
@@ -35,7 +36,7 @@ public class PushDown implements Refactoring {
     }
     return success;
   }
-
+  
   /**
    * Push down all attributes
    *
@@ -59,13 +60,14 @@ public class PushDown implements Refactoring {
     deleteAttribute.set_$superclass(superClassName);
     if (deleteAttribute.doPatternMatching()) {
       deleteAttribute.doReplacement();
-    } else {
+    }
+    else {
       return false;
     }
-
+    
     return sucess;
   }
-
+  
   /**
    * Push down given attributes {@code attributes} to subclasses
    *
@@ -74,9 +76,9 @@ public class PushDown implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean pushDownAttributes(
-      String superClassName, List<String> attributes, ASTCDCompilationUnit ast) {
-
+  public boolean pushDownAttributes(String superClassName, List<String> attributes,
+      ASTCDCompilationUnit ast) {
+    
     for (int i = 0; i < attributes.size(); i++) {
       // Copy attribute to all subclasses
       CopyAttributeToSubclass copyAttribute = new CopyAttributeToSubclass(ast);
@@ -88,22 +90,23 @@ public class PushDown implements Refactoring {
         copyAttribute.set_$superclass(superClassName);
         copyAttribute.set_$name(attributes.get(i));
       }
-
+      
       // delete attribute in superclass
       DeleteAttributeInSuperclass deleteAttribute = new DeleteAttributeInSuperclass(ast);
       deleteAttribute.set_$superclass(superClassName);
       deleteAttribute.set_$name(attributes.get(i));
       if (deleteAttribute.doPatternMatching()) {
         deleteAttribute.doReplacement();
-      } else {
-        Log.info(
-            "0xF4111: Error by deleting attribute " + attributes.get(i), PushDown.class.getName());
+      }
+      else {
+        Log.info("0xF4111: Error by deleting attribute " + attributes.get(i), PushDown.class
+            .getName());
         return false;
       }
     }
     return true;
   }
-
+  
   /**
    * Push down given attributes {@code attributes} of a given class {@code superClassName} to the
    * given subclasses {@code subClasses}
@@ -114,12 +117,9 @@ public class PushDown implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean pushDownAttributes(
-      String superClassName,
-      List<String> subClasses,
-      List<String> attributes,
-      ASTCDCompilationUnit ast) {
-
+  public boolean pushDownAttributes(String superClassName, List<String> subClasses,
+      List<String> attributes, ASTCDCompilationUnit ast) {
+    
     for (int j = 0; j < attributes.size(); j++) {
       // Add attribute in subclasses
       for (int i = 0; i < subClasses.size(); i++) {
@@ -129,34 +129,31 @@ public class PushDown implements Refactoring {
         copyAttribute.set_$name(attributes.get(j));
         if (copyAttribute.doPatternMatching()) {
           copyAttribute.doReplacement();
-        } else {
-          Log.info(
-              "0xF4112: Error by adding attribute "
-                  + attributes.get(j)
-                  + " to class "
-                  + subClasses.get(i),
-              PushDown.class.getName());
+        }
+        else {
+          Log.info("0xF4112: Error by adding attribute " + attributes.get(j) + " to class "
+              + subClasses.get(i), PushDown.class.getName());
           return false;
         }
       }
-
+      
       // Remove attribute in Superclass
       DeleteAttributeInSuperclass removeAttribute = new DeleteAttributeInSuperclass(ast);
       removeAttribute.set_$name(attributes.get(j));
       removeAttribute.set_$superclass(superClassName);
       if (removeAttribute.doPatternMatching()) {
         removeAttribute.doReplacement();
-      } else {
-        Log.info(
-            "0xF4113: Error by removing attribute " + attributes.get(j) + " after pushing down.",
-            PushDown.class.getName());
+      }
+      else {
+        Log.info("0xF4113: Error by removing attribute " + attributes.get(j)
+            + " after pushing down.", PushDown.class.getName());
         return false;
       }
     }
-
+    
     return true;
   }
-
+  
   /**
    * Push down all methods
    *
@@ -180,13 +177,14 @@ public class PushDown implements Refactoring {
     deleteMethod.set_$superclass(superClassName);
     if (deleteMethod.doPatternMatching()) {
       deleteMethod.doReplacement();
-    } else {
+    }
+    else {
       return false;
     }
-
+    
     return sucess;
   }
-
+  
   /**
    * Push down given methods {@code methods} to subclasses {@code superClassName}
    *
@@ -195,9 +193,9 @@ public class PushDown implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean pushDownMethods(
-      String superClassName, List<String> methods, ASTCDCompilationUnit ast) {
-
+  public boolean pushDownMethods(String superClassName, List<String> methods,
+      ASTCDCompilationUnit ast) {
+    
     for (int i = 0; i < methods.size(); i++) {
       // Copy attribute to all subclasses
       CopyMethodToSubclass copyMethod = new CopyMethodToSubclass(ast);
@@ -209,22 +207,23 @@ public class PushDown implements Refactoring {
         copyMethod.set_$superclass(superClassName);
         copyMethod.set_$name(methods.get(i));
       }
-
+      
       // delete attribute in superclass
       DeleteMethodInSuperclass deleteMethod = new DeleteMethodInSuperclass(ast);
       deleteMethod.set_$superclass(superClassName);
       deleteMethod.set_$name(methods.get(i));
       if (deleteMethod.doPatternMatching()) {
         deleteMethod.doReplacement();
-      } else {
-        Log.info(
-            "0xF4114: Error by deleting attribute " + methods.get(i), PushDown.class.getName());
+      }
+      else {
+        Log.info("0xF4114: Error by deleting attribute " + methods.get(i), PushDown.class
+            .getName());
         return false;
       }
     }
     return true;
   }
-
+  
   /**
    * Push down given methods {@code methods} of a given class {@code superClassName} to the given
    * subclasses {@code subClasses}
@@ -235,12 +234,9 @@ public class PushDown implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean pushDownMethods(
-      String superClassName,
-      List<String> subClasses,
-      List<String> methods,
-      ASTCDCompilationUnit ast) {
-
+  public boolean pushDownMethods(String superClassName, List<String> subClasses,
+      List<String> methods, ASTCDCompilationUnit ast) {
+    
     for (int j = 0; j < methods.size(); j++) {
       // Add attribute in subclasses
       for (int i = 0; i < subClasses.size(); i++) {
@@ -250,31 +246,29 @@ public class PushDown implements Refactoring {
         copyMethod.set_$name(methods.get(j));
         if (copyMethod.doPatternMatching()) {
           copyMethod.doReplacement();
-        } else {
-          Log.info(
-              "0xF4115: Error by adding attribute "
-                  + methods.get(j)
-                  + " to class "
-                  + subClasses.get(i),
-              PushDown.class.getName());
+        }
+        else {
+          Log.info("0xF4115: Error by adding attribute " + methods.get(j) + " to class "
+              + subClasses.get(i), PushDown.class.getName());
           return false;
         }
       }
-
+      
       // Remove attribute in Superclass
       DeleteMethodInSuperclass removeMethod = new DeleteMethodInSuperclass(ast);
       removeMethod.set_$name(methods.get(j));
       removeMethod.set_$superclass(superClassName);
       if (removeMethod.doPatternMatching()) {
         removeMethod.doReplacement();
-      } else {
-        Log.info(
-            "0xF4116: Error by removing attribute " + methods.get(j) + " after pushing down.",
+      }
+      else {
+        Log.info("0xF4116: Error by removing attribute " + methods.get(j) + " after pushing down.",
             PushDown.class.getName());
         return false;
       }
     }
-
+    
     return true;
   }
+  
 }

@@ -1,0 +1,10 @@
+// Ticket incarnates Task, but the method names do not follow the template adaptation —
+// should fail even with ADAPTED_NAME_MAPPING.
+classdiagram WrongName {
+  <<ref="Task">> class Ticket;
+
+  <<ref="Processor">> class TicketProcessor {
+    Ticket doSomething();
+    void handleItem(Ticket ticket);
+  }
+}

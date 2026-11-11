@@ -5,8 +5,8 @@ import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
 import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
 import static de.monticore.cd.facade.CDModifier.PROTECTED;
 import static de.monticore.cd.facade.CDModifier.PUBLIC;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd.codegen.methods.mutator.OptionalMutatorDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
@@ -18,30 +18,30 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.LogStub;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OptionalMutatorDecoratorTest {
-
+  
   private final GlobalExtensionManagement glex = new GlobalExtensionManagement();
-
+  
   private List<ASTCDMethod> methods;
-
-  @Before
+  
+  @BeforeEach
   public void setup() {
     LogStub.init();
     ASTMCType optionalType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optionalType, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        optionalType, "a");
     OptionalMutatorDecorator optionalMutatorDecorator = new OptionalMutatorDecorator(glex);
     this.methods = optionalMutatorDecorator.decorate(attribute);
   }
-
+  
   @Test
   public void testMethods() {
     assertEquals(2, methods.size());
   }
-
+  
   @Test
   public void testGetMethod() {
     ASTCDMethod method = getMethodBy("setA", this.methods);
@@ -52,7 +52,7 @@ public class OptionalMutatorDecoratorTest {
     assertDeepEquals(String.class, parameter.getMCType());
     assertEquals("a", parameter.getName());
   }
-
+  
   @Test
   public void testIsPresentMethod() {
     ASTCDMethod method = getMethodBy("setAAbsent", this.methods);
@@ -60,4 +60,5 @@ public class OptionalMutatorDecoratorTest {
     assertDeepEquals(PUBLIC, method.getModifier());
     assertTrue(method.getCDParameterList().isEmpty());
   }
+  
 }

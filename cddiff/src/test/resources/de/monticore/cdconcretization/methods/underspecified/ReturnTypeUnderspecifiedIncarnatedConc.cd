@@ -1,0 +1,6 @@
+classdiagram ReturnTypeUnderspecifiedIncarnatedConc {
+
+  <<ref="Operator">> class MyOperator {
+    <<ref="operation">> void foo();
+  }
+}

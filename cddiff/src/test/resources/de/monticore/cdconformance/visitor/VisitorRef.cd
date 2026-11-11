@@ -1,0 +1,14 @@
+classdiagram VisitorRef {
+	
+	interface Visitable {
+	  void accept(VisitableVisitor visitor);
+	}
+
+  // TODO use <<matchStructure>> here once it is implemented
+	class ConcreteVisitable implements Visitable;
+
+	<<forEach="Visitable">> interface VisitableVisitor {
+    void visit(Visitable visitable);
+    <<forEach="ConcreteVisitable">> void visit(ConcreteVisitable concreteVisitable);
+	}
+}

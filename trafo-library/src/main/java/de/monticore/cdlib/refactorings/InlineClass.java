@@ -15,8 +15,9 @@ import de.se_rwth.commons.logging.Log;
  * @montitoolbox
  */
 public class InlineClass implements Refactoring {
+  
   public InlineClass() {}
-
+  
   /**
    * Moves methods from a class, which should be removed, to another class and deletes the first
    * class. Only possible if there is an one-to-one association between those classes.
@@ -33,34 +34,31 @@ public class InlineClass implements Refactoring {
     deleteAssociation.set_$oldClassName(classToRemove);
     if (deleteAssociation.doPatternMatching()) {
       deleteAssociation.doReplacement();
-    } else {
-      Log.info(
-          "0xF4101: One-to-One-Association between "
-              + newClass
-              + " and "
-              + classToRemove
-              + "is assumed.",
-          InlineClass.class.getName());
+    }
+    else {
+      Log.info("0xF4101: One-to-One-Association between " + newClass + " and " + classToRemove
+          + "is assumed.", InlineClass.class.getName());
       return false;
     }
-
+    
     // Move all methods and attributes from the removedClass to the newClass
     Move move = new Move();
     move.moveMethodsAndAttributes(classToRemove, newClass, ast);
-
+    
     // Change referenceName in all associations from removedClass to
     // newClass
     transformationUtility.changeRefNameInAllAssociations(classToRemove, newClass, ast);
-
+    
     Remove removeClass = new Remove();
     // remove classToRemove
     if (removeClass.removeClass(classToRemove, ast)) {
       return true;
-    } else {
-      Log.info(
-          "0xF4102: Inline Class: Could not remove Class " + classToRemove,
-          InlineClass.class.getName());
+    }
+    else {
+      Log.info("0xF4102: Inline Class: Could not remove Class " + classToRemove, InlineClass.class
+          .getName());
     }
     return false;
   }
+  
 }

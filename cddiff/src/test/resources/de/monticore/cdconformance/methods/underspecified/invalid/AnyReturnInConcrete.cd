@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram AnyReturnInConcrete {
+
+  class Operator {
+    any operation(String input, int param);
+  }
+}

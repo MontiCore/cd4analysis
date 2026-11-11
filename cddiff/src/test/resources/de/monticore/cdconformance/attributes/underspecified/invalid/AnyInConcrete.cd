@@ -1,0 +1,6 @@
+classdiagram Concrete {
+  class Account {
+    any username;
+    int id;
+  }
+}

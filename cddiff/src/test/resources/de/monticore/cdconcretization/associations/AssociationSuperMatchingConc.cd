@@ -1,0 +1,22 @@
+classdiagram AssociationSuperMatchingConc {
+
+  class ASuperSuper1;
+  class ASuperSuper2;
+  class ASuper1 extends ASuperSuper1;
+  class ASuper2 extends ASuperSuper2;
+  class ASuper3;
+
+  <<ref="A">> class A1 extends ASuper1;
+  <<ref="A">> class A2 extends ASuper2;
+  <<ref="A">> class A3 extends ASuper3; // this one is missing associations
+
+  abstract class BSuperSuper1;
+  abstract class BSuperSuper2;
+  abstract class BSuper1 extends BSuperSuper1, BSuperSuper2;
+
+  <<ref="B">> class B1 extends BSuper1;
+  <<ref="B">> class B2 extends BSuperSuper2; // this one is missing associations
+
+  association ASuperSuper1 -> BSuperSuper1 [*];
+  association ASuperSuper2 -> BSuperSuper1 [*];
+}

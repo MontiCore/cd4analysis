@@ -7,14 +7,15 @@ import de.monticore.types.check.SymTypeExpressionDeSer;
 import java.util.List;
 
 public class CDTypeSymbolDeSer extends CDTypeSymbolDeSerTOP {
-
+  
   @Override
   protected void serializeSuperTypes(List<SymTypeExpression> superTypes, CDBasisSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.printer, "superTypes", superTypes);
   }
-
+  
   @Override
   protected List<SymTypeExpression> deserializeSuperTypes(JsonObject symbolJson) {
     return SymTypeExpressionDeSer.deserializeListMember("superTypes", symbolJson);
   }
+  
 }

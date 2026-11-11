@@ -8,22 +8,23 @@ import de.monticore.types.typeparameters.cocos.TypeParameterNoCyclicInheritance;
 import de.monticore.types.typeparameters.cocos.TypeParametersHaveUniqueNames;
 
 public class CD4CodeCoCos extends CoCoParent<CD4CodeCoCoChecker> {
+  
   @Override
   public CD4CodeCoCoChecker createNewChecker() {
     return new CD4CodeCoCoChecker();
   }
-
+  
   @Override
   protected void addCheckerForAllCoCos(CD4CodeCoCoChecker checker) {
     addCheckerForEbnfCoCos(checker);
     addCheckerForMcgCoCos(checker);
     addCheckerForMcg2EbnfCoCos(checker);
   }
-
+  
   @Override
   public CD4CodeCoCoChecker addCheckerForEbnfCoCos(CD4CodeCoCoChecker checker) {
     super.addCheckerForEbnfCoCos(checker);
-
+    
     // CDAttribute
     checker.addCoCo(new CDAttributeOverridden());
     // TypeParameters
@@ -32,4 +33,5 @@ public class CD4CodeCoCos extends CoCoParent<CD4CodeCoCoChecker> {
     checker.addCoCo(new TypeParameterNoCyclicInheritance());
     return checker;
   }
+  
 }

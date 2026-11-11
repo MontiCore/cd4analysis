@@ -14,21 +14,17 @@ import java.util.stream.Collectors;
  * @author KH
  */
 public class TransformationUtil {
-
+  
   public static void calculateAndSetName(ASTCDClass superclass, List<ASTCDClass> subs) {
     List<String> names = subs.stream().map(ASTCDClass::getName).collect(Collectors.toList());
     String sClassName = Joiner.on("").join(names);
     superclass.setName(sClassName);
     for (ASTCDClass c : subs) {
       c.getSuperclassList().clear();
-      c.getSuperclassList()
-          .add(
-              CD4CodeMill.mCQualifiedTypeBuilder()
-                  .setMCQualifiedName(
-                      CD4CodeMill.mCQualifiedNameBuilder()
-                          .addAllParts(Collections.singletonList(sClassName))
-                          .build())
-                  .build());
+      c.getSuperclassList().add(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(CD4CodeMill
+          .mCQualifiedNameBuilder().addAllParts(Collections.singletonList(sClassName)).build())
+          .build());
     }
   }
+  
 }

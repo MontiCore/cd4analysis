@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.Set;
 
 public interface ClassStrategy extends ClassData {
+  
   /***
    * Transform classes and interfaces in a class diagram in smt.
    *
@@ -14,13 +15,14 @@ public interface ClassStrategy extends ClassData {
    * @param context the SMT context.
    */
   void cd2smt(ASTCDCompilationUnit ast, Context context);
-
+  
   /***
    * @param model the model produced by the SMT-Solver.
    * @param partial to produce a partial Model, some irrelevant attributes won't be produce.
    * @return set of MinObject. (object self and attributes as SMT-expressions)
    */
   Set<MinObject> smt2od(Model model, Boolean partial);
+  
   /***
    * different Strategy to convert classes and interfaces.
    * DS: DistinctSort: each Type is converted as a new Sort.
@@ -28,10 +30,7 @@ public interface ClassStrategy extends ClassData {
    * SSCOMB: SS-Strategy Combined With an Inheritance Strategy.
    */
   enum Strategy {
-    SS,
-    DS,
-    SSCOMB,
-    FINITEDS,
-    FINITESS
+    SS, DS, SSCOMB, FINITEDS, FINITESS
   }
+  
 }

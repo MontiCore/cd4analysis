@@ -1,0 +1,12 @@
+classdiagram InstanceMethodExistsConc {
+
+  <<ref="StaticDelegator">> class MyLanguageMill {
+    <<ref="StaticDelegator._method">> int _foo;
+    <<ref="StaticDelegator._method">> int _getId;
+    <<ref="StaticDelegator._method">> boolean _doSomething;
+
+    <<ref="StaticDelegatorRef.StaticDelegator.method">> static int foo;
+    <<ref="StaticDelegatorRef.StaticDelegator.method">> static int getId;
+    <<ref="StaticDelegatorRef.StaticDelegator.method">> static boolean doSomething;
+  }
+}

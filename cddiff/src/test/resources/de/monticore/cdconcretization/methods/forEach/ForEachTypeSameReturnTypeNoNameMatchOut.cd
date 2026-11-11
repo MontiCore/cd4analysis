@@ -1,0 +1,11 @@
+classdiagram ForEachTypeSameReturnTypeConc {
+  <<ref="Builder">> class EmployeeBuilder;
+  <<ref="Builder">> class DepartmentBuilder;
+  <<ref="Builder">> class CompanyBuilder;
+
+  class Mill {
+    <<ref="ForEachTypeSameReturnTypeNoNameMatchRef.Mill.create">> EmployeeBuilder create_EmployeeBuilder();
+    <<ref="ForEachTypeSameReturnTypeNoNameMatchRef.Mill.create">> DepartmentBuilder create_DepartmentBuilder();
+    <<ref="ForEachTypeSameReturnTypeNoNameMatchRef.Mill.create">> CompanyBuilder create_CompanyBuilder();
+  }
+}

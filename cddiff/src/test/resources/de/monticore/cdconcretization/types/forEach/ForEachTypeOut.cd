@@ -1,0 +1,19 @@
+classdiagram ForEachTypeConc {
+  <<ref="DataClass">> class Employee;
+
+  <<ref="DataClass">> class Department;
+
+  <<ref="DataClass">> class Company;
+
+  <<ref="ForEachTypeRef.Builder">> class Builder_Employee {
+
+  }
+
+  <<ref="ForEachTypeRef.Builder">> class Builder_Department {
+
+  }
+
+  <<ref="ForEachTypeRef.Builder">> class Builder_Company {
+
+  }
+}

@@ -14,8 +14,9 @@ import java.util.List;
  * @montitoolbox
  */
 public class ExtractInterface implements Refactoring {
+  
   public ExtractInterface() {}
-
+  
   /**
    * Creates an interface and all subclasses {@code subclasses} will implement this interface
    *
@@ -24,24 +25,24 @@ public class ExtractInterface implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean extractInterface(
-      String interfaceName, List<String> subclasses, ASTCDCompilationUnit ast) {
+  public boolean extractInterface(String interfaceName, List<String> subclasses,
+      ASTCDCompilationUnit ast) {
     if (transformationUtility.createInterface(interfaceName, ast)) {
       for (int i = 0; i < subclasses.size(); i++) {
-        if (!transformationUtility.addInheritanceToInterface(
-            subclasses.get(i), interfaceName, ast)) {
-          Log.info(
-              "0xF4081: Could not add Interface " + interfaceName + " to " + subclasses.get(i),
+        if (!transformationUtility.addInheritanceToInterface(subclasses.get(i), interfaceName,
+            ast)) {
+          Log.info("0xF4081: Could not add Interface " + interfaceName + " to " + subclasses.get(i),
               ExtractInterface.class.getName());
           return false;
         }
       }
       return true;
-    } else {
-      Log.info(
-          "0xF4082: extractInterface: Could not create Interface " + interfaceName,
+    }
+    else {
+      Log.info("0xF4082: extractInterface: Could not create Interface " + interfaceName,
           ExtractInterface.class.getName());
     }
     return false;
   }
+  
 }

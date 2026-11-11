@@ -1,0 +1,5 @@
+classdiagram TransitiveDependenciesConc {
+
+  <<ref="DataClass">> class Employee;
+  <<ref="DataClass">> class Department;
+}

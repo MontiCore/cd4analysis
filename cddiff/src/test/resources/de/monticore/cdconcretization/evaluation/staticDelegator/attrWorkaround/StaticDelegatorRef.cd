@@ -1,0 +1,12 @@
+classdiagram StaticDelegatorRef {
+
+  /*
+   * Because there is not yet a "method forEach method" completion implementation, we test the
+   * same pattern with attributes.
+   */
+
+  class StaticDelegator {
+    <<forEach="StaticDelegator.method">> any _method;
+    static any method;
+  }
+}

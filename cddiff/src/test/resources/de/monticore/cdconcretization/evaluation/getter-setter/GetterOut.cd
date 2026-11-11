@@ -1,0 +1,23 @@
+import java.lang.String;
+
+classdiagram DataModelConc {
+  <<ref="DataClass">> class Employee {
+    // TODO remove attribute mappings once <<matchStructure>> is implemented
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+    <<ref="GetterRef.DataClass.getAttribute">> String getFirstName();
+    <<ref="GetterRef.DataClass.getAttribute">> String getLastName();
+    <<ref="GetterRef.DataClass.getAttribute">> int getNumber();
+    <<ref="GetterRef.DataClass.getAttribute">> int getSalary();
+  }
+
+  <<ref="DataClass">> class Department {
+    // TODO remove attribute mappings once <<matchStructure>> is implemented
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+    <<ref="GetterRef.DataClass.getAttribute">> String getManagerName();
+    <<ref="GetterRef.DataClass.getAttribute">> int getDepId();
+  }
+}

@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeDifferentNameRef {
+  class DataClass {
+    any attribute;
+  }
+
+  class Builder {
+    // Incarnations will have the name "attrCopy_{DataClass.attribute incarnation}" because here
+    // target and source attribute have different names!
+    <<forEach="DataClass.attribute">> any attrCopy;
+  }
+}

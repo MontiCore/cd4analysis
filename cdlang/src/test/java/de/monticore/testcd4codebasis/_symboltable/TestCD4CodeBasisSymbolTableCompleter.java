@@ -13,20 +13,19 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import java.util.List;
 
 public class TestCD4CodeBasisSymbolTableCompleter {
+  
   protected TestCD4CodeBasisTraverser traverser;
-
+  
   public TestCD4CodeBasisSymbolTableCompleter(ASTCDCompilationUnit ast) {
-    this(
-        ast.getMCImportStatementList(),
-        ast.isPresentMCPackageDeclaration()
-            ? ast.getMCPackageDeclaration().getMCQualifiedName()
-            : MCQualifiedNameFacade.createQualifiedName(""));
+    this(ast.getMCImportStatementList(), ast.isPresentMCPackageDeclaration() ? ast
+        .getMCPackageDeclaration().getMCQualifiedName() : MCQualifiedNameFacade.createQualifiedName(
+            ""));
   }
-
-  public TestCD4CodeBasisSymbolTableCompleter(
-      List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
+  
+  public TestCD4CodeBasisSymbolTableCompleter(List<ASTMCImportStatement> imports,
+      ASTMCQualifiedName packageDeclaration) {
     this.traverser = TestCD4CodeBasisMill.inheritanceTraverser();
-
+    
     final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter();
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
@@ -38,8 +37,7 @@ public class TestCD4CodeBasisSymbolTableCompleter {
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
     traverser.add4CDBasis(cd4CodeBasisVisitor);
   }
-
-  public TestCD4CodeBasisTraverser getTraverser() {
-    return traverser;
-  }
+  
+  public TestCD4CodeBasisTraverser getTraverser() { return traverser; }
+  
 }

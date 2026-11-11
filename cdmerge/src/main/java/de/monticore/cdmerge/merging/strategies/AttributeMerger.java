@@ -9,14 +9,12 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 
 /** The super class of all attribute merging strategies */
 public abstract class AttributeMerger extends MergerBase {
-
+  
   public AttributeMerger(MergeBlackBoard mergeBlackBoard) {
     super(mergeBlackBoard, MergePhase.ATTRIBUTE_MERGING);
   }
-
-  public abstract void mergeAttributes(
-      ASTCDClass input1,
-      ASTCDClass input2,
-      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult,
-      ASTCDClass mergedClass);
+  
+  public abstract void mergeAttributes(ASTCDClass input1, ASTCDClass input2,
+      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult, ASTCDClass mergedClass);
+  
 }

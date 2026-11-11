@@ -7,24 +7,26 @@ import de.monticore.types.check.SymTypeExpressionDeSer;
 import java.util.List;
 
 public class CDMethodSignatureSymbolDeSer extends CDMethodSignatureSymbolDeSerTOP {
+  
   @Override
-  protected void serializeExceptions(
-      List<SymTypeExpression> exceptions, CD4CodeBasisSymbols2Json s2j) {
+  protected void serializeExceptions(List<SymTypeExpression> exceptions,
+      CD4CodeBasisSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.printer, "exceptions", exceptions);
   }
-
+  
   @Override
   protected void serializeType(SymTypeExpression returnType, CD4CodeBasisSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.printer, "type", returnType);
   }
-
+  
   @Override
   public List<SymTypeExpression> deserializeExceptions(JsonObject symbolJson) {
     return SymTypeExpressionDeSer.deserializeListMember("exceptions", symbolJson);
   }
-
+  
   @Override
   public SymTypeExpression deserializeType(JsonObject symbolJson) {
     return SymTypeExpressionDeSer.deserializeMember("type", symbolJson);
   }
+  
 }

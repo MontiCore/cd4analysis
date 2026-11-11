@@ -21,71 +21,64 @@ import java.util.Map;
 
 /** Returns a list of matching type definitions from the provided class diagrams. */
 public abstract class CDMatcher extends MatcherBase {
-
+  
   private AssociationMatcher associationMatcher;
-
+  
   private AttributeMatcher attributeMatcher;
-
+  
   private TypeMatcher typeMatcher;
-
-  public CDMatcher(
-      MergeBlackBoard blackBoard,
-      TypeMatcher typeMatcher,
-      AttributeMatcher attributeMatcher,
-      AssociationMatcher associationMatcher) {
+  
+  public CDMatcher(MergeBlackBoard blackBoard, TypeMatcher typeMatcher,
+      AttributeMatcher attributeMatcher, AssociationMatcher associationMatcher) {
     super(blackBoard);
     this.typeMatcher = typeMatcher;
     this.attributeMatcher = attributeMatcher;
     this.associationMatcher = associationMatcher;
   }
-
-  protected AssociationMatcher getAssociationMatcher() {
-    return this.associationMatcher;
-  }
-
-  protected AttributeMatcher getAttributeMatcher() {
-    return this.attributeMatcher;
-  }
-
-  protected TypeMatcher getTypeMatcher() {
-    return this.typeMatcher;
-  }
-
+  
+  protected AssociationMatcher getAssociationMatcher() { return this.associationMatcher; }
+  
+  protected AttributeMatcher getAttributeMatcher() { return this.attributeMatcher; }
+  
+  protected TypeMatcher getTypeMatcher() { return this.typeMatcher; }
+  
   public Map<String, ASTMatchGraph<ASTCDAttribute, ASTCDClass>> findMatchingAttributes() {
     return getAttributeMatcher().findMatchingAttributes(findMatchingClasses());
   }
-
+  
   public ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations()
       throws MergingException {
     return getAssociationMatcher().findMatchingAssociations();
   }
-
+  
   public ASTMatchGraph<ASTCDAttribute, ASTCDClass> findMatchingAttributes(String className) {
     Map<String, ASTMatchGraph<ASTCDAttribute, ASTCDClass>> matchingAttributes =
         getAttributeMatcher().findMatchingAttributes(findMatchingClasses());
     if (matchingAttributes.containsKey(className)) {
       return matchingAttributes.get(className);
-    } else {
-      throw new IllegalArgumentException(
-          "No class with name " + className + " found in any of the classdiagrams");
+    }
+    else {
+      throw new IllegalArgumentException("No class with name " + className
+          + " found in any of the classdiagrams");
     }
   }
-
+  
   public ASTMatchGraph<ASTCDType, ASTCDDefinition> findMatchingTypes() {
     return getTypeMatcher().findMatchingTypes();
   }
-
+  
   public ASTMatchGraph<ASTCDClass, ASTCDDefinition> findMatchingClasses() {
     return getTypeMatcher().findMatchingClasses();
   }
-
+  
   public ASTMatchGraph<ASTCDInterface, ASTCDDefinition> findMatchingInterfaces() {
     return getTypeMatcher().findMatchingInterfaces();
   }
-
+  
   public ASTMatchGraph<ASTCDEnum, ASTCDDefinition> findMatchingEnums() {
     return getTypeMatcher().findMatchingEnums();
   }
-
+  
   public abstract CDMatch createCDMatch(List<ASTCDDefinition> cds) throws MergingException;
+  
 }

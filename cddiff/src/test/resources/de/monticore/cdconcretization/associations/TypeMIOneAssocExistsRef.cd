@@ -1,0 +1,7 @@
+classdiagram TypeMIOneAssocExistsRef {
+
+  class A;
+  class B;
+
+  association A -- (partOf) B;
+}

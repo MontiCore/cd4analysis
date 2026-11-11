@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp.features.syntax_highlighting.rule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,27 +19,27 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 class HighlightInterfaceTest {
-
+  
   @Test
   void testInterfaceName() throws IOException {
-    CD4AnalysisLexerProvider lexerProvider =
-        new CD4AnalysisLexerProvider(
-            new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
+    CD4AnalysisLexerProvider lexerProvider = new CD4AnalysisLexerProvider(
+        new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
     Path pathToModel = Paths.get("src/test/resources/highlighting/CDInterface.cd");
     String content = IOUtils.toString(pathToModel.toUri(), StandardCharsets.UTF_8);
-
+    
     List<Token> classifiedTokens = lexerProvider.getTokensForInput(content);
-
+    
     // Check interface name
     int interfaceToken = 6;
-    assertEquals(
-        SemanticTokenTypesWrapper.Interface.value, classifiedTokens.get(interfaceToken).getName());
-
+    assertEquals(SemanticTokenTypesWrapper.Interface.value, classifiedTokens.get(interfaceToken)
+        .getName());
+    
     for (int i = 0; i < classifiedTokens.size(); i++) {
       if (i != interfaceToken) {
-        assertNotEquals(
-            SemanticTokenTypesWrapper.Interface.value, classifiedTokens.get(i).getName());
+        assertNotEquals(SemanticTokenTypesWrapper.Interface.value, classifiedTokens.get(i)
+            .getName());
       }
     }
   }
+  
 }

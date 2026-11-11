@@ -1,0 +1,8 @@
+classdiagram Reference {
+  class Account {
+    void withdraw(int amount);
+    void deposit(int amount);
+    void transfer(int amount, Account account);
+    int getBalance();
+  }
+}

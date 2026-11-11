@@ -1,0 +1,11 @@
+classdiagram ForEachTypeRef {
+  class DataClass {
+
+  }
+
+  // DataClass is an infix of 'DataClassBuilder'. Therefore, 'DataClass' is replaced with the
+  // incarnation name of 'DataClass' in the output
+  <<forEach="DataClass">> class DataClassBuilder {
+
+  }
+}

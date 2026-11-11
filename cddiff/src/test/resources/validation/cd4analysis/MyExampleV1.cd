@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram MyExample {
+classdiagram MyExampleV1 {
   class Person {
     int age;
     java.lang.String surname;

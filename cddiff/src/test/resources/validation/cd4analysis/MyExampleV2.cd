@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 import java.lang.String;
 
-classdiagram MyExample {
+classdiagram MyExampleV2 {
   class Person {
     int age;
     String surname;

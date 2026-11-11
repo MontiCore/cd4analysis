@@ -1,0 +1,8 @@
+classdiagram DifferentRoleNamesSTMapped {
+
+  class Account;
+  class Transaction;
+
+  <<ref="transactionSource">> association Transaction -> (sourceAccount) Account [1];
+  <<ref="transactionTarget">> association Transaction -> (targetAccount) Account [1];
+}

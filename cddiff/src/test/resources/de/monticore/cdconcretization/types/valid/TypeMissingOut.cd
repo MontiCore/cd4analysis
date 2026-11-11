@@ -1,0 +1,23 @@
+import java.lang.String;
+classdiagram TypeMissingConc {
+  class Course implements Teachable;
+
+  interface Teachable;
+
+  enum CourseType {
+    /*
+     * NOTE: The enum value position from the reference CD is preserved!
+     * This is important as reference code could access the values by index.
+     */
+    LECTURE,
+    EXERCICE,
+    SEMINAR,
+    TUTORIAL;
+  }
+
+  enum CourseStatus {
+    ACTIVE,
+    COMPLETED,
+    CANCELLED;
+  }
+}

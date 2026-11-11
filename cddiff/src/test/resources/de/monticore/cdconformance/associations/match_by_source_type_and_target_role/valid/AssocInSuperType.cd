@@ -1,0 +1,12 @@
+import java.lang.String;
+
+classdiagram AssocInSuperType {
+  abstract class AccountTop;
+
+  class Account extends AccountTop;
+
+  class Person ;
+
+  association AccountTop -> (owner) Person[1];
+  association Person     -> (accounts) Account[*];
+}

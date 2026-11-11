@@ -12,15 +12,15 @@ import de.monticore.cdinterfaceandenum.cocos.ebnf.*;
 /** This CoCos Set is adapted from the CD4ACoCo Set as several CoCos are disabled */
 @Deprecated
 public class CDMergeCD4ACoCos {
-
+  
   public CD4CodeCoCoChecker getCheckerForMergedCDs() {
     CD4CodeCoCoChecker checker = new CD4CodeCoCoChecker();
     addCoCos(checker);
     return checker;
   }
-
+  
   private void addCoCos(CD4CodeCoCoChecker checker) {
-
+    
     // CD Basis - EBNF
     checker.addCoCo(new CDAttributeInitialTypeCompatible(new FullDeriveFromCD4Code()));
     checker.addCoCo(new CDAttributeNameLowerCaseIfNotStatic());
@@ -39,13 +39,13 @@ public class CDMergeCD4ACoCos {
     checker.addCoCo(new CDPackageUniqueCDTypeNames());
     checker.addCoCo(new CDTypeNoInitializationOfDerivedAttribute());
     checker.addCoCo(new RoleAndFieldNamesUnique());
-
+    
     // CD Basis - MCG
     checker.addCoCo(new ModifierNotMultipleVisibilitiesCoCo());
-
+    
     // CD Basis - MCG2EBNF
     checker.addCoCo(new CDPackageNotContainingCDPackage());
-
+    
     // CD Assocication - EBNF
     // checker.addCoCo(new CDAssociationByAttributeFieldExist());
     checker.addCoCo(new CDAssociationHasSymbol());
@@ -57,25 +57,26 @@ public class CDMergeCD4ACoCos {
     // checker.addCoCo(new CDAssociationRoleNameNoConflictWithLocalAttribute());
     // FIXME  disabled for now
     // checker.addCoCo(new CDAssociationSourceNotEnum());
-
+    
     // CD InterfaceAndEnum - EBNF
     checker.addCoCo(new CDEnumConstantUnique());
     checker.addCoCo(new CDEnumImplementsNotCyclic());
     checker.addCoCo(new CDEnumImplementsOnlyInterfaces());
     checker.addCoCo(new CDInterfaceExtendsNotCyclic());
     checker.addCoCo(new CDInterfaceExtendsOnlyInterfaces());
-
+    
     // CD InterfaceAndEnum - MCG
     checker.addCoCo(new CDEnumConstantUnique());
     checker.addCoCo(new CDEnumImplementsNotCyclic());
     checker.addCoCo(new CDEnumImplementsOnlyInterfaces());
     checker.addCoCo(new CDInterfaceExtendsNotCyclic());
     checker.addCoCo(new CDInterfaceExtendsOnlyInterfaces());
-
+    
     // TODO Cocos do not exist anymore, possibly obsolete
     // checker.addCoCo(new CDAssociationRoleNameNoConflictWithOtherRoleName());
     // checker.addCoCo(new CDAssociactionCompositionCardinalityValid());
     // checker.addCoCo(new CDAttributeOverriddenTypeMatch());
-
+    
   }
+  
 }

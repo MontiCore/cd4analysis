@@ -1,0 +1,7 @@
+classdiagram BothExist {
+
+  class Account;
+  class Transaction;
+
+  association Transaction -> (source) Account [1];
+}

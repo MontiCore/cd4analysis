@@ -1,0 +1,42 @@
+import java.lang.String;
+
+classdiagram BankingRef {
+
+  interface Auditable {
+    String generateReport();
+  }
+
+  class Bank implements Auditable {
+    String id;
+    double overallBalance;
+  }
+
+  abstract class Account implements Auditable {
+    String id;
+    double balance;
+    AccountStatus status;
+    void withdraw(double amount);
+    void deposit(double amount);
+    void transfer(Account targetAccount, double amount);
+  }
+
+  class SavingsAccount extends Account;
+  class CheckingAccount extends Account;
+
+  enum AccountStatus {
+    PENDING, ACTIVE, CLOSED;
+  }
+
+  class Customer;
+
+  class Transaction {
+    double amount;
+  }
+
+  association Bank -> Account [*];
+  association allCustomers Bank -> Customer [*];
+  association [*] Account <-> Customer [*];
+  association Account -> Transaction [*] {ordered};
+  association Transaction -> (source) Account [1];
+  association Transaction -> (target) Account [1];
+}

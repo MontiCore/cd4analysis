@@ -1,0 +1,19 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeMultipleParametersConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+
+    <<ref="ForEachAttributeMultipleParametersRef.DataClass.updateAttribute">>
+      void updateFirstName(String firstName, String changedBy);
+    <<ref="ForEachAttributeMultipleParametersRef.DataClass.updateAttribute">>
+      void updateLastName(String lastName, String changedBy);
+    <<ref="ForEachAttributeMultipleParametersRef.DataClass.updateAttribute">>
+      void updateNumber(int number, String changedBy);
+    <<ref="ForEachAttributeMultipleParametersRef.DataClass.updateAttribute">>
+      void updateSalary(int salary, String changedBy);
+  }
+}

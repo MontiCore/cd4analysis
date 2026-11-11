@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram BuilderRef {
+  class DataClass {
+    anytype attribute;
+  }
+
+  <<forEach="DataClass">> class DataClassBuilder {
+    <<forEach="DataClass.attribute">> anytype attribute;
+    <<forEach="DataClass.attribute">> DataClassBuilder attribute(anytype attribute);
+    DataClass build();
+  }
+}

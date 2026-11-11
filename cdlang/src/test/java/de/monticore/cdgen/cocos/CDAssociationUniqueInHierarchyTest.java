@@ -1,0 +1,60 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdgen.cocos;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.CD4CodeTestBasis;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.se_rwth.commons.logging.Log;
+import java.io.IOException;
+import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
+  
+  @Test
+  public void testValid() throws IOException {
+    coCoChecker.addCoCo(new CDAssociationUniqueInHierarchy());
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4code/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+    assertTrue(optAST.isPresent());
+    final ASTCDCompilationUnit ast = optAST.get();
+    Log.getFindings().clear();
+    createSymTab(ast);
+    coCoChecker.checkAll(ast);
+    System.out.println(Log.getFindings());
+    assertTrue(Log.getFindings().isEmpty());
+  }
+  
+  @Test
+  public void testInvalid() throws IOException {
+    coCoChecker.addCoCo(new CDAssociationUniqueInHierarchy());
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4code/cocos/CDAssociationUniqueInHierarchyInvalid.cd"));
+    assertTrue(optAST.isPresent());
+    final ASTCDCompilationUnit ast = optAST.get();
+    Log.getFindings().clear();
+    createSymTab(ast);
+    coCoChecker.checkAll(ast);
+    assertEquals(1, Log.getFindings().size());
+    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCE6"));
+  }
+  
+  protected ICD4CodeArtifactScope createSymTab(ASTCDCompilationUnit ast) {
+    ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+    CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(ast.getMCImportStatementList(),
+        MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    ast.accept(c.getTraverser());
+    return as;
+  }
+  
+  @AfterEach
+  public void after() {}
+  
+}

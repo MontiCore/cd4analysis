@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
-  id "com.github.johnrengelman.shadow" version "6.0.0"
+    id 'com.gradleup.shadow' version "$shadow_plugin_version"
 }
 
 description = "SymTabDefinition: Tool"
@@ -8,9 +8,9 @@ description = "SymTabDefinition: Tool"
 dependencies {
   implementation(project(':cdlang'))
 
-  implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
-  implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-  implementation "de.monticore:class2mc:${project.properties['mc_version']}"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore:class2mc:$mc_version"
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
@@ -18,23 +18,57 @@ dependencies {
   implementation "org.antlr:antlr4-runtime:$antlr_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
-  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
 }
 
-task toolJar(type: Jar) {
+tasks.register('toolJar', Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
-  archiveClassifier = "tool"
 }
 
-apply plugin: "com.github.johnrengelman.shadow"
-  shadowJar {
-    manifest {
-      attributes "Main-Class": "de.monticore.SymTabDefinitionTool"
-    }
-    archiveFileName = "MCSTD.jar"
-    archiveClassifier = "std-tool"
+shadowJar {
+  manifest {
+    attributes "Main-Class": "de.monticore.symtabdefinition.SymTabDefinitionTool"
   }
+  archiveFileName = "MCSTD.jar"
+  archiveClassifier = "std-tool"
+}
 assemble.dependsOn(shadowJar)
 
 jar.dependsOn(shadowJar)
+
+// tool test
+
+sourceSets {
+  tooltest
+}
+
+dependencies {
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  tooltestImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  tooltestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  tooltestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
+}
+
+tasks.register('toolTest', Test) {
+  description = 'Runs tool integration tests.'
+  group = 'verification'
+
+  testClassesDirs = sourceSets.tooltest.output.classesDirs
+  classpath = sourceSets.tooltest.runtimeClasspath
+  shouldRunAfter test
+  dependsOn shadowJar
+
+  useJUnitPlatform()
+
+  testLogging {
+    events "passed"
+  }
+
+  // Pass path to the tool jar to the test
+  systemProperty "toolJarFile",  tasks.shadowJar.outputs.files.singleFile
+  // Pass mc_version to the test
+  systemProperty "mc_version",  mc_version
+}
+
+check.dependsOn toolTest

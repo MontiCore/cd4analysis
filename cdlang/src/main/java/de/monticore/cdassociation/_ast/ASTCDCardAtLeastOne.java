@@ -5,17 +5,14 @@ import de.monticore.cardinality.CardinalityMill;
 import de.monticore.cardinality._ast.ASTCardinality;
 
 public class ASTCDCardAtLeastOne extends ASTCDCardAtLeastOneTOP {
+  
   @Override
-  public boolean isAtLeastOne() {
-    return true;
-  }
-
+  public boolean isAtLeastOne() { return true; }
+  
   @Override
   public ASTCardinality toCardinality() {
-    return CardinalityMill.cardinalityBuilder()
-        .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits("1").build())
-        .setUpperBoundLitAbsent()
-        .setNoUpperLimit(true)
-        .build();
+    return CardinalityMill.cardinalityBuilder().setLowerBoundLit(CardinalityMill.natLiteralBuilder()
+        .setDigits("1").build()).setUpperBoundLitAbsent().setNoUpperLimit(true).build();
   }
+  
 }

@@ -13,80 +13,73 @@ import de.monticore.types.mcbasictypes._visitor.MCBasicTypesTraverser;
 import java.util.Iterator;
 
 public abstract class PrettyPrintUtil {
+  
   protected IndentPrinter printer;
-
+  
   protected boolean printComments = true;
-
+  
   public static final String EMPTY_STRING = "";
-
+  
   public PrettyPrintUtil() {
     this(new IndentPrinter());
   }
-
+  
   public PrettyPrintUtil(IndentPrinter printer) {
     this.printer = printer;
   }
-
-  public IndentPrinter getPrinter() {
-    return printer;
-  }
-
-  public void setPrinter(IndentPrinter printer) {
-    this.printer = printer;
-  }
-
-  public boolean isPrintComments() {
-    return printComments;
-  }
-
-  public void setPrintComments(boolean printComments) {
-    this.printComments = printComments;
-  }
-
+  
+  public IndentPrinter getPrinter() { return printer; }
+  
+  public void setPrinter(IndentPrinter printer) { this.printer = printer; }
+  
+  public boolean isPrintComments() { return printComments; }
+  
+  public void setPrintComments(boolean printComments) { this.printComments = printComments; }
+  
   public void println() {
     this.printer.println();
   }
-
+  
   public void println(Object o) {
     this.printer.println(o);
   }
-
+  
   public void print(Object o) {
     this.printer.print(o);
   }
-
+  
   public void indent() {
     this.printer.indent();
   }
-
+  
   public void indent(int i) {
     this.printer.indent(i);
   }
-
+  
   public void unindent() {
     this.printer.unindent();
   }
-
+  
   public void printPreComments(ASTNode node) {
     if (printComments) {
       CommentPrettyPrinter.printPreComments(node, getPrinter());
     }
   }
-
+  
   public void printPostComments(ASTNode node) {
     if (printComments) {
       CommentPrettyPrinter.printPostComments(node, getPrinter());
     }
   }
-
+  
   /**
    * Prints a list of CDBasisNode in an ownVisit method
    *
    * @param iter iterator for the list of {@link ASTCDBasisNode}s
    * @param seperator string for seperating the ASTCDBasisNodes
    */
-  public void printSeparatorCDBasis(
-      CDBasisTraverser visitor, Iterator<? extends ASTCDBasisNode> iter, String seperator) {
+  public void printSeparatorCDBasis(CDBasisTraverser visitor,
+      Iterator<? extends ASTCDBasisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -95,17 +88,15 @@ public abstract class PrettyPrintUtil {
       sep = seperator;
     }
   }
-
+  
   /**
    * Prints a list of ASTQualifiedNames in an ownVisit method
    *
    * @param iter iterator for the list of {@link ASTCD4CodeBasisNode}s
    * @param seperator string for seperating the ASTCD4CodeBasisNodes
    */
-  public void printSeparatorCD4CodeBasis(
-      CD4CodeBasisTraverser traverser,
-      Iterator<? extends ASTCD4CodeBasisNode> iter,
-      String seperator) {
+  public void printSeparatorCD4CodeBasis(CD4CodeBasisTraverser traverser,
+      Iterator<? extends ASTCD4CodeBasisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -114,17 +105,15 @@ public abstract class PrettyPrintUtil {
       sep = seperator;
     }
   }
-
+  
   /**
    * Prints a list
    *
    * @param iter iterator for the list
    * @param separator string for separating list
    */
-  public void printList(
-      MCBasicTypesTraverser traverser,
-      Iterator<? extends ASTMCBasicTypesNode> iter,
-      String separator) {
+  public void printList(MCBasicTypesTraverser traverser,
+      Iterator<? extends ASTMCBasicTypesNode> iter, String separator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -133,4 +122,5 @@ public abstract class PrettyPrintUtil {
       sep = separator;
     }
   }
+  
 }

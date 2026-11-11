@@ -12,8 +12,9 @@ import de.monticore.generating.templateengine.reporting.reporter.TransformationR
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Date;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Check Executiontime for Testcase 2
@@ -22,35 +23,35 @@ import org.junit.Test;
  *
  * @author KE
  */
+@Timeout(60)
 public class TestTime2 {
-
-  @BeforeClass
+  
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   @Test
   public void testCase2() throws IOException {
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/TestCase2");
     ExtractSuperClass refactoring = new ExtractSuperClass();
-
+    
     // Perform transformation
     long start = new Date().getTime();
     refactoring.extractSuperClass(utility.getAst());
@@ -59,4 +60,5 @@ public class TestTime2 {
     long runTime = end - start;
     System.out.println("Executiontime of Testcase 2: " + runTime + " Milliseconds");
   }
+  
 }

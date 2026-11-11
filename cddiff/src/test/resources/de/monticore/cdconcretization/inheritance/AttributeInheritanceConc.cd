@@ -1,0 +1,5 @@
+classdiagram AttributeInheritanceConc {
+  class Teacher {
+    int number;
+  }
+}

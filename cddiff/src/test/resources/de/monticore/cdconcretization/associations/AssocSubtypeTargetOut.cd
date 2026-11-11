@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AssocSubtypeTargetConc {
+  class Container;
+  class Item;
+  class SpecialItem extends Item;
+  // both associations are added: SpecialItem extends Item, but Item [*] must not suppress
+  // adding a separate incarnation for the explicitly modelled SpecialItem association
+  association Container -> (items) Item [*];
+  association Container -> (specialItems) SpecialItem [*];
+}

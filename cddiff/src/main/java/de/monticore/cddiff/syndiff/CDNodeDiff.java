@@ -1,13 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.ast.ASTNode;
 import java.util.Optional;
 
 public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
+  
   protected Actions action;
   protected final Optional<SrcType> srcValue;
   protected final Optional<TgtType> tgtValue;
-
+  
   /**
    * Checks if an action is present.
    *
@@ -16,7 +18,7 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
   public boolean checkForAction() {
     return getAction().isPresent();
   }
-
+  
   /**
    * Gets the action as an Optional containing an Actions enum value.
    *
@@ -25,11 +27,12 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
   public Optional<Actions> getAction() {
     if (action == null) {
       return Optional.empty();
-    } else {
+    }
+    else {
       return Optional.of(action);
     }
   }
-
+  
   /**
    * Constructs a CDNodeDiff object with source and target values and determines the associated
    * action.
@@ -42,7 +45,7 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
     this.tgtValue = tgtValue;
     this.action = findAction();
   }
-
+  
   /**
    * Constructs a CDNodeDiff object with a specified action and source and target values.
    *
@@ -55,24 +58,27 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
     this.tgtValue = tgtValue;
     this.action = action;
   }
-
+  
   /**
    * Determines the action to be taken based on the values of srcValue and tgtValue.
    *
    * @return The action to be taken, which can be CHANGED, ADDED, REMOVED, or null if no action is
-   *     needed.
+   * needed.
    */
   protected Actions findAction() {
-    if (srcValue.isPresent()
-        && tgtValue.isPresent()
-        && !srcValue.get().deepEquals(tgtValue.get())) {
+    if (srcValue.isPresent() && tgtValue.isPresent() && !srcValue.get().deepEquals(tgtValue
+        .get())) {
       return Actions.CHANGED;
-    } else if (srcValue.isPresent() && tgtValue.isEmpty()) {
+    }
+    else if (srcValue.isPresent() && tgtValue.isEmpty()) {
       return Actions.ADDED;
-    } else if (srcValue.isEmpty() && tgtValue.isPresent()) {
+    }
+    else if (srcValue.isEmpty() && tgtValue.isPresent()) {
       return Actions.REMOVED;
-    } else {
+    }
+    else {
       return null;
     }
   }
+  
 }

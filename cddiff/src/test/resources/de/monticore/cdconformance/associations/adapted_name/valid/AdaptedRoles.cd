@@ -1,0 +1,12 @@
+// BankAccount incarnates Account, User incarnates Person.
+// Role names adapted via the endpoint type incarnation pairs:
+//   adaptTemplatedName("myAccount", "Account", "BankAccount") = "myBankAccount"
+//   adaptTemplatedName("myPerson",  "Person",  "User")        = "myUser"
+// ADAPTED_NAME_MAPPING is required; ImplicitRoleNameAssocIncStrategy does not cover
+// custom role names like "myAccount"/"myBankAccount".
+classdiagram AdaptedRoles {
+  <<ref="Account">> class BankAccount;
+  <<ref="Person">> class User;
+
+  association BankAccount (myBankAccount) -> (myUser) User[1];
+}

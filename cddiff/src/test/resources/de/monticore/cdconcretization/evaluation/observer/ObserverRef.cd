@@ -1,0 +1,14 @@
+classdiagram ObserverRef {
+
+  class Observer {
+    void update();
+  }
+
+  class Subject {
+    void register(Observer o);
+    void unregister(Observer o);
+    void notifyAll();
+  }
+
+  association Subject -> (observers) Observer [*] <<ordered>>;
+}

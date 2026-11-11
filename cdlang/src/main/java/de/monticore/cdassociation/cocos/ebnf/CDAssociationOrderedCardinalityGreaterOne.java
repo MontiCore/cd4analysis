@@ -8,12 +8,12 @@ import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /** Checks that the cardinality of an ordered association is greater than 1. */
-public class CDAssociationOrderedCardinalityGreaterOne
-    implements CDAssociationASTCDAssociationCoCo {
-
+public class CDAssociationOrderedCardinalityGreaterOne implements
+    CDAssociationASTCDAssociationCoCo {
+  
   /**
    * @see
-   *     de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo#check(de.monticore.cdassociation._ast.ASTCDAssociation)
+   * de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo#check(de.monticore.cdassociation._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation assoc) {
@@ -24,7 +24,7 @@ public class CDAssociationOrderedCardinalityGreaterOne
       check(assoc.getRight().getCDCardinality(), assoc);
     }
   }
-
+  
   /**
    * Does the check on the given cardinality.
    *
@@ -33,11 +33,10 @@ public class CDAssociationOrderedCardinalityGreaterOne
    */
   private void check(ASTCDCardinality card, ASTCDAssociation assoc) {
     if (card.getUpperBound() <= 1 && !card.toCardinality().isNoUpperLimit()) {
-      Log.error(
-          String.format(
-              "0xCDC65: Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
-              CDAssociationMill.prettyPrint(assoc, false)),
-          assoc.get_SourcePositionStart());
+      Log.error(String.format(
+          "0xCDC65: Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
+          CDAssociationMill.prettyPrint(assoc, false)), assoc.get_SourcePositionStart());
     }
   }
+  
 }

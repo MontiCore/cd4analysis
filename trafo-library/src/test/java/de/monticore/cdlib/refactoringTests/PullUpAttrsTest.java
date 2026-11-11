@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.refactoringTests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -13,8 +13,9 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Test class PullUp
@@ -23,52 +24,53 @@ import org.junit.Test;
  *
  * @author hoelldobler
  */
+@Timeout(60)
 public class PullUpAttrsTest {
-
-  @BeforeClass
+  
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   /** Test method pullUpAttributes */
   @Test
   public void testPullUpAttrs() throws IOException {
-
-    ASTCDCompilationUnit ast =
-        CD4CodeMill.parser().parse("src/main/models/cdlib/PullUpAttrs.cd").get();
+    
+    ASTCDCompilationUnit ast = CD4CodeMill.parser().parse("src/main/models/cdlib/PullUpAttrs.cd")
+        .get();
     PullUpAttributes refactoring = new PullUpAttributes(ast);
-
+    
     // Perform transformation
     assertTrue(refactoring.doPatternMatching());
-
+    
     refactoring.doReplacement();
     //		CDPrettyPrinterConcreteVisitor p = new CDPrettyPrinterConcreteVisitor(new IndentPrinter());
     //		System.out.println(p.prettyprint(ast));
-
+    
     refactoring = new PullUpAttributes(ast);
-
+    
     assertTrue(refactoring.doPatternMatching());
-
+    
     refactoring.doReplacement();
     //		System.out.println(p.prettyprint(ast));
-
+    
     // Check if attribute attribute1 was pulled up
   }
+  
 }

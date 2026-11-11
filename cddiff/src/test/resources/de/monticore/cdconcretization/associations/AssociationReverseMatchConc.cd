@@ -1,0 +1,7 @@
+classdiagram AssociationReverseMatchConc {
+  class A {
+  }
+  class B {
+  }
+  association B <- A;
+}

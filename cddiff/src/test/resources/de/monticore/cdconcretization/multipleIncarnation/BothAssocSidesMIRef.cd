@@ -1,0 +1,10 @@
+classdiagram BothAssocSidesMIRef {
+
+  class SuperTeacher {
+  }
+  class Teacher extends SuperTeacher {
+  }
+  class Department {
+  }
+  association Teacher (hasTeacher) -- (teachesIn) Department;
+}

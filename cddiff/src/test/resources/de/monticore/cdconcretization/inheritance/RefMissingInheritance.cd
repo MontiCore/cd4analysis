@@ -1,6 +1,0 @@
-classdiagram RefMissingInheritance {
-  class Person {
-  }
-  class Teacher extends Person {
-  }
-}

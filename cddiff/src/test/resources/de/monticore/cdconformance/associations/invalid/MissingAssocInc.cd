@@ -1,0 +1,23 @@
+import java.lang.String;
+
+classdiagram MissingAssocInc {
+
+ abstract class AccountTop;
+ abstract class PersonTop;
+
+  class Account extends AccountTop;
+  <<ref="Account">>class BankAccount extends AccountTop;
+
+  class Person  extends PersonTop;
+
+  association belongTo AccountTop    -> Person[1];
+  association access   PersonTop     -> Account[*];
+
+  /*
+   * There is no association between BankAccount and Person matching the "access" reference assoc.
+   * Either we have to add a dedicated association for "bankAccountAccess" (see Valid1.cd) or
+   * change 'Account' to 'AccountTop' as it is a common superclass of both 'Account' and
+   * 'BankAccount'.
+   */
+}
+

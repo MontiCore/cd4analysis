@@ -1,0 +1,5 @@
+classdiagram AttributesMissingConc {
+  class Employee {
+    int number;
+  }
+}

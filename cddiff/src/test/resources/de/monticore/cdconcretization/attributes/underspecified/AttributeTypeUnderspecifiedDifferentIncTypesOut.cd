@@ -1,0 +1,10 @@
+import java.lang.String;
+
+classdiagram AttributeTypeUnderspecifiedDifferentIncTypesConc {
+  // nothing changed. we just make sure the tool can process the input and does not add anything
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int salery;
+  }
+}

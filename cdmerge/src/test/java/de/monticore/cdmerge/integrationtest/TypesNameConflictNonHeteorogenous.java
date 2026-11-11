@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Preconditions;
 import de.monticore.cdmerge.BaseTest;
@@ -16,16 +16,16 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TypesNameConflictNonHeteorogenous extends BaseTest {
-
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams/Types" + "/NameConflictNonHeteorogenous/A.cd";
-
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams/Types" + "/NameConflictNonHeteorogenous/B.cd";
-
+  
+  private static final String INPUT_MODEL_1 = "src/test/resources/class_diagrams/Types"
+      + "/NameConflictNonHeteorogenous/A.cd";
+  
+  private static final String INPUT_MODEL_2 = "src/test/resources/class_diagrams/Types"
+      + "/NameConflictNonHeteorogenous/B.cd";
+  
   @Test
   public void testTypesTypeNameConflictNonHeteorogenous() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
@@ -36,21 +36,21 @@ public class TypesNameConflictNonHeteorogenous extends BaseTest {
       MergeResult result = cdMerger.mergeCDs();
       processResult(result);
       fail("Exception expected: 'Color' is defined several times");
-    } catch (FailFastException expected) {
+    }
+    catch (FailFastException expected) {
       assertTrue(expected.getMessage().contains("The name Color is used several times"));
     }
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder =
-        getConfigBuilder()
-            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
-            .withParam(MergeParameter.FAIL_FAST)
-            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
+    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
+        MergeParameter.ON).withParam(MergeParameter.FAIL_FAST).withParam(MergeParameter.OUTPUT_NAME,
+            "mergedCD");
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
+  
 }

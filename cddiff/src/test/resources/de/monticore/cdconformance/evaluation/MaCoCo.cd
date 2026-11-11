@@ -1,0 +1,1454 @@
+/* (c) https://github.com/MontiCore/monticore */
+/* adapted and customized by (c) MaCoCo, ein RWTH Aachen projekt */
+
+package de.macoco.be.domain;
+
+import java.lang.String;
+import java.lang.Long;
+import java.lang.Integer;
+import java.lang.Boolean;
+
+import java.time.ZonedDateTime;
+
+classdiagram MaCoCo {
+
+  //----------------------------------------------
+  //--------------- PERSONAL ---------------------
+  //----------------------------------------------
+
+  /**
+   * Person ist die Zentrale Klasse des Personal-Komplexes.
+   **/
+  class Person {
+    String vorname;
+    Optional<String> vorsatzwort;
+    String nachname;
+    String kuerzel;       // Abgeleitet analog wie bei SAP: 3 Vor- 3 Nachnamenbuchstaben
+    Optional<String> personalnummer;
+    Optional<ZonedDateTime> gebDatum;
+    Optional<ZonedDateTime> beschBeginn;
+    Optional<ZonedDateTime> beschEnde;
+    List<String> kommentar;
+    boolean istAktiv;
+    boolean istStundenzettelpflichtig = false;
+    Optional<ZonedDateTime> stundenzettelpflichtigVon;
+    Optional<ZonedDateTime> stundenzettelpflichtigBis; // TODO: brauchen wir nicht mehr
+    Optional<Long> ueberStundenUebertrag;
+    boolean darfWochenendarbeiten;
+    // Start WZL:
+    Optional<ZonedDateTime> hoechstbeschaeftigungBis;
+    List<String> staatsangehoerigkeiten;
+    Optional<String> telefonnummer;
+    Optional<ZonedDateTime> arbeitserlaubnisBis;
+    boolean extern;
+    Optional<String> titel;
+    Optional<String> rufname;
+    Optional<String> adresse;
+    Optional<String> email;
+    Optional<String> geburtsname;
+    Optional<String> geschlecht;
+    Optional<String> lBVNummer;
+    Optional<ZonedDateTime> entfristung;
+    <<dbColumnDefinition="TEXT">>
+    Optional<String> qualifikationstitel;
+    boolean speicherungGewuenscht = false;
+    <<dbColumnDefinition="TEXT">>
+    Optional<String> urlaubskommentar;
+    Optional<ZonedDateTime> aenderungsdatum;
+  }
+
+  association [1] Person -> (anstellungsarten) Anstellungsart [*];
+  association [*] Person -> (vorgesetzte) Person [*];
+  association [1] Person -> (notiz) Freitext [0..1];
+
+  //Für Studentenzettel:
+  association [1] Person -> (jahresurlaubstage) Jahresurlaub [*];
+  association [1] Person -> (zusatzurlaubstage) Sonderurlaub [*];
+  association [1] Person -> (stundenzettel) Stundenzettel [*];
+  association [1] Person -> (abwesenheiten) Abwesenheit [*];
+
+    <<nocascade>>
+  association [1] Person -> (user) MacocoUser [0..1];
+
+
+  //----------------------------------------------
+  // Person -> *Anstellungsart
+
+  class Anstellungsart {
+    BeschaeftigungsArt beschArt;
+  }
+
+  association [1] Anstellungsart -> (vertraege) Vertrag [*];
+  association [1] Anstellungsart -> (anstellungsformen) Anstellungsform [*];
+
+  enum BeschaeftigungsArt {
+    WiMi("Wissenschaftliche/r Mitarbeiter/in (WiMi)"),
+    HiWi("Hilfskraft (HiWi)"),
+    BTV("Beschäftigte/r in Technik und Verwaltung (BTV)"),
+    BEAMTE("Beamte/r"),
+    AZUBI("Azubi/ne"),
+    PLAN;
+  }
+
+  //----------------------------------------------
+  // Person -> *Anstellungsart -> *Vertrag
+  // eine direkte Verbindung zwischen Person und Vertrag existiert nicht.
+
+  class Vertrag {       // spiegelt den Vertrag der Hochschule wieder
+    ZonedDateTime vertragsBeginn;
+    ZonedDateTime vertragsEnde;
+    boolean aenderungsvertrag;
+    /String vertragsStatus; // Aktiv, Planung, Abgelaufen // TODO: change String to enum
+    List<String> kommentar;
+    ZahlenWert planUmfang;
+    Optional<Long> arbeitsstundenProWoche; //Stundenzettel
+    boolean kuendigungsschutz;  // WZL
+    Optional<String> vertragsgrundlage;  // WZL / TODO: change to enum
+    Optional<String> aktion;  // WZL / TODO: change to enum
+    Optional<ZonedDateTime> aktionsDatum;  // WZL / TODO: change to enum
+  }
+
+  association [1] Vertrag -> (kostenstellen) Kostenstelle [*];
+
+  //----------------------------------------------
+  // Person -> *Anstellungsart -> Anstellungsform
+
+  /**
+   * Beschreibt alle wesentlichen Merkmale einer Anstellung.
+   * Entgeltgruppe, Stufe, etc.
+   **/
+  class Anstellungsform {
+    boolean erstanstellung;
+    Optional<String> entgeltGruppe; // { TVL-13}  Für Hiwis: {SHK (default), WHB, WHK}
+    Optional<String> erfahrungsStufe; // 1- 6 ; sowie Spezialfälle (TVL Ü+);
+    boolean unbefristet;
+    ZonedDateTime anstellungVon;
+    Optional<ZonedDateTime> anstellungBis;
+    long gehaltCent;  // evtl. Schätzgehalt in Zukunft
+    boolean istEigenerReferenzwert;
+    List<String> kommentar;
+    Optional<String> berufsgruppe; // WZL / TODO: change to enum
+    Optional<String> aktion;  // WZL / TODO: change to enum
+    Optional<ZonedDateTime> aktionsDatum;  // WZL / TODO: change to enum
+  }
+
+  //----------------------------------------------
+  // Person -> *Anstellungsart -> *Vertrag -> *Kostenstelle
+
+  class Kostenstelle {
+    ZonedDateTime verbuchungsBeginn;
+    ZonedDateTime verbuchungsEnde;
+    KostenstelleBezeichnung bezeichnung;
+    List<String> kommentar;
+    ZahlenWert beschaeftigungsUmfang;
+    boolean buchungenNeuErzeugen;
+    boolean buchungenLoeschen;
+    boolean gesperrt;
+  }
+
+  enum KostenstelleBezeichnung {
+    NONE(""),
+    AN_INSTITUT("An-Institut"),
+    GMBH("GmbH"),
+    ANDERER_LEHRSTUHL,
+    ANDERES_INSTITUT,
+    VORUEBERGEHEND_ABWESEND("Vorübergehend Abwesend"),
+    ANDERE_FINANZIERUNG;
+  }
+
+  enum Zuweisungsart {
+    KONTO("Kontenzuweisung"),
+    STELLENZUWEISUNG,
+    PLANSTELLE,
+    SONSTIGES;
+  }
+
+  association [*] Kostenstelle -> (personalBudget) Budget [0..1];
+  association Kostenstelle -> (stellenzuweisung) Stellenzuweisung [0..1];
+  association Kostenstelle -> (planstelle) Planstelle [0..1];
+                              <<nocascade>>
+  association [0..1] Kostenstelle -> (personalBuchungen) Buchung [*];
+
+  // Person -> *Anstellungsart -> *Vertrag -> *Kostenstelle -> ?Planstelle
+
+  class Planstelle {
+    String bezeichnung;
+    Optional<String> minEntgeltgruppe;
+    Optional<String> minEntgeltstufe;
+    Optional<String> maxEntgeltgruppe;
+    Optional<String> maxEntgeltstufe;
+    Optional<ZonedDateTime> verfuegbarVon;
+    Optional<ZonedDateTime> verfuegbarBis;
+    Optional<String> kommentar;
+    ZahlenWert planUmfang;
+    boolean aktiv;
+  }
+
+  association Planstelle -> (konto) Konto [0..1];
+
+  //----------------------------------------------
+
+  /**
+   * Repräsentiert verschiedene Arten von monetären Haben
+   * @attribute wert ist jeweils unterschiedlich zu interpretieren:
+   * EURO heisst, der wert ist in Cent angegeben
+   * STUNDE heisst: er ist in Stunden angegeben
+   *    (und das obwohl jedes Monat, Jahr unterschiedliche Stundenzahlen hat)
+   * PROZENT heisst er ist zwischen 0 und 100 angegeben (100%)
+   * NONE
+   **/
+  class ZahlenWert {
+    ZahlenTyp zahlenTyp;
+    long wert;
+  }
+
+  enum ZahlenTyp {EURO, STUNDE, PROZENT, NONE; }
+
+  //----------------------------------------------
+  //------------- Alerts -------------------------
+  //----------------------------------------------
+
+  // Konto -> *MailAlert
+
+  class MailAlert {
+    String name;
+                                    <<dbColumnDefinition="TEXT">>
+    String alertCondition;
+                                    <<dbColumnDefinition="TEXT">>
+    String mailBody;
+    int repetitions;
+    ZonedDateTime firstAlert;
+    ZonedDateTime lastAlert;
+
+    Optional<String> receipients;
+    Optional<String> ccs;
+    Optional<String> bccs;
+
+    // extra Attribute zur Speicherung einiger Werte (vom System unbenutzt)
+    long a1;
+    long a2;
+    boolean flag1;
+    boolean flag2;
+    String s1;
+    String s2;
+  }
+
+  //----------------------------------------------
+  // ============ Finanz-Datenstruktur ===========
+  //----------------------------------------------
+
+  /**
+   * Hauptklasse; das Konto, von der alle anderen abhängen.
+   * Hat mehrere Varianten (Subklassen)
+   */
+  abstract class Konto {
+    String name;
+    Optional<String> pspElement;
+    Optional<String> kontotyp;  // unterschiedlich je nach Kontoart
+    Optional<ZonedDateTime> sapDatum;
+    Optional<String> internesAktenzeichen;
+    boolean istPlanKonto;
+    boolean istVerbuchungsKonto;
+    boolean istAktiv;
+    Optional<String> vergabeVerordnung;
+    Optional<String> farbe;
+    Optional<ZonedDateTime> aenderungsdatum;
+    /Optional<ZonedDateTime> optStartDatum;
+    /Optional<ZonedDateTime> optEndDatum;
+    /Geschaeftsvorgang gueltigerGeschaeftsvorgang;
+  }
+
+  <<treatAsBidirectional>>
+  association [1] Konto (konto) -> (gesamtBudget) Budget [0..1];
+  association [1] Konto -> (kommentare) Freitext [*];
+  association [1] Konto -> (notiz) Freitext [0..1];
+  association [1] Konto <-> MailAlert [*];
+  association [1] Konto -> (abgleichsKonto) ExternKonto [0..1];
+
+  abstract class ErweitertesKonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    Optional<ZonedDateTime> bewilligungsDatum;    // Bewilligungsdatum ist im Industrieprojekt nur mandatory, wenn kein Sammelkonto
+    Optional<ZonedDateTime> verlaengertBisDatum;
+    Optional<ZonedDateTime> aufstockungsDatum;
+    Optional<Long> foerderquote;
+    // human names: "Aktenzeichen (RWTH)"
+    // Drittmittel: "Förderkennzeichen",
+    Optional<String> aktenzeichen;
+    Optional<Long> finanzierteKomplettsumme;
+    // human names:
+    // Drittmittel: "Aktenzeichen (Fördergeber)",
+    // Industrieprojekt: "Bestellnummer",
+    // Sonstiges: "Bestellnummer/Aktenzeichen (Fördergeber)"
+    Optional<String> referenzSponsor;
+    boolean hatProgrammpauschale;
+  }
+
+
+  class Drittmittelprojekt extends ErweitertesKonto {
+  }
+
+  association [*] Drittmittelprojekt -> (fachlicherVerantwortlicher) Person [*];
+
+  class Haushaltskonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+  }
+
+  class Industrieprojekt extends ErweitertesKonto {
+    Optional<String> auftraggeber;
+    boolean istSammelkonto;
+    Optional<Long> mehrwertsteuer;
+  }
+
+  association [*] Industrieprojekt -> (fachlicherVerantwortlicher) Person [*];
+
+  class Sonstiges extends ErweitertesKonto {
+    Optional<String> auftraggeber;
+    Geschaeftsvorgang geschaeftsvorgang;
+    Optional<Long> mehrwertsteuer;
+    boolean istSammelkonto;
+  }
+
+
+  enum AbrechnungsInterval {
+    GESAMTE_PROJEKTLAUFZEIT("Gesamte Projektlaufzeit"),
+    JAEHRLICH("Jährlich"),
+    HALBJAEHRLICH("Halbjährlich"),
+    QUARTALSWEISE("Quartalsweise"),
+    MONATLICH("Monatlich");
+  }
+
+  association [1] Konto -> OrganigrammKonto [*];
+
+  class OrganigrammKonto {
+    Optional<ZonedDateTime> von;
+    Optional<ZonedDateTime> bis;
+    Optional<ZahlenWert> umfang;
+  }
+
+  association [*] OrganigrammKonto -> Organigramm [1];
+
+  class ZeitlicheVerbuchungskontoZuordnung {
+  	Optional<Long> programmPauschale;
+  	Optional<Long> gemeinkostensatz;
+  	Optional<ZonedDateTime> startDate;
+  	Optional<ZonedDateTime> endDate;
+  	boolean istHauptVerbuchungskonto;
+  }
+
+  association [1] ErweitertesKonto -> (verbuchungskontoZuordnung) ZeitlicheVerbuchungskontoZuordnung [*];
+  association [*] ZeitlicheVerbuchungskontoZuordnung -> (verbuchungskonto) Konto [0..1];
+
+  //----------------------------------------------
+
+  // ------ Budget ------
+  // Konto -> 1Budget
+  // Konto -> 1Budget -> *Budget
+  // Konto -> 1Budget -> *Budget -> *Budget
+
+  /**
+   * Ein Budget erlaubt es ein Konto nach verschiedenen
+   * Strukturierungskriterien zu zerlegen. Budgets sind nur auf drei Ebenen
+   * erlaubt: 1 Hauptbudget, * OberBudgets, ** Unterbudgets.
+   * Die Budget-Struktur stellt einen Baum der maximalen Tiefe 3 dar.
+   */
+
+  class Budget {
+    String typ; // name
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    Optional<String> kommentar;
+    Optional<long> budgetRahmenCent; // wird im Gesamtbudget als Bewilligungssumme interpretiert
+    Optional<long> eigenAnteilCent;
+    List<long> jahresBudgets;
+    boolean proportionaleVerteilung;
+    boolean forOverheads; // das erste Budget (gesamtBudget.getUnterbudgets[0])
+    Optional<String> budgetKategorie;
+    /int budgetDepth;
+  }
+
+  association [*] Budget -> Konto [1];
+  association [0..1] Budget (elternBudget) <-> (unterBudget) Budget [*];
+  association [1] Budget (budget) <-> (buchungseintrag) Buchungseintrag [*];
+  association [1] Budget (budget) <-> (stellenzuweisung) Stellenzuweisung [*];
+  <<noOrphanRemoval, noRemoveCascade>>
+  association [0..1] Budget -> Organigramm [0..1];
+
+  //----------------------------------------------
+
+  // ------ Buchungseinträge ------
+  // Konto -> 1Budget (->*Budget)* -> *Buchung
+
+  /**
+   * Buchungen aller Arten: gemeinsame Oberklasse
+   */
+  abstract class Buchungseintrag {
+    ZonedDateTime datum;
+    Optional<String> buchungseintragText; // human name: Buchung: "Buchungstext", Rechnung: "Rechnungsgrund", Mittelabruf: "Anmerkung", Mittelzuweisung: "Grund"
+    long betragCent;                          // human name: "Betrag", Rechnung: "Rechnungsbetrag", Konten mit Programmpauschale: "Rechnungsbetrag (inkl Pauschale)"
+    boolean istAktiv;
+    Optional<ZonedDateTime> aenderungsdatum;
+    /Geschaeftsvorgang gueltigerGeschaeftsvorgang;
+    /String lfdeNummer;
+  }
+
+  class Buchung extends Buchungseintrag {
+    ZonedDateTime belegdatum;
+    String zahlungsgrund; //Belegpositionstext
+    Optional<String> kreditorDebitor;
+    List<String> sachkonto;
+    Optional<ZonedDateTime> buchungsdatum;
+    BuchungsStatus status;
+    List<String> belegnummern;
+    List<String> auftragsnummer;
+    Optional<String> bereich;
+    Optional<String> projekt;
+    Optional<ZonedDateTime> geschaeftsjahr;
+    Optional<Long> steuer;
+    Optional<Long> skonto;
+    Optional<Long> gez_Skonto;
+    Optional<String> erfasser;
+    Optional<String> belegart;
+    Optional<String> referenz;
+    Optional<String> stornonummer;
+    Optional<String> stkz;
+    Optional<ZonedDateTime> erfassungsdatum;
+    Optional<ZonedDateTime> ausgleichsdatum;
+    long betragCentOriginal; // Bei Abweichungen von BetragCent kann nun eine Absicht ueberprueft werden
+    boolean budgetChangedManually; // s.o.
+    Optional<String> kostenarten;
+    /Optional<Integer> bezugsdatumJahr;
+  }
+
+  class Rechnungsstellung extends Buchungseintrag {
+    Optional<ZonedDateTime> rechnungsdatum;
+    Optional<String> rechnungsnummer;
+    RechnungsstellungStatus status;
+    List<String> belegnummern;
+    Optional<Long> gemeinkosten;
+    Optional<Long> honorierung;
+    Optional<String> projekt;
+    Optional<String> debitor;
+    Optional<Long> mehrwertsteuer;
+    Optional<ZonedDateTime> zahlungsziel;
+  }
+
+  class Mittelzuweisung extends Buchungseintrag {
+    Optional<ZonedDateTime> verfallDatum;
+    Optional<String> kennung;
+    MittelzuweisungStatus status;
+  }
+
+  class Mittelabruf extends Buchungseintrag {
+    ZonedDateTime abrufdatum;
+    MittelabrufStatus status;
+    String zeitraum;
+    Optional<Long> pauschaleManuell; // Präsent, falls die Pauschale manuell geändert wurde
+  }
+
+  // ------ Stellenzuweisung ------
+
+  // Konto -> 1Budget (->*Budget)* -> *Stellenzuweisung
+
+  class Stellenzuweisung {
+    ZonedDateTime erstellDatum;         // aktuelles Datum
+    Optional<ZonedDateTime> startDatum; // Datum, zu welchem die Stelle beginnt
+    Optional<ZonedDateTime> endDatum;   // Datum, zu welchem die Stelle endet
+    long wert;
+    String kennung;
+    StellenzuweisungStatus status;
+    ZahlenWert stellenumfang;
+    boolean istAktiv;
+    Optional<ZonedDateTime> aenderungsdatum;
+  }
+
+  enum Geschaeftsvorgang {
+    NONE,
+    MITTELABRUF,
+    ZUWEISUNG,
+    RECHNUNG;
+  }
+
+  enum BuchungsStatus {
+    EINGEREICHT,
+    SAP("SAP"),
+    SAP_STORNIERT("SAP(Storniert)"),
+    PLANUNG,
+    FEHLERHAFT;
+  }
+
+  enum RechnungsstellungStatus {
+    OFFENE_RECHNUNG,
+    SAP("SAP"),
+     SAP_STORNIERT("SAP(Storniert)"),
+    PLANUNG;
+  }
+
+  enum MittelzuweisungStatus {
+    BESCHEID_ERHALTEN ("Bescheid erhalten"),
+    SAP("SAP"),
+    SAP_STORNIERT("SAP(Storniert)"),
+    PLANUNG,
+    FEHLERHAFT;
+  }
+
+  enum MittelabrufStatus {
+    ABGERUFEN,
+    SAP("SAP"),
+     SAP_STORNIERT("SAP(Storniert)"),
+    PLANUNG,
+    EINGEREICHT;
+  }
+
+  enum StellenzuweisungStatus {
+    BESETZT,
+    TEILBESETZT,
+    UNBESETZT,
+    PLANUNG;
+  }
+
+  enum VertragStatus {
+    AKTIV,
+    PLANUNG,
+    ABGELAUFEN;
+  }
+
+  //----------------------------------------------
+  // =============== SAPii ===============
+  //----------------------------------------------
+
+  class SAPVerbindung {
+    SAPverbindungsStatus status;
+  }
+
+  class Anfrage {
+    String ikz;
+    String bezeichner;
+    boolean letzteAnfrageErfolgreich;
+  }
+
+  enum SAPverbindungsStatus {
+    VERBUNDEN,
+    GETRENNT,
+    PROBLEM;
+  }
+
+  enum SAPimportMode {
+    DEFAULT,
+    F1KONTO;
+  }
+
+  association [1] SAPVerbindung -> (authorizedBy) MacocoUser [*];
+  association [1] MacocoUser -> (anfragen) Anfrage [*];
+  association [1] Anfrage -> (filteredKonten) PSPImportFilter [*];
+
+  //----------------------------------------------
+
+  class AbgleichsBuchung extends Buchung {
+      AbgleichsStatus abgleichsStatus;
+      Optional<String> abgleichKommentar;
+      String positionsNummer;
+      boolean deactivated;
+  }
+
+    enum AbgleichsStatus {
+      ABGESCHLOSSEN,            // Der Abgleich dieser Buchung ist Abgeschlossen
+      TEILWEISE_ABGESCHLOSSEN,  // Der Abgleich wurde schon Bearbeitet es fehlen jedoch Summen
+      ABWEICHEND,               // Der Abgleich ist Vollständig mit Abweichenden Summen
+      OFFEN,                    // Der Abgleich wurde noch nicht gesetzt
+      VORGESCHLAGEN;            // Der Abgleich wurde vom System vorgeschlagen
+    }
+
+  class AbgleichsGruppe {
+    String bezeichnung;
+  }
+                                <<nocascade>>
+  association AbgleichsGruppe -> (buchungen) Buchung [*];
+                                <<nocascade>>
+  association AbgleichsGruppe -> (abgleichsBuchungen) AbgleichsBuchung [*];
+                                 <<nocascade>>
+  association AbgleichsGruppe -> (konto) Konto [1];
+
+  // ------ Freitext ------
+
+  class Freitext {
+    Optional<ZonedDateTime> erstellDatum;
+    Optional<ZonedDateTime> bearbeitetDatum;
+                                    <<dbColumnDefinition="TEXT">>
+    Optional<String> text;
+  }
+
+  class Legende {
+    LegendeTyp type;
+    String expression;
+      <<dbColumnDefinition="TEXT">>
+    String description;
+  }
+
+  enum LegendeTyp {
+    KONTO_FARBE;
+  }
+
+  //----------------------------------------------
+  // =============== Projekte ===============
+  //----------------------------------------------
+
+  abstract class Projekt {
+    String name;
+    String kuerzel;
+    Optional<Long> minPM;
+    Optional<Long> maxPM;
+    Optional<Long> finanzPM;
+    Optional<ZonedDateTime> laufzeitVon;
+    Optional<ZonedDateTime> laufzeitBis;
+    Optional<String> kommentar;
+    Optional<String> foerdergeberAZ;
+    ProjektStatus status;
+    boolean istAktiv;
+    boolean lockedForStundenzettel;   // Das gesamte Projekt ist gesperrt
+    List<ZonedDateTime> lockedMonths; // Stellen die Ausnahme aus der Lock-Regelung für das gesamte Projekt dar
+    Optional<ZonedDateTime> aenderungsdatum;
+  }
+
+  association [1] Projekt -> Aufwand [*];
+  association [1] Projekt -> Arbeitspaket [*];
+  association [1] Projekt -> Anstellung [*];
+  association [*] Projekt -> Konto [0..1];
+  association [*] Projekt -> (hauptverantwortlich) Person [*];
+  association [1] Projekt -> (notiz) Freitext [0..1];
+
+  class Auftragsprojekt extends Projekt {
+    Optional<String> nummer;
+    ProjektTyp typ;
+    Optional<String> regelung;
+  }
+
+  class Organisation extends Projekt {
+  }
+
+  class Lehre extends Projekt {
+    Optional<Long> stunden;
+  }
+
+  class Arbeitspaket {
+    String nummer; // könnte auch 1.1 sein
+    String name;
+    Optional<String>  beschreibung;
+    Optional<ZonedDateTime> beginnDatum;
+    Optional<ZonedDateTime> endeDatum;
+    Optional<Long> pMs;
+    Optional<Long> stunden;
+    Optional<ZonedDateTime> aenderungsdatum;
+  }
+
+  class Aufwand {
+    /long pM;
+    ZahlenWert umfang;
+    ZonedDateTime laufzeitVon;
+    ZonedDateTime laufzeitBis;
+    Optional<ZonedDateTime> aenderungsdatum;
+  }
+
+  association [*] Aufwand -> Person [0..1];
+
+  class Anstellung {
+    Optional<String> bezeichnung;
+    ZahlenWert umfang;
+    ZonedDateTime von;
+    ZonedDateTime bis;
+    boolean verfaellt;
+    Optional<Stellentyp> min;
+    Optional<Stellentyp> max;
+    /long pM;
+    BeschaeftigungsArt beschaeftigungsArt;
+  }
+
+  association [*] Anstellung -> Person [0..1];
+
+  class Stellentyp {
+    Optional<String> entgeltgruppe;
+    Optional<String> entgeltstufe;
+  }
+
+  enum ProjektStatus {
+    IN_DEFINITION,
+    BEANTRAGT,
+    GENEHMIGT,
+    ABGELEHNT,
+    LAUFEND,
+    FACHLICH_ABGESCHLOSSEN("Fachlich abgeschlossen"),
+    ENDBERICHT_EINGEREICHT("Endbericht eingereicht"),
+    INPRUEFUNG("In Prüfung"),
+    GEPRUEFT("Geprüft"),
+    ABGERECHNET,
+    ABGESCHLOSSEN,
+    ARCHIVIERT;
+  }
+
+  enum ProjektArt {
+    AUFTRAG,
+    ORGANISATION,
+    LEHRE,
+    NONE;
+  }
+
+  enum ProjektTyp {
+    HOHEITLICH,
+    INDUSTRIE,
+    UNIVERSITAET("Universität"),
+    SONSTIGE;
+  }
+
+  enum Vergabeverordnung {
+    VOL_A ("VOL/A"),
+    VOB_A ("VOB/A"),
+    UVGO_NRW ("UVgO NRW"),
+    UVGO_BUND ("UVgO Bund"),
+    NONE (" ");
+  }
+
+  //----------------------------------------------
+  // =============== Stundenzettel ===============
+  //----------------------------------------------
+
+  class Stundenzettel {
+    StundenzettelStatus status;
+    ZonedDateTime zeit;
+    Optional<Long> abgegebenVonUserId;
+    Optional<ZonedDateTime> abgabeDatum;
+  }
+
+  association [1] Stundenzettel -> (eintraege) StundenzettelEintrag [*];
+
+  class StundenzettelEintrag {
+    ZonedDateTime uhrzeitVon;
+    Optional<ZonedDateTime> uhrzeitBis;
+    Optional<String> beschreibung;
+    /long stunden;
+    StundenzettelProjekt pauseOderSonstiges;
+  }
+
+  association [*] StundenzettelEintrag ->  Projekt [0..1];
+  association [*] StundenzettelEintrag ->  Arbeitspaket [0..1];
+
+  class StundenzettelHistorieEintrag {
+    ZonedDateTime bearbeitungsdatum;
+    Optional<Long> editorId;
+    Optional<String> editedBy;
+    String monat;
+    int jahr;
+    String changeOperation;
+  }
+
+  enum StundenzettelChangeOperation {
+    INVALID,
+    ABGEGEBEN("Abgegeben"),
+    INTERN_GEPRUEFT("Intern Geprüft"),
+    INTERN_ABGESCHLOSSEN("Intern Abgeschlossen");
+  }
+
+  association [1] Person ->  StundenzettelHistorieEintrag [*];
+
+  class Abwesenheit {
+    Abwesenheitsgrund grund;
+    ZonedDateTime  datumVon;
+    ZonedDateTime datumBis;
+    Optional<String> kommentar;
+    Optional<ZonedDateTime> uhrzeitVon;
+    Optional<ZonedDateTime> uhrzeitBis;
+    Optional<Long> minutenProTag;
+    /long tageGesamt;
+  }
+
+  class Dienstreise extends Abwesenheit {
+    Optional<String> reisenummer;
+    Optional<String> dienstreisegrund;
+    Optional<String> reiseziel;
+    Optional<Long> gesamtkosten;
+    Optional<String> status;
+    Optional<String> statusText;
+  }
+
+  association [*] Abwesenheit -> Konto [0..1];
+
+  association [1] Abwesenheit -> UrlaubsGenehmigung [0..1];
+
+  association [*] Dienstreise -> Budget [0..1];
+
+  class Arbeitstage {
+    ZonedDateTime guiltigAb;
+    ZonedDateTime guiltigBis;
+    List<Integer> wochenTage; // 0..4 (Montag-Freitag)
+  }
+
+  association [1] Person -> Arbeitstage [*];
+
+  class Jahresurlaub {
+    int jahr;
+    long tageAnzahl;
+    Optional<Long> stundenAnzahl;
+    boolean istManuellerEintrag;
+  }
+
+  class UrlaubsGenehmigung {
+    Optional<ZonedDateTime> beantragt;
+    Optional<ZonedDateTime> genehmigt;
+    Optional<ZonedDateTime> geprueft;
+    Optional<ZonedDateTime> storniert;
+    Urlaubssstatus status;
+    Stornierungsstatus stornierungsStatus;
+  }
+
+  class Sonderurlaub {  // Für WZL: Zusatzurlaub umbenennen in Sonderurlaub und neues Feld anzahl
+    ZonedDateTime  datumVon;
+    ZonedDateTime datumBis;
+    long anzahl;
+  }
+
+  class UrlaubEinstellungen {
+    boolean urlaubsanspruchInStunden;
+  }
+
+  enum Abwesenheitsgrund {
+    U_URLAUB,
+    D_DIENSTREISE,
+    S_SONSTIGE;
+    /*
+    Z_ZUSATZURLAUB,
+    A_ARBEITSUNFALL,
+    AB_ABGELTUNG,
+    E_ELTERNZEIT,
+    F_FREISTELLUNG,
+    K_KRANKHEIT,
+    KU_KUR,
+    S_SONSTIGES;*/
+  }
+
+  enum Urlaubssstatus {
+    NONE,
+    BEANTRAGT,
+    GEPRUEFT("Geprüft"),
+    PRUEFUNG_ABGELEHNT("Prüfung abgelehnt"),
+    GENEHMIGT,
+    GENEHMIGUNG_ABGELEHNT;
+  }
+
+  enum Stornierungsstatus {
+    NONE,
+    VERBOTEN,
+    STORNIERUNGSANTRAG,
+    STORNIERT;
+  }
+
+  enum Abrechnungsstatus {
+    OFFEN,
+    ABZURECHNEN,
+    ABGERECHNET,
+    STORNIERT;
+  }
+
+  enum StundenzettelStatus {
+    IN_ERFASSUNG,
+    INTERN_INPRUEFUNG("Intern in Prüfung"),
+    INTERN_ABGESCHLOSSEN,
+    DRITTMITTELABTEILUNG_INPRUEFUNG("Drittmittelabteilung in Prüfung"),
+    DRITTMITTELABTEILUNG_ABGESCHLOSSEN,
+    ENDBERICHT_EINGEREICHT,
+    GEPRUEFT("Geprüft"),
+    FOERDERGEBER_ABGESCHLOSSEN("Fördergeber abgeschlossen"),
+    ABGESCHLOSSEN;
+  }
+
+  enum StundenzettelProjekt {
+    PAUSE,
+    SONSTIGE,
+    NONE;
+  }
+
+  association [*] F1Konto -> (institut) Institut [0..1];
+
+  class ExternKonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    Optional<String> importVermerk;
+    AbgleichType abgleichVerhalten;
+  }
+
+  enum AbgleichType {
+    IGNORE,
+    MANUEL,
+    AUTO_COPY;
+  }
+
+  association [*] ExternKonto -> (institut) Institut [0..1];
+
+  class PSPImportFilter{
+    boolean importThisPSPelement;
+    boolean importBookings;
+    String name;
+    String pspElement;
+    Optional<ZonedDateTime> startDate;
+  }
+
+  association [*] PSPImportFilter -> (targetPSP) Konto [0..1];
+
+  //----------------------------------------------
+  // Reports
+
+  class EventReport {
+    ZonedDateTime eventStart;
+    Optional<ZonedDateTime> eventEnd;
+    /EventStatus status;
+    String message; // <a href="wiki/BuchungImport">BuchungImport</a>: Nutzer 'netz' hat die Datei '.....' importiert
+  }
+
+  class EventReportEntry {
+    EventType type;
+    Optional<Long> targetId; // click -> navigate to id
+    Optional<Integer> count;
+    <<dbColumnDefinition="TEXT">>
+    String message; // Zeile 4 Fehler ...... Zeile 5 .....
+    EventStatus status;
+  }
+  association [1] EventReport -> (entries) EventReportEntry [*];
+
+  class ImportReport extends EventReport {
+  }
+
+  class ImportReportEntry extends EventReportEntry {
+  }
+
+
+  class PersonalExportReport extends EventReport {
+    Long dataId;
+
+    ZonedDateTime datenStart;
+    ZonedDateTime datenEnd;
+    Long countData;
+    /Long countError;
+    EventStatus exportStatus;
+  }
+
+  class PersonalExportReportEntry extends EventReportEntry {
+    Optional<String> vorsatzwort;
+    String vorname;
+    String nachname;
+    BeschaeftigungsArt beschaeftigungsArt;
+    ZonedDateTime monat;
+  }
+
+  enum EventStatus {
+    // Import
+    SUCCESS("erfolgreich"),
+    ERROR("fehlerhaft"),
+    INFO("erfolgreich"), // success + special
+    CREATED("erstellt"),
+    UPDATED("upgedated"),
+    IGNORED("ignoriert"),
+    IN_PROGRESS("in bearbeitung"),
+
+    // Personal Export
+    SENT("verschickt"),
+    CORRECT("sachlich korrekt");
+  }
+
+  enum EventType {
+    IMPORT_KONTO("Konten"),
+    IMPORT_BUCHUNG("Buchungs"),
+    IMPORT_PERSON("Personen"),
+    IMPORT_INSTITUT("Instituts"),
+    IMPORT_NUTZER("Nutzer"),
+    IMPORT_VERTRAG("Vertrags"),
+    EXPORT_FINANZEN_KONTO("Konten"),
+    EXPORT_FINANZEN_PLANSTELLE("Planstellen"),
+    EXPORT_FINANZEN_VERTRAG("Vertragabdeckungs");
+  }
+
+
+  //----------------------------------------------
+  // =============== Fakultät 1 DS ===============
+  //----------------------------------------------
+
+  // Institut
+  <<dbColumn = "unique=true">>
+  class Institut {
+    String institutsKennZiffer;
+    String institutsName;
+    String professorName;
+    boolean lokalInstitut;
+  }
+
+  // Fachgruppe
+  enum Fachgruppe {
+    MATHEMATIK,
+    INFORMATIK,
+    PHYSIK,
+    CHEMIE,
+    BIOLOGIE;
+  }
+
+  //SAP-Abschöpfung von Geschäftsjahr
+  class GeschaeftsjahrSAPAbschoepfung {
+    String fachgruppe;
+    String institutsKennZiffer;
+    String institutsName;
+    String pspElement;
+    long gesamtSAPAbschoepfung;
+  }
+
+  class SAPAbschoepfung {
+    Long betragCent;
+    ZonedDateTime year;
+  }
+
+  association [1] GeschaeftsjahrSAPAbschoepfung -> (sapAbschoepfung) SAPAbschoepfung [*];
+
+
+  // Konto
+  class F1Konto extends Haushaltskonto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    long originalBudgetCent;
+    long sonstigeZuweisungenCent;
+    long resteCent;
+    long aktuellerKontostandCent;
+    long kontoRahmenCent;
+    KommunikationsStatus kommunikationsStatus;
+    StrafsteuerStatus strafsteuerStatus;
+    long strafsteuerBasisCent;
+    long strafsteuerSAPCent;
+    long strafsteuerCent;
+    long strafsteuerBerechnungsGrundlageCent;
+    Optional<Long> kontoStandBeginnGeschaeftsjahr;
+  }
+
+  // Konto -> 1Budget (->*Budget)* -> *Buchung -> ?Begruendung
+
+  // Buchungen werden hier noch erweitert:
+  association [1] Buchung -> (begruendung) Begruendung [0..1];
+
+  class Begruendung {
+    String text;
+    ZonedDateTime erstellung;
+    Optional<ZonedDateTime> letzteBearbeitung;
+    Optional<StrafsteuerGeschaeftsjahr> geschaeftsjahr;
+  }
+
+  association [1] Begruendung -> (akzeptanz) Akzeptanz [0..1];
+  //association [1] Begruendung -> (geschaeftsjahr) StrafsteuerGeschaeftsjahr [0..1];
+
+  //----------------------------------------------
+
+  // Konto -> 1Budget (->*Budget)* -> *Buchung -> ?Begruendung -> ?Akzeptanz
+
+  class Akzeptanz {
+    Akzeptanzstatus akzeptanzstatus;
+    Optional<long> teilbetragCent;
+    Optional<ZonedDateTime> bearbeitung;
+    boolean istAktiv;
+    Optional<String> kommentar;
+  }
+
+  //----------------------------------------------
+
+  enum KommunikationsStatus {
+    KOM_STAT_NO_ACTION_NEEDED,       // Kein Handlungsbedarf
+    KOM_STAT_BEGR_FEHLT,             // Begründung fehlt
+    KOM_STAT_ANTW_FEHLT,             // Antwort fehlt
+    KOM_STAT_ANTW_CHANGED,           // Buchung oder Begründung wurden geändert
+    KOM_STAT_BEGR_CHANGED,           // Antwort wurde geändert
+    KOM_STAT_ANTW_BEGR_CHANGED,      // Antwort und Begründung wurde geändert
+    KOM_STAT_ANTW_FEHLT_CHANGED;     // Antwort Fehlt, andere Antwort wurde geändert
+  }
+
+  enum StrafsteuerStatus {
+    NONE,
+    SOME,
+    ALL;
+  }
+
+  enum Akzeptanzstatus {
+    OFFEN,
+    OK,
+    TEILOK,
+    NOTOK;
+  }
+
+  class StrafsteuerGeschaeftsjahr {
+    ZonedDateTime jahr;
+    boolean current;
+  }
+
+  class StrafsteuerSperrDatum {
+    ZonedDateTime sperrDatum;
+  }
+
+  //----------------------------------------------
+  // =============== MacocoUser ===============
+  //----------------------------------------------
+
+  class MacocoUser {
+                                     <<dbColumn = "unique=true">>
+    String username;
+    Optional<String> encodedPassword;
+    String passwordSaltBase64;
+    ZonedDateTime registrationDate;
+    Optional<String> initials;
+    MacocoUserActivationStatus activated;
+    boolean enabled;
+                                      <<dbColumn = "unique=true">>
+    String email;
+    boolean authentifiziert;
+    Optional<String> timID;
+    Optional<String> sapAccessToken;
+    Optional<String> sapRefreshToKen;
+
+  }
+
+  association  [*] MacocoUser -> (institute) Institut [*];
+
+  enum MacocoUserActivationStatus {
+    AKTIVIERT,
+    MAIL_NICHT_GESENDET("Mail nicht gesendet"),
+    MAIL_FEHLERHAFT("Mail fehlerhaft"),
+    MAIL_GESENDET("Mail gesendet");
+  }
+
+  // Favoriten
+  class Favorite {
+    String title;
+    String url;
+  }
+
+  association [1] MacocoUser -> (favorite) Favorite [*];
+
+  class RoleAssignment {
+  }
+
+  association [*] RoleAssignment -> (user) MacocoUser [1];
+  association [*] RoleAssignment -> (accessPolicy) AccessPolicy [1];
+
+  class AccessPolicy {
+    String roleName;
+    Optional<Long> objId;
+  }
+
+  class GroupedAccessPolicy {
+    String name;
+  }
+
+  association [*] GroupedAccessPolicy -> (user) MacocoUser [*];
+  association [1] GroupedAccessPolicy -> (policy) AccessPolicy [*];
+
+  //----------------------------------------------
+  // =============== Fristen ===============
+  //----------------------------------------------
+
+  class Frist {
+    String beschreibung;
+    Friststatus status;
+    Fristobjekt fristobjekt;
+    ZonedDateTime faelligkeitsdatum;
+    Optional<String> notiz;
+    Boolean manuellerEintrag;
+    Long bezugsobjektId;
+    String bezugsobjektName;
+    Optional<ZonedDateTime> aenderungsdatum;
+    boolean istAktiv;
+  }
+
+  association [*] Frist -> (zuweisung) Person [0..1];
+
+  association [1] Person -> Frist [*];
+  association [1] Konto -> Frist [*];
+  association [1] Projekt -> Frist [*];
+  association [1] Mittelabruf -> Frist [0..1];
+  association [1] Rechnungsstellung -> Frist [0..1];
+  association [1] Vertrag -> Frist [0..1];
+  association [1] Zulage -> Frist [0..1];
+
+  enum Friststatus {
+    PLANUNG,
+    IN_BEARBEITUNG,
+    ERLEDIGT;
+  }
+
+  enum Fristobjekt {
+    PERSON,
+    KONTO,
+    VERTRAGSVERLAENGERUNG("Vertragsverlängerung"),
+    ZULAGE,
+    RECHNUNG,
+    MITTELABRUF,
+    PROJEKT;
+  }
+
+  class DefaultFristen {
+    ZonedDateTime finanzenStartDatum;
+    Long finanzenFristinWeeks;
+    ZonedDateTime personalStartDatum;
+    Long personalFristinWeeks;
+  }
+
+  //----------------------------------------------
+  // ============= Einstellungen =================
+  //----------------------------------------------
+
+  class Setting {
+    String identifier;
+  }
+
+  class InstanzSetting extends Setting {
+    String value;
+  }
+
+  class UISetting extends Setting {
+    String seite;
+  }
+
+  association [0..1] MacocoUser -> (setting) UISetting [*];
+
+  class FilterSetting extends UISetting {
+    List<String> filterValues;
+  }
+
+  class TableSetting extends UISetting {
+    TableIdentifierTyp typ;
+    boolean zeigeInaktive;
+    int zeilenLimit;
+    Optional<String> gruppiereNach;
+    Optional<String> sortiereNach;
+    Optional<String> sortiereDir;
+    boolean isShowColor;
+  }
+
+  association [1] TableSetting -> (spalten) TableSettingSpalten [*];
+
+  enum TableIdentifierTyp {
+    DEFAULT,
+    USER,
+    INSTITUT;
+  }
+
+  class TableSettingSpalten {
+    String name;
+    boolean istAktiv;
+    long breite;
+  }
+
+  class ErweiterbareListen{
+    String bereich;
+    String feldbezeichnung;
+    List<String> inhalte;
+  }
+
+  //----------------------------------------------
+  // =============== Card Settings ===============
+  //----------------------------------------------
+
+  class CardSetting {
+    String page;
+    String identifier;
+    <<dbColumnDefinition="TEXT">>
+    String configuration;
+  }
+
+  association [*] CardSetting -> (benutzer) MacocoUser [0..1];
+
+  //----------------------------------------------
+  // =============== WZL ===============
+  //----------------------------------------------
+
+  class Elternzeit { // WZL
+    Optional<ZonedDateTime> von;
+    Optional<ZonedDateTime> bis;
+    ZahlenWert umfang;
+  }
+
+  class Nebentaetigkeit { // WZL
+    Optional<ZonedDateTime> von;
+    Optional<ZonedDateTime> bis;
+    ZahlenWert umfang;
+    Optional<String> arbeitgeber;
+    Optional<String> taetigkeitsbereich;
+  }
+
+  class Zulage  { // WZL
+    Optional<String> pspelement;
+    Optional<String> bezeichnung;
+    ZonedDateTime von;
+    ZonedDateTime bis;
+    Long arbeitgeberbrutto;
+    Long arbeitnehmerbrutto;
+  }
+
+  // WZL
+  enum Geschlecht { NONE(""), WEIBLICH("weiblich"), MAENNLICH("männlich"), DIVERS("divers"); }
+
+  // WZL
+  // -> DataSource
+  enum Titel { NONE(""), E1("Apl. Prof. Dr.") , E2("B.Sc.") , E3("Dipl.-Inform.") , E4("Dipl.-Ing."), E5("Dipl.-Ing. (FH)"),
+    E6("Dipl.-Ing. (RUS)"), E7("Dipl.-Kff.") , E8("Dipl.-Math."), E9("Dipl.-Phys.") , E10("Dipl.-Wirt. Ing.") , E11("Dr.")  , E12("Dr. phil."),
+    E13("Dr. rer. nat."), E14("Dr. rer. pol."), E15("Dr.-Ing."), E16("M.A.") , E17("M.Eng."), E18("M.Sc."), E19("PhD"), E20("Prof. Dr.-Ing."); }
+
+  // WZL
+  // -> DataSource
+  enum Berufsgruppe { NONE(""), E1("Akademischer Direktor"), E2("Angestellter in der DV"), E3("Auszubildende/r"), E4("Bibl.-Beschäftiger"),
+    E5("Elektriker"), E6("Elektroniker"), E7("Elektrotechniker"), E8("Fachinformatiker"), E9("Fachinformatiker"), E10("Industriemechaniker"),
+    E11("Lagerarbeiter"), E12("Mechaniker"), E13("Meister"), E14("Praktikant, SV-frei"), E15("Programmierer"), E16("Stud. Hilfskraft"),
+    E17("Techn. Beschäftigter"), E18("Techn. Zeichner"), E19("Techniker"), E20("Universitätsprofessor"), E21("Verw. Beschäftigter"), E22("Werkstoffprüfer"),
+    E23("Wiss. Beschäftigter"), E24("Wiss. Hilfskraft Bachelor"), E25("Wiss. Hilfskraft Master"); }
+
+  // WZL
+  enum Aktion { NONE(""), ANFRAGE_VERSENDET("Anfrage versendet"), ERINNERUNG_VERSENDET("Erinnerung versendet"),
+    ZUR_UNTERSCHRIFT_BEIM_VORGESETZTEN("Zur Unterschrift beim Vorgesetzten"),
+    BEI_ZHV_VORGELEGT("Bei ZHV vorgelegt"), VON_ZHV_BESTAETIGT("Von ZHV bestätigt"); }
+
+  // WZL
+  // -> DataSource
+  enum Vertragsgrundlage { NONE(""), E1("sonst. Befristungen (gleicht Auszubildenden)"), E2("unbefristet"), E3("unbefr. (Beamter aL)"), E4("§14 Abs. 2 TzBfG"),
+    E5("Elternzeitvertretung"), E6("Befristung SHK"), E7("Mehrbedarf sonstiger"), E8("Mehrb. Forschungspr."), E9("§2(5)Nr.3WZVG MuS-EZ"),
+    E10("§2 WZVG DM (NP)"), E11("§2 WZVG KiBetr NP"), E12("WZVG-Postdoc-Quali."), E13("WZVG-N-Gr._Leiter"), E14("WZVG-Wiss.-Quali NP"),
+    E15("§2 WZVG DM (VP)"), E16("§2 WZVG KiBetr VP"), E17("WZVG-Promotion"), E18("WZVG-sonst.Wiss-Qual"), E19("Befristung WHB"), E20("Befristung WHK"),
+    E21("§2 (1) S.2 WZVG nPr"), E22("§14(1) Nr.2 TzBfG-Üb"), E23("befr. Arbeitszeitänderung"), E24("Übernahme nach Ausbildung"); }
+
+  association [1] Person -> (elternzeiten) Elternzeit [*]; // WZL
+  association [1] Person -> (nebentaetigkeiten) Nebentaetigkeit[*];  // WZL
+  association [1] Person -> (zulagen) Zulage [*];  // WZL
+
+  // WZL Personal Export
+  class PersonalExportData {
+  }
+  association [1] PersonalExportData -> (entries) PersonalExportDataEntry [*];
+
+  class PersonalExportDataEntry {
+    String personalnummer;
+    Optional<String> vorsatzwort;
+    String nachname;
+    String vorname;
+    ZonedDateTime von;
+    ZonedDateTime bis;
+    String pspElement;
+    Long prozentsatz;
+  }
+
+   class PersonalExportEinstellungen {
+     String pspElement;
+     List<String> bezeichnungen;
+     ZonedDateTime startmonat;
+     ZonedDateTime endmonat;
+   }
+
+  class Organigramm {
+    boolean istStabstelle;
+    boolean istAktiv;
+    String bezeichnung;
+  }
+
+  <<noOrphanRemoval>>
+  association [0..1] Organigramm (parent) <-> (child) Organigramm [*];
+
+  association [1] Organigramm -> (leiter) OrganigrammPersonInfo [*];
+  association [1] Organigramm -> (stellvertreter) OrganigrammPersonInfo [*];
+  association [1] Organigramm -> (mitarbeiter) OrganigrammPersonInfo [*];
+
+  class OrganigrammPersonInfo {
+    Optional<ZonedDateTime> von;
+    Optional<ZonedDateTime> bis;
+    Optional<ZahlenWert> umfang;
+  }
+
+  association [*] OrganigrammPersonInfo -> Person [1];
+
+  //----------------------------------------------
+  // =============== WZL END ===============
+  //----------------------------------------------
+
+
+  // Druckeinstellungen
+  class DruckEinstellungenProjekt {
+    Long projektId;
+    Integer jahr;
+    Integer monat;
+    Optional<String> mittelabrufnummer;
+    Optional<String> belegnummer;
+  }
+
+  association [1] DruckEinstellungenProjekt -> (druckEinstellungenPersonen) DruckEinstellungenPerson [*];
+
+  class DruckEinstellungenPerson {
+    Long personId;
+    Optional<ZahlenWert> stundensatz;
+  }
+
+  class BlacklistedToken {
+    <<dbColumnDefinition="TEXT">> // have more than 255 characters
+    String token;
+    ZonedDateTime addedAt;
+    ZonedDateTime expiresAt;
+  }
+
+  class RefreshToken {
+    long userId;
+    String token;
+  }
+
+  // NotificationCenter
+  class UserNotification {
+    UserNotificationType notificationType;
+    String title;
+
+    <<dbColumnDefinition="TEXT">>
+    String message;
+    ZonedDateTime timeStamp;
+
+    // clickable
+    Optional<String> link; // fuer Router
+
+    boolean seen;
+    boolean pinned;
+  }
+
+  enum UserNotificationType { SUCCESS, INFO, WARNING, DANGER; }
+
+  association [1] MacocoUser -> (notification) UserNotification [*];
+
+  //----------------------------------------------
+  // =============== Command Logs ================
+  //----------------------------------------------
+  class AccessIdentifier {
+  }
+
+  class CommandLog {
+    ZonedDateTime timestamp;
+    List<String> diff;
+    String affectedArea;
+    String affectedObject;
+  }
+
+  association [1] CommandLog -> (executor) MacocoUser [0..1]; // TODO: In den Migrationsskript für 2.9.0 -> 2.10.0 : früher war association [1] CommandLog -> (executor) MacocoUser [1];
+  association [1] CommandLog -> (permission) AccessIdentifier [*];
+
+  //----------------------------------------------
+  // =============== Dokumente ===================
+  //----------------------------------------------
+
+  // Bei Änderung PermissionCheckHelper.doesUserHavePermissionForDokument updaten
+  enum DokumentGroup {
+    PERSONAL("personal"),
+    KONTO("konto");
+  }
+
+  class Dokument {
+    DokumentGroup groupName;
+    Long associationId;       // ID des Objektes an dem das Dokument hängt
+    ZonedDateTime datum;      // Upload-Datum
+    String bezeichnung;
+    String dateiFormat;
+    Long fileSize;
+    Optional<String> anmerkung;
+    boolean istAktiv;
+  }
+
+}

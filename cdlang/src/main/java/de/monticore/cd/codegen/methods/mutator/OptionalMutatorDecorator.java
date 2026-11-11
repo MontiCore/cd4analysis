@@ -18,22 +18,22 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 public class OptionalMutatorDecorator extends AbstractMethodDecorator {
-
+  
   protected static final String SET = "set%s";
-
+  
   protected static final String SET_ABSENT = "set%sAbsent";
-
+  
   protected String naiveAttributeName;
-
+  
   public OptionalMutatorDecorator(final GlobalExtensionManagement glex) {
     super(glex);
   }
-
-  public OptionalMutatorDecorator(
-      final GlobalExtensionManagement glex, final CDGenService service) {
+  
+  public OptionalMutatorDecorator(final GlobalExtensionManagement glex,
+      final CDGenService service) {
     super(glex, service);
   }
-
+  
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
     if (ast.getModifier().isDerived() || ast.getModifier().isReadonly()) {
@@ -45,22 +45,23 @@ public class OptionalMutatorDecorator extends AbstractMethodDecorator {
     methodList.add(createSetAbsentMethod(ast));
     return methodList;
   }
-
+  
   protected ASTCDMethod createSetMethod(final ASTCDAttribute ast) {
     String name = String.format(SET, naiveAttributeName);
     ASTMCType parameterType = service.getFirstTypeArgument(ast.getMCType()).deepClone();
-    ASTCDParameter parameter =
-        this.getCDParameterFacade().createParameter(parameterType, ast.getName());
+    ASTCDParameter parameter = this.getCDParameterFacade().createParameter(parameterType, ast
+        .getName());
     ASTCDMethod method = this.getCDMethodFacade().createMethod(PUBLIC.build(), name, parameter);
-    this.replaceTemplate(
-        EMPTY_BODY, method, new TemplateHookPoint("methods.opt.Set4Opt", ast, naiveAttributeName));
+    this.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint("methods.opt.Set4Opt", ast,
+        naiveAttributeName));
     return method;
   }
-
+  
   protected ASTCDMethod createSetAbsentMethod(final ASTCDAttribute ast) {
     String name = String.format(SET_ABSENT, naiveAttributeName);
     ASTCDMethod method = this.getCDMethodFacade().createMethod(PUBLIC.build(), name);
     this.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint("methods.opt.SetAbsent", ast));
     return method;
   }
+  
 }

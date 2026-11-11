@@ -13,23 +13,17 @@ import java.util.stream.Collectors;
 
 /** Checks uniqueness among the names of classes, interfaces, and enums. */
 public class CDDefinitionUniqueCDTypeNames implements CDBasisASTCDDefinitionCoCo {
-
+  
   @Override
   public void check(ASTCDDefinition cdDefinition) {
-    Collection<CDTypeSymbol> types =
-        cdDefinition
-            .streamCDElements()
-            .filter(e -> e instanceof ASTCDType)
-            .map(e -> ((ASTCDType) e).getSymbol())
-            .collect(Collectors.toList());
-
-    CoCoHelper.findDuplicatesBy(types, TypeSymbol::getFullName)
-        .forEach(
-            e ->
-                Log.error(
-                    String.format(
-                        "0xCDC0D: The name %s is used several times. Classes, interfaces and enumerations may not use the same names.",
-                        e.getName()),
-                    e.getAstNode().get_SourcePositionStart()));
+    Collection<CDTypeSymbol> types = cdDefinition.streamCDElements().filter(
+        e -> e instanceof ASTCDType).map(e -> ((ASTCDType) e).getSymbol()).collect(Collectors
+            .toList());
+    
+    CoCoHelper.findDuplicatesBy(types, TypeSymbol::getFullName).forEach(e -> Log.error(String
+        .format(
+            "0xCDC0D: The name %s is used several times. Classes, interfaces and enumerations may not use the same names.",
+            e.getName()), e.getAstNode().get_SourcePositionStart()));
   }
+  
 }

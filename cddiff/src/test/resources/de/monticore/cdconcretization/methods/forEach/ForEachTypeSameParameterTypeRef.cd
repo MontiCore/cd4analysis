@@ -1,0 +1,7 @@
+classdiagram ForEachTypeSameReturnTypeRef {
+  class Message;
+
+  class MessageBus {
+    <<forEach="Message">> void sendMessage(Message message);
+  }
+}

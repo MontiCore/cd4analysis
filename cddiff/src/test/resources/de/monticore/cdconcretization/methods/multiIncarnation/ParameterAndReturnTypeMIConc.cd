@@ -1,0 +1,8 @@
+classdiagram ParameterAndReturnTypeMIConc {
+
+  <<ref="Account">> class PersonalAccount;
+  <<ref="Account">> class BusinessAccount;
+
+  <<ref="Transaction">> class NormalTransaction;
+  <<ref="Transaction">> class InstantTransaction;
+}

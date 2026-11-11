@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram ReferenceMethods {
+
+  class Operator {
+    <<ref="operation">> void operation(String input, int param);
+    <<ref="operation">> String operation2(int input, String param);
+  }
+}

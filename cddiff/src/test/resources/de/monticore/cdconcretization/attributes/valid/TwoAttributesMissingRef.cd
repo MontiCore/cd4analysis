@@ -1,0 +1,6 @@
+classdiagram TwoAttributesMissingRef {
+  class Employee {
+    int number;
+    int salary;
+  }
+}

@@ -1,5 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
+
 package conflictDifferentTypes;
+
+import java.util.Date;
+
 classdiagram B {
 	class Person {
 		Date birthday;

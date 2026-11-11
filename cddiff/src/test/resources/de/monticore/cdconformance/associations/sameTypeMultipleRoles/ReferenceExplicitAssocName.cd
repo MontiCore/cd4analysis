@@ -1,0 +1,8 @@
+classdiagram ReferenceExplicitAssocName {
+
+  class Account;
+  class Transaction;
+
+  association transactionSource Transaction -> (source) Account [1];
+  association transactionTarget Transaction -> (target) Account [1];
+}

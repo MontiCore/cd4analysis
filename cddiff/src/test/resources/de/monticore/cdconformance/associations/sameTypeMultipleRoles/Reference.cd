@@ -1,0 +1,8 @@
+classdiagram Reference {
+
+  class Account;
+  class Transaction;
+
+  association Transaction -> (source) Account [1];
+  association Transaction -> (target) Account [1];
+}

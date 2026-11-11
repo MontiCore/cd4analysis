@@ -1,0 +1,38 @@
+# (c) https://github.com/MontiCore/monticore
+name: Report Proposed Changes Test Results
+on:
+  workflow_run:
+    workflows: [ Test Proposed Changes ]
+    types: [ completed ]
+
+# Note: This is a separate workflow (file) to constrain the write permissions & secrets
+jobs:
+  trigger-montiverse-fork:
+    # only run on forked PRs with a successful build workflow (as we have to elevate permissions & gain access to secrets)
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event  == 'pull_request' && github.event.workflow_run.head_repository.full_name != github.repository}}
+    uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
+    with:
+      project: "CD4A"
+      refspec: ${{github.event.workflow_run.head_sha}} # Use the head commit of the PR
+    permissions: # allow this action to give feedback on its checks
+      pull-requests: write
+      statuses: write
+    secrets: inherit
+
+  checks:
+    runs-on: ubuntu-latest
+    if: ${{github.event.workflow_run.conclusion  != 'skipped'}}
+    permissions:
+      checks: write
+    steps:
+      - name: Download Test Report
+        uses: dawidd6/action-download-artifact@20319c5641d495c8a52e688b7dc5fada6c3a9fbc
+        with:
+          name: junit-test-results
+          workflow: ${{ github.event.workflow.id }}
+          run_id: ${{ github.event.workflow_run.id }}
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@a451de5ac1ff45e46508b6150cb4f51a287d0309
+        with:
+          commit: ${{github.event.workflow_run.head_sha}}
+          report_paths: '**/target/test-results/*/TEST-*.xml'

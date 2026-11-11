@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram TOPMechanismTest {
+
+  <<getter,setter,builder>> public class TOPMechanismTest {
+     public int myInt;
+     public boolean myBool;
+     -> (manyB) Integer [*];
+     -> (optB) Integer [0..1] ;
+     -> (oneB) Integer [1];
+  }
+}

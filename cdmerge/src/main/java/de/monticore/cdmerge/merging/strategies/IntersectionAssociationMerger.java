@@ -11,15 +11,16 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
  * diagrams is allowes as long as there are distinct mathc candidates
  */
 public class IntersectionAssociationMerger extends AssociationMerger {
-
-  public IntersectionAssociationMerger(
-      MergeBlackBoard mergeBlackBoard, AssociationMergeStrategy associationMergeStrategy) {
+  
+  public IntersectionAssociationMerger(MergeBlackBoard mergeBlackBoard,
+      AssociationMergeStrategy associationMergeStrategy) {
     super(mergeBlackBoard, associationMergeStrategy);
   }
-
+  
   @Override
   public void mergeAssociations(ASTCDDefinition cd1, ASTCDDefinition cd2, CDMatch matchResult) {
     // TODO - Implement Association Intersection Merger
     throw new UnsupportedOperationException("AssociationIntersectionMerger NOT IMPLEMENTED");
   }
+  
 }

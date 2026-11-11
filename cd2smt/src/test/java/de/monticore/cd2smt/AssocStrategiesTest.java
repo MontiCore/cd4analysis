@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -10,25 +12,25 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class AssocStrategiesTest extends CD2SMTAbstractTest {
-
+  
   @BeforeEach
   public void setup() {
     Log.init();
+    CD4CodeMill.reset();
     CD4CodeMill.init();
   }
-
+  
   @Test
   public void testOptionalCard() {
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     Context ctx = new Context(cfg);
     ASTCDCompilationUnit ast = parseModel("/assocStrategies/Optional.cd");
@@ -42,26 +44,15 @@ public class AssocStrategiesTest extends CD2SMTAbstractTest {
     Expr<? extends Sort> motor1 = ctx.mkConst("motor1", Motor);
     Expr<? extends Sort> motor2 = ctx.mkConst("motor2", Motor);
     Expr<? extends Sort> car = ctx.mkConst("car", Car);
-
-    BoolExpr two =
-        ctx.mkAnd(
-            ctx.mkNot(ctx.mkEq(motor1, motor2)),
-            cd2SMTGenerator.evaluateLink(
-                ast.getCDDefinition().getCDAssociationsList().get(0),
-                ClassCar,
-                MotorClass,
-                car,
-                motor2),
-            cd2SMTGenerator.evaluateLink(
-                ast.getCDDefinition().getCDAssociationsList().get(0),
-                ClassCar,
-                MotorClass,
-                car,
-                motor1));
-
-    Solver solver =
-        cd2SMTGenerator.makeSolver(
-            List.of(IdentifiableBoolExpr.buildIdentifiable(two, null, Optional.of("Two_Motor"))));
-    Assertions.assertEquals(Status.UNSATISFIABLE, solver.check());
+    
+    BoolExpr two = ctx.mkAnd(ctx.mkNot(ctx.mkEq(motor1, motor2)), cd2SMTGenerator.evaluateLink(ast
+        .getCDDefinition().getCDAssociationsList().get(0), ClassCar, MotorClass, car, motor2),
+        cd2SMTGenerator.evaluateLink(ast.getCDDefinition().getCDAssociationsList().get(0), ClassCar,
+            MotorClass, car, motor1));
+    
+    Solver solver = cd2SMTGenerator.makeSolver(List.of(IdentifiableBoolExpr.buildIdentifiable(two,
+        null, Optional.of("Two_Motor"))));
+    assertEquals(Status.UNSATISFIABLE, solver.check());
   }
+  
 }

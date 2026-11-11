@@ -39,16 +39,16 @@ import org.apache.commons.io.FileUtils;
  * etc.
  */
 public class CDMergeUtils {
-
+  
   private static final CD4CodeFullPrettyPrinter inlinePrettyPrinter;
-
+  
   private static CD4CodeParser parser;
-
+  
   static {
     StringBuilder sb = new StringBuilder();
     inlinePrettyPrinter = new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
   }
-
+  
   /** Returns the common Attributes from two classes (Names checked only) */
   public static List<ASTCDAttribute> commonAttributeNames(ASTCDClass class1, ASTCDClass class2) {
     List<ASTCDAttribute> common = new ArrayList<>();
@@ -61,32 +61,32 @@ public class CDMergeUtils {
     }
     return common;
   }
-
+  
   /** Returns the Diff of Attributes from two classes (Names checked only) */
   public static List<ASTCDAttribute> diffAttributes(ASTCDClass class1, ASTCDClass class2) {
     List<ASTCDAttribute> common = commonAttributeNames(class1, class2);
     List<ASTCDAttribute> diff = new ArrayList<>();
-
+    
     diff.addAll(class1.getCDAttributeList());
     diff.addAll(class2.getCDAttributeList());
     if (common.isEmpty()) {
       return diff;
     }
-
+    
     diff.removeIf(attr -> common.stream().anyMatch(a -> a.getName().equals(attr.getName())));
     return diff;
   }
-
+  
   /**
    * resolves an attribute in a AST Class
    *
    * @param name the name of the attribute to be resolved
    * @param clazz class to be searched in
    * @return the found attribute's ASTNode or empty if the class does not contain this attribute or
-   *     the class doesn't exist
+   * the class doesn't exist
    */
-  public static Optional<ASTCDAttribute> getAttributeFromClass(
-      final String name, final ASTCDClass clazz) {
+  public static Optional<ASTCDAttribute> getAttributeFromClass(final String name,
+      final ASTCDClass clazz) {
     for (ASTCDAttribute attribute : clazz.getCDAttributeList()) {
       if (attribute.getName().equalsIgnoreCase(name)) {
         return Optional.of(attribute);
@@ -94,7 +94,7 @@ public class CDMergeUtils {
     }
     return Optional.empty();
   }
-
+  
   /**
    * resolves a class in a class diagram
    *
@@ -110,7 +110,7 @@ public class CDMergeUtils {
     }
     return Optional.empty();
   }
-
+  
   /**
    * resolves a constant in an enum
    *
@@ -126,7 +126,7 @@ public class CDMergeUtils {
     }
     return Optional.empty();
   }
-
+  
   /**
    * resolves an enumeration in a class diagram
    *
@@ -142,7 +142,7 @@ public class CDMergeUtils {
     }
     return Optional.empty();
   }
-
+  
   public static String getFullQualifiedName(List<String> parts) {
     if (parts == null || parts.isEmpty()) {
       return "";
@@ -151,7 +151,7 @@ public class CDMergeUtils {
     parts.forEach(s -> sj.add(s));
     return sj.toString();
   }
-
+  
   /**
    * resolves an interface in a class diagram
    *
@@ -159,8 +159,8 @@ public class CDMergeUtils {
    * @param cd the class diagram
    * @return the found type's ASTNode empty if the cd does not contain an interface with this name
    */
-  public static Optional<ASTCDInterface> getInterface(
-      final String interfaceName, final ASTCDDefinition cd) {
+  public static Optional<ASTCDInterface> getInterface(final String interfaceName,
+      final ASTCDDefinition cd) {
     for (ASTCDInterface iface : cd.getCDInterfacesList()) {
       if (iface.getName().equalsIgnoreCase(interfaceName)) {
         return Optional.of(iface);
@@ -168,11 +168,11 @@ public class CDMergeUtils {
     }
     return Optional.empty();
   }
-
+  
   public static String getName(ASTMCObjectType referenceType) {
     return referenceType.printType();
   }
-
+  
   public static String getName(ASTNode astCDNode) {
     if (astCDNode instanceof ASTCDDefinition) {
       return ((ASTCDDefinition) astCDNode).getName();
@@ -190,16 +190,15 @@ public class CDMergeUtils {
       ASTCDAssociation assoc = (ASTCDAssociation) astCDNode;
       if (assoc.isPresentName()) {
         return assoc.getName();
-      } else {
-        return "A_"
-            + assoc.getLeftQualifiedName().getBaseName()
-            + "_"
-            + assoc.getRightQualifiedName().getBaseName();
+      }
+      else {
+        return "A_" + assoc.getLeftQualifiedName().getBaseName() + "_" + assoc
+            .getRightQualifiedName().getBaseName();
       }
     }
     return "";
   }
-
+  
   /**
    * resolves a type in a class diagram
    *
@@ -222,54 +221,54 @@ public class CDMergeUtils {
     }
     return Optional.empty();
   }
-
+  
   public static String getTypeName(ASTCDAttribute attr) {
     if (attr == null) {
       return "";
     }
     return getTypeName(attr.getMCType());
   }
-
+  
   public static String getTypeName(ASTMCType type) {
     if (type == null) {
       return "";
     }
     return type.printType();
   }
-
+  
   /** Used for log outputs */
   public static String prettyPrint(ASTCD4CodeNode node) {
     return CD4CodeMill.prettyPrint(node, true);
   }
-
+  
   public static String prettyPrint(ASTCDBasisNode node) {
     return CD4CodeMill.prettyPrint(node, true);
   }
-
+  
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTMCBasicTypesNode node) {
     inlinePrettyPrinter.getPrinter().clearBuffer();
     node.accept(inlinePrettyPrinter.getTraverser());
     return inlinePrettyPrinter.getPrinter().getContent();
   }
-
+  
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTCD4CodeNode node) {
-
+    
     return inlinePrettyPrinter.prettyprint(node);
   }
-
+  
   public static String prettyPrintInline(ASTCDAssociationNode node) {
     return inlinePrettyPrinter.prettyprint(node);
   }
-
+  
   public static String prettyPrintInline(ASTCDBasisNode node) {
     StringBuilder sb = new StringBuilder();
-    CD4CodeFullPrettyPrinter prettyPrinter =
-        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
+    CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter(
+        new NoLineBreakIndentPrinter(sb));
     return prettyPrinter.prettyprint(node);
   }
-
+  
   public static String prettyPrintInline(ASTNode node) {
     if (node instanceof ASTCDCompilationUnit) {
       return "classdiagram " + ((ASTCDCompilationUnit) node).getCDDefinition().getName();
@@ -288,7 +287,7 @@ public class CDMergeUtils {
     }
     return node.toString();
   }
-
+  
   public static void removeSuperInterface(ASTCDClass baseType, ASTMCType interfToRemove) {
     if (baseType.getInterfaceList().contains(interfToRemove)) {
       baseType.getInterfaceList().remove(interfToRemove);
@@ -297,7 +296,7 @@ public class CDMergeUtils {
       baseType.setCDInterfaceUsageAbsent();
     }
   }
-
+  
   public static void removeSuperInterface(ASTCDClass baseType, String interfToRemove) {
     if (baseType.getInterfaceList().size() > 0) {
       for (ASTMCType iface : baseType.getInterfaceList()) {
@@ -308,7 +307,7 @@ public class CDMergeUtils {
       }
     }
   }
-
+  
   public static void removeSuperInterface(ASTCDInterface baseType, ASTMCType interfToRemove) {
     if (baseType.getInterfaceList().contains(interfToRemove)) {
       baseType.getInterfaceList().remove(interfToRemove);
@@ -317,7 +316,7 @@ public class CDMergeUtils {
       baseType.setCDExtendUsageAbsent();
     }
   }
-
+  
   public static void removeSuperInterface(ASTCDInterface baseType, String interfToRemove) {
     if (baseType.getInterfaceList().size() > 0) {
       for (ASTMCType iface : baseType.getInterfaceList()) {
@@ -328,30 +327,32 @@ public class CDMergeUtils {
       }
     }
   }
-
+  
   public static void removeSuperInterface(ASTCDType baseType, ASTMCType interfToRemove) {
     if (baseType instanceof ASTCDClass) {
       removeSuperInterface((ASTCDClass) baseType, interfToRemove);
-    } else if (baseType instanceof ASTCDInterface) {
+    }
+    else if (baseType instanceof ASTCDInterface) {
       removeSuperInterface((ASTCDInterface) baseType, interfToRemove);
     }
   }
-
+  
   public static void removeSuperInterface(ASTCDType baseType, String interfToRemove) {
     if (baseType instanceof ASTCDClass) {
       removeSuperInterface((ASTCDClass) baseType, interfToRemove);
-    } else if (baseType instanceof ASTCDInterface) {
+    }
+    else if (baseType instanceof ASTCDInterface) {
       removeSuperInterface((ASTCDInterface) baseType, interfToRemove);
     }
   }
-
+  
   private static CD4CodeParser getParser() {
     if (parser == null) {
       parser = CD4CodeMill.parser();
     }
     return parser;
   }
-
+  
   /**
    * Parses a CD4Code model from file, without performing any CoCo checks.
    *
@@ -362,7 +363,7 @@ public class CDMergeUtils {
   public static Optional<ASTCDCompilationUnit> parseCDFile(String modelfile) throws IOException {
     return parseCDFile(modelfile, false);
   }
-
+  
   /**
    * Parses a CD4Code model from file, will resolve Local symbol
    *
@@ -373,38 +374,35 @@ public class CDMergeUtils {
   public static Optional<ASTCDCompilationUnit> parseCDFile(String modelfile, boolean checkCoCos)
       throws IOException {
     Path p = Paths.get(modelfile).toAbsolutePath();
-
+    
     // Make sure we have a filename extension
     String[] nameParts = p.getFileName().toString().split("\\.(?=[^\\.]+$)");
     if (nameParts.length != 2) {
       return Optional.empty();
     }
-
-    Optional<ASTCDCompilationUnit> ast =
-        parseCDCompilationUnit(
-            FileUtils.readFileToString(new File(p.toUri()), Charset.defaultCharset()), checkCoCos);
+    
+    Optional<ASTCDCompilationUnit> ast = parseCDCompilationUnit(FileUtils.readFileToString(new File(
+        p.toUri()), Charset.defaultCharset()), checkCoCos);
     if (ast.isPresent()) {
       String simpleFileName = p.getFileName().toString().replace(".cd", "");
       String modelName = ast.get().getCDDefinition().getName();
       if (!modelName.equals(simpleFileName)) {
-        Log.error(
-            "The name of the diagram "
-                + modelName
-                + " is not identical to the name of the file "
-                + simpleFileName
-                + " (without its file-extension).");
+        Log.error("The name of the diagram " + modelName
+            + " is not identical to the name of the file " + simpleFileName
+            + " (without its file-extension).");
       }
     }
     return ast;
   }
-
-  public static Optional<ASTCDCompilationUnit> parseCDCompilationUnit(
-      String model, boolean checkCoCos) {
-
+  
+  public static Optional<ASTCDCompilationUnit> parseCDCompilationUnit(String model,
+      boolean checkCoCos) {
+    
     Optional<ASTCDCompilationUnit> ast = Optional.empty();
     try {
       ast = getParser().parse_StringCDCompilationUnit(model);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       // Should never happen
       Log.error("Unable to parse input model due to IO Exception!");
     }
@@ -415,61 +413,63 @@ public class CDMergeUtils {
       // Ensure every CDElement is in a package and perform default AST Trafos
       final CDMergeAfterParseTrafo afterParseTrafo = new CDMergeAfterParseTrafo();
       afterParseTrafo.transform(cd);
-
+      
       if (checkCoCos) {
         if (checkCoCos) {
           CD4CodeCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
           checker.checkAll(cd);
         }
       }
-
-    } else {
+      
+    }
+    else {
       if (parser.hasErrors()) {
         Log.error("Unable to parse input model due to parsing Errors!");
-      } else {
+      }
+      else {
         Log.error("Unable to parse input model  !");
       }
     }
     return ast;
   }
-
+  
   public static void refreshSymbolTable(ASTCDCompilationUnit cd) {
     if (cd.getEnclosingScope() != null) {
       CD4CodeMill.globalScope().removeSubScope(cd.getEnclosingScope());
     }
-
+    
     // Resolve the symboltable
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
     scope.addImports(new ImportStatement("java.lang", true));
-
+    
     final CD4CodeTraverser completer = new CD4CodeSymbolTableCompleter(cd).getTraverser();
-
+    
     cd.accept(completer);
   }
-
+  
   public static Optional<ASTCDCompilationUnit> parseCDCompilationUnit(String model) {
     return parseCDCompilationUnit(model, false);
   }
-
+  
   /**
    * Filters the list of attributes from class1 and keeps only the attributes which are not declared
    * in class2
    */
-  public static List<ASTCDAttribute> retainUniqueAttributesFromClass1(
-      ASTCDClass class1, ASTCDClass class2) {
+  public static List<ASTCDAttribute> retainUniqueAttributesFromClass1(ASTCDClass class1,
+      ASTCDClass class2) {
     List<ASTCDAttribute> common = commonAttributeNames(class1, class2);
     List<ASTCDAttribute> diff = new ArrayList<>();
     diff.addAll(class1.getCDAttributeList());
     diff.removeIf(attr -> common.stream().anyMatch(a -> a.getName().equals(attr.getName())));
     return diff;
   }
-
+  
   public static void setSuperClass(ASTCDClass clazz, ASTMCObjectType superClazz) {
     ASTCDExtendUsage extend = new ASTCDExtendUsageBuilder().build();
     extend.addSuperclass(superClazz);
     clazz.setCDExtendUsage(extend);
   }
-
+  
   /**
    * Returns a temporary ASTCDAssociation clone of association2 where lefthand-side and
    * righthand-side corresponds to the types in association1. This makes further comparison more
@@ -477,91 +477,75 @@ public class CDMergeUtils {
    */
   public static Optional<ASTCDAssociation> tryAlignAssociation(
       ASTCDAssociation associationReference, ASTCDAssociation associationToAlign) {
-
+    
     boolean doFlip = false;
-
-    AssociationDirection directionReference =
-        AssociationDirection.getDirection(associationReference);
+    
+    AssociationDirection directionReference = AssociationDirection.getDirection(
+        associationReference);
     AssociationDirection directionToAlign = AssociationDirection.getDirection(associationToAlign);
-
+    
     // Special case for two reflexive associations A -- A
-    if (associationReference
-            .getLeftReferenceName()
-            .toString()
-            .equalsIgnoreCase(associationReference.getRightReferenceName().toString())
-        && associationToAlign
-            .getLeftReferenceName()
-            .toString()
+    if (associationReference.getLeftReferenceName().toString().equalsIgnoreCase(associationReference
+        .getRightReferenceName().toString()) && associationToAlign.getLeftReferenceName().toString()
             .equalsIgnoreCase(associationToAlign.getRightReferenceName().toString())
-        && associationReference
-            .getLeftReferenceName()
-            .toString()
-            .equals(associationToAlign.getLeftReferenceName().toString())) {
+        && associationReference.getLeftReferenceName().toString().equals(associationToAlign
+            .getLeftReferenceName().toString())) {
       doFlip = checkFlipReflexiveAssociation(associationReference, associationToAlign);
     }
-
+    
     // Case A -- B | A -- B : Don't Flip
-    else if (associationReference
-            .getLeftReferenceName()
-            .toString()
-            .equalsIgnoreCase(associationToAlign.getLeftReferenceName().toString())
-        && associationReference
-            .getRightReferenceName()
-            .toString()
-            .equalsIgnoreCase(associationToAlign.getRightReferenceName().toString())) {
+    else if (associationReference.getLeftReferenceName().toString().equalsIgnoreCase(
+        associationToAlign.getLeftReferenceName().toString()) && associationReference
+            .getRightReferenceName().toString().equalsIgnoreCase(associationToAlign
+                .getRightReferenceName().toString())) {
       // Already aligned, nothing to do..
       return Optional.of(associationToAlign);
     }
-
+    
     // Case A -- B | B -- A : Always flip
-    else if (associationReference
-            .getLeftReferenceName()
-            .toString()
-            .equalsIgnoreCase(associationToAlign.getRightReferenceName().toString())
-        && associationReference
-            .getRightReferenceName()
-            .toString()
-            .equalsIgnoreCase(associationToAlign.getLeftReferenceName().toString())) {
+    else if (associationReference.getLeftReferenceName().toString().equalsIgnoreCase(
+        associationToAlign.getRightReferenceName().toString()) && associationReference
+            .getRightReferenceName().toString().equalsIgnoreCase(associationToAlign
+                .getLeftReferenceName().toString())) {
       doFlip = true;
-
-    } else {
+      
+    }
+    else {
       // Associations don't seem to match
       return Optional.empty();
     }
-
+    
     if (doFlip) {
       // FLIP
       ASTCDAssociation flippedAssociation = associationToAlign.deepClone();
       flippedAssociation.setEnclosingScope(associationToAlign.getEnclosingScope());
-
+      
       // Flip sides
-      flippedAssociation.setLeft(
-          CDAssociationPartFromTemplateBuilder.buildLeftAssociation(associationToAlign.getRight()));
-      flippedAssociation.setRight(
-          CDAssociationPartFromTemplateBuilder.buildRightAssociation(associationToAlign.getLeft()));
-
+      flippedAssociation.setLeft(CDAssociationPartFromTemplateBuilder.buildLeftAssociation(
+          associationToAlign.getRight()));
+      flippedAssociation.setRight(CDAssociationPartFromTemplateBuilder.buildRightAssociation(
+          associationToAlign.getLeft()));
+      
       // flip direction
       switch (directionToAlign) {
         case LeftToRight:
-          flippedAssociation.setCDAssocDir(
-              CDAssociationPartFromTemplateBuilder.buildRightToLeftDir(
-                  associationToAlign.getCDAssocDir()));
+          flippedAssociation.setCDAssocDir(CDAssociationPartFromTemplateBuilder.buildRightToLeftDir(
+              associationToAlign.getCDAssocDir()));
           break;
         case RightToLeft:
-          flippedAssociation.setCDAssocDir(
-              CDAssociationPartFromTemplateBuilder.buildLeftToRightDir(
-                  associationToAlign.getCDAssocDir()));
+          flippedAssociation.setCDAssocDir(CDAssociationPartFromTemplateBuilder.buildLeftToRightDir(
+              associationToAlign.getCDAssocDir()));
           break;
         default:
           break;
       }
       return Optional.of(flippedAssociation);
     }
-
+    
     // Don't Flip
     return Optional.of(associationToAlign);
   }
-
+  
   /**
    * Checks if the role-name on the left-hand side of the association is explicitly defined or was
    * derived from association name or referred type
@@ -578,15 +562,13 @@ public class CDMergeUtils {
         return false;
       }
     }
-    if (association
-        .getLeftQualifiedName()
-        .getBaseName()
-        .equalsIgnoreCase(association.getLeft().getCDRole().getName())) {
+    if (association.getLeftQualifiedName().getBaseName().equalsIgnoreCase(association.getLeft()
+        .getCDRole().getName())) {
       return false;
     }
     return true;
   }
-
+  
   /**
    * Checks if the role-name on the right-hand side of the association is explicitly defined or was
    * derived from association name or referred type
@@ -603,15 +585,13 @@ public class CDMergeUtils {
         return false;
       }
     }
-    if (association
-        .getRightQualifiedName()
-        .getBaseName()
-        .equalsIgnoreCase(association.getRight().getCDRole().getName())) {
+    if (association.getRightQualifiedName().getBaseName().equalsIgnoreCase(association.getRight()
+        .getCDRole().getName())) {
       return false;
     }
     return true;
   }
-
+  
   /**
    * Special case for reflexive associations A -- A Try to determine if the associations would
    * correspond better if we flip the second association Unchecked precondition is that both
@@ -621,96 +601,82 @@ public class CDMergeUtils {
    * @param associationToAlign the Association that should be aligned to the reference
    * @return true, if the associationToAlign should be flipped
    */
-  private static boolean checkFlipReflexiveAssociation(
-      ASTCDAssociation associationReference, ASTCDAssociation associationToAlign) {
-
+  private static boolean checkFlipReflexiveAssociation(ASTCDAssociation associationReference,
+      ASTCDAssociation associationToAlign) {
+    
     boolean alignByRoles = false;
-    AssociationDirection directionReference =
-        AssociationDirection.getDirection(associationReference);
+    AssociationDirection directionReference = AssociationDirection.getDirection(
+        associationReference);
     AssociationDirection directionToAlign = AssociationDirection.getDirection(associationToAlign);
-
+    
     // try to do determine orientation by using the roles, but only if it's not an automatically
     // induced role (i.e. role is not the same as the association name or referred Type name)
-    if (isExplicitRoleDefinitionLeftSide(associationReference)
-        && isExplicitRoleDefinitionRightSide(associationToAlign)) {
-      if (!associationReference
-          .getLeft()
-          .getCDRole()
-          .getName()
-          .equals(associationToAlign.getRight().getCDRole().getName())) {
+    if (isExplicitRoleDefinitionLeftSide(associationReference) && isExplicitRoleDefinitionRightSide(
+        associationToAlign)) {
+      if (!associationReference.getLeft().getCDRole().getName().equals(associationToAlign.getRight()
+          .getCDRole().getName())) {
         return true;
       }
     }
-    if (isExplicitRoleDefinitionRightSide(associationReference)
-        && isExplicitRoleDefinitionLeftSide(associationToAlign)) {
-      if (!associationReference
-          .getRight()
-          .getCDRole()
-          .getName()
-          .equals(associationToAlign.getLeft().getCDRole().getName())) {
+    if (isExplicitRoleDefinitionRightSide(associationReference) && isExplicitRoleDefinitionLeftSide(
+        associationToAlign)) {
+      if (!associationReference.getRight().getCDRole().getName().equals(associationToAlign.getLeft()
+          .getCDRole().getName())) {
         return true;
       }
     }
-
+    
     boolean conflict = false;
     // Try to align according to Cardinalities, but we must ensure first, that roles match
-    if (associationReference.getLeft().isPresentCDRole()
-        && associationToAlign.getLeft().isPresentCDRole()) {
-      if (!associationReference
-          .getLeft()
-          .getCDRole()
-          .getName()
-          .equals(associationToAlign.getLeft().getCDRole().getName())) {
+    if (associationReference.getLeft().isPresentCDRole() && associationToAlign.getLeft()
+        .isPresentCDRole()) {
+      if (!associationReference.getLeft().getCDRole().getName().equals(associationToAlign.getLeft()
+          .getCDRole().getName())) {
         conflict = true;
       }
     }
-    if (!conflict
-        && associationReference.getRight().isPresentCDRole()
-        && associationToAlign.getRight().isPresentCDRole()) {
-      if (!associationReference
-          .getRight()
-          .getCDRole()
-          .getName()
-          .equals(associationToAlign.getRight().getCDRole().getName())) {
+    if (!conflict && associationReference.getRight().isPresentCDRole() && associationToAlign
+        .getRight().isPresentCDRole()) {
+      if (!associationReference.getRight().getCDRole().getName().equals(associationToAlign
+          .getRight().getCDRole().getName())) {
         conflict = true;
       }
     }
     if (!conflict) {
-      if (associationReference.getLeft().isPresentCDCardinality()
-          && associationToAlign.getRight().isPresentCDCardinality()) {
-        if (associationReference
-            .getLeft()
-            .getCDCardinality()
-            .deepEquals(associationToAlign.getRight().getCDCardinality())) {
+      if (associationReference.getLeft().isPresentCDCardinality() && associationToAlign.getRight()
+          .isPresentCDCardinality()) {
+        if (associationReference.getLeft().getCDCardinality().deepEquals(associationToAlign
+            .getRight().getCDCardinality())) {
           return true;
         }
       }
-      if (associationReference.getRight().isPresentCDCardinality()
-          && associationToAlign.getLeft().isPresentCDCardinality()) {
-        if (associationReference
-            .getRight()
-            .getCDCardinality()
-            .deepEquals(associationToAlign.getLeft().getCDCardinality())) {
+      if (associationReference.getRight().isPresentCDCardinality() && associationToAlign.getLeft()
+          .isPresentCDCardinality()) {
+        if (associationReference.getRight().getCDCardinality().deepEquals(associationToAlign
+            .getLeft().getCDCardinality())) {
           return true;
         }
       }
     }
-
+    
     // We could not determine an alignment for the two reflexive
     // associations. If none was configured bidirectional we ensure, that
     // they have the same orientation A -> A / A <- A
     // A -> A[1] vs [1] A <- A
     switch (directionReference) {
       case LeftToRight:
-        if (directionToAlign == AssociationDirection.RightToLeft) return true;
+        if (directionToAlign == AssociationDirection.RightToLeft)
+          return true;
         break;
       case RightToLeft:
-        if (directionToAlign == AssociationDirection.LeftToRight) return true;
+        if (directionToAlign == AssociationDirection.LeftToRight)
+          return true;
         break;
       default:
         break;
     }
-
+    
     return false;
   }
+  
 }

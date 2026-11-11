@@ -4,15 +4,15 @@ package de.monticore.cd.plantuml;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._visitor.UMLModifierVisitor2;
 
-public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
-    implements UMLModifierVisitor2 {
-
+public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil implements
+    UMLModifierVisitor2 {
+  
   public UMLModiferPlantUMLPrettyPrinter() {}
-
+  
   public UMLModiferPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
   }
-
+  
   @Override
   public void visit(ASTModifier node) {
     if (node.isPrivate()) {
@@ -24,7 +24,7 @@ public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     if (node.isPublic()) {
       print("+");
     }
-
+    
     if (node.isStatic()) {
       print("{static} ");
     }
@@ -32,4 +32,5 @@ public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print("{abstract} ");
     }
   }
+  
 }

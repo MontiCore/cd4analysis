@@ -1,0 +1,29 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram TicketSystemConc {
+
+  <<ref="Task">> class Ticket {
+    <<ref="title">> String summary;
+    <<ref="description">> String detail;
+    TaskStatus status;
+  }
+
+  <<ref="Project">> class Workspace {
+    <<ref="name">> String label;
+    boolean archived;
+  }
+
+  class Member {
+    String name;
+    String email;
+  }
+
+  enum TaskStatus {
+    Open, InProgress, Done;
+  }
+
+  association Member -> (assignedTickets) Ticket [*];
+  association Workspace -> (members) Member [*];
+  association Workspace -> Ticket [*];
+}

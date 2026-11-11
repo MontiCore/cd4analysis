@@ -12,24 +12,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ASTCDEnum extends ASTCDEnumTOP {
+  
   protected final CDInterfaceAndEnumFullPrettyPrinter printer =
       new CDInterfaceAndEnumFullPrettyPrinter(new IndentPrinter());
-
+  
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {
     super.setSpannedScope((IOOSymbolsScope) spannedScope);
   }
-
+  
   @Override
   public List<ASTMCObjectType> getSuperclassList() {
     return Collections.emptyList(); // empty unmodifiable list
   }
-
+  
   @Override
   public String printSuperclasses() {
     return "";
   }
-
+  
   @Override
   public List<ASTMCObjectType> getInterfaceList() {
     if (!isPresentCDInterfaceUsage()) {
@@ -37,7 +38,7 @@ public class ASTCDEnum extends ASTCDEnumTOP {
     }
     return getCDInterfaceUsage().getInterfaceList();
   }
-
+  
   /**
    * Prints the name of the interfaces as a comma-separated string
    *
@@ -48,8 +49,8 @@ public class ASTCDEnum extends ASTCDEnumTOP {
     if (!isPresentCDInterfaceUsage()) {
       return PrettyPrintUtil.EMPTY_STRING;
     }
-    return getCDInterfaceUsage().getInterfaceList().stream()
-        .map(ASTMCObjectType::printType)
+    return getCDInterfaceUsage().getInterfaceList().stream().map(ASTMCObjectType::printType)
         .collect(Collectors.joining(","));
   }
+  
 }

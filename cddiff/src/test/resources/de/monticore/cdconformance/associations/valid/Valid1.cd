@@ -12,5 +12,6 @@ classdiagram Valid1 {
 
   association belongTo AccountTop    -> Person[1];
   association access   PersonTop     -> Account[*];
+  <<ref="access">> association bankAccountAccess PersonTop -> BankAccount[*];
 }
 

@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram EcommerceDomain {
+
+  <<ref="Entity">> class Product {
+    <<ref="key">> String sku;
+    double price;
+  }
+
+  <<ref="Entity">> class Order {
+     <<ref="key">> long id;
+  }
+
+  <<ref="Entity">> class Customer {
+     <<ref="key">> long id;
+     <<ref="key">> String email;
+  }
+}

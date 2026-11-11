@@ -1,0 +1,17 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  class Builder {
+    <<ref="ForEachAttributeRef.Builder.attribute">> Builder firstName(String firstName);
+    <<ref="ForEachAttributeRef.Builder.attribute">> Builder lastName(String lastName);
+    <<ref="ForEachAttributeRef.Builder.attribute">> Builder number(int number);
+    <<ref="ForEachAttributeRef.Builder.attribute">> Builder salary(int salary);
+  }
+}
