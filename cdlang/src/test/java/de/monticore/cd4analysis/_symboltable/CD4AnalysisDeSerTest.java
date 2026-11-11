@@ -3,6 +3,8 @@ package de.monticore.cd4analysis._symboltable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -27,6 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -108,6 +111,87 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final CDRoleSymbol right = s.get().getRight();
     assertEquals("upper", right.getName());
     assertTrue(right.isIsDefinitiveNavigable());
+  }
+  
+  /**
+   * Serializes a model in which every association is explicitly named twice (parsed twice, with a
+   * cleared symbol table in between). Both outputs must be the same and the SymAssociations must
+   * be restored when deserializing.
+   */
+  @Test
+  public void namedAssociationRoundTrip() throws IOException {
+    final String model = "cdassociation/symboltable/SerializationNamedCD.cd";
+    final String cdName = "de.monticore.cdassociation.symboltable.SerializationNamedCD.";
+    
+    final String first = parseAndSerialize(model);
+    
+    // clear the symbol table in between both runs
+    final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
+    globalScope.clear();
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
+    BuiltInTypes.addBuiltInTypes(globalScope);
+    assertTrue(globalScope.getSubScopes().isEmpty());
+    
+    final String second = parseAndSerialize(model);
+    assertEquals(first, second);
+    // no warning about unnamed associations
+    assertTrue(Log.getFindings().isEmpty(), getJoinedErrors());
+    
+    // the SymAssociations are identified via the name of the association
+    assertTrue(first.contains("\"association\":\"" + cdName + "namedAssoc\""), first);
+    assertTrue(first.contains("\"" + cdName + "namedAssoc\":{"), first);
+    
+    final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(second);
+    final CDTypeSymbol a = deserialize.resolveCDType("A").get();
+    final CDTypeSymbol b = deserialize.resolveCDType("B").get();
+    final CDTypeSymbol d = deserialize.resolveCDType("D").get();
+    
+    // association symbol and both roles share one SymAssociation
+    final CDAssociationSymbol withRoles = deserialize.resolveCDAssociation("namedAssocWithRoles")
+        .get();
+    assertTrue(withRoles.isPresentAssoc());
+    assertTrue(withRoles.getAssoc().isAssociation());
+    assertFalse(withRoles.getAssoc().isComposition());
+    assertEquals("myA", withRoles.getLeft().getName());
+    assertEquals("myB", withRoles.getRight().getName());
+    assertSame(a.getCDRoleList("myB").get(0), withRoles.getRight());
+    assertSame(b.getCDRoleList("myA").get(0), withRoles.getLeft());
+    assertSame(withRoles.getAssoc(), withRoles.getLeft().getAssoc());
+    assertSame(withRoles.getAssoc(), withRoles.getRight().getAssoc());
+    assertSame(withRoles.getLeft(), withRoles.getRight().getOtherSide());
+    
+    final CDAssociationSymbol namedAssoc = deserialize.resolveCDAssociation("namedAssoc").get();
+    assertTrue(namedAssoc.isPresentAssoc());
+    assertNotSame(withRoles.getAssoc(), namedAssoc.getAssoc());
+    assertSame(a.getCDRoleList("b").get(0), namedAssoc.getRight());
+    assertSame(b.getCDRoleList("a").get(0), namedAssoc.getLeft());
+    
+    final CDAssociationSymbol composition = deserialize.resolveCDAssociation("namedComposition")
+        .get();
+    assertTrue(composition.isPresentAssoc());
+    assertTrue(composition.getAssoc().isComposition());
+    assertSame(d.getCDRoleList("part").get(0), composition.getRight());
+    assertSame(composition.getAssoc(), composition.getRight().getAssoc());
+  }
+  
+  /** An association without a name is serialized using a non-deterministic identifier */
+  @Test
+  public void unnamedAssociationWarns() throws IOException {
+    parseAndSerialize("cdassociation/symboltable/SerializationCD.cd");
+    assertEquals(0, Log.getErrorCount());
+    // A -> B and both direct compositions of D are not named
+    assertEquals(3, Log.getFindings().stream().filter(f -> f.isWarning() && f.getMsg().startsWith(
+        "0xCD002")).count(), getJoinedErrors());
+    Log.getFindings().clear();
+  }
+  
+  protected String parseAndSerialize(String model) throws IOException {
+    final ASTCDCompilationUnit node = parse(model);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(
+        node);
+    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
+    checkLogError();
+    return new CD4AnalysisSymbols2Json().serialize(scope);
   }
   
   @Disabled("no inner classes are allowed")

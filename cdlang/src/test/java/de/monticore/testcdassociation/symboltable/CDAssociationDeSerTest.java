@@ -3,6 +3,7 @@ package de.monticore.testcdassociation.symboltable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
@@ -52,6 +53,46 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
     assertEquals(0, Log.getErrorCount());
   }
   
+  /**
+   * Serializing the same model twice (run parse + symbol table creation again) should
+   * yield the same output.
+   */
+  @Test
+  public void serializationIsDeterministicTest() {
+    // every association of this model is explicitly named
+    String artifact = "cdassociation/symboltable/SerializationNamedCD.cd";
+
+    String first = parseAndSerialize(artifact);
+
+    // clear the symbol table in between both runs
+    ITestCDAssociationGlobalScope gs = TestCDAssociationMill.globalScope();
+    gs.clear();
+    gs.setSymbolPath(new MCPath(Paths.get(PATH)));
+    BuiltInTypes.addBuiltInTypes(gs);
+    assertTrue(gs.getSubScopes().isEmpty());
+
+    String second = parseAndSerialize(artifact);
+
+    assertEquals(first, second);
+    assertTrue(first.contains("\"association\":\"de.monticore.cdassociation.symboltable."
+        + "SerializationNamedCD.namedAssoc\""), first);
+    // no warning about unnamed associations
+    assertTrue(Log.getFindings().isEmpty(), getJoinedErrors());
+  }
+
+  protected String parseAndSerialize(String artifact) {
+    ASTCDCompilationUnit ast = parseModel(artifact);
+    afterParseTrafo(ast);
+
+    ITestCDAssociationArtifactScope artifactScope = createSymTab(ast);
+    completeSymTab(ast);
+
+    String serialized = new TestCDAssociationSymbols2Json().serialize(artifactScope);
+    assertNotNull(serialized);
+    assertNotEquals("", serialized);
+    return serialized;
+  }
+
   @Test
   public void deserializationTest() {
     ITestCDAssociationGlobalScope gs = TestCDAssociationMill.globalScope();

@@ -113,7 +113,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   
   @Override
   protected Optional<SymAssociation> deserializeAssoc(JsonObject symbolJson) {
-    return symbolJson.getIntegerMemberOpt("association").flatMap(a -> Optional.ofNullable(
+    return symbolJson.getStringMemberOpt("association").flatMap(a -> Optional.ofNullable(
         CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
   }
   

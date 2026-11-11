@@ -9,6 +9,7 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdgen.CDGenTool;
 import de.monticore.runtime.junit.MCAssertions;
+import de.se_rwth.commons.logging.Log;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
@@ -42,6 +43,9 @@ public class CDGeneratorToolTest {
     new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-c", "-s",
         "target/generated/example/symboltable" });
+    // the association of the example is not named
+    MCAssertions.assertHasFindingStartingWith("0xCD002");
+    Log.getFindings().removeIf(f -> f.isWarning() && f.getMsg().startsWith("0xCD002"));
     assertTrue(new File("target/generated/example/symboltable/model/Example.cdsym").isFile());
   }
   
@@ -127,6 +131,9 @@ public class CDGeneratorToolTest {
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c", "-o",
         "target/generated/example/imports", "-c2mc", "-s", "target/generated/example/imports/" });
     
+    // the association of the example is not named
+    MCAssertions.assertHasFindingStartingWith("0xCD002");
+    Log.getFindings().removeIf(f -> f.isWarning() && f.getMsg().startsWith("0xCD002"));
     MCAssertions.assertNoFindings();
     
     new CDGenTool().run(new String[] { "-i",
