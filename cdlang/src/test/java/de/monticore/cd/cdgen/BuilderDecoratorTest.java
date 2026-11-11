@@ -84,7 +84,6 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     MCAssertions.assertHasFindingsStartingWith(
         "0xCDD64: No Builder for attribute `myPrivateBool` can be added, since its private.");
     
-    
     // No builder must be generated for abstract classes
     Assertions.assertTrue(outputDir.toPath().resolve("TestBuilder/TestAbstractBuilder.java")
         .toFile().exists());
