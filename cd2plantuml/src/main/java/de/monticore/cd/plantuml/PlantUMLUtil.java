@@ -5,7 +5,6 @@ import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.prettyprint.IndentPrinter;
-import de.se_rwth.commons.logging.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -112,15 +111,8 @@ public class PlantUMLUtil {
   protected static String toPlantUmlModelString(String cdString, PlantUMLConfig config) {
     CD4CodeParser parser = new CD4CodeParser();
     
-    try {
-      Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
-      return toPlantUmlModelString(astCD, config);
-    }
-    catch (IOException e) {
-      Log.error("Cannot display CD since it contains errors!");
-    }
-    
-    return PLANTUML_EMPTY;
+    Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
+    return toPlantUmlModelString(astCD, config);
   }
   
 }

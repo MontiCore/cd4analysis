@@ -398,14 +398,7 @@ public class CDMergeUtils {
   public static Optional<ASTCDCompilationUnit> parseCDCompilationUnit(String model,
       boolean checkCoCos) {
     
-    Optional<ASTCDCompilationUnit> ast = Optional.empty();
-    try {
-      ast = getParser().parse_StringCDCompilationUnit(model);
-    }
-    catch (IOException e) {
-      // Should never happen
-      Log.error("Unable to parse input model due to IO Exception!");
-    }
+    Optional<ASTCDCompilationUnit> ast = getParser().parse_StringCDCompilationUnit(model);
     if (ast.isPresent()) {
       final ASTCDCompilationUnit cd = ast.get();
       // Always ensure clean Symboltable for each model

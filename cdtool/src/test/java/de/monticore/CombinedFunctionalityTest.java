@@ -17,7 +17,6 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -41,13 +40,7 @@ public class CombinedFunctionalityTest {
   protected static ASTCDCompilationUnit parseCDModel(String cdFilePath) {
     CD4CodeParser cdParser = CD4CodeMill.parser();
     final Optional<ASTCDCompilationUnit> optCdAST;
-    try {
-      optCdAST = cdParser.parse(cdFilePath);
-    }
-    catch (IOException e) {
-      fail();
-      throw new RuntimeException(e);
-    }
+    optCdAST = cdParser.parse(cdFilePath);
     assert (optCdAST.isPresent());
     return optCdAST.get();
   }
