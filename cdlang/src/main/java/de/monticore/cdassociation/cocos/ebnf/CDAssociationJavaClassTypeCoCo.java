@@ -11,12 +11,25 @@ import de.se_rwth.commons.logging.Log;
 
 public class CDAssociationJavaClassTypeCoCo implements CDAssociationASTCDAssociationCoCo {
   
+  /**
+   * CoCo: Master method to check whether an association has a Java type on either side.
+   *
+   * @param node the association AST node
+   */
   @Override
   public void check(ASTCDAssociation node) {
     check(node, node.getLeft().getMCQualifiedType(), "left");
     check(node, node.getRight().getMCQualifiedType(), "right");
   }
   
+  /**
+   * CoCo: Helper method to check the left and right side of the association
+   * by resolving with the enclosing scope and checking if the resolved symbol is a CDTypeSymbol.
+   *
+   * @param a (Association)
+   * @param qualifiedType (QualifiedType)
+   * @param sideName (left or right side of the association)
+   */
   protected void check(ASTCDAssociation a, ASTMCQualifiedType qualifiedType, String sideName) {
     
     if (qualifiedType == null || a == null) {
