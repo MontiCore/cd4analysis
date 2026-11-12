@@ -8,8 +8,8 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdgen.CDGenTool;
+import de.monticore.runtime.junit.AbstractMCTest;
 import de.monticore.runtime.junit.MCAssertions;
-import de.se_rwth.commons.logging.Log;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class CDGeneratorToolTest {
+public class CDGeneratorToolTest extends AbstractMCTest {
   
   @BeforeEach
   public void before() {
@@ -44,8 +44,7 @@ public class CDGeneratorToolTest {
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-c", "-s",
         "target/generated/example/symboltable" });
     // the association of the example is not named
-    MCAssertions.assertHasFindingStartingWith("0xCD002");
-    Log.getFindings().removeIf(f -> f.isWarning() && f.getMsg().startsWith("0xCD002"));
+    MCAssertions.assertHasFindingsStartingWith("0xCD002");
     assertTrue(new File("target/generated/example/symboltable/model/Example.cdsym").isFile());
   }
   
@@ -132,9 +131,7 @@ public class CDGeneratorToolTest {
         "target/generated/example/imports", "-c2mc", "-s", "target/generated/example/imports/" });
     
     // the association of the example is not named
-    MCAssertions.assertHasFindingStartingWith("0xCD002");
-    Log.getFindings().removeIf(f -> f.isWarning() && f.getMsg().startsWith("0xCD002"));
-    MCAssertions.assertNoFindings();
+    MCAssertions.assertHasFindingsStartingWith("0xCD002");
     
     new CDGenTool().run(new String[] { "-i",
         "src/test/resources/de/monticore/cdgentool/ImportTest.cd", "-o",
@@ -159,7 +156,6 @@ public class CDGeneratorToolTest {
   
   @AfterEach
   public void after() {
-    MCAssertions.assertNoFindings();
     CD4CodeMill.globalScope().clear();
   }
   
