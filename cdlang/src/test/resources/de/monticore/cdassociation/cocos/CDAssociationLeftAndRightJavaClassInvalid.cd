@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationLeftAndRightJavaClassInvalid{
+
+  class A{
+  }
+
+  //left side is an external java class
+  association leftJava java.lang.String -> A;
+
+  // right side is an external java class
+  association rightJava A -> java.lang.Integer;
+
+  // both sides are external java classes
+  association bothJava java.lang.Boolean -> java.lang.Long;
+}
