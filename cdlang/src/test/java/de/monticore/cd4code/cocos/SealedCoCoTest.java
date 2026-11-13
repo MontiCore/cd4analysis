@@ -9,7 +9,6 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4codebasis._ast.ASTCDInterface;
-import de.monticore.cd4codebasis.cocos.ebnf.CDPermitsTargetsResolvable;
 import de.monticore.cd4codebasis.cocos.ebnf.CDPermittedTypesAreSubtypes;
 import de.monticore.cd4codebasis.cocos.ebnf.CDSealedModifierCombinations;
 import de.monticore.cd4codebasis.cocos.ebnf.CDSealedOnlyOnClassesAndInterfaces;
@@ -60,11 +59,10 @@ public class SealedCoCoTest extends CD4CodeTestBasis {
   }
   
   @Test
-  public void testPermitsTargetsResolvable() {
-    // the type check reports unresolvable types (0xA0324) in addition
-    String code = CDPermitsTargetsResolvable.ERROR_CODE;
-    assertEquals(List.of("0xA0324", "0xA0324", code, code), checkAndGetErrorCodes(
-        "SealedPermitsTargetsResolvableInvalid.cd"), getJoinedErrors());
+  public void testUnresolvablePermittedTypes() {
+    // reported by the type check only, CDPermittedTypesAreSubtypes skips them
+    assertEquals(List.of("0xA0324", "0xA0324"), checkAndGetErrorCodes(
+        "SealedUnresolvablePermittedTypes.cd"), getJoinedErrors());
   }
   
   @Test

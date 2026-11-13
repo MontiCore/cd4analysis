@@ -20,13 +20,13 @@ import java.util.Set;
 
 /**
  * Checks that all types listed in a {@code permits} clause directly extend or implement the
- * sealed type declaring the clause. Unresolvable types are reported by
- * {@link CDPermitsTargetsResolvable}.
+ * sealed type declaring the clause. Unresolvable types are skipped, the type check reports them
+ * (0xA0324).
  */
 public class CDPermittedTypesAreSubtypes implements CD4CodeBasisASTCDClassCoCo,
     CD4CodeBasisASTCDInterfaceCoCo {
   
-  public static final String ERROR_CODE = "0xCDC92";
+  public static final String ERROR_CODE = "0xCDC91";
   
   @Override
   public void check(ASTCDClass clazz) {
@@ -46,8 +46,7 @@ public class CDPermittedTypesAreSubtypes implements CD4CodeBasisASTCDClassCoCo,
     IOOSymbolsScope scope = declarer.getEnclosingScope();
     
     for (ASTMCObjectType type : permits.getPermittedList()) {
-      Optional<OOTypeSymbol> permitted = scope.resolveOOType(CDPermitsTargetsResolvable.rawTypeName(
-          type));
+      Optional<OOTypeSymbol> permitted = scope.resolveOOType(rawTypeName(type));
       
       if (permitted.isPresent() && !directSupertypeNamesOf(permitted.get()).contains(declarer
           .getFullName())) {
@@ -76,8 +75,7 @@ public class CDPermittedTypesAreSubtypes implements CD4CodeBasisASTCDClassCoCo,
       
       IOOSymbolsScope scope = sym.getEnclosingScope();
       for (ASTMCObjectType supertype : supertypes) {
-        scope.resolveOOType(CDPermitsTargetsResolvable.rawTypeName(supertype)).ifPresent(s -> result
-            .add(s.getFullName()));
+        scope.resolveOOType(rawTypeName(supertype)).ifPresent(s -> result.add(s.getFullName()));
       }
     }
     else {
@@ -89,6 +87,15 @@ public class CDPermittedTypesAreSubtypes implements CD4CodeBasisASTCDClassCoCo,
     }
     
     return result;
+  }
+  
+  /**
+   * @return the type name without type arguments, e.g., {@code F} for {@code F<X>}
+   */
+  protected static String rawTypeName(ASTMCObjectType t) {
+    String printed = t.printType();
+    int lt = printed.indexOf('<');
+    return lt < 0 ? printed : printed.substring(0, lt);
   }
   
 }

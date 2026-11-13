@@ -32,7 +32,7 @@ public class CDSealedOnlyOnClassesAndInterfaces implements CDBasisASTCDDefinitio
     CDInterfaceAndEnumASTCDEnumCoCo, CDAssociationASTCDAssociationCoCo,
     CDAssociationASTCDAssocLeftSideCoCo, CDAssociationASTCDAssocRightSideCoCo {
   
-  public static final String ERROR_CODE = "0xCDC97";
+  public static final String ERROR_CODE = "0xCDC96";
   
   @Override
   public void check(ASTCDDefinition node) {

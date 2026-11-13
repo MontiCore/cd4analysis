@@ -22,13 +22,13 @@ import de.se_rwth.commons.logging.Log;
 public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
     CD4CodeBasisASTCDInterfaceCoCo {
   
-  public static final String ERROR_CODE_EXCLUSIVE = "0xCDC93";
+  public static final String ERROR_CODE_EXCLUSIVE = "0xCDC92";
   
-  public static final String ERROR_CODE_ABSTRACT_FINAL = "0xCDC94";
+  public static final String ERROR_CODE_ABSTRACT_FINAL = "0xCDC93";
   
-  public static final String ERROR_CODE_FINAL_INTERFACE = "0xCDC95";
+  public static final String ERROR_CODE_FINAL_INTERFACE = "0xCDC94";
   
-  public static final String ERROR_CODE_PERMITS_WITHOUT_SEALED = "0xCDC96";
+  public static final String ERROR_CODE_PERMITS_WITHOUT_SEALED = "0xCDC95";
   
   @Override
   public void check(ASTCDClass node) {
