@@ -23,14 +23,61 @@ component grammar CD4CodeBasis extends
     de.monticore.expressions.CommonExpressions,
     de.monticore.types.TypeParameters {
 
+  /* ==== Modifiers ==== */
+
+  /** Adds Java's sealed and non-sealed to the UML modifiers
+      (JLS 17, §8.1.1.2). Sealing is a code-level concept and
+      thus not part of UMLModifier (cf. MontiCore PR #181).
+      Extends instead of overrides Modifier, so that the
+      modifier attributes of all CD productions keep their type.
+      Requires exactly one of sealed or non-sealed, so that all
+      other modifiers are still parsed as plain UML modifiers.
+      (Each of them occurs only once, as MontiTrans requires a
+      single cardinality per attribute.)
+   */
+  CDSealedModifier extends Modifier =
+    Stereotype?
+    (
+        ["public"]       | [public:"+"]
+      | ["private"]      | [private:"-"]
+      | ["protected"]    | [protected:"#"]
+      | ["final"]
+      | ["abstract"]
+      | ["local"]
+      | ["derived"]      | [derived:"/"]
+      | ["readonly"]     | [readonly:"?"]
+      | ["static"]
+    )*
+    ( ["sealed"] | [nonSealed:"non-sealed"] )
+    (
+        ["public"]       | [public:"+"]
+      | ["private"]      | [private:"-"]
+      | ["protected"]    | [protected:"#"]
+      | ["final"]
+      | ["abstract"]
+      | ["local"]
+      | ["derived"]      | [derived:"/"]
+      | ["readonly"]     | [readonly:"?"]
+      | ["static"]
+    )*;
+
+  /** Lists the permitted direct subtypes of a sealed class or interface
+   */
+  CDPermitsUsage =
+    "permits" permitted:(MCObjectType || ",")+;
+
+  // keep sealed and permits usable as names
+  nokeyword "sealed", "permits";
+
   /* ==== Classes and Interfaces ==== */
-  
+
   @Override
   CDClass implements CDType =
     Modifier "class" Name
     TypeParameters?
     CDExtendUsage?
     CDInterfaceUsage?
+    CDPermitsUsage?
     ( "{"
         CDMember*
       "}"
@@ -41,6 +88,7 @@ component grammar CD4CodeBasis extends
     Modifier "interface" Name
     TypeParameters?
     CDExtendUsage?
+    CDPermitsUsage?
     ( "{"
         CDMember*
       "}"
