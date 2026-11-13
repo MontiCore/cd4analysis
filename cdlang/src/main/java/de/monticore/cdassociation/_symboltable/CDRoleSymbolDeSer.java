@@ -13,10 +13,12 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symboltable.Memorizer;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   
@@ -104,22 +106,20 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
   
   @Override
-  protected Optional<SymTypeExpression> deserializeTypeQualifier(JsonObject symbolJson) {
-    if (symbolJson.hasMember("typeQualifier")) {
-      return Optional.of(SymTypeExpressionDeSer.deserializeMember("typeQualifier", symbolJson));
-    }
-    return Optional.empty();
+  protected Supplier<Optional<SymTypeExpression>> deserializeTypeQualifier(JsonObject symbolJson) {
+    return new Memorizer<>(() -> {
+      if (symbolJson.hasMember("typeQualifier")) {
+        return Optional.of(SymTypeExpressionDeSer.deserializeMember("typeQualifier",
+          symbolJson));
+      }
+      return Optional.empty();
+    });
   }
   
   @Override
   protected Optional<SymAssociation> deserializeAssoc(JsonObject symbolJson) {
     return symbolJson.getStringMemberOpt("association").flatMap(a -> Optional.ofNullable(
         CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
-  }
-  
-  @Override
-  protected SymTypeExpression deserializeType(JsonObject symbolJson) {
-    return SymTypeExpressionDeSer.deserializeMember("type", symbolJson);
   }
   
 }
