@@ -10,9 +10,7 @@ classdiagram SealedValid {
   public abstract non-sealed class Circle extends Shape;
 
   sealed interface Colored permits Paint, Ink, Dye;
-  class Paint implements Colored;
+  final class Paint implements Colored;
   non-sealed interface Ink extends Colored;
   enum Dye implements Colored { RED; }
-
-  sealed class Standalone;
 }

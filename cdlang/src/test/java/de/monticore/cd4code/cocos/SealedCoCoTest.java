@@ -88,7 +88,8 @@ public class SealedCoCoTest extends CD4CodeTestBasis {
   @Test
   public void testSealedOnlyOnClassesAndInterfaces() {
     String code = CDSealedOnlyOnClassesAndInterfaces.ERROR_CODE;
-    assertEquals(List.of(code, code, code, code), checkAndGetErrorCodes(
+    // attribute, method, constructor, enum, class diagram, association, and both ends
+    assertEquals(List.of(code, code, code, code, code, code, code, code), checkAndGetErrorCodes(
         "SealedOnlyOnClassesAndInterfacesInvalid.cd"), getJoinedErrors());
   }
   

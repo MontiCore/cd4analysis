@@ -6,10 +6,12 @@ import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis._ast.ASTCDSealedModifier;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisHandler;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cd4codebasis._ast.ASTCDClass;
+import de.monticore.umlmodifier._ast.ASTModifier;
 
 import java.util.stream.Collectors;
 
@@ -133,6 +135,25 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil i
     }
     
     nameStack.pop();
+  }
+  
+  @Override
+  public void handle(ASTCDSealedModifier node) {
+    // the registered UMLModifier handler prints the UML modifiers
+    getTraverser().getUMLModifierHandler().ifPresent(h -> h.handle(node));
+    if (node.isSealed()) {
+      print("sealed ");
+    }
+    if (node.isNonSealed()) {
+      print("non-sealed ");
+    }
+  }
+  
+  @Override
+  public boolean hasModifier(ASTModifier modifier) {
+    return super.hasModifier(modifier) || modifier instanceof ASTCDSealedModifier
+        && (((ASTCDSealedModifier) modifier).isSealed() || ((ASTCDSealedModifier) modifier)
+            .isNonSealed());
   }
   
 }

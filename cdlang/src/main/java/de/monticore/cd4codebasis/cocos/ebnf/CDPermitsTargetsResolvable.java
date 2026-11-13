@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
 public class CDPermitsTargetsResolvable implements CD4CodeBasisASTCDClassCoCo,
     CD4CodeBasisASTCDInterfaceCoCo {
   
-  public static final String ERROR_CODE = "0xCDCF9";
+  public static final String ERROR_CODE = "0xCDC91";
   
   @Override
   public void check(ASTCDClass clazz) {

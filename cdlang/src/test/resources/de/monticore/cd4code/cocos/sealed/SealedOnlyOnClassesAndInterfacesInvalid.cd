@@ -1,9 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram SealedOnlyOnClassesAndInterfacesInvalid {
+sealed classdiagram SealedOnlyOnClassesAndInterfacesInvalid {
   class A {
     non-sealed int x;
     non-sealed void m();
     non-sealed A();
   }
   sealed enum E { X; }
+
+  class B;
+  class C;
+  class D;
+  sealed association B -> C;
+  association non-sealed C -> D;
+  association D -> B non-sealed;
 }

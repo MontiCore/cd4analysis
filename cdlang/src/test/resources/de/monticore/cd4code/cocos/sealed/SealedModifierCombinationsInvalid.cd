@@ -1,18 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 classdiagram SealedModifierCombinationsInvalid {
-  // 0xCDCFB: final, sealed, and non-sealed are mutually exclusive
+  // 0xCDC93: final, sealed, and non-sealed are mutually exclusive
   final sealed class A1;
   sealed class A2 permits B2;
   sealed non-sealed class B2 extends A2 permits C2;
   final class C2 extends B2;
 
-  // 0xCDCFC: abstract and final
+  // 0xCDC94: abstract and final
   abstract final class A3;
 
-  // 0xCDCFD: final interface
+  // 0xCDC95: final interface
   final interface I4;
 
-  // 0xCDCFE: permits without sealed
+  // 0xCDC96: permits without sealed
   class A5 permits B5;
   final class B5 extends A5;
   interface I6 permits B6;

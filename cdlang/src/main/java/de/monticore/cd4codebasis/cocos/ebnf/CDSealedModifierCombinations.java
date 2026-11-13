@@ -12,19 +12,23 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * Checks the modifier combinations Java allows for classes and interfaces with respect to
+ * Checks the modifiers of a single class or interface declaration with respect to
  * {@code sealed}, {@code non-sealed}, {@code final}, and {@code abstract} (JLS 17, §8.1.1, §9.1.1).
+ *
+ * <p>Rules that involve the type hierarchy are not checked yet, e.g., that a permitted subclass
+ * is final, sealed, or non-sealed, or that a non-sealed type has a sealed direct supertype. They
+ * are planned on symbol level once OOTypeSymbol stores isSealed.</p>
  */
 public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
     CD4CodeBasisASTCDInterfaceCoCo {
   
-  public static final String ERROR_CODE_EXCLUSIVE = "0xCDCFB";
+  public static final String ERROR_CODE_EXCLUSIVE = "0xCDC93";
   
-  public static final String ERROR_CODE_ABSTRACT_FINAL = "0xCDCFC";
+  public static final String ERROR_CODE_ABSTRACT_FINAL = "0xCDC94";
   
-  public static final String ERROR_CODE_FINAL_INTERFACE = "0xCDCFD";
+  public static final String ERROR_CODE_FINAL_INTERFACE = "0xCDC95";
   
-  public static final String ERROR_CODE_PERMITS_WITHOUT_SEALED = "0xCDCFE";
+  public static final String ERROR_CODE_PERMITS_WITHOUT_SEALED = "0xCDC96";
   
   @Override
   public void check(ASTCDClass node) {

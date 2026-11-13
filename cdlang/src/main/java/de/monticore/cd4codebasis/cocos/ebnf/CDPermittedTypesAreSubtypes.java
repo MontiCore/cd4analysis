@@ -26,7 +26,7 @@ import java.util.Set;
 public class CDPermittedTypesAreSubtypes implements CD4CodeBasisASTCDClassCoCo,
     CD4CodeBasisASTCDInterfaceCoCo {
   
-  public static final String ERROR_CODE = "0xCDCFA";
+  public static final String ERROR_CODE = "0xCDC92";
   
   @Override
   public void check(ASTCDClass clazz) {
