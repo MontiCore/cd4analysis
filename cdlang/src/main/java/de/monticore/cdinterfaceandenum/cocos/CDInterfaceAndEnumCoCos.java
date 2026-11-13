@@ -2,6 +2,7 @@
 package de.monticore.cdinterfaceandenum.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
+import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDInterfaceCoCo;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumCoCoChecker;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.*;
 
@@ -27,6 +28,8 @@ public class CDInterfaceAndEnumCoCos extends CoCoParent<CDInterfaceAndEnumCoCoCh
     checker.addCoCo(new CDInterfaceExtendsNotCyclic());
     checker.addCoCo(new CDInterfaceExtendsOnlyInterfaces());
     checker.addCoCo(new CDAttributeInInterfaceIsPublic());
+    checker.addCoCo((CDInterfaceAndEnumASTCDInterfaceCoCo) new CDPermitsTargetsResolvable());
+    checker.addCoCo((CDInterfaceAndEnumASTCDInterfaceCoCo) new CDPermittedTypesAreSubtypes());
     
     // CDEnumConstant
     checker.addCoCo(new CDEnumConstantUnique());

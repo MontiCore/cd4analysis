@@ -1,0 +1,21 @@
+classdiagram CDNestedSealedInterfacesInvalid {
+  /*
+   * Interfaces can never be final, regardless of other Modifiers.
+   */
+  abstract static sealed interface Shape permits Rectangle, Square, Circle, Triangle, Line, Point;
+  final interface Rectangle extends Shape;
+  static final interface Square extends Shape;
+  abstract static final interface Circle extends Shape;
+  public abstract static final interface Triangle extends Shape;
+  private abstract static final interface Line extends Shape;
+  protected abstract static final interface Point extends Shape;
+
+  // Permits clause cannot be invoked without the sealed modifier
+  interface Geometry1 permits Circle1;
+  final class Circle1 extends Geometry1;
+
+  // sealed and non-sealed are mutually exclusive
+  sealed interface Geometry2 permits Circle2;
+  sealed non-sealed interface Circle2 extends Geometry2 permits Ellipsoid2;
+  non-sealed interface Ellipsoid2 extends Circle2;
+}

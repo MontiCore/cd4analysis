@@ -1,0 +1,8 @@
+classdiagram CDPermittedTypesAreSubtypesInvalid {
+  sealed class Vehicle permits Bike;
+  class Bike;
+  sealed interface Shape permits Blob;
+  class Blob;
+  sealed interface Shade permits Grey;
+  enum Grey { LIGHT; }
+}

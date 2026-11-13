@@ -33,6 +33,15 @@ public class TestCDBasisParserTest extends CDBasisTestBasis {
   }
   
   @Test
+  public void parseSealedClassWithPermits() throws IOException {
+    final Optional<ASTCDClass> sealed = p.parse_StringCDClass("sealed class A permits B;");
+    checkNullAndPresence(p, sealed);
+    
+    final Optional<ASTCDClass> nonSealed = p.parse_StringCDClass("non-sealed class B extends A;");
+    checkNullAndPresence(p, nonSealed);
+  }
+  
+  @Test
   public void parseCDElement() throws IOException {
     final Optional<ASTCDElement> astcdElement = p.parse_StringCDElement("class A;");
     checkNullAndPresence(p, astcdElement);

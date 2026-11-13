@@ -1,0 +1,22 @@
+classdiagram CDTopLevelSealedClassesInvalid {
+  // Top-Level interfaces cannot be private
+  private sealed interface Geometry1 permits Circle1;
+  public non-sealed interface Circle1 extends Geometry1;
+
+  // Top-Level interfaces cannot be protected
+  protected sealed interface Geometry2 permits Circle2;
+  public non-sealed interface Circle2 extends Geometry2;
+
+  // Final is not allowed in the context of an interface
+  public sealed interface Geometry3 permits Circle3;
+  public final interface Circle3 extends Geometry3;
+
+  // Permits clause cannot be invoked without the sealed modifier
+  interface Geometry4 permits Circle4;
+  final class Circle4 extends Geometry4;
+
+  // sealed and non-sealed are mutually exclusive
+  sealed interface Geometry5 permits Circle5;
+  sealed non-sealed interface Circle5 extends Geometry5 permits Ellipsoid5;
+  non-sealed interface Ellipsoid5 extends Circle5;
+}

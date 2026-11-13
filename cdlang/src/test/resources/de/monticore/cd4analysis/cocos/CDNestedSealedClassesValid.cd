@@ -1,0 +1,43 @@
+classdiagram CDNestedSealedClassesValid {
+  // Combination for nested sealed classes with public and private for both non-sealed and final
+  public sealed class Shape1 permits Rectangle1, Square1;
+  private non-sealed class Square1 extends Shape1;
+  private final class Rectangle1 extends Shape1;
+
+  // Combination for nested sealed classes with private and protected for both non-sealed and final
+  private sealed class Shape2 permits Rectangle2, Square2;
+  protected non-sealed class Square2 extends Shape2;
+  protected final class Rectangle2 extends Shape2;
+
+  // Combination for nested sealed classes with protected and public for both non-sealed and final
+  protected sealed class Shape3 permits Rectangle3, Square3;
+  public non-sealed class Square3 extends Shape3;
+  public final class Rectangle3 extends Shape3;
+
+  // In the following visibility Modifier are no longer considered, as it would be superfluous
+
+  // Combination for nested sealed classes with static for non-sealed and final
+  static sealed class Shape4 permits Rectangle4, Square4;
+  static non-sealed class Square4 extends Shape4;
+  static final class Rectangle4 extends Shape4;
+
+  /*
+   * Combination for nested sealed classes with abstract, here only for non-sealed.
+   * abstract and final are illegal combination of Modifier.
+   */
+  abstract sealed class Shape5 permits Rectangle5;
+  abstract non-sealed class Rectangle5 extends Shape5;
+
+  /*
+   * Combination for nested sealed classes with abstract static in the super-class
+   * and only static in the sub-classes. Here using final is legal since it is not
+   * used in combination with abstract.
+   */
+  abstract static sealed class Shape6 permits Rectangle6, Square6;
+  static non-sealed class Square6 extends Shape6;
+  static final class Rectangle6 extends Shape6;
+
+  // Combination for nested sealed classes with abstract and static for non-sealed
+  abstract static sealed class Shape7 permits Rectangle7;
+  abstract static non-sealed class Rectangle7 extends Shape7;
+}

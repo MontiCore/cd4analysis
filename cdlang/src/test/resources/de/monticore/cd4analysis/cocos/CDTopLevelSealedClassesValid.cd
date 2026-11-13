@@ -1,0 +1,10 @@
+classdiagram CDTopLevelSealedClassesValid {
+  public abstract sealed class Geometry permits Circle;
+  public abstract non-sealed class Circle extends Geometry;
+
+  public abstract sealed class Geometry2 permits Circle2;
+  final class Circle2 extends Geometry2;
+
+  public sealed class Geometry3 permits Circle3;
+  abstract non-sealed class Circle3 extends Geometry3;
+}

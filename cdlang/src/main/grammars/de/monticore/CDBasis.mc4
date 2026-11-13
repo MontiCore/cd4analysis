@@ -95,12 +95,50 @@ component grammar CDBasis extends
   CDExtendUsage =
     "extends" superclass:(MCObjectType || ",")+;
 
-  /** CDClass defines a class including extensions and its body.
+  /** This adds the possibility for sealed classes to permit
+      other (sealed/non-sealed/final) classes
+      (by filling the external NT defined there)
+   */
+  CDPermitsUsage =
+    "permits" permitted:(MCObjectType || ",")+;
+
+  /** Sealed and Non-Sealed classes.
+
+      https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.1.1.2
+
+      Re-Implementation of the grammar UMLModifier
+      to allow sealed/non-sealed modifier.
+      Should be implemented in UMLModifier itself,
+      since additional PrettyPrinter is also needed
+      right now.
+
+      If not possible the visibility/modifier block should be
+      reworked into an interface, and sealed/non-sealed should
+      be reworked by implementing that interface here.
+  */
+  CDSealedModifier extends Modifier =
+      Stereotype?
+      (
+          ["public"]       | [public:"+"]
+        | ["private"]      | [private:"-"]
+        | ["protected"]    | [protected:"#"]
+        | ["final"]
+        | ["abstract"]
+        | ["local"]
+        | ["derived"]      | [derived:"/"]
+        | ["readonly"]     | [readonly:"?"]
+        | ["static"]
+        | ["sealed"]
+        | [nonSealed:"non-sealed"]
+      )*;
+
+  /** CDClass defines a class including extensions and permits lists and its body.
    */
   scope CDClass implements CDType =
     Modifier "class" Name
     CDExtendUsage?
     CDInterfaceUsage?
+    CDPermitsUsage?
     ( "{"
         CDMember*
       "}"

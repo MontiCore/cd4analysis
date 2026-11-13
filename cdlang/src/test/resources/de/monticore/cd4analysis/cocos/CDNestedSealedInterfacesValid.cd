@@ -1,0 +1,36 @@
+classdiagram CDNestedSealedInterfacesValid {
+  /*
+   * Combination for nested sealed interfaces with public and private for
+   * non-sealed. Final cannot be used since we have interfaces, and will
+   * not be considered in the following as it is never legal.
+   */
+  public sealed interface Shape1 permits Square1;
+  private non-sealed interface Square1 extends Shape1;
+
+  // Combination for nested sealed interfaces with private and protected
+  private sealed interface Shape2 permits Square2;
+  protected non-sealed interface Square2 extends Shape2;
+
+  // Combination for nested sealed interfaces with protected and public
+  protected sealed interface Shape3 permits Square3;
+  public non-sealed interface Square3 extends Shape3;
+
+  // In the following visibility Modifier are no longer considered, as it would be superfluous
+
+  // Combination for nested sealed interfaces with static
+  static sealed interface Shape4 permits Square4;
+  static non-sealed interface Square4 extends Shape4;
+
+  // Combination for nested sealed interfaces with abstract
+  abstract sealed interface Shape5 permits Square5;
+  abstract non-sealed interface Square5 extends Shape5;
+
+  // Combination for nested sealed interfaces with abstract + static in super-class and static in sub-class
+  abstract static sealed interface Shape6 permits Square6;
+  static non-sealed interface Square6 extends Shape6;
+
+  // Combination for nested sealed interfaces with abstract + static for both super-/sub-class
+  abstract static sealed interface Shape7 permits Square7;
+  abstract static non-sealed interface Square7 extends Shape7;
+
+}

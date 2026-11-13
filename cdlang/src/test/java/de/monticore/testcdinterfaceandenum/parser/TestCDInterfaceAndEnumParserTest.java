@@ -21,6 +21,13 @@ public class TestCDInterfaceAndEnumParserTest extends CDInterfaceAndEnumTestBasi
   }
   
   @Test
+  public void parseSealedInterfaceWithPermits() throws IOException {
+    final Optional<ASTCDInterface> sealed = p.parse_StringCDInterface(
+        "sealed interface I permits I2;");
+    checkNullAndPresence(p, sealed);
+  }
+  
+  @Test
   public void parseCDElement() throws IOException {
     final Optional<ASTCDElement> astcdElement = p.parse_StringCDElement("interface I;");
     checkNullAndPresence(p, astcdElement);

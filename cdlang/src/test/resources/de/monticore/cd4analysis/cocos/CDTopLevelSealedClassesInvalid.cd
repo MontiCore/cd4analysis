@@ -1,0 +1,38 @@
+classdiagram CDTopLevelSealedClassesInvalid {
+  // Top-Level classes cannot be private
+  private abstract sealed class Geometry permits Circle;
+  public abstract non-sealed class Circle extends Geometry;
+
+  // Top-Level classes cannot be protected
+  protected abstract sealed class Geometry2 permits Circle2;
+  public abstract non-sealed class Circle2 extends Geometry2;
+
+  // Static is not allowed as a Modifier for top-level classes
+  public static sealed class Geometry3 permits Circle3;
+  public non-sealed class Circle3 extends Geometry3;
+
+  // Combination of Modifiers Private and Static is not allowed at top-level
+  private static sealed class Geometry4 permits Circle4;
+  public non-sealed class Circle4 extends Geometry4;
+
+  // Combination of Modifiers Abstract and Final is not allowed
+  public sealed class Geometry5 permits Circle5;
+  public abstract final class Circle5 extends Geometry5;
+
+  // Permits clause cannot be invoked without the sealed modifier
+  class Geometry6 permits Circle6;
+  final class Circle6 extends Geometry6;
+
+  // final and sealed are mutually exclusive
+  final sealed class Geometry7 permits Circle7;
+  final class Circle7 extends Geometry7;
+
+  // final and non-sealed are mutually exclusive
+  sealed class Geometry8 permits Circle8;
+  final non-sealed class Circle8 extends Geometry8;
+
+  // sealed and non-sealed are mutually exclusive
+  sealed class Geometry9 permits Rectangle9;
+  sealed non-sealed class Rectangle9 extends Geometry9 permits Square9;
+  final class Square9 extends Rectangle9;
+}
