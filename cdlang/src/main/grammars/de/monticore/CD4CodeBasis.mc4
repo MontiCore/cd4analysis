@@ -30,8 +30,10 @@ component grammar CD4CodeBasis extends
       thus not part of UMLModifier (cf. MontiCore PR #181).
       Extends instead of overrides Modifier, so that the
       modifier attributes of all CD productions keep their type.
-      Requires sealed or non-sealed, so that all other modifiers
-      are still parsed as plain UML modifiers.
+      Requires exactly one of sealed or non-sealed, so that all
+      other modifiers are still parsed as plain UML modifiers.
+      (Each of them occurs only once, as MontiTrans requires a
+      single cardinality per attribute.)
    */
   CDSealedModifier extends Modifier =
     Stereotype?
@@ -57,8 +59,6 @@ component grammar CD4CodeBasis extends
       | ["derived"]      | [derived:"/"]
       | ["readonly"]     | [readonly:"?"]
       | ["static"]
-      | ["sealed"]
-      | [nonSealed:"non-sealed"]
     )*;
 
   /** Lists the permitted direct subtypes of a sealed class or interface

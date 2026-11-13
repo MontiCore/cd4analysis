@@ -1,10 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 classdiagram SealedModifierCombinationsInvalid {
   // 0xCDC92: final, sealed, and non-sealed are mutually exclusive
+  // (sealed together with non-sealed is a parse error)
   final sealed class A1;
-  sealed class A2 permits B2;
-  sealed non-sealed class B2 extends A2 permits C2;
-  final class C2 extends B2;
+  non-sealed final class A2;
 
   // 0xCDC93: abstract and final
   abstract final class A3;
