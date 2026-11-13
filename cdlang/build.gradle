@@ -271,7 +271,7 @@ tasks.named('generateCdGenIntTestMCGrammars') {
 }
 dependencies {
   cdGenIntTestImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
-  cdGenIntTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  cdGenIntTestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_version"
   // Runtime dependencies
   cdGenIntTestImplementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   cdGenIntTestImplementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
