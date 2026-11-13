@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram SealedValid {
+  sealed class Vehicle permits Car, Truck, Bike;
+  final class Car extends Vehicle;
+  non-sealed class Truck extends Vehicle;
+  sealed class Bike extends Vehicle permits EBike;
+  final class EBike extends Bike;
+
+  public abstract sealed class Shape permits Circle;
+  public abstract non-sealed class Circle extends Shape;
+
+  sealed interface Colored permits Paint, Ink, Dye;
+  class Paint implements Colored;
+  non-sealed interface Ink extends Colored;
+  enum Dye implements Colored { RED; }
+
+  sealed class Standalone;
+}

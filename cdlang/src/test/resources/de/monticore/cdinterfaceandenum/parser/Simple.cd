@@ -26,7 +26,4 @@ classdiagram Simple {
     ;
     java.lang.String name;
   }
-
-  sealed class F permits G;
-  non-sealed class G extends F;
 }

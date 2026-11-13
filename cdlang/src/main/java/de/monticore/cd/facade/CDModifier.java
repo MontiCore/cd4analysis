@@ -131,9 +131,15 @@ public enum CDModifier {
   }
   
   public ASTModifier build() {
-    return CD4CodeMill.cDSealedModifierBuilder().setPublic(isPublic).setProtected(isProtected)
-        .setPrivate(isPrivate).setStatic(isStatic).setFinal(isFinal).setAbstract(isAbstract)
-        .setSealed(isSealed).setNonSealed(isNonSealed).build();
+    // only sealed modifiers use the CD4Code node, so that other modifiers stay usable in all CD
+    // languages
+    if (isSealed || isNonSealed) {
+      return CD4CodeMill.cDSealedModifierBuilder().setPublic(isPublic).setProtected(isProtected)
+          .setPrivate(isPrivate).setStatic(isStatic).setFinal(isFinal).setAbstract(isAbstract)
+          .setSealed(isSealed).setNonSealed(isNonSealed).build();
+    }
+    return CD4CodeMill.modifierBuilder().setPublic(isPublic).setProtected(isProtected).setPrivate(
+        isPrivate).setStatic(isStatic).setFinal(isFinal).setAbstract(isAbstract).build();
   }
   
 }

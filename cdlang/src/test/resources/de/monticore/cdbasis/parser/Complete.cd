@@ -20,7 +20,4 @@ classdiagram Complete {
     int x;
   }
 
-  sealed class S permits P1, P2;
-  non-sealed class P1 extends S;
-  final class P2 extends S;
 }

@@ -1,4 +1,0 @@
-classdiagram CDPermitsTargetsResolvableInvalid {
-  sealed class Vehicle permits Ghost;
-  sealed interface Shape permits Phantom;
-}

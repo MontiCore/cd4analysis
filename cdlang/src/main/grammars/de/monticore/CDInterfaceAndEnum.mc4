@@ -18,7 +18,6 @@ component grammar CDInterfaceAndEnum extends de.monticore.CDBasis {
   scope CDInterface implements CDType =
     Modifier "interface" Name
     CDExtendUsage?
-    CDPermitsUsage?
     ( "{"
         CDMember*
       "}"

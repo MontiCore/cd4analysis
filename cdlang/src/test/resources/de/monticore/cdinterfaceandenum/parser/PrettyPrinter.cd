@@ -19,7 +19,4 @@ classdiagram PrettyPrinter {
     ;
     java.lang.String name;
   }
-
-  sealed interface I permits P1, P2;
-  non-sealed class P1 implements I;
 }

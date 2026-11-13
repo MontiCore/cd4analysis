@@ -2,7 +2,7 @@
 package de.monticore.cd.facade;
 
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
-import de.monticore.cdbasis._ast.ASTCDPermitsUsage;
+import de.monticore.cd4codebasis._ast.ASTCDPermitsUsage;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.Arrays;

@@ -16,6 +16,4 @@ classdiagram Simple {
     S s;
   }
 
-  sealed class D permits E;
-  non-sealed class E extends D;
 }

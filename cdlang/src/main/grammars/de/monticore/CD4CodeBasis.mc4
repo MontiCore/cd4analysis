@@ -23,6 +23,52 @@ component grammar CD4CodeBasis extends
     de.monticore.expressions.CommonExpressions,
     de.monticore.types.TypeParameters {
 
+  /* ==== Modifiers ==== */
+
+  /** Adds Java's sealed and non-sealed to the UML modifiers
+      (JLS 17, §8.1.1.2). Sealing is a code-level concept and
+      thus not part of UMLModifier (cf. MontiCore PR #181).
+      Extends instead of overrides Modifier, so that the
+      modifier attributes of all CD productions keep their type.
+      Requires sealed or non-sealed, so that all other modifiers
+      are still parsed as plain UML modifiers.
+   */
+  CDSealedModifier extends Modifier =
+    Stereotype?
+    (
+        ["public"]       | [public:"+"]
+      | ["private"]      | [private:"-"]
+      | ["protected"]    | [protected:"#"]
+      | ["final"]
+      | ["abstract"]
+      | ["local"]
+      | ["derived"]      | [derived:"/"]
+      | ["readonly"]     | [readonly:"?"]
+      | ["static"]
+    )*
+    ( ["sealed"] | [nonSealed:"non-sealed"] )
+    (
+        ["public"]       | [public:"+"]
+      | ["private"]      | [private:"-"]
+      | ["protected"]    | [protected:"#"]
+      | ["final"]
+      | ["abstract"]
+      | ["local"]
+      | ["derived"]      | [derived:"/"]
+      | ["readonly"]     | [readonly:"?"]
+      | ["static"]
+      | ["sealed"]
+      | [nonSealed:"non-sealed"]
+    )*;
+
+  /** Lists the permitted direct subtypes of a sealed class or interface
+   */
+  CDPermitsUsage =
+    "permits" permitted:(MCObjectType || ",")+;
+
+  // keep sealed and permits usable as names
+  nokeyword "sealed", "permits";
+
   /* ==== Classes and Interfaces ==== */
 
   @Override
@@ -49,10 +95,10 @@ component grammar CD4CodeBasis extends
     | ";" );
 
   /* ==== Methods ==== */
-
+  
   /** Introduction of the new form of symbol: the Method
    */
-  interface scope symbol CDMethodSignature extends CDMember, Method =
+  interface scope symbol CDMethodSignature extends CDMember, Method = 
     Name CDParameter*;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
@@ -89,13 +135,13 @@ component grammar CD4CodeBasis extends
     Name Arguments?;
 
   /* ==== AST extensions ==== */
-
+  
   astrule CDMethod =
     isDefault: boolean
   ;
 
   /* ==== Symbols ==== */
-
+  
   /** Method knows its signature, whether it is a constructor,
       visibility
    */

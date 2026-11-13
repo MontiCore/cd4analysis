@@ -1,4 +1,5 @@
-classdiagram CDPermittedTypesAreSubtypesInvalid {
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram SealedPermittedTypesAreSubtypesInvalid {
   sealed class Vehicle permits Bike;
   class Bike;
   sealed interface Shape permits Blob;

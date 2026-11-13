@@ -9,8 +9,6 @@ import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassExtendsOnlyClasses;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsNotCyclic;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsOnlyInterfaces;
-import de.monticore.cdinterfaceandenum.cocos.ebnf.CDPermitsTargetsResolvable;
-import de.monticore.cdinterfaceandenum.cocos.ebnf.CDPermittedTypesAreSubtypes;
 
 public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
   
@@ -41,8 +39,6 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     checker.addCoCo(new CDClassImplementsNotCyclic());
     checker.addCoCo(new CDClassNameUpperCase());
     checker.addCoCo(new ConstructorNameEqualsClassNameCoCo());
-    checker.addCoCo(new CDPermitsTargetsResolvable());
-    checker.addCoCo(new CDPermittedTypesAreSubtypes());
     
     // CDType
     checker.addCoCo(new CDTypeNoInitializationOfDerivedAttribute());
