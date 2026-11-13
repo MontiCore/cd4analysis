@@ -61,38 +61,38 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
   public void serializationIsDeterministicTest() {
     // every association of this model is explicitly named
     String artifact = "cdassociation/symboltable/SerializationNamedCD.cd";
-
+    
     String first = parseAndSerialize(artifact);
-
+    
     // clear the symbol table in between both runs
     ITestCDAssociationGlobalScope gs = TestCDAssociationMill.globalScope();
     gs.clear();
     gs.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(gs);
     assertTrue(gs.getSubScopes().isEmpty());
-
+    
     String second = parseAndSerialize(artifact);
-
+    
     assertEquals(first, second);
     assertTrue(first.contains("\"association\":\"de.monticore.cdassociation.symboltable."
         + "SerializationNamedCD.namedAssoc\""), first);
     // no warning about unnamed associations
     assertTrue(Log.getFindings().isEmpty(), getJoinedErrors());
   }
-
+  
   protected String parseAndSerialize(String artifact) {
     ASTCDCompilationUnit ast = parseModel(artifact);
     afterParseTrafo(ast);
-
+    
     ITestCDAssociationArtifactScope artifactScope = createSymTab(ast);
     completeSymTab(ast);
-
+    
     String serialized = new TestCDAssociationSymbols2Json().serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
     return serialized;
   }
-
+  
   @Test
   public void deserializationTest() {
     ITestCDAssociationGlobalScope gs = TestCDAssociationMill.globalScope();
