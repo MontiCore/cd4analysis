@@ -15,7 +15,8 @@ public class CDSubclassBuilderPrivateAttributesCoCo implements CDBasisASTCDClass
       + "Class %s has a <<builder>> stereotype, but extends superclass %s which lacks a builder or contains private attributes.";
   
   /**
-   * CoCo:
+   * CoCo: Checks for all superclasses of a given subclass (that has the <<builder>> stereotype) if
+   * they have the <<builder>> stereotype or only contain public attributes
    *
    * @param node (Class)
    */
@@ -33,6 +34,7 @@ public class CDSubclassBuilderPrivateAttributesCoCo implements CDBasisASTCDClass
           
           for (ASTCDClass superClass : superClasses) {
             if (superClass != null) {
+              
               // Check if all superclass attributes are public
               for (var attribute : superClass.getCDAttributeList()) {
                 if (attribute.getModifier().isPrivate()) {
@@ -41,7 +43,7 @@ public class CDSubclassBuilderPrivateAttributesCoCo implements CDBasisASTCDClass
                 }
               }
               
-              // Check if superclass has <<builder>> stereotype
+              // Check if the superclass has the <<builder>> stereotype
               if (superClass.getModifier().isPresentStereotype()) {
                 superclassBuilder = superClass.getModifier().getStereotype().contains("builder");
               }
