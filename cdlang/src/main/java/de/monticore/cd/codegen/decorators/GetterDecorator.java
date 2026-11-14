@@ -286,9 +286,15 @@ public class GetterDecorator extends AbstractDecorator<GetterDecorator.GetterDat
   
   protected void updateModifier(ASTCDAttribute attribute) {
     var decoratedModifier = decoratorData.getAsDecorated(attribute).getModifier();
-    decoratedModifier.setProtected(true);
     decoratedModifier.setPublic(false);
-    decoratedModifier.setPrivate(false);
+    if (attribute.getModifier().isPrivate()) {
+      decoratedModifier.setProtected(false);
+      decoratedModifier.setPrivate(true);
+    }
+    else {
+      decoratedModifier.setProtected(true);
+      decoratedModifier.setPrivate(false);
+    }
   }
   
   @Override

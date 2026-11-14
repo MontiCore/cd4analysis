@@ -12,7 +12,7 @@ public class CDDeSerHelper {
   
   protected static CDDeSerHelper INSTANCE;
   protected Set<SymAssociation> symAssocForSerialization;
-  protected Map<Integer, SymAssociation> symAssocForDeserialization;
+  protected Map<String, SymAssociation> symAssocForDeserialization;
   
   protected CDDeSerHelper() {
     this(new LinkedHashSet<>());
@@ -33,7 +33,7 @@ public class CDDeSerHelper {
   
   public Set<SymAssociation> getSymAssocForSerialization() { return symAssocForSerialization; }
   
-  public Map<Integer, SymAssociation> getSymAssocForDeserialization() {
+  public Map<String, SymAssociation> getSymAssocForDeserialization() {
     return symAssocForDeserialization;
   }
   
@@ -42,7 +42,7 @@ public class CDDeSerHelper {
   }
   
   public void setSymAssocForDeserialization(
-      Map<Integer, SymAssociation> symAssocForDeserialization) {
+      Map<String, SymAssociation> symAssocForDeserialization) {
     this.symAssocForDeserialization = symAssocForDeserialization;
   }
   
@@ -50,7 +50,7 @@ public class CDDeSerHelper {
     return this.symAssocForSerialization.add(symAssociation);
   }
   
-  public SymAssociation addSymAssociationForDeserialization(int hash,
+  public SymAssociation addSymAssociationForDeserialization(String hash,
       SymAssociation symAssociation) {
     return this.symAssocForDeserialization.put(hash, symAssociation);
   }

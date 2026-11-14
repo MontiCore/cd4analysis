@@ -23,8 +23,10 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
         import java.lang.String;
         classdiagram TestGetter {
          <<getter>> public class TestGetterC {
-           boolean myBool; public int myInt;
+           boolean myBool;
+           public int myInt;
            <<noGetter>> public int pubX;
+           private boolean myPrivateBool;
          }
          public association TestGetterC -> (roleB) Other [*];
          public association TestGetterC -> (orderedRole) Other [*] {ordered};
