@@ -34,7 +34,8 @@ import java.util.Stack;
  * TOP-mechanism.
  * <b>Attention:</b> does not actually create a new CD object, because then the glex has the
  * wrong objects referenced.
- * CD classes, interfaces, and enums with the stereotype <code>needsTOP</code> cause logged <code>0xC0FFEE00</code> errors when no handwritten class can be found.
+ * CD classes, interfaces, and enums with the stereotype <code>needsTOP</code> cause logged
+ * <code>0xC0FFEE00</code> errors when no handwritten class can be found.
  * The %s in the stereotype value is substituted with the classname.
  */
 public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implements
@@ -202,6 +203,7 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
    * (e.g. to apply TOP mechanism)
    * see {@link de.monticore.generating.GeneratorEngine#existsHandwrittenClass(MCPath, String)}
    * ".java"
+   *
    * @param qualifiedName the qualified name of the cd element
    * @param fileExtension the file extension (without a dot) to check for
    * @return Whether a handwritten version of that cd element exists within the hwPath

@@ -322,7 +322,8 @@ public class CDGenTool extends CD4CodeTool {
       // template
       boolean qf = Log.isFailQuickEnabled();
       Log.enableFailQuick(false); // Disable quick-fail during post decoration
-      TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath(), Set.of(setup.getDefaultFileExtension()));
+      TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath(), Set.of(setup
+          .getDefaultFileExtension()));
       t = CD4CodeMill.inheritanceTraverser();
       topTransformer.addToTraverser(t);
       decorated.get().accept(t);
