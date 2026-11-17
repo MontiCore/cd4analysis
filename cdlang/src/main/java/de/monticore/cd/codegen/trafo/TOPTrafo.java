@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.trafo;
 
-import static de.monticore.generating.GeneratorEngine.existsHandwrittenClass;
 import static de.se_rwth.commons.Names.constructQualifiedName;
 
 import de.monticore.cd.codegen.decorators.IDecorator;
@@ -15,18 +14,28 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
+import de.monticore.generating.templateengine.reporting.Reporting;
 import de.monticore.io.paths.MCPath;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
+import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
+
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Stack;
 
 /**
  * Adds the suffix TOP to generated AST elements IFF a handwritten equivalent exists. Part of the
- * TOP-mechanism. Attention! does not actually create a new CD object, because then the glex has the
- * wrong objects referenced
+ * TOP-mechanism.
+ * <b>Attention:</b> does not actually create a new CD object, because then the glex has the
+ * wrong objects referenced.
+ * CD classes, interfaces, and enums with the stereotype <code>needsTOP</code> cause logged <code>0xC0FFEE00</code> errors when no handwritten class can be found.
+ * The %s in the stereotype value is substituted with the classname.
  */
 public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implements
     CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
@@ -37,9 +46,15 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
   protected Stack<String> packageName = new Stack<>();
   protected ASTCDCompilationUnit compilationUnit = null;
   protected final MCPath hwPath;
+  protected final Set<String> fileExtensions;
   
   public TOPTrafo(MCPath hwPath) {
+    this(hwPath, Set.of("java"));
+  }
+  
+  public TOPTrafo(MCPath hwPath, Set<String> fileExtensions) {
     this.hwPath = hwPath;
+    this.fileExtensions = fileExtensions;
   }
   
   @Override
@@ -93,7 +108,7 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
   /** Should the TOP mechanism be applied to a class */
   protected boolean shouldApplyTOPToClass(ASTCDClass cdClass, ASTCDCompilationUnit compUnit) {
     String qualifiedName = determineQualifiedName(cdClass, compUnit);
-    boolean existsHw = existsHandwrittenClass(hwPath, qualifiedName);
+    boolean existsHw = existsHandwrittenClass(qualifiedName);
     // In addition, check for the <<needsTOP="message">> stereo
     checkNeedsHandwrittenClass(existsHw, cdClass, qualifiedName);
     return existsHw;
@@ -102,12 +117,12 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
   /** Should the TOP mechanism be applied to an interface */
   protected boolean shouldApplyTOPToInterface(ASTCDInterface cdInterface,
       ASTCDCompilationUnit compUnit) {
-    return existsHandwrittenClass(hwPath, determineQualifiedName(cdInterface, compUnit));
+    return existsHandwrittenClass(determineQualifiedName(cdInterface, compUnit));
   }
   
   /** Should the TOP mechanism be applied to an enum */
   protected boolean shouldApplyTOPToEnum(ASTCDEnum cdEnum, ASTCDCompilationUnit compUnit) {
-    return existsHandwrittenClass(hwPath, determineQualifiedName(cdEnum, compUnit));
+    return existsHandwrittenClass(determineQualifiedName(cdEnum, compUnit));
   }
   
   /**
@@ -176,6 +191,31 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
     traverser.add4CDInterfaceAndEnum(this);
+  }
+  
+  public boolean existsHandwrittenClass(String qualifiedName) {
+    return this.fileExtensions.stream().anyMatch(fe -> existsHandwrittenClass(qualifiedName, fe));
+  }
+  
+  /**
+   * Check whether a handwritten version of that class already exits and shall be integrated
+   * (e.g. to apply TOP mechanism)
+   * see {@link de.monticore.generating.GeneratorEngine#existsHandwrittenClass(MCPath, String)}
+   * ".java"
+   * @param qualifiedName the qualified name of the cd element
+   * @param fileExtension the file extension (without a dot) to check for
+   * @return Whether a handwritten version of that cd element exists within the hwPath
+   */
+  public boolean existsHandwrittenClass(String qualifiedName, String fileExtension) {
+    String hwFile = Names.getPathFromPackage(qualifiedName) + "." + fileExtension;
+    Optional<URL> hwFilePath = hwPath.find(hwFile);
+    boolean result = hwFilePath.isPresent();
+    if (result) {
+      Optional<Path> hwPath = MCPath.toPath(hwFilePath.get());
+      hwPath.ifPresent(path -> Reporting.reportUseHandwrittenCodeFile(path, Paths.get(hwFile)));
+    }
+    Reporting.reportHWCExistenceCheck(hwPath, Paths.get(hwFile), hwFilePath);
+    return result;
   }
   
 }
