@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class CDGenerator {
   
+  @Deprecated
   protected static final String JAVA_EXTENSION = ".java";
   protected final ASTCDPackage emptyPKG;
   
@@ -73,7 +74,7 @@ public class CDGenerator {
   }
   
   protected Path getAsPath(String packageAsPath, String name) {
-    return Paths.get(packageAsPath, name + JAVA_EXTENSION);
+    return Paths.get(packageAsPath, name + "." + this.setup.getDefaultFileExtension());
   }
   
   protected void generateCDClasses(String packageAsPath, ASTCDPackage astcdPackage,
