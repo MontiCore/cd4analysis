@@ -18,7 +18,7 @@ import de.se_rwth.commons.logging.Log;
  */
 public class MethodImplementationDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     implements CD4CodeBasisVisitor2 {
-
+  
   @Override
   public void visit(ASTCDMethod method) {
     // First, check if we should decorate the given object
@@ -26,17 +26,17 @@ public class MethodImplementationDecorator extends AbstractDecorator<AbstractDec
       // Then ensure a stereotype is present (as we do not support other configuration values so far)
       if (!method.getModifier().isPresentStereotype()) {
         Log.error("0xTODO: The method " + method.getName()
-                + " is decorated with a method implementation, but does not present a stereotype.",
+            + " is decorated with a method implementation, but does not present a stereotype.",
             method.get_SourcePositionStart(), method.get_SourcePositionEnd());
         return;
       }
-
+      
       // TODO: ALu: Create shared get-marked value source (not only for stereotypes)
-
+      
       doDecoration(method, method.getModifier().getStereotype());
     }
   }
-
+  
   @Override
   public void visit(ASTCDConstructor constructor) {
     // First, check if we should decorate the given object
@@ -44,31 +44,31 @@ public class MethodImplementationDecorator extends AbstractDecorator<AbstractDec
       // Then ensure a stereotype is present (as we do not support other configuration values so far)
       if (!constructor.getModifier().isPresentStereotype()) {
         Log.error("0xTODO: The constructor " + constructor.getName()
-                + " is decorated with a method implementation, but does not present a stereotype.",
+            + " is decorated with a method implementation, but does not present a stereotype.",
             constructor.get_SourcePositionStart(), constructor.get_SourcePositionEnd());
         return;
       }
-
+      
       // TODO: ALu: Create shared get-marked value source (not only for stereotypes)
       doDecoration(constructor, constructor.getModifier().getStereotype());
     }
   }
-
+  
   protected void doDecoration(ASTNode target, ASTStereotype stereotype) {
     // TODO: Discuss if split via # or separate stereo is better for params?
     String[] sp = stereotype.getValue("impl").split("#");
     String template = sp[0];
     Object[] templateParams = new Object[sp.length - 1];
     System.arraycopy(sp, 1, templateParams, 0, sp.length - 1);
-
+    
     // And finally. replace the empty body template with the given template
     glexOpt.ifPresent(g -> g.replaceTemplate(CD4C.getInstance().getEmptyBodyTemplate(),
         decoratorData.getAsDecorated(target), new TemplateHookPoint(template, templateParams)));
   }
-
+  
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CD4CodeBasis(this);
   }
-
+  
 }

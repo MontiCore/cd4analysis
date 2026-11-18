@@ -268,7 +268,7 @@ public class DecoratorData {
     
     return MatchResult.DEFAULT;
   }
-
+  
   protected MatchResult matchCDConstructor(ASTCDConstructor node, MatcherData matcherData) {
     if (node.getModifier().isPresentStereotype()) {
       for (var s : node.getModifier().getStereotype().getValuesList()) {
