@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationModifierCoCoValid{
+
+ package p1 {
+      public class A {
+        int foo;
+        String field;
+      }
+    }
+    package p2 {
+      class B;
+    }
+
+  public association assocVisibility p1.A -> p2.B;
+  association leftVisibility private p1.A -> p2.B;
+  association rightVisibility p1.A -> p2.B public;
+
+  public association finalRole final p2.B -> p1.A final;
+  private association derivedRoles derived p2.B -> p1.A derived;
+  protected association readOnlyRoles readonly p1.A -> p2.B readonly;
+}
