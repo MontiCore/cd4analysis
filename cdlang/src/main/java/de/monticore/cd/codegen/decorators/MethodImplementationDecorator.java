@@ -1,12 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -30,16 +33,37 @@ public class MethodImplementationDecorator extends AbstractDecorator<AbstractDec
       
       // TODO: ALu: Create shared get-marked value source (not only for stereotypes)
       
-      // TODO: Discuss if split via # or separate stereo is better for params?
-      String[] sp = method.getModifier().getStereotype().getValue("impl").split("#");
-      String template = sp[0];
-      Object[] templateParams = new Object[sp.length - 1];
-      System.arraycopy(sp, 1, templateParams, 0, sp.length - 1);
-      
-      // And finally. replace the empty body template with the given template
-      glexOpt.ifPresent(g -> g.replaceTemplate(CD4C.getInstance().getEmptyBodyTemplate(),
-          decoratorData.getAsDecorated(method), new TemplateHookPoint(template, templateParams)));
+      doDecoration(method, method.getModifier().getStereotype());
     }
+  }
+  
+  @Override
+  public void visit(ASTCDConstructor constructor) {
+    // First, check if we should decorate the given object
+    if (decoratorData.shouldDecorate(this.getClass(), constructor)) {
+      // Then ensure a stereotype is present (as we do not support other configuration values so far)
+      if (!constructor.getModifier().isPresentStereotype()) {
+        Log.error("0xTODO: The constructor " + constructor.getName()
+            + " is decorated with a method implementation, but does not present a stereotype.",
+            constructor.get_SourcePositionStart(), constructor.get_SourcePositionEnd());
+        return;
+      }
+      
+      // TODO: ALu: Create shared get-marked value source (not only for stereotypes)
+      doDecoration(constructor, constructor.getModifier().getStereotype());
+    }
+  }
+  
+  protected void doDecoration(ASTNode target, ASTStereotype stereotype) {
+    // TODO: Discuss if split via # or separate stereo is better for params?
+    String[] sp = stereotype.getValue("impl").split("#");
+    String template = sp[0];
+    Object[] templateParams = new Object[sp.length - 1];
+    System.arraycopy(sp, 1, templateParams, 0, sp.length - 1);
+    
+    // And finally. replace the empty body template with the given template
+    glexOpt.ifPresent(g -> g.replaceTemplate(CD4C.getInstance().getEmptyBodyTemplate(),
+        decoratorData.getAsDecorated(target), new TemplateHookPoint(template, templateParams)));
   }
   
   @Override
