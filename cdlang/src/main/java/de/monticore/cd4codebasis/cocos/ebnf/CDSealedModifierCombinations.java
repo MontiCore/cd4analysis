@@ -38,11 +38,7 @@ public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
     if (node.getModifier().isAbstract() && node.getModifier().isFinal()) {
       error(ERROR_CODE_ABSTRACT_FINAL, "Class '%s' must not be both 'abstract' and 'final'.", node);
     }
-    if (node.isPresentCDPermitsUsage() && !isSealed(node.getModifier())) {
-      error(ERROR_CODE_PERMITS_WITHOUT_SEALED,
-          "Class '%s' has a 'permits' clause but is not 'sealed'.", node);
-    }
-    checkPermitsPresent(node);
+    checkSealedAndPermits(node, node.isPresentCDPermitsUsage());
   }
   
   @Override
@@ -51,20 +47,19 @@ public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
     if (node.getModifier().isFinal()) {
       error(ERROR_CODE_FINAL_INTERFACE, "Interface '%s' must not be 'final'.", node);
     }
-    if (node.isPresentCDPermitsUsage() && !isSealed(node.getModifier())) {
-      error(ERROR_CODE_PERMITS_WITHOUT_SEALED,
-          "Interface '%s' has a 'permits' clause but is not 'sealed'.", node);
-    }
-    checkPermitsPresent(node);
+    checkSealedAndPermits(node, node.isPresentCDPermitsUsage());
   }
   
   /**
-   * A 'sealed' type needs a 'permits' clause.
+   * A type has a 'permits' clause if and only if it is 'sealed'.
    */
-  protected void checkPermitsPresent(ASTCDType node) {
-    boolean hasPermits = node instanceof ASTCDClass ? ((ASTCDClass) node).isPresentCDPermitsUsage()
-        : ((ASTCDInterface) node).isPresentCDPermitsUsage();
-    if (isSealed(node.getModifier()) && !hasPermits) {
+  protected void checkSealedAndPermits(ASTCDType node, boolean hasPermits) {
+    boolean sealed = isSealed(node.getModifier());
+    if (hasPermits && !sealed) {
+      error(ERROR_CODE_PERMITS_WITHOUT_SEALED,
+          "Type '%s' has a 'permits' clause but is not 'sealed'.", node);
+    }
+    if (sealed && !hasPermits) {
       error(ERROR_CODE_SEALED_WITHOUT_PERMITS, "Type '%s' is 'sealed' but has no 'permits' clause.",
           node);
     }
