@@ -19,6 +19,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+import java.util.function.Supplier;
 
 /**
  * Checks that 'sealed' and 'non-sealed' are only used for classes and interfaces. CDSealedModifier
@@ -36,51 +37,54 @@ public class CDSealedOnlyOnClassesAndInterfaces implements CDBasisASTCDDefinitio
   
   @Override
   public void check(ASTCDDefinition node) {
-    check(node.getModifier(), "class diagram", node.getName());
+    check(node.getModifier(), "class diagram", node::getName);
   }
   
   @Override
   public void check(ASTCDAttribute node) {
-    check(node.getModifier(), "attribute", node.getName());
+    check(node.getModifier(), "attribute", node::getName);
   }
   
   @Override
   public void check(ASTCDMethod node) {
-    check(node.getModifier(), "method", node.getName());
+    check(node.getModifier(), "method", node::getName);
   }
   
   @Override
   public void check(ASTCDConstructor node) {
-    check(node.getModifier(), "constructor", node.getName());
+    check(node.getModifier(), "constructor", node::getName);
   }
   
   @Override
   public void check(ASTCDEnum node) {
-    check(node.getModifier(), "enum", node.getName());
+    check(node.getModifier(), "enum", node::getName);
   }
   
   @Override
   public void check(ASTCDAssociation node) {
-    check(node.getModifier(), "association", node.isPresentName() ? node.getName() : node.getLeft()
-        .getMCQualifiedType().printType() + " - " + node.getRight().getMCQualifiedType()
+    check(node.getModifier(), "association", () -> node.isPresentName() ? node.getName() : node
+        .getLeft().getMCQualifiedType().printType() + " - " + node.getRight().getMCQualifiedType()
             .printType());
   }
   
   @Override
   public void check(ASTCDAssocLeftSide node) {
-    check(node.getModifier(), "association end", node.getMCQualifiedType().printType());
+    check(node.getModifier(), "association end", () -> node.getMCQualifiedType().printType());
   }
   
   @Override
   public void check(ASTCDAssocRightSide node) {
-    check(node.getModifier(), "association end", node.getMCQualifiedType().printType());
+    check(node.getModifier(), "association end", () -> node.getMCQualifiedType().printType());
   }
   
-  protected void check(ASTModifier mod, String kind, String name) {
+  /**
+   * @param name supplies the name for the error message, only called if there is an error
+   */
+  protected void check(ASTModifier mod, String kind, Supplier<String> name) {
     if (CDSealedModifierCombinations.isSealed(mod) || CDSealedModifierCombinations.isNonSealed(
         mod)) {
       Log.error(String.format("%s: The %s '%s' must not be 'sealed' or 'non-sealed'.", ERROR_CODE,
-          kind, name), mod.get_SourcePositionStart(), mod.get_SourcePositionEnd());
+          kind, name.get()), mod.get_SourcePositionStart(), mod.get_SourcePositionEnd());
     }
   }
   
