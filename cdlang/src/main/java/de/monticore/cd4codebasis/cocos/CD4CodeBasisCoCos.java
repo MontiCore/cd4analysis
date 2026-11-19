@@ -47,6 +47,21 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
     // CDClass
     checker.addCoCo(new ConstructorNameEqualsClassNameCoCo());
     
+    // sealed, non-sealed, and permits
+    addCheckerForSealedCoCos(checker);
+    
+    // CDMethodSignature
+    checker.addCoCo(new CDMethodSignatureParameterNamesUnique());
+    
+    // CD4CodeEnumConstant
+    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
+  }
+  
+  /**
+   * Adds the CoCos for sealed and non-sealed types and permits clauses. Languages that do not use
+   * all CD4CodeBasis CoCos (e.g., SymTabDefinition) add them separately.
+   */
+  public CD4CodeBasisCoCoChecker addCheckerForSealedCoCos(CD4CodeBasisCoCoChecker checker) {
     // CDClass and CDInterface: sealed and permits
     // (registered once each, the CoCos visit both classes and interfaces)
     checker.addCoCo((CD4CodeBasisASTCDClassCoCo) new CDPermittedTypesAreSubtypes());
@@ -59,12 +74,7 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
     checker.addCoCo((CDBasisASTCDAttributeCoCo) sealedOnlyOnTypes);
     checker.addCoCo((CD4CodeBasisASTCDMethodCoCo) sealedOnlyOnTypes);
     checker.addCoCo((CDInterfaceAndEnumASTCDEnumCoCo) sealedOnlyOnTypes);
-    
-    // CDMethodSignature
-    checker.addCoCo(new CDMethodSignatureParameterNamesUnique());
-    
-    // CD4CodeEnumConstant
-    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
+    return checker;
   }
   
 }

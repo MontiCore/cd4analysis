@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.stdefinition.cocos;
+
+symtabdefinition SealedInvalid {
+
+  // 0xCDC92: final and sealed
+  final sealed class A permits B;
+  final class B extends A;
+
+  // 0xCDC9B: sealed without permits
+  sealed class W;
+
+  // 0xCDC99: non-sealed without a sealed supertype
+  non-sealed class N;
+
+  class C {
+    // 0xCDC96: sealed on an attribute
+    sealed int x;
+  }
+
+}
