@@ -184,6 +184,17 @@ public class SealedCoCoTest extends CD4CodeTestBasis {
     assertTrue(p.parse_String("classdiagram C { non- sealed class A; }").isEmpty());
   }
   
+  /**
+   * Like in Java, permitted types have no type arguments.
+   */
+  @Test
+  public void testPermittedTypeWithTypeArguments() throws IOException {
+    assertTrue(p.parse_String(
+        "classdiagram C { sealed class S<T> permits A<String>; final class A extends S<String>; }")
+        .isEmpty());
+    Log.getFindings().clear();
+  }
+  
   @Test
   public void testPrettyPrint() throws IOException {
     Optional<ASTCDCompilationUnit> parsed = p.parse(getFilePath(MODELS + "SealedValid.cd"));

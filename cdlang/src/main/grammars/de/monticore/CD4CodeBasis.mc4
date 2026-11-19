@@ -64,10 +64,11 @@ component grammar CD4CodeBasis extends
       | ["static"]
     )*;
 
-  /** Lists the permitted direct subtypes of a sealed class or interface
+  /** Lists the permitted direct subtypes of a sealed class or interface.
+      Like in Java, the types have no type arguments (JLS 17, §8.1.6).
    */
   CDPermitsUsage =
-    "permits" permitted:(MCObjectType || ",")+;
+    "permits" permitted:(MCQualifiedType || ",")+;
 
   // keep non, sealed, and permits usable as names
   nokeyword "non", "sealed", "permits";

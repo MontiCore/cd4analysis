@@ -4,7 +4,7 @@ package de.monticore.cd.facade;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCDPermitsUsage;
 import de.monticore.types.MCTypeFacade;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,11 +24,11 @@ public class CDPermitsUsageFacade {
     return cdPermitsUsageFacade;
   }
   
-  public ASTCDPermitsUsage createCDPermitsUsage(final List<ASTMCObjectType> types) {
+  public ASTCDPermitsUsage createCDPermitsUsage(final List<ASTMCQualifiedType> types) {
     return CD4CodeBasisMill.cDPermitsUsageBuilder().setPermittedList(types).build();
   }
   
-  public ASTCDPermitsUsage createCDPermitsUsage(final ASTMCObjectType... types) {
+  public ASTCDPermitsUsage createCDPermitsUsage(final ASTMCQualifiedType... types) {
     return createCDPermitsUsage(Arrays.asList(types));
   }
   
