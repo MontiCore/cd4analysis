@@ -17,3 +17,6 @@ gradlew.bat
 
 # AI
 .claude/**
+
+# macOS
+.DS_Store
