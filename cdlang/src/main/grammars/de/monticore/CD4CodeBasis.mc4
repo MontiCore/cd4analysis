@@ -34,6 +34,9 @@ component grammar CD4CodeBasis extends
       other modifiers are still parsed as plain UML modifiers.
       (Each of them occurs only once, as MontiTrans requires a
       single cardinality per attribute.)
+      non-sealed consists of three tokens without whitespace, so that
+      no new token changes the lexing of, e.g., the expression
+      "non-sealed" (non minus sealed).
    */
   CDSealedModifier extends Modifier =
     Stereotype?
@@ -48,7 +51,7 @@ component grammar CD4CodeBasis extends
       | ["readonly"]     | [readonly:"?"]
       | ["static"]
     )*
-    ( ["sealed"] | [nonSealed:"non-sealed"] )
+    ( ["sealed"] | {noSpace(2,3)}? [nonSealed:"non"] "-" "sealed" )
     (
         ["public"]       | [public:"+"]
       | ["private"]      | [private:"-"]
@@ -66,8 +69,8 @@ component grammar CD4CodeBasis extends
   CDPermitsUsage =
     "permits" permitted:(MCObjectType || ",")+;
 
-  // keep sealed and permits usable as names
-  nokeyword "sealed", "permits";
+  // keep non, sealed, and permits usable as names
+  nokeyword "non", "sealed", "permits";
 
   /* ==== Classes and Interfaces ==== */
 

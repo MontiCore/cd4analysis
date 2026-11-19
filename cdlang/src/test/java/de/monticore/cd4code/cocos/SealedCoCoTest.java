@@ -172,6 +172,18 @@ public class SealedCoCoTest extends CD4CodeTestBasis {
     assertTrue(Log.getFindings().isEmpty(), getJoinedErrors());
   }
   
+  /**
+   * non-sealed consists of three tokens, which must not be separated by whitespace.
+   */
+  @Test
+  public void testNonSealedWithWhitespace() throws IOException {
+    assertTrue(p.parse_String("classdiagram C { non-sealed class A; }").isPresent(),
+        getJoinedErrors());
+    assertTrue(p.parse_String("classdiagram C { non - sealed class A; }").isEmpty());
+    assertTrue(p.parse_String("classdiagram C { non -sealed class A; }").isEmpty());
+    assertTrue(p.parse_String("classdiagram C { non- sealed class A; }").isEmpty());
+  }
+  
   @Test
   public void testPrettyPrint() throws IOException {
     Optional<ASTCDCompilationUnit> parsed = p.parse(getFilePath(MODELS + "SealedValid.cd"));

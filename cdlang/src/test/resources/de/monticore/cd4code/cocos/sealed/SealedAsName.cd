@@ -6,5 +6,7 @@ classdiagram SealedAsName {
   }
   class sealed {
     permits p;
+    int non;
+    int d = non-sealed;
   }
 }
