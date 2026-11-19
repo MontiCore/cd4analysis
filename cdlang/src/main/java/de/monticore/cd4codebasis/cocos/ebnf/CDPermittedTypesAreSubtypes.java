@@ -6,27 +6,24 @@ import de.monticore.cd4codebasis._ast.ASTCDInterface;
 import de.monticore.cd4codebasis._ast.ASTCDPermitsUsage;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDClassCoCo;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDInterfaceCoCo;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**
- * Checks that all types listed in a {@code permits} clause directly extend or implement the
- * sealed type declaring the clause. Unresolvable types are skipped, the type check reports them
- * (0xA0324).
+ * Checks on symbol level that all types of the subtype restriction (the {@code permits} clause)
+ * directly extend or implement the sealed type declaring the clause, and that no type is listed
+ * twice (JLS 17, §8.1.6). Unresolvable types are not part of the restriction, the type check
+ * reports them (0xA0324).
  */
 public class CDPermittedTypesAreSubtypes implements CD4CodeBasisASTCDClassCoCo,
     CD4CodeBasisASTCDInterfaceCoCo {
   
   public static final String ERROR_CODE = "0xCDC91";
+  
+  public static final String ERROR_CODE_DUPLICATE = "0xCDC9A";
   
   @Override
   public void check(ASTCDClass clazz) {
@@ -43,59 +40,35 @@ public class CDPermittedTypesAreSubtypes implements CD4CodeBasisASTCDClassCoCo,
   }
   
   protected void checkPermits(OOTypeSymbol declarer, ASTCDPermitsUsage permits) {
-    IOOSymbolsScope scope = declarer.getEnclosingScope();
+    Set<String> seen = new HashSet<>();
     
-    for (ASTMCObjectType type : permits.getPermittedList()) {
-      Optional<OOTypeSymbol> permitted = scope.resolveOOType(rawTypeName(type));
+    for (SymTypeExpression permitted : declarer.getSubTypeRestrictionList()) {
+      if (!permitted.hasTypeInfo()) {
+        continue;
+      }
+      String permittedName = permitted.getTypeInfo().getFullName();
       
-      if (permitted.isPresent() && !directSupertypeNamesOf(permitted.get()).contains(declarer
-          .getFullName())) {
-        Log.error(String.format(
-            "%s: Permitted type '%s' does not directly extend or implement the sealed type '%s'.",
-            ERROR_CODE, permitted.get().getName(), declarer.getName()), type
-                .get_SourcePositionStart(), type.get_SourcePositionEnd());
+      if (!seen.add(permittedName)) {
+        error(ERROR_CODE_DUPLICATE, "Permitted type '%s' is listed more than once.", permits,
+            permitted.getTypeInfo().getName());
+      }
+      else if (!directlyExtendsOrImplements(permitted, declarer)) {
+        error(ERROR_CODE,
+            "Permitted type '%s' does not directly extend or implement the sealed type '%s'.",
+            permits, permitted.getTypeInfo().getName(), declarer.getName());
       }
     }
   }
   
-  /**
-   * Reads the direct supertypes from the AST if available, so that the check also works before
-   * the symbol table completer has run. Types without AST (e.g., loaded from a symbol file) use
-   * the supertypes stored in their symbol.
-   *
-   * @return full names of the directly extended or implemented types
-   */
-  protected Set<String> directSupertypeNamesOf(OOTypeSymbol sym) {
-    Set<String> result = new HashSet<>();
-    
-    if (sym.isPresentAstNode() && sym.getAstNode() instanceof ASTCDType) {
-      ASTCDType type = (ASTCDType) sym.getAstNode();
-      List<ASTMCObjectType> supertypes = new ArrayList<>(type.getSuperclassList());
-      supertypes.addAll(type.getInterfaceList());
-      
-      IOOSymbolsScope scope = sym.getEnclosingScope();
-      for (ASTMCObjectType supertype : supertypes) {
-        scope.resolveOOType(rawTypeName(supertype)).ifPresent(s -> result.add(s.getFullName()));
-      }
-    }
-    else {
-      for (SymTypeExpression supertype : sym.getSuperTypesList()) {
-        if (supertype.hasTypeInfo()) {
-          result.add(supertype.getTypeInfo().getFullName());
-        }
-      }
-    }
-    
-    return result;
+  protected static boolean directlyExtendsOrImplements(SymTypeExpression subtype,
+      OOTypeSymbol supertype) {
+    return subtype.getTypeInfo().getSuperTypesList().stream().anyMatch(s -> s.hasTypeInfo() && s
+        .getTypeInfo().getFullName().equals(supertype.getFullName()));
   }
   
-  /**
-   * @return the type name without type arguments, e.g., {@code F} for {@code F<X>}
-   */
-  protected static String rawTypeName(ASTMCObjectType t) {
-    String printed = t.printType();
-    int lt = printed.indexOf('<');
-    return lt < 0 ? printed : printed.substring(0, lt);
+  protected void error(String code, String message, ASTCDPermitsUsage node, Object... args) {
+    Log.error(code + ": " + String.format(message, args), node.get_SourcePositionStart(), node
+        .get_SourcePositionEnd());
   }
   
 }

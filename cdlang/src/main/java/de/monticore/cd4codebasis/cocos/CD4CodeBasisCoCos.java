@@ -51,6 +51,9 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
     // (registered once each, the CoCos visit both classes and interfaces)
     checker.addCoCo((CD4CodeBasisASTCDClassCoCo) new CDPermittedTypesAreSubtypes());
     checker.addCoCo((CD4CodeBasisASTCDClassCoCo) new CDSealedModifierCombinations());
+    CDSubtypesRespectRestriction respectsRestriction = new CDSubtypesRespectRestriction();
+    checker.addCoCo((CD4CodeBasisASTCDClassCoCo) respectsRestriction);
+    checker.addCoCo((CDInterfaceAndEnumASTCDEnumCoCo) respectsRestriction);
     // (once per grammar: CDBasis, CD4CodeBasis, CDInterfaceAndEnum; CDAssociation in CD4CodeCoCos)
     CDSealedOnlyOnClassesAndInterfaces sealedOnlyOnTypes = new CDSealedOnlyOnClassesAndInterfaces();
     checker.addCoCo((CDBasisASTCDAttributeCoCo) sealedOnlyOnTypes);

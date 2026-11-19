@@ -6,4 +6,7 @@ classdiagram SealedPermittedTypesAreSubtypesInvalid {
   class Blob;
   sealed interface Shade permits Grey;
   enum Grey { LIGHT; }
+  // 0xCDC9A: duplicate entry
+  sealed class Dup permits Single, Single;
+  final class Single extends Dup;
 }

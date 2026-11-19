@@ -15,9 +15,9 @@ import de.se_rwth.commons.logging.Log;
  * Checks the modifiers of a single class or interface declaration with respect to
  * {@code sealed}, {@code non-sealed}, {@code final}, and {@code abstract} (JLS 17, §8.1.1, §9.1.1).
  *
- * <p>Rules that involve the type hierarchy are not checked yet, e.g., that a permitted subclass
- * is final, sealed, or non-sealed, or that a non-sealed type has a sealed direct supertype. They
- * are planned on symbol level once OOTypeSymbol stores isSealed.</p>
+ * <p>Unlike Java, a sealed type must list its permitted subtypes: a class diagram has no
+ * compilation unit that could define them implicitly. Rules that involve the type hierarchy are
+ * checked by {@link CDSubtypesRespectRestriction}.</p>
  */
 public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
     CD4CodeBasisASTCDInterfaceCoCo {
@@ -30,6 +30,8 @@ public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
   
   public static final String ERROR_CODE_PERMITS_WITHOUT_SEALED = "0xCDC95";
   
+  public static final String ERROR_CODE_SEALED_WITHOUT_PERMITS = "0xCDC9B";
+  
   @Override
   public void check(ASTCDClass node) {
     checkExclusive(node);
@@ -40,6 +42,7 @@ public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
       error(ERROR_CODE_PERMITS_WITHOUT_SEALED,
           "Class '%s' has a 'permits' clause but is not 'sealed'.", node);
     }
+    checkPermitsPresent(node);
   }
   
   @Override
@@ -51,6 +54,19 @@ public class CDSealedModifierCombinations implements CD4CodeBasisASTCDClassCoCo,
     if (node.isPresentCDPermitsUsage() && !isSealed(node.getModifier())) {
       error(ERROR_CODE_PERMITS_WITHOUT_SEALED,
           "Interface '%s' has a 'permits' clause but is not 'sealed'.", node);
+    }
+    checkPermitsPresent(node);
+  }
+  
+  /**
+   * A 'sealed' type needs a 'permits' clause.
+   */
+  protected void checkPermitsPresent(ASTCDType node) {
+    boolean hasPermits = node instanceof ASTCDClass ? ((ASTCDClass) node).isPresentCDPermitsUsage()
+        : ((ASTCDInterface) node).isPresentCDPermitsUsage();
+    if (isSealed(node.getModifier()) && !hasPermits) {
+      error(ERROR_CODE_SEALED_WITHOUT_PERMITS, "Type '%s' is 'sealed' but has no 'permits' clause.",
+          node);
     }
   }
   

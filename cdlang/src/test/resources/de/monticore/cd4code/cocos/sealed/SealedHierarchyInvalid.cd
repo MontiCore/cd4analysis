@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram SealedHierarchyInvalid {
+  // 0xCDC97: C extends A, but is not permitted
+  sealed class A permits B;
+  final class B extends A;
+  final class C extends A;
+
+  // 0xCDC98: permitted subtype without final, sealed, or non-sealed
+  sealed class S permits P;
+  class P extends S;
+
+  // 0xCDC99: non-sealed without sealed supertype
+  non-sealed class N;
+
+  // 0xCDC9B: sealed without permits
+  sealed class W;
+
+  // 0xCDC97: enum is not permitted
+  sealed interface I permits E;
+  enum E implements I { X; }
+  enum F implements I { X; }
+}

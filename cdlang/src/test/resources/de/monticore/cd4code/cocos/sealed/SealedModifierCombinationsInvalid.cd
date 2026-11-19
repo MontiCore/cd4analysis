@@ -2,8 +2,10 @@
 classdiagram SealedModifierCombinationsInvalid {
   // 0xCDC92: final, sealed, and non-sealed are mutually exclusive
   // (sealed together with non-sealed is a parse error)
-  final sealed class A1;
-  non-sealed final class A2;
+  final sealed class A1 permits B1;
+  final class B1 extends A1;
+  sealed class S2 permits A2;
+  non-sealed final class A2 extends S2;
 
   // 0xCDC93: abstract and final
   abstract final class A3;
