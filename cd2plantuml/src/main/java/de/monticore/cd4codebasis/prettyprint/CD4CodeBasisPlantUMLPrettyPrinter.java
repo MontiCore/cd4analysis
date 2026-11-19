@@ -4,6 +4,7 @@ package de.monticore.cd4codebasis.prettyprint;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+import de.monticore.cd4codebasis._ast.ASTCDInterface;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._ast.ASTCDSealedModifier;
@@ -126,6 +127,54 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil i
   
   @Override
   public void endVisit(ASTCDClass node) {
+    if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {
+      unindent();
+      println("}");
+    }
+    else {
+      println();
+    }
+    
+    nameStack.pop();
+  }
+  
+  /**
+   * CD4CodeBasis overrides CDInterface, so the CDInterfaceAndEnum printer does not reach it. The
+   * permits clause is not printed: PlantUML has no syntax for it, and the permitted types are
+   * direct subtypes anyway.
+   */
+  @Override
+  public void visit(ASTCDInterface node) {
+    nameStack.push(node.getName());
+    printComment(node);
+    
+    print("interface " + node.getName());
+    
+    if (plantUMLConfig.getShowModifier() && hasModifier(node.getModifier())) {
+      print(" << ");
+      node.getModifier().accept(getTraverser());
+      print(">>");
+    }
+    
+    if (node.isPresentCDExtendUsage()) {
+      print(" extends ");
+      print(node.getInterfaceList().stream().map(s -> s.printType()).collect(Collectors.joining(
+          ", ")));
+    }
+    
+    if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {
+      println(" {");
+      indent();
+    }
+  }
+  
+  @Override
+  public void traverse(ASTCDInterface node) {
+    node.getCDMemberList().forEach(m -> m.accept(getTraverser()));
+  }
+  
+  @Override
+  public void endVisit(ASTCDInterface node) {
     if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {
       unindent();
       println("}");
