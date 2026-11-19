@@ -3,6 +3,8 @@ package de.monticore.cd4code.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4codebasis.cocos.ebnf.CDSealedOnlyOnClassesAndInterfaces;
+import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeOverridden;
 import de.monticore.types.mcbasictypes.cocos.QualifiedTypeHasNoTypeParameters;
 import de.monticore.types.typeparameters.cocos.TypeParameterNoCyclicInheritance;
@@ -34,6 +36,8 @@ public class CD4CodeCoCos extends CoCoParent<CD4CodeCoCoChecker> {
     checker.addCoCo(new TypeParameterNoCyclicInheritance());
     // MCBasicTypes
     checker.addCoCo(new QualifiedTypeHasNoTypeParameters());
+    // CDAssociation: no sealed or non-sealed (once, visits associations and both ends)
+    checker.addCoCo((CDAssociationASTCDAssociationCoCo) new CDSealedOnlyOnClassesAndInterfaces());
     return checker;
   }
   
