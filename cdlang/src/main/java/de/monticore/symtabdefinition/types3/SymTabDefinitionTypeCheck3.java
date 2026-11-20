@@ -22,6 +22,7 @@ import de.monticore.types3.generics.TypeParameterRelations;
 import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.util.MapBasedTypeCheck3;
 import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
+import de.monticore.types3.util.PostTypeCheckNodeReplacer;
 import de.monticore.types3.util.TypeContextCalculator;
 import de.monticore.types3.util.TypeVisitorOperatorCalculator;
 import de.monticore.visitor.ITraverser;
@@ -37,6 +38,7 @@ public class SymTabDefinitionTypeCheck3 extends MapBasedTypeCheck3 {
     OOWithinTypeBasicSymbolsResolver.init();
     CDWithinScopeBasicsSymbolResolver.init();
     TypeContextCalculator.init();
+    PostTypeCheckNodeReplacer.init();
     TypeVisitorOperatorCalculator.init();
     CommonExpressionsLValueRelations.init();
     TypeParameterRelations.init();
@@ -103,6 +105,7 @@ public class SymTabDefinitionTypeCheck3 extends MapBasedTypeCheck3 {
     OOWithinTypeBasicSymbolsResolver.reset();
     CDWithinScopeBasicsSymbolResolver.reset();
     TypeContextCalculator.reset();
+    PostTypeCheckNodeReplacer.reset();
     TypeVisitorOperatorCalculator.reset();
     CommonExpressionsLValueRelations.reset();
     TypeParameterRelations.reset();
