@@ -387,19 +387,6 @@ java -jar MCCD.jar -script adapted.groovy
 ```
 - option '-h' or '--help' can be used to get information of allowed parameters
 
-### Gradle Plugin
-- the gradle plugin provides the functionality of the tool for gradle builds
-- the plugin can be used to check given class diagrams or generate symbol tables
-- example usage of the gradle plugin
-```gradle
-task checkCD(type: CDTask) {
-  inputFile = file "src/main/resources/de/monticore/cd/Test.cd"
-  outputDir = file buildDir
-  modelPaths = files(buildDir, "src/main/resources")
-  reportDir = file "$buildDir/reports"
-  scriptFile = file "src/main/resources/adapted.groovy"
-}
-```
 
 # CD4Code
 CD4Code is a conservative extension of CD4Analysis and adds methods,
@@ -636,6 +623,10 @@ The difference to other templates is that the CD4C templates (using the CD4C
 infrastructure) have to be executed from CD4C, otherwise the signature
 definitions can not be handled.
 The method body definition is exactly the same.
+
+### CD Decorating Generator and CD Generator Gradle Plugin
+The decorating generator is described in
+[a separate location](../../../../../../doc/CDGen.md).
 
 ## Additional info
 ### Error codes

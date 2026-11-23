@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdassociation.symboltable;
+
+// every association is explicitly named, thus the serialized symbol table is deterministic
+classdiagram SerializationNamedCD {
+  class A;
+  class B;
+  class D;
+
+  association namedAssoc A -> B;
+  association namedAssocWithRoles A (myA) <-> (myB) B;
+  composition namedComposition D -> (part) A;
+}

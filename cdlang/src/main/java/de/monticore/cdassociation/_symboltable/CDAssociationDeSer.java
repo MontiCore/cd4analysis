@@ -6,6 +6,7 @@ import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.symboltable.serialization.json.JsonElement;
 import de.monticore.symboltable.serialization.json.JsonObject;
+import de.se_rwth.commons.logging.Log;
 import java.util.Map;
 
 public class CDAssociationDeSer extends CDAssociationDeSerTOP {
@@ -56,7 +57,7 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
    * @param symAssociation
    */
   public static void serializeSymAssociation(JsonPrinter printer, SymAssociation symAssociation) {
-    printer.beginObject(String.valueOf(symAssociation.hashCode()));
+    printer.beginObject(handleSymAssociation(symAssociation));
     
     printer.member(JsonDeSers.KIND, SYM_ASSOCIATION_TYPE);
     printer.member("isAssociation", symAssociation.isAssociation());
@@ -65,11 +66,20 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
     printer.endObject();
   }
   
-  public static int handleSymAssociation(SymAssociation association) {
+  public static String handleSymAssociation(SymAssociation association) {
     // don't serialize the SymAssociation, just add it to the list and generate an identifier to be
     // placed in the CDAssociation or CDRoleSymbol
-    CDDeSerHelper.getInstance().addSymAssociationForSerialization(association);
-    return association.hashCode();
+    boolean isNew = CDDeSerHelper.getInstance().addSymAssociationForSerialization(association);
+    if (association.isPresentAssociation()) {
+      return association.getAssociation().getFullName();
+    }
+    if (isNew) {
+      Log.warn("0xCD002: The serialized symbol table of the class diagram may differ across "
+          + "multiple serializations, since the association between the roles `" + association
+              .getLeft().getFullName() + "` and `" + association.getRight().getFullName()
+          + "` is not named.");
+    }
+    return String.valueOf(association.hashCode());
   }
   
   public static void deserializeSymAssociation(String name, JsonObject symbolJson) {
@@ -80,8 +90,7 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
     symAssociation.setIsAssociation(symbolJson.getBooleanMemberOpt("isAssociation").orElse(false));
     symAssociation.setIsComposition(symbolJson.getBooleanMemberOpt("isComposition").orElse(false));
     
-    CDDeSerHelper.getInstance().addSymAssociationForDeserialization(Integer.parseInt(name),
-        symAssociation);
+    CDDeSerHelper.getInstance().addSymAssociationForDeserialization(name, symAssociation);
   }
   
   public static void deserializeSymAssociations(Map.Entry<String, JsonElement> entry) {

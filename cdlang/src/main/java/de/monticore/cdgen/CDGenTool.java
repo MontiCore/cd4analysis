@@ -6,6 +6,7 @@ import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
+import de.monticore.cd.codegen.trafo.JavaAssociationRoleNameTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
@@ -322,7 +323,8 @@ public class CDGenTool extends CD4CodeTool {
       // template
       boolean qf = Log.isFailQuickEnabled();
       Log.enableFailQuick(false); // Disable quick-fail during post decoration
-      TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
+      TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath(), Set.of(setup
+          .getDefaultFileExtension()));
       t = CD4CodeMill.inheritanceTraverser();
       topTransformer.addToTraverser(t);
       decorated.get().accept(t);
@@ -345,6 +347,7 @@ public class CDGenTool extends CD4CodeTool {
   
   public CDAssociationCreateFieldsFromAllRoles performFieldsFromRolesTrafo(
       Collection<ASTCDCompilationUnit> asts) {
+    new JavaAssociationRoleNameTrafo().transform(asts);
     CDAssociationCreateFieldsFromAllRoles roleTrafo =
         new CDAssociationCreateFieldsFromNavigableRoles();
     final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();

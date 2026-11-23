@@ -10,6 +10,7 @@ import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd.codegen.decorators.matcher.MatcherData;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.*;
@@ -141,37 +142,23 @@ public class DecoratorData {
   }
   
   protected MatchResult shouldDecorateCacheMiss(MatcherData matcherData, ASTNode node) {
-    MatchResult result = MatchResult.DEFAULT;
-    if (node instanceof ASTCDClass) {
-      result = matchClass((ASTCDClass) node, matcherData);
-    }
-    else if (node instanceof ASTCDAttribute) {
-      result = matchCDAttribute((ASTCDAttribute) node, matcherData);
-    }
-    else if (node instanceof ASTCDDefinition) {
-      result = matchCDDef((ASTCDDefinition) node, matcherData);
-    }
-    else if (node instanceof ASTCDCompilationUnit) {
-      result = matchCDCU((ASTCDCompilationUnit) node, matcherData);
-    }
-    else if (node instanceof ASTCDMethod) {
-      result = matchCDMethod((ASTCDMethod) node, matcherData);
-    }
-    else if (node instanceof ASTCDInterface) {
-      result = matchCDInterface(((ASTCDInterface) node), matcherData);
-    }
-    else if (node instanceof ASTCDEnum) {
-      result = matchCDEnum(((ASTCDEnum) node), matcherData);
-    }
-    else if (node instanceof ASTCDPackage) {
-      result = matchCDPackage(((ASTCDPackage) node), matcherData);
-    }
-    else {
-      Log.error(INTERNAL_ERROR_CODE + ": Unable add to parent of unknown type " + node.getClass()
-          .getName(), node.get_SourcePositionStart());
-      throw new IllegalStateException("Unable find parent of unknown type " + node.getClass()
-          .getName());
-    }
+    MatchResult result = switch (node) {
+      case ASTCDClass cdClass -> matchClass(cdClass, matcherData);
+      case ASTCDAttribute cdAttribute -> matchCDAttribute(cdAttribute, matcherData);
+      case ASTCDDefinition cdDefinition -> matchCDDef(cdDefinition, matcherData);
+      case ASTCDCompilationUnit cdCompilationUnit -> matchCDCU(cdCompilationUnit, matcherData);
+      case ASTCDMethod cdMethod -> matchCDMethod(cdMethod, matcherData);
+      case ASTCDInterface cdInterface -> matchCDInterface(cdInterface, matcherData);
+      case ASTCDEnum cdEnum -> matchCDEnum(cdEnum, matcherData);
+      case ASTCDPackage cdPackage -> matchCDPackage(cdPackage, matcherData);
+      case ASTCDConstructor cdConstructor -> matchCDConstructor(cdConstructor, matcherData);
+      default -> {
+        Log.error(INTERNAL_ERROR_CODE + ": Unable to find parent of unknown type " + node.getClass()
+            .getName(), node.get_SourcePositionStart());
+        throw new IllegalStateException("Unable to find parent of unknown type " + node.getClass()
+            .getName());
+      }
+    };
     
     if (result != MatchResult.DEFAULT)
       return result;
@@ -279,6 +266,25 @@ public class DecoratorData {
         return r;
     }
     
+    return MatchResult.DEFAULT;
+  }
+  
+  protected MatchResult matchCDConstructor(ASTCDConstructor node, MatcherData matcherData) {
+    if (node.getModifier().isPresentStereotype()) {
+      for (var s : node.getModifier().getStereotype().getValuesList()) {
+        var r = matchStereo(s, matcherData);
+        if (r != MatchResult.DEFAULT)
+          return r;
+      }
+    }
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+    }
     return MatchResult.DEFAULT;
   }
   
