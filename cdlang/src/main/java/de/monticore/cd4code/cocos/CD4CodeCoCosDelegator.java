@@ -23,11 +23,19 @@ public class CD4CodeCoCosDelegator extends CoCoParent<CD4CodeCoCoChecker> {
     addCheckerForMcg2EbnfCoCos(checker);
   }
   
+  /**
+   * Creates the CDAssociation CoCos. Subclasses may override this, e.g., to check a transformed
+   * model.
+   */
+  protected CDAssociationCoCos createCDAssociationCoCos() {
+    return new CDAssociationCoCos();
+  }
+  
   @Override
   protected void addEbnfCoCos(CD4CodeCoCoChecker checker) {
     checker.addChecker(new CDBasisCoCos().addCheckerForEbnfCoCos());
     checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForEbnfCoCos());
-    checker.addChecker(new CDAssociationCoCos().addCheckerForEbnfCoCos());
+    checker.addChecker(createCDAssociationCoCos().addCheckerForEbnfCoCos());
     checker.addChecker(new CD4AnalysisCoCos().addCheckerForEbnfCoCos());
     checker.addChecker(new CD4CodeBasisCoCos().addCheckerForEbnfCoCos());
     checker.addChecker(new CD4CodeCoCos().addCheckerForEbnfCoCos());
@@ -37,7 +45,7 @@ public class CD4CodeCoCosDelegator extends CoCoParent<CD4CodeCoCoChecker> {
   protected void addMcgCoCos(CD4CodeCoCoChecker checker) {
     checker.addChecker(new CDBasisCoCos().addCheckerForMcgCoCos());
     checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForMcgCoCos());
-    checker.addChecker(new CDAssociationCoCos().addCheckerForMcgCoCos());
+    checker.addChecker(createCDAssociationCoCos().addCheckerForMcgCoCos());
     checker.addChecker(new CD4AnalysisCoCos().addCheckerForMcgCoCos());
     checker.addChecker(new CD4CodeBasisCoCos().addCheckerForMcgCoCos());
     checker.addChecker(new CD4CodeCoCos().addCheckerForMcgCoCos());
@@ -47,7 +55,7 @@ public class CD4CodeCoCosDelegator extends CoCoParent<CD4CodeCoCoChecker> {
   protected void addMcg2EbnfCoCos(CD4CodeCoCoChecker checker) {
     checker.addChecker(new CDBasisCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForMcg2EbnfCoCos());
-    checker.addChecker(new CDAssociationCoCos().addCheckerForMcg2EbnfCoCos());
+    checker.addChecker(createCDAssociationCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CD4AnalysisCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CD4CodeBasisCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CD4CodeCoCos().addCheckerForMcg2EbnfCoCos());

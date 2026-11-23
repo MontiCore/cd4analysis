@@ -2,6 +2,7 @@
 package de.monticore.testcdassociation.cocos;
 
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationJavaClassTypeCoCo;
+import de.monticore.cdassociation.cocos.ebnf.CDAssociationModifierCoCo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.se_rwth.commons.logging.Log;
@@ -17,6 +18,8 @@ public class CDAssociationLeftAndRightJavaClassInvalidTest extends CDAssociation
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationJavaClassTypeCoCo());
+    // the valid model must also satisfy the other association modifier CoCos
+    coCoChecker.addCoCo(new CDAssociationModifierCoCo());
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
         "cdassociation/cocos/CDAssociationLeftAndRightJavaClassValid.cd"));
     assertTrue(optAST.isPresent());

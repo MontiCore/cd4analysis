@@ -7,10 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdassociation.cocos.ebnf.CDAssociationVisibilityConflictCoCo;
 import de.monticore.cdgen.CDGenTool;
 import de.monticore.runtime.junit.AbstractMCTest;
 import de.monticore.runtime.junit.MCAssertions;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +56,34 @@ public class CDGeneratorToolTest extends AbstractMCTest {
         "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c", "-c2mc", "-o",
         "target/generated/example/standard", });
     assertTrue(new File("target/generated/example/standard/model/Example/A.java").isFile());
+  }
+  
+  @Test
+  public void testGeneratorToolPropagatesAssociationVisibility() throws IOException {
+    new CDGenTool().run(new String[] { "-i",
+        "src/test/resources/de/monticore/cdgentool/model/AssocVisibility.cd", "-c", "-c2mc", "-o",
+        "target/generated/example/assocVisibility", });
+    // the conflicting association is reported for the model as written (before the symbol table
+    // is created) and for the transformed model (after the symbol table is created)
+    assertEquals(1, Log.getFindings().stream().filter(f -> f.isWarning() && f.getMsg().startsWith(
+        CDAssociationVisibilityConflictCoCo.ERROR_CODE)).count(), Log.getFindings().toString());
+    assertEquals(1, Log.getFindings().stream().filter(f -> f.isWarning() && f.getMsg().startsWith(
+        CDAssociationVisibilityConflictCoCo.ERROR_CODE_AFTER_TRAFOS)).count(), Log.getFindings()
+            .toString());
+    MCAssertions.assertHasFindingsStartingWith(CDAssociationVisibilityConflictCoCo.ERROR_CODE);
+    MCAssertions.assertHasFindingsStartingWith(
+        CDAssociationVisibilityConflictCoCo.ERROR_CODE_AFTER_TRAFOS);
+    
+    Path out = Paths.get("target/generated/example/assocVisibility/model/AssocVisibility");
+    String a = Files.readString(out.resolve("A.java"));
+    String b = Files.readString(out.resolve("B.java"));
+    String c = Files.readString(out.resolve("C.java"));
+    assertTrue(a.matches("(?s).*\\bprivate\\s+\\S+\\s+privB\\b.*"), a);
+    assertTrue(a.matches("(?s).*\\bprotected\\s+\\S+\\s+protC\\b.*"), a);
+    assertTrue(c.matches("(?s).*\\bprivate\\s+\\S+\\s+privA\\b.*"), c);
+    // public (default) members are generated as protected fields with public accessors
+    assertTrue(b.matches("(?s).*\\bprotected\\s+\\S+\\s+pubC\\b.*"), b);
+    assertTrue(b.matches("(?s).*\\bpublic\\s+\\S+\\s+getPubC\\s*\\(.*"), b);
   }
   
   @Test

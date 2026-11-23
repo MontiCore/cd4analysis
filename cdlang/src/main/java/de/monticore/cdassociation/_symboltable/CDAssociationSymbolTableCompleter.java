@@ -129,9 +129,12 @@ public class CDAssociationSymbolTableCompleter implements CDAssociationVisitor2,
   
   public void setupModifiers(ASTModifier assocSideModifier, ASTModifier assocModifier,
       CDRoleSymbol roleSymbol) {
-    roleSymbol.setIsPublic(assocSideModifier.isPublic());
-    roleSymbol.setIsPrivate(assocSideModifier.isPrivate());
-    roleSymbol.setIsProtected(assocSideModifier.isProtected());
+    // A visibility of the role takes precedence over the visibility of the association
+    ASTModifier visibilitySource = assocSideModifier.isPublic() || assocSideModifier.isPrivate()
+        || assocSideModifier.isProtected() ? assocSideModifier : assocModifier;
+    roleSymbol.setIsPublic(visibilitySource.isPublic());
+    roleSymbol.setIsPrivate(visibilitySource.isPrivate());
+    roleSymbol.setIsProtected(visibilitySource.isProtected());
     roleSymbol.setIsStatic(assocSideModifier.isStatic() || assocModifier.isStatic());
     roleSymbol.setIsFinal(assocSideModifier.isFinal() || assocModifier.isFinal());
     roleSymbol.setIsDerived(assocSideModifier.isDerived() || assocModifier.isDerived());

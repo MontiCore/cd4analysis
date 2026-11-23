@@ -19,4 +19,8 @@ classdiagram CDAssociationModifierCoCoValid{
   public association finalRole final p2.B -> p1.A final;
   private association derivedRoles derived p2.B -> p1.A derived;
   protected association readOnlyRoles readonly p1.A -> p2.B readonly;
+
+  // role visibilities matching the association visibility are allowed
+  private association matchingVisibility private p1.A -> p2.B private;
+  public association matchingLeftVisibility public p1.A -> p2.B;
 }

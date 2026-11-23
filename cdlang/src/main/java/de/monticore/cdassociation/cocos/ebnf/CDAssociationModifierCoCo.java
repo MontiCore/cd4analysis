@@ -14,29 +14,39 @@ import java.util.function.Predicate;
 
 public class CDAssociationModifierCoCo implements CDAssociationASTCDAssociationCoCo {
   
+  protected final CDAssociationVisibilityConflictCoCo visibilityConflictCoCo;
+  
+  /** Checks the model as written. */
+  public CDAssociationModifierCoCo() {
+    this(false);
+  }
+  
+  /**
+   * @param afterTrafos whether the checked model has already been transformed, see
+   * {@link CDAssociationVisibilityConflictCoCo#CDAssociationVisibilityConflictCoCo(boolean)}
+   */
+  public CDAssociationModifierCoCo(boolean afterTrafos) {
+    this.visibilityConflictCoCo = new CDAssociationVisibilityConflictCoCo(afterTrafos);
+  }
+  
   @Override
   public void check(ASTCDAssociation a) {
     
     String assocName = a.isPresentName() ? a.getName() : "unnamed";
     
-    // Check for conflicting visibility modifiers
-    boolean hasMain = hasVisibility(a.getModifier());
-    boolean hasRoleVisibility = hasVisibility(a.getLeft().getModifier()) || hasVisibility(a
-        .getRight().getModifier());
-    
-    if (hasMain && hasRoleVisibility) {
-      Log.warn(String.format(
-          "The association '%s' cannot combine a main visibility modifier with individual role visibility modifiers.",
-          assocName), a.get_SourcePositionStart());
-    }
+    // Check for conflicting visibility modifiers (does not require a symbol table)
+    visibilityConflictCoCo.check(a);
     
     //----------------------------------check the rest modifiers-----------------------------------------------------------
     
     //// Ensure that the association does not connect static classes
     ICDAssociationScope scope = a.getEnclosingScope();
     
-    boolean staticClassLeft = isStaticType(scope.resolveType(a.getLeft().getName()));
-    boolean staticClassRight = isStaticType(scope.resolveType(a.getRight().getName()));
+    // Note: ASTCDAssocSide#getName returns the role name if present, so resolve the type name
+    boolean staticClassLeft = isStaticType(scope.resolveType(a.getLeft().getMCQualifiedType()
+        .getMCQualifiedName().getQName()));
+    boolean staticClassRight = isStaticType(scope.resolveType(a.getRight().getMCQualifiedType()
+        .getMCQualifiedName().getQName()));
     
     if (staticClassLeft || staticClassRight) {
       Log.error(String.format("0xCDA66: The association '%s' cannot connect static classes.",
@@ -52,18 +62,6 @@ public class CDAssociationModifierCoCo implements CDAssociationASTCDAssociationC
     checkForbiddenModifier(a, ASTModifier::isLocal, "0xCDA68", String.format(
         "The association '%s' (or its roles) must not use a local modifier.", assocName));
     
-  }
-  
-  /**
-   * Checks whether the given modifier specifies an explicit visibility
-   * (i.e., public, protected, or private).
-   *
-   * @param modifier the AST modifier to check (can be null)
-   * @return true if a public, protected, or private modifier is present, false otherwise
-   */
-  private boolean hasVisibility(ASTModifier modifier) {
-    return modifier != null && (modifier.isPublic() || modifier.isProtected() || modifier
-        .isPrivate());
   }
   
   /**

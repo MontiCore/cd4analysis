@@ -12,7 +12,10 @@ public class CDNoOutgoingAssocs4LibraryTypes implements CDAssociationASTCDAssoci
   
   public static final String ERROR_CODE = "0xCDCE7";
   public static final String ERROR_MESSAGE = ERROR_CODE
-      + ": Cannot add outgoing associations to imported library type %s.";
+      + ": The association is navigable from '%s', but '%s' is an imported library type "
+      + "(e.g., a Java class or a type of another class diagram). The code generator cannot add "
+      + "fields for associations to imported library types; change the navigation direction "
+      + "or use an attribute instead.";
   
   @Override
   public void check(ASTCDAssociation node) {
@@ -31,8 +34,8 @@ public class CDNoOutgoingAssocs4LibraryTypes implements CDAssociationASTCDAssoci
     // Resolve the symbol for the type and check if it does not have an ASTNode, i.e., is imported
     final SymTypeExpression typeExpression = TypeCheck3.symTypeFromAST(type);
     if (typeExpression.hasTypeInfo() && !typeExpression.getTypeInfo().isPresentAstNode()) {
-      Log.error(String.format(ERROR_MESSAGE, type.printType()), context.get_SourcePositionStart(),
-          context.get_SourcePositionEnd());
+      Log.error(String.format(ERROR_MESSAGE, type.printType(), type.printType()), context
+          .get_SourcePositionStart(), context.get_SourcePositionEnd());
     }
   }
   

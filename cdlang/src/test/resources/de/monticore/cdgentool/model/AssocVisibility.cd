@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package model;
+
+classdiagram AssocVisibility {
+
+  class A;
+  class B;
+  class C;
+
+  // the association visibility is propagated to the roles
+  private association A -> (privB) B;
+
+  // a role visibility takes precedence over the association visibility (both are equal here)
+  protected association A -> (protC) C protected;
+
+  // no visibility: roles are public by default
+  association B -> (pubC) C;
+
+  // conflicting visibilities: reported as warning (before and after symbol table creation)
+  public association C -> (privA) A private;
+
+}

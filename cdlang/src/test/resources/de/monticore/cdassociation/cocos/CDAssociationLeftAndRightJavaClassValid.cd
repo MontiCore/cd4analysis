@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram CDAssociationLeftAndRightJavaClassInvalid{
+classdiagram CDAssociationLeftAndRightJavaClassValid{
 
   public class A{
     java.lang.String attributeA1;
@@ -12,10 +12,10 @@ classdiagram CDAssociationLeftAndRightJavaClassInvalid{
     final java.lang.String attributeB2;
   }
 
-  protected static class C {
+  protected class C {
   }
 
-  association abstract B -> A;
+  association B -> A;
   association [0..2] A -> B;
 
   association A -> C;

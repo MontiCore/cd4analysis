@@ -5,7 +5,9 @@ import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
+import de.monticore.cd.codegen.trafo.AssociationVisibilityToRolesTrafo;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
+import de.monticore.cdassociation.cocos.ebnf.CDAssociationVisibilityConflictCoCo;
 import de.monticore.cd.codegen.trafo.JavaAssociationRoleNameTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
@@ -452,7 +454,10 @@ public class CDGenTool extends CD4CodeTool {
    * @param ast the original ast, without ST
    */
   public void runBeforeSTCoCos(ASTCDCompilationUnit ast) {
-    // Nothing yet, decide how we expose them
+    // Check visibilities as written in the model, before trafos add (default) visibilities
+    CD4CodeCoCoChecker checker = new CD4CodeCoCoChecker();
+    checker.addCoCo(new CDAssociationVisibilityConflictCoCo());
+    checker.checkAll(ast);
   }
   
   /**
@@ -470,6 +475,8 @@ public class CDGenTool extends CD4CodeTool {
     asts.forEach(ast -> ast.accept(trafo.getTraverser()));
     // TODO: Have this be done via the config-options (#4310)
     var t = CD4CodeMill.inheritanceTraverser();
+    // Propagates association visibilities to the roles before the default visibility is applied
+    t.add4CDAssociation(new AssociationVisibilityToRolesTrafo());
     t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
     asts.forEach(ast -> ast.accept(t));
     return asts;

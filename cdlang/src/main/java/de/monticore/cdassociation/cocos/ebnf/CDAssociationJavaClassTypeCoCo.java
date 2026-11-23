@@ -45,11 +45,13 @@ public class CDAssociationJavaClassTypeCoCo implements CDAssociationASTCDAssocia
       TypeSymbol typeSymbol = optTypeSymbol.get();
       
       if (!(typeSymbol instanceof CDTypeSymbol)) {
-        String assocName = a.isPresentName() ? a.getName() : "unnamed";
+        String assocName = a.isPresentName() ? " '" + a.getName() + "'" : "";
         
-        Log.error(String.format(
-            "0xCDA64: Java class '%s' cannot be used on the %s side of association '%s'.", qName,
-            sideName, assocName), a.get_SourcePositionStart());
+        Log.error(String.format("0xCDA64: The type '%s' on the %s side of the association%s is "
+            + "not defined in a class diagram (e.g., it is a Java class). Associations may only "
+            + "connect class diagram types; use an attribute of type '%s' instead.", qName,
+            sideName, assocName, qName), qualifiedType.get_SourcePositionStart(), qualifiedType
+                .get_SourcePositionEnd());
         
       }
     }
