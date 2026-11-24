@@ -62,6 +62,7 @@ public class CD4C {
   
   protected GeneratorSetup config;
   protected boolean isInitialized;
+  protected boolean isDeferredTemplateEvaluation = false;
   
   protected CD4C() {}
   
@@ -143,6 +144,13 @@ public class CD4C {
   
   public String getEmptyBodyTemplate() { return emptyBodyTemplate; }
   
+  public CD4C setDeferredTemplateEvaluation(boolean deferredTemplateEvaluation) {
+    this.isDeferredTemplateEvaluation = deferredTemplateEvaluation;
+    return this;
+  }
+  
+  public boolean isDeferredTemplateEvaluation() { return this.isDeferredTemplateEvaluation; }
+  
   /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
   | Methods                                                                   |
   \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
@@ -186,7 +194,15 @@ public class CD4C {
     if (attrOpt.isPresent()) {
       ASTCDAttribute attr = attrOpt.get();
       if (!attr.isPresentInitial() && !body.isEmpty()) {
-        config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, attr, new StringHookPoint(body));
+        if (this.isDeferredTemplateEvaluation) {
+          // Deferred template evaluation is request, use the templateHookPoint, so it is again executed by the
+          // TemplateController of the caller
+          config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, attr, templateHookPoint);
+        }
+        else {
+          config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, attr, new StringHookPoint(body,
+              template));
+        }
       }
     }
     
@@ -500,7 +516,8 @@ public class CD4C {
     final TemplateHookPoint templateHookPoint = new TemplateHookPoint(templateName, arguments);
     
     TemplateController controller = new TemplateController(this.config, templateName);
-    return addMethodBody(templateHookPoint.processValue(controller, astcdType));
+    return addMethodBody(templateHookPoint.processValue(controller, astcdType), templateName,
+        templateHookPoint);
   }
   
   /**
@@ -524,6 +541,34 @@ public class CD4C {
     
     final ASTCDMethodSignature method = methodHelper.getMethod().get();
     config.getGlex().replaceTemplate(emptyBodyTemplate, method, new StringHookPoint(body));
+    
+    return Optional.of(methodHelper);
+  }
+  
+  protected Optional<CD4CTemplateHelper> addMethodBody(String body, String templateOrigin,
+      TemplateHookPoint templateHookPoint) {
+    checkInitialized();
+    if (methodQueue.isEmpty()) {
+      throw new RuntimeException("0x110A0: cannot add method body: no previous method present");
+    }
+    
+    final CD4CTemplateHelper methodHelper = methodQueue.pop();
+    if (!methodHelper.getMethod().isPresent()) {
+      // if the method is not set, then add it to the stack again
+      methodQueue.add(methodHelper);
+      return Optional.empty();
+    }
+    
+    final ASTCDMethodSignature method = methodHelper.getMethod().get();
+    if (this.isDeferredTemplateEvaluation) {
+      // Deferred template evaluation is request, use the templateHookPoint, so it is again executed by the
+      // TemplateController of the caller
+      config.getGlex().replaceTemplate(emptyBodyTemplate, method, templateHookPoint);
+    }
+    else {
+      config.getGlex().replaceTemplate(emptyBodyTemplate, method, new StringHookPoint(body,
+          templateOrigin));
+    }
     
     return Optional.of(methodHelper);
   }
