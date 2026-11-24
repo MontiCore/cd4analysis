@@ -62,7 +62,7 @@ public class CD4C {
   
   protected GeneratorSetup config;
   protected boolean isInitialized;
-  protected boolean isDeferredTemplateEvaluation;
+  protected boolean isDeferredTemplateEvaluation = false;
   
   protected CD4C() {}
   
@@ -93,7 +93,6 @@ public class CD4C {
     setup.getGlex().setGlobalValue(GLEX_GLOBAL_VAR, instance);
     
     instance.isInitialized = true;
-    instance.isDeferredTemplateEvaluation = false;
     
     return instance;
   }
@@ -106,7 +105,6 @@ public class CD4C {
     
     instance.config.getGlex().changeGlobalVar(GLEX_GLOBAL_VAR, null);
     instance.isInitialized = false;
-    instance.isDeferredTemplateEvaluation = false;
     
     INSTANCE = null;
   }
