@@ -60,6 +60,23 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
   }
   
   @Test
+  public void testStringWithoutClass2MC() throws Exception {
+    var pb = runToolProcess("-c", "-i",
+        "src/tooltest/resources/de/monticore/stdefinition/StringWithoutClass2MC.symtabdefinition");
+    Process process = pb.start();
+    String out = new String(process.getInputStream().readAllBytes());
+    String err = new String(process.getErrorStream().readAllBytes());
+    process.waitFor();
+    
+    assertContains(out, "CoCo");
+    assertContains(out, "passed");
+    assertEquals("", err, "The error stream was not empty");
+    assertNoStacktrace(out);
+    assertNoStacktrace(err);
+    assertEquals(0, process.exitValue(), "Exit code of: " + out);
+  }
+  
+  @Test
   public void testIncorrectOption() throws Exception {
     var pb = runToolProcess("-IAmCertainThatWeWillNotAddThisFlagInTheFuture");
     Process process = pb.start();

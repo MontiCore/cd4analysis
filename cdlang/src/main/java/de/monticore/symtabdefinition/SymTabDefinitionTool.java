@@ -158,6 +158,9 @@ public class SymTabDefinitionTool extends SymTabDefinitionToolTOP {
         if (cmd.hasOption(OPTION_CLASS2MC)) {
           initializeClass2MC();
         }
+        else {
+          BasicSymbolsMill.initializeString();
+        }
         // set symbol path
         String[] symTabInPath = { "." };
         if (cmd.hasOption(OPTION_PATH)) {
