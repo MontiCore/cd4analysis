@@ -1,0 +1,35 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationModifierCoCoInvalid{
+
+ package p1 {
+      public class A {
+        int foo;
+        int bar;
+        int field;
+      }
+      class B extends A;
+    }
+    package p2 {
+      class C;
+      static class D;
+    }
+
+   public association visibilityAssocLeft private p1.A -> p2.C;
+   private association visibilityAssocRight p1.A -> p2.C public;
+
+  static association staticAssoc p1.A -> p2.C;
+  public association leftRoleStatic static p1.A -> p2.C;
+  private association rightRoleStatic [0..1] p1.A -> p2.C [*] static;
+
+  local association localAssoc p1.A -> p2.C;
+  public association leftLocalRole local p1.A -> p2.C;
+  private association rightRoleLocal [0..1] p1.A -> p2.C [*] local;
+
+  abstract association abstractAssoc p1.A -> p2.C;
+  public association leftRoleAbstract abstract p1.A -> p2.C;
+  private association rightRoleAbstract [0..1] p1.A -> p2.C [*] abstract;
+
+  association staticClassLeft p2.D -> p1.A;
+  association staticClassRight p2.C -> p2.D;
+}
