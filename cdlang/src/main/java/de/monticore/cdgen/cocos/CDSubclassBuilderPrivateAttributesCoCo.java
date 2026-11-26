@@ -41,11 +41,12 @@ public class CDSubclassBuilderPrivateAttributesCoCo implements CDBasisASTCDClass
                   //check if there is a public setter
                   boolean hasSetters = superClass.getCDMethodList().stream().filter(c -> c
                       .getModifier().isPublic()).filter(c -> c.getName().contentEquals("set"
-                          + attribute.getName())).anyMatch(c -> {
-                            var params = c.getCDParameterList();
-                            return params.size() == 1 && params.getFirst().getMCType().printType()
-                                .equals(attribute.getMCType().printType());
-                          });
+                          + attribute.getName().substring(0, 1).toUpperCase() + attribute.getName()
+                              .substring(1))).anyMatch(c -> {
+                                var params = c.getCDParameterList();
+                                return params.size() == 1 && params.getFirst().getMCType()
+                                    .printType().equals(attribute.getMCType().printType());
+                              });
                   if (!hasSetters) {
                     hasPrivateAttributes = true;
                     break;
