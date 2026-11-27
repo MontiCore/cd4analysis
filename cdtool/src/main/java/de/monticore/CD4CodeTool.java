@@ -502,6 +502,33 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       sb.append("Model ").append(modelName).append(" parsed:\n");
     }
     
+    doReport(ast, sb);
+    
+    final Path allElementsPath = Paths.get(path, REPORT_NAME + "." + modelName);
+    if (Files.notExists(allElementsPath.getParent())) {
+      try {
+        Files.createDirectories(allElementsPath.getParent());
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+        return;
+      }
+    }
+    try (
+        PrintWriter out = new PrintWriter(allElementsPath.toFile())
+    ) {
+      out.println(sb);
+    }
+    catch (FileNotFoundException e) {
+      e.printStackTrace();
+      return;
+    }
+    
+    System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Collections.singletonList(unifyPath(
+        allElementsPath))));
+  }
+  
+  public void doReport(ASTCDCompilationUnit ast, StringBuilder sb) {
     final List<String> cdPackageList = ast.getCDPackageList();
     sb.append("\nPackages (").append(cdPackageList.size()).append("): [").append(Joiners.COMMA.join(
         cdPackageList)).append("]");
@@ -531,29 +558,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           }
           return name;
         }).collect(Collectors.toList()))).append("]");
-    
-    final Path allElementsPath = Paths.get(path, REPORT_NAME + "." + modelName);
-    if (Files.notExists(allElementsPath.getParent())) {
-      try {
-        Files.createDirectories(allElementsPath.getParent());
-      }
-      catch (Exception e) {
-        e.printStackTrace();
-        return;
-      }
-    }
-    try (
-        PrintWriter out = new PrintWriter(allElementsPath.toFile())
-    ) {
-      out.println(sb);
-    }
-    catch (FileNotFoundException e) {
-      e.printStackTrace();
-      return;
-    }
-    
-    System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Collections.singletonList(unifyPath(
-        allElementsPath))));
   }
   
   private String unifyPath(Path path) {

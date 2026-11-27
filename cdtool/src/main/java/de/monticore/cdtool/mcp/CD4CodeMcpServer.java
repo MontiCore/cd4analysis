@@ -59,6 +59,15 @@ public class CD4CodeMcpServer extends McpHttpServer {
         "Parses an classdiagram model (same as check_classdiagram) and returns it pretty printed.",
         modelSchema(), args -> withModel(args, ast -> CD4CodeMill.prettyPrint(ast, true)));
     
+    addTool("reports_classdiagram",
+        "Parses an classdiagram model (same as check_classdiagram) and returns the reports (details) on it.",
+        modelSchema(), args -> withModel(args, ast -> {
+          StringBuilder sb = new StringBuilder();
+          sb.append("Reports of the model ").append(ast.getCDDefinition().getName()).append(":\n");
+          tool.doReport(ast, sb);
+          return sb.toString();
+        }));
+    
     addTool("classdiagram_to_plantuml",
         "Parses an classdiagram model (same as check_classdiagram) and returns it pretty printed.",
         modelSchema("svg", booleanProperty(
