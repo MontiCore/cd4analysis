@@ -28,14 +28,9 @@ public class PlantUMLUtil {
       Path outputPathSVG, PlantUMLConfig plantUMLConfig) throws IOException {
     
     final String plantUMLString = toPlantUmlModelString(astCD, plantUMLConfig);
-    final SourceStringReader reader = new SourceStringReader(plantUMLString);
-    final ByteArrayOutputStream os = new ByteArrayOutputStream();
-    // Write the first image to "os"
-    reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
-    os.close();
     
     // The XML is stored into svg
-    final String svg = os.toString(StandardCharsets.UTF_8);
+    final String svg = plantUmlToSVG(plantUMLString);
     try (
         PrintWriter out = new PrintWriter(outputPathSVG.toString())
     ) {
@@ -45,6 +40,15 @@ public class PlantUMLUtil {
     return outputPathSVG;
   }
   
+  public static String plantUmlToSVG(String plantUMLString) throws IOException {
+    final SourceStringReader reader = new SourceStringReader(plantUMLString);
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+      // Write the first image and return it
+      reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
+      return os.toString(StandardCharsets.UTF_8);
+    }
+  }
+  
   /** this needs GraphViz/JDOT installed on your PC */
   public static void writeCdToPlantUmlSvg(String pathCD, Path outputPathSVG,
       PlantUMLConfig plantUMLConfig) throws IOException {
@@ -52,14 +56,9 @@ public class PlantUMLUtil {
     final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
     
     final String plantUMLString = toPlantUmlModelString(cdString, plantUMLConfig);
-    final SourceStringReader reader = new SourceStringReader(plantUMLString);
-    final ByteArrayOutputStream os = new ByteArrayOutputStream();
-    // Write the first image to "os"
-    reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
-    os.close();
     
     // The XML is stored into svg
-    final String svg = os.toString(StandardCharsets.UTF_8);
+    final String svg = plantUmlToSVG(plantUMLString);
     try (
         PrintWriter out = new PrintWriter(outputPathSVG.toString())
     ) {

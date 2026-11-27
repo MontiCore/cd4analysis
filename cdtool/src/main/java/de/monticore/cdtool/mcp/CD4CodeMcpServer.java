@@ -97,8 +97,18 @@ public class CD4CodeMcpServer extends McpHttpServer {
                   plantUMLConfig.setNodesep(optionalInteger(args, "nodeSeparator", -1));
                   plantUMLConfig.setRanksep(optionalInteger(args, "rankSeparator", -1));
                   
-                  return PlantUMLUtil.toPlantUmlModelString(Optional.ofNullable(ast),
-                      plantUMLConfig);
+                  String plantUmlModel = PlantUMLUtil.toPlantUmlModelString(Optional.ofNullable(
+                      ast), plantUMLConfig);
+                  if (optionalBoolean(args, "svg", false)) {
+                    try {
+                      return PlantUMLUtil.plantUmlToSVG(plantUmlModel);
+                    }
+                    catch (IOException e) {
+                      throw new RuntimeException("Failed to write PlantUML as svg", e);
+                    }
+                  }
+                  
+                  return plantUmlModel;
                 }));
   }
   
@@ -181,6 +191,7 @@ public class CD4CodeMcpServer extends McpHttpServer {
    */
   protected ToolResult withModel(JsonObject args, Function<ASTCDCompilationUnit, String> action)
       throws IOException {
+    CD4CodeMill.init();
     String model = optionalString(args, "model");
     String file = optionalString(args, "file");
     if ((model == null) == (file == null)) {
@@ -242,14 +253,14 @@ public class CD4CodeMcpServer extends McpHttpServer {
   
   public static JsonObject booleanProperty(String description) {
     JsonObject p = new JsonObject();
-    p.addProperty("type", "Bool");
+    p.addProperty("type", "boolean");
     p.addProperty("description", description);
     return p;
   }
   
   public static JsonObject integerProperty(String description) {
     JsonObject p = new JsonObject();
-    p.addProperty("type", "Int");
+    p.addProperty("type", "integer");
     p.addProperty("description", description);
     return p;
   }
