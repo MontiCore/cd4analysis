@@ -102,6 +102,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
   
   @Test
   public void symbolTableCompleterNoErrorTest() {
+    configureTC3();
     TestCD4CodeBasisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
     String artifact = SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
@@ -140,12 +141,13 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     
     ast.accept(t);
     
-    assertEquals(6, Log.getErrorCount());
+    assertEquals(2, Log.getErrorCount(), Log.getFindings().toString());
     Log.clearFindings();
   }
   
   @Test
   public void createDefaultConstructorTest() {
+    configureTC3();
     ASTCDCompilationUnit ast = loadModel(SYMBOL_PATH
         + "de/monticore/cd4codebasis/symboltable/DefaultConstructor.cd");
     createSymbolTableFromAST(ast);
