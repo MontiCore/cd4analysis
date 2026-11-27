@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram SealedAsName {
+  sealed class S permits permits;
+  final class permits extends S {
+    int sealed;
+  }
+  class sealed {
+    permits p;
+    int non;
+    int d = non-sealed;
+  }
+}

@@ -7,11 +7,13 @@ import de.monticore.cd4codebasis._ast.ASTCDClass;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDInterface;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDPermitsUsage;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.TypeCheck3;
@@ -69,8 +71,28 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     }
   }
   
+  @Override
+  public void endVisit(ASTCDClass node) {
+    if (node.isPresentCDPermitsUsage()) {
+      initialize_SubTypeRestriction(node.getSymbol(), node.getCDPermitsUsage());
+    }
+  }
+  
+  @Override
   public void endVisit(ASTCDInterface node) {
     node.getSymbol().getMethodSignatureList().forEach(m -> m.setIsAbstract(true));
+    if (node.isPresentCDPermitsUsage()) {
+      initialize_SubTypeRestriction(node.getSymbol(), node.getCDPermitsUsage());
+    }
+  }
+  
+  /**
+   * The permitted types of a {@code permits} clause are the subtype restriction of the type. Types
+   * that cannot be resolved are skipped; the type check reports them (0xA0324).
+   */
+  protected void initialize_SubTypeRestriction(OOTypeSymbol symbol, ASTCDPermitsUsage permits) {
+    symbol.addAllSubTypeRestriction(permits.streamPermitted().map(TypeCheck3::symTypeFromAST)
+        .filter(res -> !res.isObscureType()).collect(Collectors.toList()));
   }
   
   protected void initialize_CDMethod(ASTCDMethod ast) {

@@ -2,12 +2,15 @@
 package de.monticore.cd4codebasis.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
+import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDClassCoCo;
+import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDMethodCoCo;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisCoCoChecker;
-import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
-import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
+import de.monticore.cd4codebasis.cocos.ebnf.*;
+import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis._cocos.CDBasisASTCDTargetImportStatementCoCo;
 import de.monticore.cdbasis.cocos.CDOnlyResolvableImportStatements;
 import de.monticore.cdbasis.cocos.ConstructorNameEqualsClassNameCoCo;
+import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
 import de.monticore.types.mcbasictypes._cocos.MCBasicTypesASTMCImportStatementCoCo;
 
 public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
@@ -44,11 +47,34 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
     // CDClass
     checker.addCoCo(new ConstructorNameEqualsClassNameCoCo());
     
+    // sealed, non-sealed, and permits
+    addCheckerForSealedCoCos(checker);
+    
     // CDMethodSignature
     checker.addCoCo(new CDMethodSignatureParameterNamesUnique());
     
     // CD4CodeEnumConstant
     checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
+  }
+  
+  /**
+   * Adds the CoCos for sealed and non-sealed types and permits clauses. Languages that do not use
+   * all CD4CodeBasis CoCos (e.g., SymTabDefinition) add them separately.
+   */
+  public CD4CodeBasisCoCoChecker addCheckerForSealedCoCos(CD4CodeBasisCoCoChecker checker) {
+    // CDClass and CDInterface: sealed and permits
+    // (registered once each, the CoCos visit both classes and interfaces)
+    checker.addCoCo((CD4CodeBasisASTCDClassCoCo) new CDPermittedTypesAreSubtypes());
+    checker.addCoCo((CD4CodeBasisASTCDClassCoCo) new CDSealedModifierCombinations());
+    CDSubtypesRespectRestriction respectsRestriction = new CDSubtypesRespectRestriction();
+    checker.addCoCo((CD4CodeBasisASTCDClassCoCo) respectsRestriction);
+    checker.addCoCo((CDInterfaceAndEnumASTCDEnumCoCo) respectsRestriction);
+    // (once per grammar: CDBasis, CD4CodeBasis, CDInterfaceAndEnum; CDAssociation in CD4CodeCoCos)
+    CDSealedOnlyOnClassesAndInterfaces sealedOnlyOnTypes = new CDSealedOnlyOnClassesAndInterfaces();
+    checker.addCoCo((CDBasisASTCDAttributeCoCo) sealedOnlyOnTypes);
+    checker.addCoCo((CD4CodeBasisASTCDMethodCoCo) sealedOnlyOnTypes);
+    checker.addCoCo((CDInterfaceAndEnumASTCDEnumCoCo) sealedOnlyOnTypes);
+    return checker;
   }
   
 }

@@ -4,12 +4,15 @@ package de.monticore.cd4codebasis.prettyprint;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+import de.monticore.cd4codebasis._ast.ASTCDInterface;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis._ast.ASTCDSealedModifier;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisHandler;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cd4codebasis._ast.ASTCDClass;
+import de.monticore.umlmodifier._ast.ASTModifier;
 
 import java.util.stream.Collectors;
 
@@ -133,6 +136,73 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil i
     }
     
     nameStack.pop();
+  }
+  
+  /**
+   * CD4CodeBasis overrides CDInterface, so the CDInterfaceAndEnum printer does not reach it. The
+   * permits clause is not printed: PlantUML has no syntax for it, and the permitted types are
+   * direct subtypes anyway.
+   */
+  @Override
+  public void visit(ASTCDInterface node) {
+    nameStack.push(node.getName());
+    printComment(node);
+    
+    print("interface " + node.getName());
+    
+    if (plantUMLConfig.getShowModifier() && hasModifier(node.getModifier())) {
+      print(" << ");
+      node.getModifier().accept(getTraverser());
+      print(">>");
+    }
+    
+    if (node.isPresentCDExtendUsage()) {
+      print(" extends ");
+      print(node.getInterfaceList().stream().map(s -> s.printType()).collect(Collectors.joining(
+          ", ")));
+    }
+    
+    if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {
+      println(" {");
+      indent();
+    }
+  }
+  
+  @Override
+  public void traverse(ASTCDInterface node) {
+    node.getCDMemberList().forEach(m -> m.accept(getTraverser()));
+  }
+  
+  @Override
+  public void endVisit(ASTCDInterface node) {
+    if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {
+      unindent();
+      println("}");
+    }
+    else {
+      println();
+    }
+    
+    nameStack.pop();
+  }
+  
+  @Override
+  public void handle(ASTCDSealedModifier node) {
+    // the registered UMLModifier handler prints the UML modifiers
+    getTraverser().getUMLModifierHandler().ifPresent(h -> h.handle(node));
+    if (node.isSealed()) {
+      print("sealed ");
+    }
+    if (node.isNonSealed()) {
+      print("non-sealed ");
+    }
+  }
+  
+  @Override
+  public boolean hasModifier(ASTModifier modifier) {
+    return super.hasModifier(modifier) || modifier instanceof ASTCDSealedModifier
+        && (((ASTCDSealedModifier) modifier).isSealed() || ((ASTCDSealedModifier) modifier)
+            .isNonSealed());
   }
   
 }
