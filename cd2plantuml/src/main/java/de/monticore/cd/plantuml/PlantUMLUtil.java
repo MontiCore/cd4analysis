@@ -42,7 +42,9 @@ public class PlantUMLUtil {
   
   public static String plantUmlToSVG(String plantUMLString) throws IOException {
     final SourceStringReader reader = new SourceStringReader(plantUMLString);
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+    try (
+        ByteArrayOutputStream os = new ByteArrayOutputStream()
+    ) {
       // Write the first image and return it
       reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
       return os.toString(StandardCharsets.UTF_8);
