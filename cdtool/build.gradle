@@ -30,6 +30,7 @@ dependencies {
   implementationWithoutExtras "de.monticore:class2mc:$mc_version"
   implementationWithoutExtras "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementationWithoutExtras "de.se_rwth.commons:se-commons-utilities:$commons_version"
+  implementationWithoutExtras "de.se_rwth.commons:se-commons-mcp:$commons_version"
   implementationWithoutExtras "com.google.guava:guava:$guava_version"
   implementationWithoutExtras "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
   implementationWithoutExtras "commons-cli:commons-cli:$commons_cli_version"

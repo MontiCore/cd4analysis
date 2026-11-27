@@ -49,6 +49,9 @@ public class CDToolOptions {
         "Prints short help; other options are ignored. ").build());
     options.addOption(Option.builder("v").longOpt("version").desc("Prints version information")
         .build());
+    options.addOption(Option.builder().longOpt("mcp").hasArg().argName("[host:]port").desc(
+        "Starts an MCP server (Streamable HTTP) at http://[host:]port/mcp. "
+            + "Without a host, it binds to the loopback interface(localhost)").build());
     
     initCheck();
     initPrettyPrinter(showPlantUML);
