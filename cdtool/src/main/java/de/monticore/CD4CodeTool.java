@@ -45,6 +45,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.cdtool.mcp.CD4CodeMcpServer;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -422,6 +423,19 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     else if (cmd.hasOption("v")) {
       printVersion();
       // do not continue when version is printed
+      return false;
+    }
+    else if (cmd.hasOption("mcp")) {
+      // serve the tool's functionality via MCP (blocks until shutdown)
+      try {
+        new CD4CodeMcpServer(this).serve(cmd.getOptionValue("mcp"));
+      }
+      catch (IOException | IllegalArgumentException e) {
+        Log.error("0xCD013 Could not start the MCP server: " + e.getMessage());
+      }
+      catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
       return false;
     }
     else {

@@ -94,7 +94,7 @@ public class PlantUMLUtil {
     }
   }
   
-  protected static String toPlantUmlModelString(
+  public static String toPlantUmlModelString(
       @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
       PlantUMLConfig config) {
     final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(
