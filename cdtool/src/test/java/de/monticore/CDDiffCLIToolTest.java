@@ -111,17 +111,12 @@ public class CDDiffCLIToolTest {
     
     assertEquals(Log.getErrorCount(), 0, "unexpected error during execution");
     
-    try {
-      ASTCDCompilationUnit expectedOut = Objects.requireNonNull(CDDiffUtil.loadCD(expectedOutCd));
-      ASTCDCompilationUnit actualOut = Objects.requireNonNull(CDDiffUtil.loadCD(Paths.get(output,
-          outFileName).toFile().getPath()));
-      
-      assertTrue(actualOut.deepEquals(expectedOut, false),
-          "Concretized out does not deepEquals expected");
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
+    ASTCDCompilationUnit expectedOut = Objects.requireNonNull(CDDiffUtil.loadCD(expectedOutCd));
+    ASTCDCompilationUnit actualOut = Objects.requireNonNull(CDDiffUtil.loadCD(Paths.get(output,
+        outFileName).toFile().getPath()));
+    
+    assertTrue(actualOut.deepEquals(expectedOut, false),
+        "Concretized out does not deepEquals expected");
     
     // clean-up
     try {
@@ -162,7 +157,7 @@ public class CDDiffCLIToolTest {
           }
         }
       }
-      catch (NullPointerException | IOException e) {
+      catch (NullPointerException e) {
         fail(e.getMessage());
       }
       
@@ -241,7 +236,7 @@ public class CDDiffCLIToolTest {
         }
       }
     }
-    catch (NullPointerException | IOException e) {
+    catch (NullPointerException e) {
       fail(e.getMessage());
     }
     
@@ -439,7 +434,7 @@ public class CDDiffCLIToolTest {
           }
         }
       }
-      catch (NullPointerException | IOException e) {
+      catch (NullPointerException e) {
         fail(e.getMessage());
       }
     }

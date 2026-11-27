@@ -15,7 +15,6 @@ import de.monticore.testcdbasis.TestCDBasisMill;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,7 +129,7 @@ public class CDBasisDeSerTest {
       return parser.parse(Paths.get(pathToArtifact).toString()).orElseThrow(
           NoSuchElementException::new);
     }
-    catch (IOException | NoSuchElementException e) {
+    catch (NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
     }

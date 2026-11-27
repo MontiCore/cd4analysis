@@ -12,7 +12,6 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -36,12 +35,7 @@ public abstract class DecoratorTestCase {
     
     CD4CodeParser parser = CD4CodeMill.parser();
     Optional<ASTCDCompilationUnit> ast = Optional.empty();
-    try {
-      ast = parser.parse(MODEL_PATH + qualifiedName + ".cd");
-    }
-    catch (IOException e) {
-      fail(String.format("Failed to load model '%s'", qualifiedName));
-    }
+    ast = parser.parse(MODEL_PATH + qualifiedName + ".cd");
     if (!ast.isPresent()) {
       fail(String.format("Failed to load model '%s'", qualifiedName));
     }

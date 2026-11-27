@@ -16,7 +16,6 @@ import de.monticore.testcdinterfaceandenum.TestCDInterfaceAndEnumMill;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import de.monticore.testcdinterfaceandenum._visitor.TestCDInterfaceAndEnumTraverser;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -143,7 +142,7 @@ public class CDInterfaceAndEnumDeSerTest {
       return parser.parse(Paths.get(pathToArtifact).toString()).orElseThrow(
           NoSuchElementException::new);
     }
-    catch (IOException | NoSuchElementException e) {
+    catch (NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
     }

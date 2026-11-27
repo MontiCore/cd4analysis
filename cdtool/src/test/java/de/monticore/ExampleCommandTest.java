@@ -20,7 +20,6 @@ import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -278,7 +277,7 @@ public class ExampleCommandTest extends OutTestBasis {
         }
       }
     }
-    catch (NullPointerException | IOException e) {
+    catch (NullPointerException e) {
       fail(e.getMessage());
     }
     assertEquals(0, Log.getErrorCount());
@@ -317,23 +316,16 @@ public class ExampleCommandTest extends OutTestBasis {
   }
   
   protected ASTCDCompilationUnit loadAndCheckCD(String filePath) {
-    try {
-      Optional<ASTCDCompilationUnit> optCD = CD4CodeMill.parser().parse(filePath);
-      assertTrue(optCD.isPresent());
-      new CD4CodeAfterParseTrafo().transform(optCD.get());
-      new CD4CodeDirectCompositionTrafo().transform(optCD.get());
-      ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(optCD.get());
-      as.addImports(new ImportStatement("java.lang", true));
-      CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(optCD.get());
-      optCD.get().accept(c.getTraverser());
-      new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(optCD.get());
-      return optCD.get();
-      
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    return null;
+    Optional<ASTCDCompilationUnit> optCD = CD4CodeMill.parser().parse(filePath);
+    assertTrue(optCD.isPresent());
+    new CD4CodeAfterParseTrafo().transform(optCD.get());
+    new CD4CodeDirectCompositionTrafo().transform(optCD.get());
+    ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(optCD.get());
+    as.addImports(new ImportStatement("java.lang", true));
+    CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(optCD.get());
+    optCD.get().accept(c.getTraverser());
+    new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(optCD.get());
+    return optCD.get();
   }
   
   protected String retrieveRelativeGenPath(ASTCDClass c, ASTCDCompilationUnit cd) {

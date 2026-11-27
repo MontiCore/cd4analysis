@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -15,7 +13,6 @@ import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import de.monticore.testcdinterfaceandenum._symboltable.ITestCDInterfaceAndEnumArtifactScope;
 import de.monticore.testcdinterfaceandenum._visitor.TestCDInterfaceAndEnumTraverser;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,14 +38,8 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
   }
   
   protected ASTCDCompilationUnit parseModel(String modelName) {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit;
-    try {
-      astcdCompilationUnit = p.parseCDCompilationUnit(Paths.get(modelName).toString());
-    }
-    catch (IOException e) {
-      fail("Failed while parsing the model `" + getFilePath(modelName) + "': " + e.getMessage());
-      return null;
-    }
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(Paths.get(
+        modelName).toString());
     
     checkNullAndPresence(p, astcdCompilationUnit);
     return astcdCompilationUnit.get();

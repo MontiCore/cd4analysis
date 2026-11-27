@@ -35,7 +35,6 @@ import de.monticore.types3.generics.TypeParameterRelations;
 import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.util.*;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -176,7 +175,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     try {
       return p.parse(Paths.get(pathToArtifact).toString()).orElseThrow(NoSuchElementException::new);
     }
-    catch (IOException | NoSuchElementException e) {
+    catch (NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
     }

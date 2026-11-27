@@ -288,30 +288,23 @@ public class MergeTool {
     Optional<ASTCDCompilationUnit> cd1Opt, cd2Opt;
     for (int j = 0; j < results.size() - 1; j++) {
       
-      try {
-        CD4CodeParser parser = new CD4CodeParser();
-        cd1Opt = parser.parse_String(CDMergeUtils.prettyPrint(results.get(j)));
-        cd2Opt = parser.parse_String(CDMergeUtils.prettyPrint(results.get(j + 1)));
-        if (cd1Opt.isPresent() && cd2Opt.isPresent()) {
-          if (!cd1Opt.get().deepEquals(cd2Opt.get(), false)) {
-            // Different Result for different order
-            mergeBlackBoard.addLog(ErrorLevel.ERROR,
-                "Different merge results for different merge sequence", MergePhase.PREPARING, cd1Opt
-                    .get(), cd2Opt.get());
-            return false;
-          }
-        }
-        else if ((cd1Opt.isEmpty() && cd2Opt.isPresent()) || (cd1Opt.isPresent() && cd2Opt
-            .isEmpty())) {
+      CD4CodeParser parser = new CD4CodeParser();
+      cd1Opt = parser.parse_String(CDMergeUtils.prettyPrint(results.get(j)));
+      cd2Opt = parser.parse_String(CDMergeUtils.prettyPrint(results.get(j + 1)));
+      if (cd1Opt.isPresent() && cd2Opt.isPresent()) {
+        if (!cd1Opt.get().deepEquals(cd2Opt.get(), false)) {
+          // Different Result for different order
           mergeBlackBoard.addLog(ErrorLevel.ERROR,
-              "Different merge results (one empty) for different merge sequence",
-              MergePhase.PREPARING, cd1Opt.get(), cd2Opt.get());
+              "Different merge results for different merge sequence", MergePhase.PREPARING, cd1Opt
+                  .get(), cd2Opt.get());
           return false;
         }
       }
-      catch (IOException e) {
-        mergeBlackBoard.addLog(ErrorLevel.ERROR, "IOExcpetion while parsing the merged cds: " + e
-            .getMessage(), MergePhase.PREPARING);
+      else if ((cd1Opt.isEmpty() && cd2Opt.isPresent()) || (cd1Opt.isPresent() && cd2Opt
+          .isEmpty())) {
+        mergeBlackBoard.addLog(ErrorLevel.ERROR,
+            "Different merge results (one empty) for different merge sequence",
+            MergePhase.PREPARING, cd1Opt.get(), cd2Opt.get());
         return false;
       }
     }

@@ -13,7 +13,6 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.runtime.junit.AbstractMCTest;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import org.junit.jupiter.api.Assertions;
@@ -90,13 +89,8 @@ public abstract class AbstractDecoratorTest extends AbstractMCTest {
           // If required, we also output the symbol table of the *decorated* AST
           
           // For better error reports (in our tests only!) update the source positions
-          try {
-            decorated = CD4CodeMill.parser().parse_String(CD4CodeMill.prettyPrint(decorated, true))
-                .get();
-          }
-          catch (IOException e) {
-            throw new IllegalStateException(e);
-          }
+          decorated = CD4CodeMill.parser().parse_String(CD4CodeMill.prettyPrint(decorated, true))
+              .get();
           // Unload the original symbol table to avoid duplicate symbols
           CD4CodeMill.globalScope().removeSubScope(originalSymbolTable);
           

@@ -40,44 +40,34 @@ public class Syn2SemDiffValidationTest {
   
   @Test
   public void testEmployees1() {
-    try {
-      ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(
-          "src/test/resources/de/monticore/cddiff/Employees/Employees1.cd");
-      ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(
-          "src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
-      
-      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
-      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-      
-      Assertions.assertFalse(witnesses.isEmpty());
-      
-      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
-      
-    }
-    catch (IOException e) {
-      Assertions.fail(e.getMessage());
-    }
+    ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(
+        "src/test/resources/de/monticore/cddiff/Employees/Employees1.cd");
+    ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(
+        "src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
+    
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+    
+    Assertions.assertFalse(witnesses.isEmpty());
+    
+    checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
+    
   }
   
   @Test
   public void testEmployees2() {
-    try {
-      ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(
-          "src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
-      ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(
-          "src/test/resources/de/monticore/cddiff/Employees/Employees1.cd");
-      
-      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
-      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-      
-      Assertions.assertFalse(witnesses.isEmpty());
-      
-      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
-      
-    }
-    catch (IOException e) {
-      Assertions.fail(e.getMessage());
-    }
+    ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(
+        "src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
+    ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(
+        "src/test/resources/de/monticore/cddiff/Employees/Employees1.cd");
+    
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+    
+    Assertions.assertFalse(witnesses.isEmpty());
+    
+    checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
+    
   }
   
   @Test

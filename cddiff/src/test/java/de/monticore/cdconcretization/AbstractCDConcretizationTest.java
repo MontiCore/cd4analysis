@@ -17,7 +17,6 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -145,14 +144,8 @@ public abstract class AbstractCDConcretizationTest {
   }
   
   public static ASTCDCompilationUnit parseCD(String filePath) {
-    ASTCDCompilationUnit cd;
-    try {
-      cd = CD4CodeMill.parser().parseCDCompilationUnit(TEST_RES_DIR + filePath).orElseThrow(
-          () -> new RuntimeException("Could not parse CD: " + filePath));
-    }
-    catch (IOException e) {
-      throw new RuntimeException("Failed to load CD: " + filePath, e);
-    }
+    ASTCDCompilationUnit cd = CD4CodeMill.parser().parseCDCompilationUnit(TEST_RES_DIR + filePath)
+        .orElseThrow(() -> new RuntimeException("Could not parse CD: " + filePath));
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
     cd.accept(new CD4CodeSymbolTableCompleter(cd).getTraverser());
     assertNoFindings("Findings while loading CD");
